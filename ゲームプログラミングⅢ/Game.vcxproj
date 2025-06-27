@@ -119,6 +119,7 @@
     <ClInclude Include="External\imgui-docking\imstb_rectpack.h" />
     <ClInclude Include="External\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="External\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="fujimoto.h" />
     <ClInclude Include="Source\Camera\Camera.h" />
     <ClInclude Include="Source\Camera\CameraController.h" />
     <ClInclude Include="Source\Camera\CameraController\FPCameraController.h" />
@@ -134,6 +135,10 @@
     <ClInclude Include="Source\ProjectileManager.h" />
     <ClInclude Include="Source\ProjectileStraigth.h" />
     <ClInclude Include="Source\GameObjects\Character.h" />
+    <ClInclude Include="Source\Pursuer\Edge.h" />
+    <ClInclude Include="Source\Pursuer\Object.h" />
+    <ClInclude Include="Source\Pursuer\SearchAI.h" />
+    <ClInclude Include="Source\Pursuer\WayPoint.h" />
     <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Scene\SceneGame.h" />
     <ClInclude Include="Source\Scene\SceneLoading.h" />
@@ -170,6 +175,7 @@
     <ClCompile Include="External\imgui-docking\imgui_impl_dx11.cpp" />
     <ClCompile Include="External\imgui-docking\imgui_impl_win32.cpp" />
     <ClCompile Include="External\imgui-docking\imgui_widgets.cpp" />
+    <ClCompile Include="fujimoto.cpp" />
     <ClCompile Include="Source\Camera\Camera.cpp" />
     <ClCompile Include="Source\Camera\CameraController.cpp" />
     <ClCompile Include="Source\Camera\CameraController\FPCameraController.cpp" />
@@ -184,6 +190,8 @@
     <ClCompile Include="Source\ProjectileManager.cpp" />
     <ClCompile Include="Source\ProjectileStraigth.cpp" />
     <ClCompile Include="Source\GameObjects\Character.cpp" />
+    <ClCompile Include="Source\Pursuer\Object.cpp" />
+    <ClCompile Include="Source\Pursuer\SearchAI.cpp" />
     <ClCompile Include="Source\Scene\SceneGame.cpp" />
     <ClCompile Include="Source\Scene\SceneLoading.cpp" />
     <ClCompile Include="Source\Scene\SceneManager.cpp" />

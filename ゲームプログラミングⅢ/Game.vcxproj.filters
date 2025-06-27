@@ -28,6 +28,9 @@
     <Filter Include="Resource">
       <UniqueIdentifier>{d99213ba-b5cb-4c4b-bd81-a88735a666b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Pursuer">
+      <UniqueIdentifier>{633e6b8d-154a-4d81-a7d2-4b77156cb566}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h">
@@ -167,6 +170,19 @@
     <ClInclude Include="Source\Camera\CameraController\FreeCameraController.h" />
     <ClInclude Include="Source\GameObjects\Enemy\Enemy.h" />
     <ClInclude Include="Source\Scene\SceneMattsu.h" />
+    <ClInclude Include="Source\Pursuer\Edge.h">
+      <Filter>Source\Pursuer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pursuer\Object.h">
+      <Filter>Source\Pursuer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pursuer\SearchAI.h">
+      <Filter>Source\Pursuer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pursuer\WayPoint.h">
+      <Filter>Source\Pursuer</Filter>
+    </ClInclude>
+    <ClInclude Include="fujimoto.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -296,6 +312,15 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\SceneMattsu.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pursuer\Object.cpp">
+      <Filter>Source\Pursuer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pursuer\SearchAI.cpp">
+      <Filter>Source\Pursuer</Filter>
+    </ClCompile>
+    <ClCompile Include="fujimoto.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
