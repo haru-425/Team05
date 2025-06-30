@@ -24,6 +24,8 @@ Stage::Stage()
     DirectX::XMMATRIX W = S * R * T;
     //計算したワールド行列を取り出す
     DirectX::XMStoreFloat4x4(&world, W);
+
+    DestinationPointSet();
 }
 Stage::~Stage()
 {
