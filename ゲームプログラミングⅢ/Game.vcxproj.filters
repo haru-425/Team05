@@ -182,7 +182,9 @@
     <ClInclude Include="Source\Pursuer\WayPoint.h">
       <Filter>Source\Pursuer</Filter>
     </ClInclude>
-    <ClInclude Include="fujimoto.h" />
+    <ClInclude Include="Source\Scene\fujimoto.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -320,8 +322,8 @@
     <ClCompile Include="Source\Pursuer\SearchAI.cpp">
       <Filter>Source\Pursuer</Filter>
     </ClCompile>
-    <ClCompile Include="fujimoto.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="Source\Scene\fujimoto.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

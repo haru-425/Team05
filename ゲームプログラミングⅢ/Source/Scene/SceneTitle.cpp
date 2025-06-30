@@ -2,6 +2,7 @@
 #include"SceneTitle.h"
 #include"System/Input.h"
 #include"SceneGame.h"
+#include"Scene/fujimoto.h"
 #include"SceneManager.h"
 #include"SceneLoading.h"
 
@@ -39,6 +40,10 @@ void SceneTitle::Update(float elapsedTime)
     {
         //SceneManager::instance().ChangeScene(new SceneGame);
         SceneManager::instance().ChangeScene(new SceneLoading(new SceneGame));
+    }
+    if (GetAsyncKeyState('F') & 0x8000)
+    {
+        SceneManager::instance().ChangeScene(new SceneLoading(new fujimoto));
     }
 }
 
