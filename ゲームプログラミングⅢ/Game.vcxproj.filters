@@ -183,6 +183,12 @@
       <Filter>Source\Pursuer</Filter>
     </ClInclude>
     <ClInclude Include="fujimoto.h" />
+    <ClInclude Include="Source\System\FrameBuffer.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\FullScreenQuad.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -323,6 +329,12 @@
     <ClCompile Include="fujimoto.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\FrameBuffer.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\FullScreenQuad.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Sprite.hlsli">
@@ -344,6 +356,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="Shader\Scene.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\FullScreenQuad.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
@@ -376,6 +391,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\LambertVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\FullScreenQuadPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\FullScreenQuadVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

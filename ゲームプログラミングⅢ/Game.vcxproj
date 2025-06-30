@@ -150,6 +150,8 @@
     <ClInclude Include="Source\System\AudioResource.h" />
     <ClInclude Include="Source\System\AudioSource.h" />
     <ClInclude Include="Source\System\BasicShader.h" />
+    <ClInclude Include="Source\System\FrameBuffer.h" />
+    <ClInclude Include="Source\System\FullScreenQuad.h" />
     <ClInclude Include="Source\System\GamePad.h" />
     <ClInclude Include="Source\System\GpuResourceUtils.h" />
     <ClInclude Include="Source\System\Graphics.h" />
@@ -202,6 +204,8 @@
     <ClCompile Include="Source\System\AudioResource.cpp" />
     <ClCompile Include="Source\System\AudioSource.cpp" />
     <ClCompile Include="Source\System\BasicShader.cpp" />
+    <ClCompile Include="Source\System\FrameBuffer.cpp" />
+    <ClCompile Include="Source\System\FullScreenQuad.cpp" />
     <ClCompile Include="Source\System\GamePad.cpp" />
     <ClCompile Include="Source\System\GpuResourceUtils.cpp" />
     <ClCompile Include="Source\System\Graphics.cpp" />
@@ -218,6 +222,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
+    <None Include="Shader\FullScreenQuad.hlsli" />
     <None Include="Shader\Lambert.hlsli" />
     <None Include="Shader\Scene.hlsli" />
     <None Include="Shader\ShapeRenderer.hlsli" />
@@ -231,6 +236,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\BasicVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\FullScreenQuadPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\FullScreenQuadVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
