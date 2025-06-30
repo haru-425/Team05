@@ -194,6 +194,15 @@
     <ClInclude Include="Source\Scene\fujimoto.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Source\System\ShadowCaster.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\LoadTextures.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\CustomShader.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -343,6 +352,15 @@
     <ClCompile Include="Source\Scene\fujimoto.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\ShadowCaster.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\LoadTextures.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\CustomShader.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Sprite.hlsli">
@@ -367,6 +385,12 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="Shader\FullScreenQuad.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Custom.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Function.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
@@ -430,6 +454,12 @@
     </FxCompile>
     <FxCompile Include="Shader\VisionBootDownPS.hlsl">
       <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\CustomVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\CustomPS.hlsl">
+      <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

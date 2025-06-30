@@ -151,6 +151,7 @@
     <ClInclude Include="Source\System\AudioResource.h" />
     <ClInclude Include="Source\System\AudioSource.h" />
     <ClInclude Include="Source\System\BasicShader.h" />
+    <ClInclude Include="Source\System\CustomShader.h" />
     <ClInclude Include="Source\System\FrameBuffer.h" />
     <ClInclude Include="Source\System\FullScreenQuad.h" />
     <ClInclude Include="Source\System\GamePad.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Source\System\ImGuiRenderer.h" />
     <ClInclude Include="Source\System\Input.h" />
     <ClInclude Include="Source\System\LambertShader.h" />
+    <ClInclude Include="Source\System\LoadTextures.h" />
     <ClInclude Include="Source\System\Misc.h" />
     <ClInclude Include="Source\System\Model.h" />
     <ClInclude Include="Source\System\ModelRenderer.h" />
@@ -168,6 +170,7 @@
     <ClInclude Include="Source\System\RenderContext.h" />
     <ClInclude Include="Source\System\RenderState.h" />
     <ClInclude Include="Source\System\Shader.h" />
+    <ClInclude Include="Source\System\ShadowCaster.h" />
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\System\Sprite.h" />
   </ItemGroup>
@@ -206,6 +209,7 @@
     <ClCompile Include="Source\System\AudioResource.cpp" />
     <ClCompile Include="Source\System\AudioSource.cpp" />
     <ClCompile Include="Source\System\BasicShader.cpp" />
+    <ClCompile Include="Source\System\CustomShader.cpp" />
     <ClCompile Include="Source\System\FrameBuffer.cpp" />
     <ClCompile Include="Source\System\FullScreenQuad.cpp" />
     <ClCompile Include="Source\System\GamePad.cpp" />
@@ -214,17 +218,21 @@
     <ClCompile Include="Source\System\ImGuiRenderer.cpp" />
     <ClCompile Include="Source\System\Input.cpp" />
     <ClCompile Include="Source\System\LambertShader.cpp" />
+    <ClCompile Include="Source\System\LoadTextures.cpp" />
     <ClCompile Include="Source\System\Model.cpp" />
     <ClCompile Include="Source\System\ModelRenderer.cpp" />
     <ClCompile Include="Source\System\ModelResource.cpp" />
     <ClCompile Include="Source\System\Mouse.cpp" />
     <ClCompile Include="Source\System\RenderState.cpp" />
+    <ClCompile Include="Source\System\ShadowCaster.cpp" />
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
     <ClCompile Include="Source\System\Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
+    <None Include="Shader\Custom.hlsli" />
     <None Include="Shader\FullScreenQuad.hlsli" />
+    <None Include="Shader\Function.hlsli" />
     <None Include="Shader\Lambert.hlsli" />
     <None Include="Shader\Scene.hlsli" />
     <None Include="Shader\ShapeRenderer.hlsli" />
@@ -252,6 +260,13 @@
     <FxCompile Include="Shader\crtPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\CustomPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\CustomVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\FullScreenQuadPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

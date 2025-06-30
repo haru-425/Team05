@@ -49,9 +49,15 @@ void FreeCameraController::Update(float dt)
 
     float f = sqrtf(front.x * front.x + front.y * front.y + front.z * front.z);
     float r = sqrtf(right.x * right.x + right.y * right.y + right.z * right.z);
-    target.x += lx * r * 10 * dt;
-    target.y += lx * f * 10 * dt;
-    target.z += ly * f * 10 * dt;
+    //target.x += lx * r * 10 * dt;
+    //target.y += lx * f * 10 * dt;
+    //target.z += ly * f * 10 * dt;
+
+    target.x += right.x * lx * 10 * dt;
+    target.z += right.z * lx * 10 * dt;
+
+    target.x += front.x * ly * 10 * dt;
+    target.z += front.z * ly * 10 * dt;
 
     DirectX::XMFLOAT3 eye;
     eye.x = target.x - front.x * range;

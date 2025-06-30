@@ -36,30 +36,77 @@ void ModelRenderer::Render(const RenderContext& rc, const DirectX::XMFLOAT4X4& w
 		DirectX::XMMATRIX V = DirectX::XMLoadFloat4x4(&rc.view);
 		DirectX::XMMATRIX P = DirectX::XMLoadFloat4x4(&rc.projection);
 		DirectX::XMStoreFloat4x4(&cbScene.viewProjection, V * P);
+
 		cbScene.lightDirection.x = rc.lightDirection.x;
 		cbScene.lightDirection.y = rc.lightDirection.y;
 		cbScene.lightDirection.z = rc.lightDirection.z;
+
+		cbScene.cameraPosition.x = rc.cameraPosition.x;
+		cbScene.cameraPosition.y = rc.cameraPosition.y;
+		cbScene.cameraPosition.z = rc.cameraPosition.z;
+		cbScene.cameraPosition.w = 1.0f;
+
 		dc->UpdateSubresource(sceneConstantBuffer.Get(), 0, 0, &cbScene, 0, 0);
 	}
+
+	// fog
+	{
+		fogConstants data = {};
+		data.ambientColor = rc.ambientColor;
+		data.fogColor = rc.fogColor;
+		data.fogRange = rc.fogRange;
+
+		dc->UpdateSubresource(fogConstantBuffer.Get(), 0, 0, &data, 0, 0);
+	}
+
+	// Shadow
+	{
+		ShadowConstants data = {};
+		data.lightViewProjection = rc.lightViewProjection;
+		data.shadowColor = rc.shadowColor;
+		data.shadowBias = rc.shadowBias;
+
+		dc->UpdateSubresource(shadowConstantBuffer.Get(), 0, 0, &data, 0, 0);
+	};
+
+	// PointLight
+	{
+		LightConstants data = {};
+		memcpy_s(data.pointLights, sizeof(data.pointLights), rc.pointLights, sizeof(rc.pointLights));
+		memcpy_s(data.lineLights, sizeof(data.lineLights), rc.lineLights, sizeof(rc.lineLights));
+		data.power = rc.lightPower;
+		data.dummy = { 0,0,0 };
+
+		dc->UpdateSubresource(lightConstantBuffer.Get(), 0, 0, &data, 0, 0);
+	};
 
 	// 定数バッファ設定
 	ID3D11Buffer* vsConstantBuffers[] =
 	{
 		sceneConstantBuffer.Get(),
 		skeletonConstantBuffer.Get(),
+		fogConstantBuffer.Get(),
+		shadowConstantBuffer.Get(),
+		lightConstantBuffer.Get(),
 	};
 	dc->VSSetConstantBuffers(0, _countof(vsConstantBuffers), vsConstantBuffers);
 
 	ID3D11Buffer* psConstantBuffers[] =
 	{
 		sceneConstantBuffer.Get(),
+		skeletonConstantBuffer.Get(),
+		fogConstantBuffer.Get(),
+		shadowConstantBuffer.Get(),
+		lightConstantBuffer.Get(),
 	};
 	dc->PSSetConstantBuffers(0, _countof(psConstantBuffers), psConstantBuffers);
 
 	// サンプラステート設定
 	ID3D11SamplerState* samplerStates[] =
 	{
-		rc.renderState->GetSamplerState(SamplerState::LinearWrap)
+		rc.renderState->GetSamplerState(SamplerState::LinearWrap),
+		rc.renderState->GetSamplerState(SamplerState::LinearClamp),
+		rc.renderState->GetSamplerState(SamplerState::Shadow),
 	};
 	dc->PSSetSamplers(0, _countof(samplerStates), samplerStates);
 
