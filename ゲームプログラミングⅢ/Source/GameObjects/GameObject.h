@@ -66,6 +66,8 @@ public:
     DirectX::XMFLOAT3 GetScale() const { return scale; }
     DirectX::XMFLOAT4X4 GetWorld() const { return world; }
 
+    float GetViewPoint() const { return viewPoint; }
+
     // セッター
     void SetPosition(const DirectX::XMFLOAT3& position) { this->position = position; }
     void SetAngle(const DirectX::XMFLOAT3& angle) { this->angle = angle; }
@@ -81,6 +83,8 @@ protected:
         0,0,1,0,
         0,0,0,1
     };
+
+    float viewPoint = 0;
 
     DirectX::XMFLOAT2 velocity = {};    // 今回は落下がないからfloat2型
     float radius = 0;                   // 探索に使う？

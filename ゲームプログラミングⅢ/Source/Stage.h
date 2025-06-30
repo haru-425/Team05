@@ -15,6 +15,10 @@ public:
     //•`‰æˆ—
     void Render(const RenderContext& rc, ModelRenderer* renderer);
 
+    DirectX::XMFLOAT4X4 GetWorld() const { return world; }
+
+    Model* GetModel() const { return model; }
+
 private:
     DirectX::XMFLOAT3 position = { 0,0,0 };
     DirectX::XMFLOAT3 angle = { 0,0,0 };

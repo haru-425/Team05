@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="External">
+      <UniqueIdentifier>{a0c818e5-8ce1-40db-9900-cd7b2a8d5f99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato">
+      <UniqueIdentifier>{567840f0-30ad-4ff5-8f7f-d49fa459481d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Shader">
+      <UniqueIdentifier>{94156189-e95d-4c5a-a89f-a2b2c5d81e12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Graphics">
+      <UniqueIdentifier>{c16ecbaf-cc27-4715-8c1d-9b11edf7ed36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\ImGui">
+      <UniqueIdentifier>{789f5f5f-5f98-401d-b504-e52c50eebb17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Core">
+      <UniqueIdentifier>{f7194128-b76b-4d4a-9124-babdc6c7a734}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Resources">
+      <UniqueIdentifier>{abdabca9-5404-4571-aadb-5b16fa58b6a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Resources\Sprite">
+      <UniqueIdentifier>{d9c5d57c-1bc2-430c-9648-df97cb607f92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Resources\Model">
+      <UniqueIdentifier>{bcfaf9fe-b6ff-4d4c-b1ad-88678cb0950b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Scene">
+      <UniqueIdentifier>{5882dc9d-4efa-4ce7-846c-371ab2da5ff7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Shader\Model">
+      <UniqueIdentifier>{a8d05834-2aa2-4a6c-8fea-790b768beadf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Shader\Sprite">
+      <UniqueIdentifier>{d0ad0f1e-2feb-499d-97c9-941b6f6b9e0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Resources\Audio">
+      <UniqueIdentifier>{0716a9d6-c3c3-419a-a0b5-c7c2027415e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Resources\Effect">
+      <UniqueIdentifier>{817179ec-786b-4508-9209-c7e978915c63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Math">
+      <UniqueIdentifier>{a5098922-5a84-4fc4-9fbb-aba48e2ca6b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Graphics\Shader">
+      <UniqueIdentifier>{981c1ec6-65ac-4ee0-a712-e5f515709899}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Scene\TestScene">
+      <UniqueIdentifier>{130e8c52-d67c-46e5-9bdd-11c1fa373318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\GameObjects">
+      <UniqueIdentifier>{cdde9c1e-ab7e-4294-a849-f1152dda7d91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Systems">
+      <UniqueIdentifier>{7661c63a-9655-4e25-9a91-0fe83f3818d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Graphics\Camera">
+      <UniqueIdentifier>{d8b8e96c-68a5-4f21-882d-9c22a55c5294}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Graphics\SkyMap">
+      <UniqueIdentifier>{50422f8c-00f2-4926-8ca7-221676f5542c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Shader\SkyMap">
+      <UniqueIdentifier>{acc5eb11-f83c-4e99-b0cd-d8de055427f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Graphics\ShadowMap">
+      <UniqueIdentifier>{fc9eb5d2-6c57-4a66-ac54-6b6298500889}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Systems\Input">
+      <UniqueIdentifier>{96fa5366-52bf-4e46-bf55-18451439108b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Systems\Config">
+      <UniqueIdentifier>{ec28f723-3c97-47af-8ba7-bf254865f758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Systems\Logger">
+      <UniqueIdentifier>{9dc8a0ae-e1df-4e59-9087-0b78e746810d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Math\operator">
+      <UniqueIdentifier>{5a4ebbf4-4148-49f5-b053-c69cc9619c2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Math\Vector">
+      <UniqueIdentifier>{cdfa38b6-0c5e-4cbb-826c-f10b4595f1ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\GameObjects\Component">
+      <UniqueIdentifier>{7e19bd7e-6547-45e6-9fa7-5e888ba2942c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Graphics\FrameBuffer">
+      <UniqueIdentifier>{4449117d-703d-4b5a-9e51-dd722027d6cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Graphics\Particles">
+      <UniqueIdentifier>{1a759352-a710-43f8-a84d-4774a8753f8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Shader\Particle">
+      <UniqueIdentifier>{08cdc700-2b23-4ab6-8f31-45b12864a9b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\Graphics\ConstantBuffer">
+      <UniqueIdentifier>{2480411a-1b97-4cb3-baf8-c622dbe3348c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Yamato\GameObjects\Test">
+      <UniqueIdentifier>{523de96a-02bc-409a-b365-694c47b908a3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Graphics\Graphics.cpp">
+      <Filter>Yamato\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_demo.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_draw.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_impl_dx11.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_impl_win32.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_ja_gryph_ranges.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_tables.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_widgets.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\ImGuiCtrl.cpp">
+      <Filter>External\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\Shader.cpp">
+      <Filter>Yamato\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Camera\Camera.cpp">
+      <Filter>Yamato\Graphics\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Application\Application.cpp" />
+    <ClCompile Include="Source\Application\HighResolutionTimer.cpp" />
+    <ClCompile Include="Source\Application\Main.cpp" />
+    <ClCompile Include="Source\GameObjects\Actor\Actor.cpp" />
+    <ClCompile Include="Source\GameObjects\Actor\ActorManager.cpp" />
+    <ClCompile Include="Source\GameObjects\Actor\Component\SkeletalMeshComponent.cpp" />
+    <ClCompile Include="Source\GameObjects\Actor\Component\StaticMeshComponent.cpp" />
+    <ClCompile Include="Source\Graphics\ModelRenderer\ModelRenderer.cpp" />
+    <ClCompile Include="Source\Graphics\FrameBuffer\FrameBuffer.cpp" />
+    <ClCompile Include="Source\Resources\Model\GltfModel.cpp" />
+    <ClCompile Include="Source\Systems\Config\GameConfig.cpp" />
+    <ClCompile Include="Source\Systems\Input\GamePad.cpp" />
+    <ClCompile Include="Source\Systems\Input\Input.cpp" />
+    <ClCompile Include="Source\Systems\Input\Keyboard.cpp" />
+    <ClCompile Include="Source\Systems\Input\Mouse.cpp" />
+    <ClCompile Include="Source\Systems\Logger\Logger.cpp" />
+    <ClCompile Include="Source\Systems\Logger\LogWindow.cpp" />
+    <ClCompile Include="Source\Scenes\SceneManager.cpp" />
+    <ClCompile Include="Source\Resources\Texture.cpp" />
+    <ClCompile Include="Source\Scenes\Levels\DemoScene.cpp" />
+    <ClCompile Include="Source\Resources\Model\FbxModel.cpp" />
+    <ClCompile Include="Source\GameObjects\Actor\Component\CameraComponent\CameraComponent.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="External\ImGui\imconfig.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui_impl_dx11.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui_impl_win32.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui_internal.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\ImGuiCtrl.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imstb_rectpack.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imstb_textedit.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imstb_truetype.h">
+      <Filter>External\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Graphics.h">
+      <Filter>Yamato\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Math\Easing.h">
+      <Filter>Yamato\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\Shader.h">
+      <Filter>Yamato\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Camera\Camera.h">
+      <Filter>Yamato\Graphics\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Application\Misc.h" />
+    <ClInclude Include="Source\Application\Application.h" />
+    <ClInclude Include="Source\Application\HighResolutionTimer.h" />
+    <ClInclude Include="Source\GameObjects\Actor\Actor.h" />
+    <ClInclude Include="Source\GameObjects\Actor\ActorManager.h" />
+    <ClInclude Include="Source\GameObjects\Actor\Component\Component.h" />
+    <ClInclude Include="Source\GameObjects\Actor\Component\MeshComponent.h" />
+    <ClInclude Include="Source\GameObjects\Actor\Component\SkeletalMeshComponent.h" />
+    <ClInclude Include="Source\GameObjects\Actor\Component\StaticMeshComponent.h" />
+    <ClInclude Include="Source\Graphics\ModelRenderer\ModelRenderer.h" />
+    <ClInclude Include="Source\Graphics\FrameBuffer\FrameBuffer.h" />
+    <ClInclude Include="Source\Math\MathUtil.h" />
+    <ClInclude Include="Source\Math\operator\AllOperators.h" />
+    <ClInclude Include="Source\Math\operator\Operator2.h" />
+    <ClInclude Include="Source\Math\operator\Operator3.h" />
+    <ClInclude Include="Source\Resources\Model\GltfModel.h" />
+    <ClInclude Include="Source\Systems\Config\GameConfig.h" />
+    <ClInclude Include="Source\Systems\Input\GamePad.h" />
+    <ClInclude Include="Source\Systems\Input\Input.h" />
+    <ClInclude Include="Source\Systems\Input\Keyboard.h" />
+    <ClInclude Include="Source\Systems\Input\KeyCode.h" />
+    <ClInclude Include="Source\Systems\Input\Mouse.h" />
+    <ClInclude Include="Source\Systems\Logger\Logger.h" />
+    <ClInclude Include="Source\Systems\Logger\LogWindow.h" />
+    <ClInclude Include="Source\Scenes\BaseScene.h" />
+    <ClInclude Include="Source\Scenes\SceneManager.h" />
+    <ClInclude Include="Source\Resources\Texture.h" />
+    <ClInclude Include="Source\GameObjects\Transform.h" />
+    <ClInclude Include="Source\Scenes\Levels\DemoScene.h" />
+    <ClInclude Include="Source\GameObjects\Actor\Component\AllComponent.h" />
+    <ClInclude Include="Source\Resources\Model\FbxModel.h" />
+    <ClInclude Include="Source\GameObjects\Actor\Component\CameraComponent\CameraComponent.h" />
+    <ClInclude Include="Source\GameObjects\Actor\Component\BaseComponent\SceneGraphComponent.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Shader\GltfModel\BidirectionalReflectanceDistributionFunction.hlsli" />
+    <None Include="Source\Shader\GltfModel\GltfModel.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Source\Shader\GltfModel\GltfModelPS.hlsl" />
+    <FxCompile Include="Source\Shader\GltfModel\GltfModelStaiticBatchingVS.hlsl" />
+    <FxCompile Include="Source\Shader\GltfModel\GltfModelVS.hlsl" />
+  </ItemGroup>
+</Project>
