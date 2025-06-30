@@ -70,6 +70,8 @@ void SceneGraphics::Update(float elapsedTime)
 			i_CameraController = std::make_unique<FPCameraController>();
 		}
 	}
+
+	Graphics::Instance().UpdateConstantBuffer(elapsedTime);
 }
 
 // •`‰æˆ—
@@ -96,7 +98,8 @@ void SceneGraphics::Render()
 	Camera& camera = Camera::Instance();
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
-
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
 	// 3Dƒ‚ƒfƒ‹•`‰æ
 	{
 		//ƒXƒe[ƒW•`‰æ
@@ -114,6 +117,13 @@ void SceneGraphics::Render()
 	{
 
 	}
+
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
+
+
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1);
+
 }
 
 // GUI•`‰æ

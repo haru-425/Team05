@@ -77,7 +77,7 @@ void framebuffer::activate(ID3D11DeviceContext* immediate_context)
 	immediate_context->OMGetRenderTargets(1, cached_render_target_view.ReleaseAndGetAddressOf(),
 		cached_depth_stencil_view.ReleaseAndGetAddressOf());
 
-	immediate_context->RSSetViewports(10, &viewport);
+	immediate_context->RSSetViewports(1, &viewport);
 	immediate_context->OMSetRenderTargets(1, render_target_view.GetAddressOf(),
 		depth_stencil_view.Get());
 }
