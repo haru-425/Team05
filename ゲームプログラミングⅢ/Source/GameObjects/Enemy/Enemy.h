@@ -21,6 +21,12 @@ public:
 	void Addroute(DirectX::XMFLOAT3 pos) { route.push_back(pos); }
 
 	void Updatemovement(float elapsedTime);
+
+	void DrawDebug() override;
+
+	float GetPitch() const { return pitch; }
+	float GetYaw() const { return yaw; }
+
 private:
 	enum class State
 	{
@@ -45,5 +51,8 @@ private:
 	float stateTimer = 0.0f;
 
 	float searchRange = 5.0f;
+
+	float pitch;
+	float yaw;
 };
 

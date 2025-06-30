@@ -10,6 +10,8 @@ Enemy::Enemy()
 	position.x = 0;
 	position.z = 0;
     position.y = 0;
+
+	viewPoint = 1.5;
 }
 
 Enemy::~Enemy()
@@ -19,6 +21,19 @@ Enemy::~Enemy()
 
 void Enemy::Update(float elapsedTime)
 {
+	using namespace DirectX;
+#pragma region カメラ用の処理
+	XMMATRIX M = XMLoadFloat4x4(&world);
+	XMVECTOR Forward = M.r[2];
+
+	float x = XMVectorGetX(Forward);
+	float y = XMVectorGetY(Forward);
+	float z = XMVectorGetZ(Forward);
+
+	pitch = asinf(y);
+	yaw = atan2f(x, z);
+#pragma endregion 
+
 	// ステート毎の更新処理
 	switch (state)
 	{
@@ -93,6 +108,10 @@ void Enemy::Updatemovement(float elapsedTime)
 	//	// 見つかったら攻撃ステートへ遷移
 	//	SetAttackState();
 	//}
+}
+
+void Enemy::DrawDebug()
+{
 }
 
 void Enemy::Render(const RenderContext& rc, ModelRenderer* renderer)
