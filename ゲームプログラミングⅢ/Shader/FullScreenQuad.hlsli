@@ -27,7 +27,7 @@ struct VS_OUT
  * アニメーションや時間経過によるエフェクト制御のため、
  * アプリケーション側から現在の経過時間（秒）を渡します。
  */
-cbuffer TimeCBuffer : register(b5)
+cbuffer TimeCBuffer : register(b10)
 {
     /**
      * @brief 経過時間（秒）
@@ -41,5 +41,21 @@ cbuffer TimeCBuffer : register(b5)
      *
      * メモリアライメントや将来の拡張のために確保されています。
      */
-    float3 pud;
+    float3 pud0;
 }
+
+cbuffer ScreenSizeCBuffer : register(b11)
+{
+    /**
+     * @brief 画面サイズ（ピクセル単位）
+     *
+     * シェーダー内で画面の解像度に基づく計算を行うために使用されます。
+     */
+    float2 iResolution;
+    /**
+     * @brief 予備のパディング用変数
+     *
+     * メモリアライメントや将来の拡張のために確保されています。
+     */
+    float2 pud1;
+};
