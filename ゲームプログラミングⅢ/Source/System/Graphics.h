@@ -6,6 +6,9 @@
 #include "RenderState.h"
 #include "ShapeRenderer.h"
 #include "ModelRenderer.h"
+#include "FrameBuffer.h"
+#include "FullScreenquad.h"
+#include "GpuResourceUtils.h"
 
 // グラフィックス
 class Graphics
@@ -73,4 +76,61 @@ private:
 	std::unique_ptr<RenderState>					renderState;
 	std::unique_ptr<ShapeRenderer>					shapeRenderer;
 	std::unique_ptr<ModelRenderer>					modelRenderer;
+
+
+
+
+private:
+	struct TimeCBuffer
+	{
+
+		float time;
+		float pad[3];
+	};
+	struct ScreenSizeCBuffer
+	{
+		float screenWidth;
+		float screenHeight;
+		float pad[2];
+	};
+	enum class ConstantBufferType
+	{
+		TimeCBuffer,
+		ScreenSizeCBuffer,
+		Count
+	};
+	Microsoft::WRL::ComPtr<ID3D11Buffer> cbuffer[int(ConstantBufferType::Count)];
+public:
+	//OFFSCREEN_RENDERING
+	enum class PPShaderType
+	{
+		screenquad,
+		crt,
+		Glitch,
+		Sharpen,
+		BreathShake,
+		TemporalNoise,
+		NoSignalFinale,
+		VisionBootDown,
+		Crackshaft,
+		Count
+	};
+	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
+	std::unique_ptr<fullscreen_quad> bit_block_transfer;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixel_shaders[int(PPShaderType::Count)];
+	void UpdateConstantBuffer(float Time) {
+		TimeCBuffer timeCBuffer;
+		timeCBuffer.time = Time;
+		immediateContext->UpdateSubresource(cbuffer[int(ConstantBufferType::TimeCBuffer)].Get(), 0, 0, &timeCBuffer, 0, 0);
+		immediateContext->PSSetConstantBuffers(10, 1, cbuffer[int(ConstantBufferType::TimeCBuffer)].GetAddressOf());
+		immediateContext->VSSetConstantBuffers(10, 1, cbuffer[int(ConstantBufferType::TimeCBuffer)].GetAddressOf());
+
+		ScreenSizeCBuffer screenSizeCBuffer;
+		screenSizeCBuffer.screenWidth = screenWidth;
+		screenSizeCBuffer.screenHeight = screenHeight;
+		immediateContext->UpdateSubresource(cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].Get(), 0, 0, &screenSizeCBuffer, 0, 0);
+		immediateContext->PSSetConstantBuffers(11, 1, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].GetAddressOf());
+		immediateContext->VSSetConstantBuffers(11, 1, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].GetAddressOf());
+
+	}
 };
