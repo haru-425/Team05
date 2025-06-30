@@ -161,6 +161,8 @@ void Graphics::Initialize(HWND hWnd)
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/NoSignalFinalePS.cso", pixel_shaders[int(PPShaderType::NoSignalFinale)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/VisionBootDownPS.cso", pixel_shaders[int(PPShaderType::VisionBootDown)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/CrackshaftPS.cso", pixel_shaders[int(PPShaderType::Crackshaft)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/HighLightPassPS.cso", pixel_shaders[int(PPShaderType::HighLightPass)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BlurPS.cso", pixel_shaders[int(PPShaderType::Blur)].ReleaseAndGetAddressOf());
 
 }
 
