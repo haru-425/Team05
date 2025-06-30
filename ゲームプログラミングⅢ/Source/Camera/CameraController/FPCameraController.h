@@ -8,5 +8,7 @@ public:
     ~FPCameraController() = default;
 
     void Update(float dt);
+
+    void DebugGUI();
 };
 
