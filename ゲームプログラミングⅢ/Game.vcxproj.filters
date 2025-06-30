@@ -189,6 +189,9 @@
     <ClInclude Include="Source\System\FullScreenQuad.h">
       <Filter>Source\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Scene\SceneGraphics.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -335,6 +338,9 @@
     <ClCompile Include="Source\System\FullScreenQuad.cpp">
       <Filter>Source\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene\SceneGraphics.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Sprite.hlsli">
@@ -398,6 +404,30 @@
     </FxCompile>
     <FxCompile Include="Shader\FullScreenQuadVS.hlsl">
       <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\BreathShakePS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\CrackshaftPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\crtPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\GlitchPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\NoSignalFinalePS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SharpenPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\TemporalNoisePS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\VisionBootDownPS.hlsl">
+      <Filter>Source\System</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
