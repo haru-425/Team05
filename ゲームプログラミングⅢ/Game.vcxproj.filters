@@ -182,7 +182,6 @@
     <ClInclude Include="Source\Pursuer\WayPoint.h">
       <Filter>Source\Pursuer</Filter>
     </ClInclude>
-    <ClInclude Include="fujimoto.h" />
     <ClInclude Include="Source\System\FrameBuffer.h">
       <Filter>Source\System</Filter>
     </ClInclude>
@@ -190,6 +189,9 @@
       <Filter>Source\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene\SceneGraphics.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\fujimoto.h">
       <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
@@ -329,9 +331,6 @@
     <ClCompile Include="Source\Pursuer\SearchAI.cpp">
       <Filter>Source\Pursuer</Filter>
     </ClCompile>
-    <ClCompile Include="fujimoto.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\FrameBuffer.cpp">
       <Filter>Source\System</Filter>
     </ClCompile>
@@ -339,6 +338,9 @@
       <Filter>Source\System</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\SceneGraphics.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\fujimoto.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
