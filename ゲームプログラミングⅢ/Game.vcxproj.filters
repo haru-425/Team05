@@ -431,5 +431,11 @@
     <FxCompile Include="Shader\VisionBootDownPS.hlsl">
       <Filter>Source\System</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\BlurPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\HighLightPassPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
