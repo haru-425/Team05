@@ -183,6 +183,15 @@
       <Filter>Source\Pursuer</Filter>
     </ClInclude>
     <ClInclude Include="fujimoto.h" />
+    <ClInclude Include="Source\System\FrameBuffer.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\FullScreenQuad.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneGraphics.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -323,6 +332,15 @@
     <ClCompile Include="fujimoto.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\FrameBuffer.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\FullScreenQuad.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneGraphics.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Sprite.hlsli">
@@ -344,6 +362,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="Shader\Scene.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\FullScreenQuad.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
@@ -377,6 +398,36 @@
     </FxCompile>
     <FxCompile Include="Shader\LambertVS.hlsl">
       <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\FullScreenQuadPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\FullScreenQuadVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\BreathShakePS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\CrackshaftPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\crtPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\GlitchPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\NoSignalFinalePS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SharpenPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\TemporalNoisePS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\VisionBootDownPS.hlsl">
+      <Filter>Source\System</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
