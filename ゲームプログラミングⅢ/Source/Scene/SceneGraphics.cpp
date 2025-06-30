@@ -4,31 +4,65 @@
 #include "System/GamePad.h"
 #include "System/Input.h"
 
-// 初期化
+/**
+ * @file SceneGraphics.cpp
+ * @brief シーングラフィックスの初期化、更新、描画、GUI描画を行うクラスの実装ファイル
+ * @author
+ * @date
+ *
+ * 本ファイルでは、シーン内のグラフィックスに関する主要な処理（初期化、終了化、更新、描画、GUI描画）を実装しています。
+ * 各関数にはDoxygen形式で詳細な説明を記載しています。
+ *
+ * @see SceneGraphics.h
+ */
+
+ /**
+  * @brief シーングラフィックスの初期化処理を行います。
+  *
+  * ステージ、カメラ、カメラコントローラー、プレイヤーの初期化を行います。
+  *
+  * @details
+  * - ステージのインスタンスを生成します。
+  * - カメラの初期位置・注視点・上方向を設定します。
+  * - 一人称カメラコントローラー（FPCameraController）を生成します。
+  * - プレイヤーのインスタンスを生成します。
+  *
+  * @see Stage, Camera, FPCameraController, Player
+  */
 void SceneGraphics::Initialize()
 {
-	//ステージ初期化
+	/// ステージのインスタンス生成
 	stage = new Stage();
 
-	//カメラ初期設定
+	/// カメラの初期設定
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
 	camera.SetLookAt(
-		DirectX::XMFLOAT3(0, 10, -10),
-		DirectX::XMFLOAT3(0, 0, 0),
-		DirectX::XMFLOAT3(0, 1, 0)
+		DirectX::XMFLOAT3(0, 10, -10), ///< カメラの初期位置
+		DirectX::XMFLOAT3(0, 0, 0),    ///< 注視点
+		DirectX::XMFLOAT3(0, 1, 0)     ///< 上方向ベクトル
 	);
 
-	//カメラコントローラー初期化
+	/// 一人称カメラコントローラーの生成
 	i_CameraController = std::make_unique<FPCameraController>();
 
+	/// プレイヤーのインスタンス生成
 	player = std::make_shared<Player>();
 }
 
-// 終了化
+/**
+ * @brief シーングラフィックスの終了化処理を行います。
+ *
+ * ステージのメモリ解放を行います。
+ *
+ * @details
+ * - ステージが存在する場合はdeleteし、ポインタをnullptrにします。
+ *
+ * @see Stage
+ */
 void SceneGraphics::Finalize()
 {
-	//ステージ終了化
+	/// ステージのメモリ解放
 	if (stage != nullptr)
 	{
 		delete stage;
@@ -36,97 +70,177 @@ void SceneGraphics::Finalize()
 	}
 }
 
-// 更新処理
+/**
+ * @brief シーングラフィックスの更新処理を行います。
+ *
+ * ステージ、プレイヤー、カメラコントローラーの更新を行い、カメラの切り替えも管理します。
+ *
+ * @param elapsedTime 前フレームからの経過時間（秒）
+ *
+ * @details
+ * - 入力デバイスの取得
+ * - ステージとプレイヤーの更新
+ * - カメラコントローラーの種類に応じてカメラの更新と切り替え
+ * - グラフィックスの定数バッファ更新
+ *
+ * @see Stage::Update, Player::Update, ICameraController, FPCameraController, FreeCameraController
+ */
 void SceneGraphics::Update(float elapsedTime)
 {
-	GamePad& gamepad = Input::Instance().GetGamePad();
+	GamePad& gamepad = Input::Instance().GetGamePad(); ///< ゲームパッド入力
 
-	//ステージ更新処理
+	/// ステージとプレイヤーの更新
 	stage->Update(elapsedTime);
 	player->Update(elapsedTime);
 
-	// 一人称用カメラ
+	/// カメラコントローラーの種類による分岐
+	// 一人称カメラコントローラーの場合
 	if (typeid(*i_CameraController) == typeid(FPCameraController))
 	{
+		/// 画面中央の座標を取得し、マウスカーソルを中央に移動
 		POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
 		ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
+
+		/// プレイヤーの位置をカメラ位置に設定
 		DirectX::XMFLOAT3 cameraPos = player->GetPosition();
 		i_CameraController->SetCameraPos(cameraPos);
+
+		/// カメラコントローラーの更新
 		i_CameraController->Update(elapsedTime);
+
+		/// マウスカーソルを画面中央に移動
 		SetCursorPos(screenPoint.x, screenPoint.y);
 
+		/// CTRL+Xボタンでフリーカメラに切り替え
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
 			i_CameraController = std::make_unique<FreeCameraController>();
 		}
 	}
-	// フリーカメラ
+	// フリーカメラコントローラーの場合
 	else
 	{
+		/// カメラコントローラーの更新
 		i_CameraController->Update(elapsedTime);
 
+		/// CTRL+Xボタンで一人称カメラに切り替え
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
 			i_CameraController = std::make_unique<FPCameraController>();
 		}
 	}
 
+	/// グラフィックスの定数バッファ更新
 	Graphics::Instance().UpdateConstantBuffer(elapsedTime);
 }
 
-// 描画処理
+/**
+ * @brief シーングラフィックスの描画処理を行います。
+ *
+ * ステージ、プレイヤーの3Dモデル描画、デバッグ描画、ポストプロセス処理を行います。
+ *
+ * @details
+ * - カメラの射影行列設定
+ * - 描画用コンテキスト(RenderContext)の準備
+ * - ステージ・プレイヤーの3Dモデル描画
+ * - プレイヤーのデバッグ描画
+ * - ポストプロセス（ハイライト、ブラー等）の適用
+ *
+ * @see RenderContext, ModelRenderer, ShapeRenderer, Camera, Player, Stage
+ */
 void SceneGraphics::Render()
 {
-	Graphics& graphics = Graphics::Instance();
-	ID3D11DeviceContext* dc = graphics.GetDeviceContext();
-	ShapeRenderer* shapeRenderer = graphics.GetShapeRenderer();
-	ModelRenderer* modelRenderer = graphics.GetModelRenderer();
+	Graphics& graphics = Graphics::Instance(); ///< グラフィックス管理インスタンス
+	ID3D11DeviceContext* dc = graphics.GetDeviceContext(); ///< デバイスコンテキスト
+	ShapeRenderer* shapeRenderer = graphics.GetShapeRenderer(); ///< 形状描画用レンダラー
+	ModelRenderer* modelRenderer = graphics.GetModelRenderer(); ///< モデル描画用レンダラー
 
-	Camera::Instance().SetPerspectiveFov(45,
-		graphics.GetScreenWidth() / graphics.GetScreenHeight(),
-		0.1f,
-		1000.0f);
+	/// カメラの射影行列を設定
+	Camera::Instance().SetPerspectiveFov(
+		45, ///< 視野角（度）
+		graphics.GetScreenWidth() / graphics.GetScreenHeight(), ///< アスペクト比
+		0.1f, ///< ニアクリップ
+		1000.0f ///< ファークリップ
+	);
 
-
-	// 描画準備
+	/// 描画用コンテキストの準備
 	RenderContext rc;
-	rc.deviceContext = dc;
-	rc.lightDirection = { 0.0f, -1.0f, 0.0f };	// ライト方向（下方向）
-	rc.renderState = graphics.GetRenderState();
+	rc.deviceContext = dc; ///< デバイスコンテキスト
+	rc.lightDirection = { 0.0f, -1.0f, 0.0f }; ///< ライトの方向（下方向）
+	rc.renderState = graphics.GetRenderState(); ///< レンダーステート
 
-	//カメラパラメータ設定
+	/// カメラパラメータの設定
 	Camera& camera = Camera::Instance();
-	rc.view = camera.GetView();
-	rc.projection = camera.GetProjection();
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc);
+	rc.view = camera.GetView(); ///< ビュー行列
+	rc.projection = camera.GetProjection(); ///< 射影行列
+
+	/// フレームバッファのクリアとアクティベート（ポストプロセス用）
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 0.5f, 0.5f, 1, 1);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
-	// 3Dモデル描画
+
+	/// 3Dモデル描画処理
 	{
-		//ステージ描画
+		/// ステージの描画
 		stage->Render(rc, modelRenderer);
 
+		/// プレイヤーの描画
 		player->Render(rc, modelRenderer);
 	}
 
-	// 3Dデバッグ描画
+	/// 3Dデバッグ描画処理
 	{
+		/// プレイヤーのデバッグ描画（ボックス・カプセル表示）
 		player->RenderDebug(rc, shapeRenderer, { 1,2,1 }, { 1,1,1,1 }, DEBUG_MODE::BOX | DEBUG_MODE::CAPSULE);
 	}
 
-	// 2Dスプライト描画
+	/// 2Dスプライト描画処理（未実装）
 	{
-
+		// ここに2Dスプライト描画処理を追加可能
 	}
 
+	/// フレームバッファのディアクティベート
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
 
+	/// ハイライトパス用フレームバッファのクリアとアクティベート
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::HighLightPass)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::HighLightPass)]->activate(dc);
 
-	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1);
+	/// ハイライトパスのポストプロセス適用
+	Graphics::Instance().bit_block_transfer->blit(
+		dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(),
+		10, 1,
+		Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::HighLightPass)].Get()
+	);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::HighLightPass)]->deactivate(dc);
 
+	/// ブラーパスのポストプロセス適用
+	ID3D11ShaderResourceView* shader_resource_views[2] = {
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].Get(),
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::HighLightPass)]->shader_resource_views[0].Get()
+	};
+
+	Graphics::Instance().bit_block_transfer->blit(
+		dc,
+		shader_resource_views, 10, 2,
+		Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Blur)].Get()
+	);
+
+#if 0
+	/// デバッグ用：ポストプロセス結果の描画
+	Graphics::Instance().bit_block_transfer->blit(
+		dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1
+	);
+#endif
 }
 
-// GUI描画
+/**
+ * @brief シーングラフィックスのGUI描画処理を行います。
+ *
+ * @details
+ * 現状は未実装です。ImGui等のGUI描画処理を追加する場合は本関数に実装してください。
+ */
 void SceneGraphics::DrawGUI()
 {
 }
