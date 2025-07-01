@@ -6,7 +6,7 @@
 
 Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 {
-	this->stage = std::make_unique<Stage>(*stage);
+	this->stage = stage;
 	this->playerRef = playerRef;
 	model=new Model("Data/Model/Slime/Slime.mdl");
 
@@ -50,7 +50,7 @@ void Enemy::Update(float elapsedTime)
 		Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
 		if (GetAsyncKeyState('T') & 0x8000)
 		{
-			SearchAI::Instance().DijkstraSearch(stage.get());
+			SearchAI::Instance().DijkstraSearch(stage);
 			int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
 			int start = stage->NearWayPointIndex(this->GetPosition());
 

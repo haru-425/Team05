@@ -27,7 +27,7 @@ public:
     // Ú‘±æƒ|ƒCƒ“ƒg‚ğİ’è
     void DestinationPointSet();
 
-    WayPoint* wayPoint[MAX_WAY_POINT];
+    std::shared_ptr<WayPoint> wayPoint[MAX_WAY_POINT];
     std::vector<int> path;
 
     DirectX::XMFLOAT4X4 GetWorld() const { return world; }

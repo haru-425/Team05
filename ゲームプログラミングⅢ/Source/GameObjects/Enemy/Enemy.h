@@ -41,7 +41,7 @@ private:
 private:
 	Model* model = nullptr;
 	std::weak_ptr<Player> playerRef;
-	std::unique_ptr<Stage> stage;
+	Stage* stage;
 
 	State state = State::Roaming;
 	std::vector<DirectX::XMFLOAT3> route;          // ˆÚ“®ƒ‹[ƒg

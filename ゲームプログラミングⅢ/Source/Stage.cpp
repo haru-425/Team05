@@ -29,10 +29,6 @@ Stage::Stage()
 }
 Stage::~Stage()
 {
-    for (int i = 0; i < MAX_WAY_POINT; ++i)
-    {
-        delete wayPoint[i];
-    }
     //ステージモデルを破棄
     delete model;
 }
@@ -57,19 +53,19 @@ void Stage::Render(const RenderContext& rc, ModelRenderer* renderer)
 void Stage::DestinationPointSet()
 {
     //WayPoint生成
-    wayPoint[0] = new WayPoint(0, DirectX::XMFLOAT3{ 0,0,0 });
-    wayPoint[1] = new WayPoint(1, DirectX::XMFLOAT3{ 15,0,9 });
-    wayPoint[2] = new WayPoint(2, DirectX::XMFLOAT3{ 10,0,2 });
-    wayPoint[3] = new WayPoint(3, DirectX::XMFLOAT3{ 4,0,12 });
-    wayPoint[4] = new WayPoint(4, DirectX::XMFLOAT3{ 22,0,22 });
+    wayPoint[0] = std::make_shared<WayPoint>(0, DirectX::XMFLOAT3{ 0,0,0 });
+    wayPoint[1] = std::make_shared<WayPoint>(1, DirectX::XMFLOAT3{ 15,0,9 });
+    wayPoint[2] = std::make_shared<WayPoint>(2, DirectX::XMFLOAT3{ 10,0,2 });
+    wayPoint[3] = std::make_shared<WayPoint>(3, DirectX::XMFLOAT3{ 4,0,12 });
+    wayPoint[4] = std::make_shared<WayPoint>(4, DirectX::XMFLOAT3{ 22,0,22 });
 
 
     //
-    wayPoint[0]->AddEdge(wayPoint[1]);
-    wayPoint[0]->AddEdge(wayPoint[3]);
-    wayPoint[1]->AddEdge(wayPoint[2]);
-    wayPoint[2]->AddEdge(wayPoint[4]);
-    wayPoint[3]->AddEdge(wayPoint[4]);
+    wayPoint[0]->AddEdge(wayPoint[1].get());
+    wayPoint[0]->AddEdge(wayPoint[3].get());
+    wayPoint[1]->AddEdge(wayPoint[2].get());
+    wayPoint[2]->AddEdge(wayPoint[4].get());
+    wayPoint[3]->AddEdge(wayPoint[4].get());
 }
 
 // インデックス番号からウェイポイントの座標を取得
