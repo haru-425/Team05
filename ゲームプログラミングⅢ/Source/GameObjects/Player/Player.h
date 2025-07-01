@@ -3,6 +3,16 @@
 #include <memory>
 #include "Enemy/Enemy.h"
 
+// テスト用のモデルだったりを切り替えるよう
+#define TEST
+
+// プレイヤーパラメータ設定
+static constexpr float maxHijackTime        = 50; // ハイジャックの最大時間
+static constexpr int hijackCost             = 5;   // ハイジャックコスト
+static constexpr int hijackCostPerSec       = 5;   // 一秒ごとのハイジャックコスト
+static constexpr int hijackRecoveryPerSec   = 3;   // 一秒ごとのハイジャックコストの回復量
+static constexpr float speed                = 3;   // プレイヤー移動速度
+
 class Player : public GameObject
 {
 public:
@@ -20,19 +30,58 @@ public:
     // 敵をバインド
     void SetEnemy(std::shared_ptr<Enemy> enemy) { enemyRef = enemy; }
 
-    bool GetIsChangeCamera() const { return isChangeCamera; }
+    bool GetUseCam() const { return useCam; }
+
+    bool GetIsChange() const { return isChange; }
+
+    DirectX::XMFLOAT3 GetDirection() const { return saveDirection; }
 
 private:
     void Move(float dt);
 
     void ChangeCamera();
 
+    void UpdateHijack(float dt);
+
 private:
     std::unique_ptr<Model> model;
-    std::shared_ptr<Enemy> enemyRef = nullptr;
+    std::shared_ptr<Enemy> enemyRef = nullptr; // 敵用
 
-    bool isChangeCamera = false;
+    bool useCam         = false; // true : 敵視点 ,false : プレイヤー視点
+    bool isChange       = false; // カメラを変えたかどうか
+    bool isHijack       = false; // 敵の視界をハイジャックしたのか
+    bool enableHijack   = false; // ハイジャックできるのか
 
-    DirectX::XMFLOAT3 forward;
+    float enableHijackTime; // ハイジャック時間
+    float hijackSpeed = 0.0f;  // 視界ジャックの時間を減らす速度
+
+    // テスト用なので気にしないで下さい
+#pragma region テスト用
+#if defined TEST
+    DirectX::XMFLOAT3 t_position = { 0,0,0 };
+    DirectX::XMFLOAT3 t_angle = { 0,0,0 };
+    DirectX::XMFLOAT3 t_scale = { 1,1,1 };
+    DirectX::XMFLOAT4X4 t_transform = {
+        1,0,0,0,
+        0,1,0,0,
+        0,0,1,0,
+        0,0,0,1
+    };
+
+    void TestTransformUpdate()
+    {
+        //スケール行列を作成
+        DirectX::XMMATRIX S = DirectX::XMMatrixScaling(t_scale.x, t_scale.y, t_scale.x);
+        //回転行列
+        DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(t_angle.x, t_angle.y, t_angle.z);
+        //位置行列を作成
+        DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(t_position.x, t_position.y, t_position.z);
+        //３つの行列を組み合わせ、ワールド行列を作成
+        DirectX::XMMATRIX W = S * R * T;
+        //計算したワールド行列を取り出す
+        DirectX::XMStoreFloat4x4(&t_transform, W);
+    }
+#endif
+#pragma endregion
 };
 

@@ -113,6 +113,8 @@ public:
 		NoSignalFinale,
 		VisionBootDown,
 		Crackshaft,
+		HighLightPass,
+		Blur,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];

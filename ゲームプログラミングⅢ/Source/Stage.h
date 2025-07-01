@@ -29,6 +29,10 @@ public:
 
     WayPoint* wayPoint[MAX_WAY_POINT];
     std::vector<int> path;
+
+    DirectX::XMFLOAT4X4 GetWorld() const { return world; }
+    Model* GetModel() { return model; }
+
 private:
     DirectX::XMFLOAT3 position = { 0,0,0 };
     DirectX::XMFLOAT3 angle = { 0,0,0 };

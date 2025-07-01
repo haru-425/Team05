@@ -6,6 +6,7 @@
 #include"SceneManager.h"
 #include"SceneLoading.h"
 #include"SceneGraphics.h"
+#include "Scene/SceneMattsu.h"
 
 //‰Šú‰»
 void SceneTitle::Initialize()
@@ -45,6 +46,10 @@ void SceneTitle::Update(float elapsedTime)
 	if (GetAsyncKeyState('F') & 0x8000)
 	{
 		SceneManager::instance().ChangeScene(new SceneLoading(new fujimoto));
+	}
+	if (GetAsyncKeyState('M') & 0x8000)
+	{
+		SceneManager::instance().ChangeScene(new SceneLoading(new SceneMattsu));
 	}
 }
 
