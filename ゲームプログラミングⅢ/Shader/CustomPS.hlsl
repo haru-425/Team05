@@ -114,6 +114,9 @@ float4 main(VS_OUT pin) : SV_TARGET
     // ‹ü•ûŒü‚ÆŒõŒ¹•ûŒü‚ÌŒvZ
     float3 L = normalize(-lightDirection.xyz);
     float3 V = normalize(cameraPosition.xyz - pin.position.xyz);
+    
+    float3 H = normalize(V + L);
+    float VdotH = saturate(dot(V, H));
   
     float4 ka = { 0.2f, 0.2f, 0.2f, 1.0f }; // ŠÂ‹«Œõ‚É‘Î‚·‚é”½ËŒW”
     float4 kd = { 0.8f, 0.8f, 0.8f, 1.0f }; // ŠgUŒõ‚É‘Î‚·‚é”½ËŒW”
@@ -125,12 +128,17 @@ float4 main(VS_OUT pin) : SV_TARGET
     // ŠÂ‹«Œõ‚ÌŒvZ
     float3 ambient = ambientColor.rgb * ka.rgb;
 
+    // •½sŒõŒ¹
+    //float3 diffuse = DiffuseBRDF(VdotH, F0, kd.rgb);
+    float3 diffuse = CalcLambert(N, L, float3(1, 1, 1), kd.rgb);
+    color.rgb *= diffuse;
+    
     // “_ŒõŒ¹‚ÌŠgUE‹¾–Ê”½Ë‚Ì‰Šú‰»
     float3 pointDiffuse = 0;
     float3 pointSpecular = 0;
 
     // “_ŒõŒ¹‚Ìƒ‹[ƒvˆ—
-    for (int i = 0; i < 8; ++i)
+    for (int i = 0; i < 2; ++i)
     {
         float3 LP = pointLights[i].position.xyz - pin.position.xyz;
         float len = length(LP);
@@ -157,7 +165,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     
     // üŒõŒ¹‚ÌÀ‘•
     float3 lineDiffuse = 0, lineSpecular = 0;
-    for (i = 0; i < 1; ++i)
+    for (i = 0; i < 2; ++i)
     {
         float3 closetPoint = ClosestPointOnLine(pin.position.xyz, lineLights[i].start.xyz, lineLights[i].end.xyz);
         float3 LP = normalize(closetPoint - pin.position.xyz);

@@ -4,6 +4,7 @@
 #include "ModelRenderer.h"
 #include "BasicShader.h"
 #include "LambertShader.h"
+#include "CustomShader.h"
 
 // コンストラクタ
 ModelRenderer::ModelRenderer(ID3D11Device* device)
@@ -20,9 +21,28 @@ ModelRenderer::ModelRenderer(ID3D11Device* device)
 		sizeof(CbSkeleton),
 		skeletonConstantBuffer.GetAddressOf());
 
+	// fog用定数バッファ
+	GpuResourceUtils::CreateConstantBuffer(
+		device,
+		sizeof(fogConstants),
+		fogConstantBuffer.GetAddressOf());
+
+	// Shadow用定数バッファ
+	GpuResourceUtils::CreateConstantBuffer(
+		device,
+		sizeof(ShadowConstants),
+		shadowConstantBuffer.GetAddressOf());
+
+	// PointLight用定数バッファ
+	GpuResourceUtils::CreateConstantBuffer(
+		device,
+		sizeof(LightConstants),
+		lightConstantBuffer.GetAddressOf());
+
 	// シェーダー生成
 	shaders[static_cast<int>(ShaderId::Basic)] = std::make_unique<BasicShader>(device);
 	shaders[static_cast<int>(ShaderId::Lambert)] = std::make_unique<LambertShader>(device);
+	shaders[static_cast<int>(ShaderId::Custom)] = std::make_unique<CustomShader>(device);
 }
 
 // 描画実行

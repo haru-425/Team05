@@ -102,7 +102,7 @@ RenderState::RenderState(ID3D11Device* device)
 		desc.MinLOD = 0;
 		desc.MaxLOD = D3D11_FLOAT32_MAX;
 		HRESULT hr = device->CreateSamplerState(&desc,
-			samplerStates[static_cast<int>(SamplerState::LinearClamp)].GetAddressOf());
+			samplerStates[static_cast<int>(SamplerState::Shadow)].GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
 	}

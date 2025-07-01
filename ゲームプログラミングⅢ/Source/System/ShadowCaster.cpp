@@ -77,22 +77,21 @@ void ShadowCaster::Release(ID3D11DeviceContext* dc)
 
 void ShadowCaster::DrawGUI()
 {
-	// TODO
-	//RenderContext rc;
-	//DirectX::XMFLOAT3 color = rc.shadowColor;
-	//float bias = rc.shadowBias;
+	RenderContext rc;
+	DirectX::XMFLOAT3 color = rc.shadowColor;
+	float bias = rc.shadowBias;
 
-	//ImGui::Separator();
+	ImGui::Separator();
 
-	//if (ImGui::TreeNode("texture"))
-	//{
-	//	ImGui::Text("shadow_map");
-	//	ImGui::Image(shadowShaderResourceView.Get(), { 256, 256 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
-	//	ImGui::DragFloat("shadowBias", &bias, 0.0001f, 0, 1, "%.6f");
-	//	ImGui::ColorEdit3("shadowColor", reinterpret_cast<float*>(&color));
+	if (ImGui::TreeNode("texture"))
+	{
+		ImGui::Text("shadow_map");
+		ImGui::Image(shadowShaderResourceView.Get(), { 256, 256 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		ImGui::DragFloat("shadowBias", &bias, 0.0001f, 0, 1, "%.6f");
+		ImGui::ColorEdit3("shadowColor", reinterpret_cast<float*>(&color));
 
-	//	ImGui::TreePop();
-	//}
+		ImGui::TreePop();
+	}
 }
 
 void ShadowCaster::Clear(ID3D11DeviceContext* dc, float depth)
