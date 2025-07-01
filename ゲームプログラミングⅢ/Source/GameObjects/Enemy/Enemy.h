@@ -2,13 +2,15 @@
 #include "GameObject.h"
 #include <memory>
 #include "System/Model.h"
+#include "Stage.h"
 
 class Player;
 
 class Enemy : public GameObject
 {
 public:
-    Enemy();
+	Enemy() {}
+	Enemy(std::shared_ptr<Player> playerRef, Stage* stage);
     ~Enemy();
 
     void Update(float dt) override ;
@@ -33,13 +35,15 @@ private:
 		Wander,
 		Idle,
 		Attack,
+		Roaming,
 	};
 
 private:
 	Model* model = nullptr;
 	std::weak_ptr<Player> playerRef;
+	std::unique_ptr<Stage> stage;
 
-	State state = State::Wander;
+	State state = State::Roaming;
 	std::vector<DirectX::XMFLOAT3> route;          // 移動ルート
 	size_t currentTargetIndex = 0;        // 今向かっているポイントのインデックス
 	DirectX::XMFLOAT3 targetPosition = { 0, 0, 0 };
@@ -52,7 +56,7 @@ private:
 
 	float searchRange = 5.0f;
 
-	float pitch;
-	float yaw;
+	float pitch=0;
+	float yaw=0;
 };
 

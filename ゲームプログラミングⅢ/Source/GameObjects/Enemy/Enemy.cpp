@@ -1,7 +1,13 @@
 #include "Enemy.h"
+#include "Pursuer/Object.h"
+#include "Pursuer/SearchAI.h"
+#include "Player/player.h"
 
-Enemy::Enemy()
+
+Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 {
+	this->stage = std::make_unique<Stage>(*stage);
+	this->playerRef = playerRef;
 	model=new Model("Data/Model/Slime/Slime.mdl");
 
 	scale.x = scale.y = scale.z = 0.01f;
@@ -37,11 +43,34 @@ void Enemy::Update(float elapsedTime)
 	// ステート毎の更新処理
 	switch (state)
 	{
-	case State::Wander:
+	case State::Roaming:
 		Updatemovement(elapsedTime);
 		break;
 	case State::Idle:
-		//UpdateIdleState(elapsedTime);
+		Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
+		if (GetAsyncKeyState('T') & 0x8000)
+		{
+			SearchAI::Instance().DijkstraSearch(stage.get());
+			int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+			int start = stage->NearWayPointIndex(this->GetPosition());
+
+			// ゴールからスタートまで親をたどる
+			while (current != start)
+			{
+				stage->path.push_back(current);
+				current = SearchAI::Instance().findRoot[current];
+			}
+			stage->path.push_back(start);
+
+			// スタート→ゴール順に並べる
+			std::reverse(stage->path.begin(), stage->path.end());
+			for (auto i : stage->path)
+			{
+				this->Addroute(stage->wayPoint[i]->position);
+			}
+			state=State::Roaming;
+
+		}
 		break;
 	case State::Attack:
 		//UpdateAttackState(elapsedTime);
@@ -64,7 +93,7 @@ void Enemy::Updatemovement(float elapsedTime)
 	if (route.empty() || currentTargetIndex >= route.size())
 	{
 		//待機ステートへ遷移
-		//state = State::Idle;
+		state = State::Idle;
 		return;
 	}
 
