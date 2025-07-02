@@ -67,7 +67,6 @@ void FreeCameraController::Update(float dt)
     //ƒJƒƒ‰‚Ì‹“_‚Æ’‹“_‚ğİ’è
     Camera::Instance().SetLookAt(eye, target, DirectX::XMFLOAT3(0, 1, 0));
 
-    DebugGUI();
 }
 
 void FreeCameraController::DebugGUI()

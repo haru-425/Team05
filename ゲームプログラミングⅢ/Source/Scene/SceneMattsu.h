@@ -31,6 +31,13 @@ public:
 	void DrawGUI()override;
 
 private:
+	void Collision();
+
+	void PlayerVsStage();
+
+	void UpdateCamera(float dt);
+
+private:
 	Stage* stage = nullptr;
 
 	std::unique_ptr<ICameraController> i_CameraController = nullptr;

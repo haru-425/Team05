@@ -28,7 +28,7 @@ void fujimoto::Initialize()
 
 	player = std::make_shared<Player>();
 
-	enemy = std::make_shared<Enemy>();
+	enemy = std::make_shared<Enemy>(player, stage);
 }
 
 // 終了化
@@ -76,30 +76,6 @@ void fujimoto::Update(float elapsedTime)
 		{
 			i_CameraController = std::make_unique<FPCameraController>();
 		}
-	}
-	Goal::Instance().SetPosition(player->GetPosition());
-
-	if (GetAsyncKeyState('T') & 0x8000)
-	{
-		int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
-		int start = stage->NearWayPointIndex(enemy->GetPosition());
-		SearchAI::Instance().DijkstraSearch(stage);
-
-		// ゴールからスタートまで親をたどる
-		while (current != start)
-		{
-			stage->path.push_back(current);
-			current = SearchAI::Instance().findRoot[current];
-		}
-		stage->path.push_back(start);
-
-		// スタート→ゴール順に並べる
-		std::reverse(stage->path.begin(), stage->path.end());
-		for (auto i : stage->path)
-		{
-			enemy->Addroute(stage->wayPoint[i]->position);
-		}
-
 	}
 }
 
