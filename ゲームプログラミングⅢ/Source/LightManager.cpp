@@ -27,7 +27,7 @@ void LightManager::Initialize()
 
 		// 赤ライト ------------------------------------------------------------------------------------------------------
 	   /* 3席 */
-		pointLights.emplace_back(PointLightConstants{ {-29.0f, CEILNG_HEIGHT, -13.0f,.0f},{1.0f, .0f, .0f,1.0f} , POINTLIGHT_S_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-29.0f, CEILNG_HEIGHT, 13.0f,.0f},{1.0f, .0f, .0f,1.0f} , POINTLIGHT_S_RANGE });
 		pointLights.emplace_back(PointLightConstants{ {-29.0f, CEILNG_HEIGHT, 5.0f,.0f},{1.0f, .0f, .0f,1.0f} , POINTLIGHT_S_RANGE });
 
 		/* 1席 */
@@ -44,7 +44,7 @@ void LightManager::Initialize()
 		pointLights.emplace_back(PointLightConstants{ {-28.0f, CEILNG_HEIGHT, -23.0f,.0f},{1.0f, .0f, .0f,1.0f} , POINTLIGHT_L_RANGE });  // 大ライト
 
 		/* OBJなし */
-		pointLights.emplace_back(PointLightConstants{ {28.0f, CEILNG_HEIGHT, 23.0f,.0f},{1.0f, .0f, .0f,1.0f} , POINTLIGHT_S_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {28.0f, CEILNG_HEIGHT, -23.0f,.0f},{1.0f, .0f, .0f,1.0f} , POINTLIGHT_S_RANGE });
 		pointLights.emplace_back(PointLightConstants{ {28.0f, CEILNG_HEIGHT, -13.0f,.0f},{1.0f, .0f, .0f,1.0f} , POINTLIGHT_L_RANGE });  // 大ライト
 
 		// 黄ライト -------------------------------------------------------------------------------------------------------

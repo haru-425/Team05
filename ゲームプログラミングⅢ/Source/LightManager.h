@@ -68,8 +68,8 @@ private:
 #define POINTLIGHT_MAX     47
 #define LINELIGHT_MAX      42
 
-#define POINTLIGHT_S_RANGE  6
-#define POINTLIGHT_L_RANGE 12
+#define POINTLIGHT_S_RANGE  8
+#define POINTLIGHT_L_RANGE 14
 #define LINELIGHT_RANGE     5
 #define CEILNG_HEIGHT       3
 };
