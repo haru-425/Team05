@@ -38,7 +38,7 @@ private:
 	struct LightData
 	{
 		DirectX::XMFLOAT3 position;  // ライトの位置
-		DirectX::XMFLOAT3 angle;     // 向きや回転（未使用ならゼロ）
+		float             angle;     // 向きや回転（未使用ならゼロ）
 		float             length;    // 光源の長さ
 	};
 
@@ -65,10 +65,12 @@ private:
 	std::vector<LineLightConstants>  lineLights;
 	std::vector<LightData>           lightData;;
 
-#define POINTLIGHT_MAX 47
-#define LINELIGHT_MAX  8
+#define POINTLIGHT_MAX     47
+#define LINELIGHT_MAX      42
 
-#define POINTLIGHT_S_RANGE 8
-#define POINTLIGHT_L_RANGE 16
+#define POINTLIGHT_S_RANGE  6
+#define POINTLIGHT_L_RANGE 12
+#define LINELIGHT_RANGE     5
+#define CEILNG_HEIGHT       3
 };
 

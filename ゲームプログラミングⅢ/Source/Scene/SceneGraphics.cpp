@@ -116,6 +116,7 @@ void SceneGraphics::Update(float elapsedTime)
 
 		/// プレイヤーの位置をカメラ位置に設定
 		DirectX::XMFLOAT3 cameraPos = player->GetPosition();
+		cameraPos.y = 1.5f;
 		i_CameraController->SetCameraPos(cameraPos);
 
 		/// カメラコントローラーの更新

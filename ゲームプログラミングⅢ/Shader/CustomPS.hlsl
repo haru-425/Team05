@@ -165,7 +165,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     
     // üŒõŒ¹‚ÌÀ‘•
     float3 lineDiffuse = 0, lineSpecular = 0;
-    for (i = 0; i < 8; ++i)
+    for (i = 0; i < 42; ++i)
     {
         float3 closetPoint = ClosestPointOnLine(pin.position.xyz, lineLights[i].start.xyz, lineLights[i].end.xyz);
         float3 LP = normalize(closetPoint - pin.position.xyz);
