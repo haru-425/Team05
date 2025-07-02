@@ -3,45 +3,12 @@
 #include "Camera/Camera.h"
 #include "System/GamePad.h"
 #include "System/Input.h"
+#include "../LightManager.h"
 
 #include <imgui.h>
 
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
-
-
-void SceneGraphics::SetPointLightData()
-{
-	// 点光源の設定
-	pointLights[0].position = { 0,1,1,0 };
-	pointLights[0].color = { 1,1,1,0 };
-	pointLights[0].range = { 5 };
-
-	//pointLights[1].position = { 1,1,-1,0 };
-	//pointLights[1].color = { 1,0,0,1 };
-	//pointLights[1].range = { 10 };
-
-	//pointLights[2].position = { -1,1,1,0 };
-	//pointLights[2].color = { 0,1,0,1 };
-	//pointLights[2].range = { 10 };
-
-	//pointLights[3].position = { -1,1,-1,0 };
-	//pointLights[3].color = { 0,0,1,1 };
-	//pointLights[3].range = { 10 };
-
-	ZeroMemory(&pointLights[1], sizeof(PointLightConstants) * 7);
-
-	// 線光源の設定
-	lineLights[0].start = { 0,2,0,0 };
-	lineLights[0].end = { 2,2,0,0 };
-	lineLights[0].color = { 1,1,1,0 };
-	lineLights[0].range = { 5 };
-
-	//lightData[0].position = { 0,1,0 };
-	//lightData[0].angle = { 0,0,0 };
-
-	ZeroMemory(&lineLights[1], sizeof(LineLightConstants) * 7);
-}
 
 
 /**
@@ -93,6 +60,7 @@ void SceneGraphics::Initialize()
 	ID3D11Device* device = Graphics::Instance().GetDevice();
 	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
+	LightManager::Instance().Initialize();
 }
 
 /**
@@ -159,7 +127,8 @@ void SceneGraphics::Update(float elapsedTime)
 		/// CTRL+Xボタンでフリーカメラに切り替え
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
-			i_CameraController = std::make_unique<FreeCameraController>();
+			//i_CameraController = std::make_unique<FreeCameraController>();
+			i_CameraController = std::make_unique<LightDebugCameraController>();
 		}
 	}
 	// フリーカメラコントローラーの場合
@@ -177,6 +146,8 @@ void SceneGraphics::Update(float elapsedTime)
 
 	/// グラフィックスの定数バッファ更新
 	Graphics::Instance().UpdateConstantBuffer(elapsedTime);
+
+	LightManager::Instance().Update();
 }
 
 /**
@@ -211,7 +182,7 @@ void SceneGraphics::Render()
 	/// 描画用コンテキストの準備
 	RenderContext rc;
 	rc.deviceContext = dc; ///< デバイスコンテキスト
-	rc.lightDirection = { 0.0f, -1.0f, 0.0f }; ///< ライトの方向（下方向）
+	rc.lightDirection = lightDirection; ///< ライトの方向（下方向）
 	rc.renderState = graphics.GetRenderState(); ///< レンダーステート
 
 	/// カメラパラメータの設定
@@ -250,6 +221,7 @@ void SceneGraphics::Render()
 #endif
 	// 定数の更新
 	UpdateConstants(rc);
+	LightManager::Instance().UpdateConstants(rc);
 
 	/// フレームバッファのクリアとアクティベート（ポストプロセス用）
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 0.5f, 0.5f, 1, 1);
@@ -269,14 +241,7 @@ void SceneGraphics::Render()
 		/// プレイヤーのデバッグ描画（ボックス・カプセル表示）
 		player->RenderDebug(rc, shapeRenderer, { 1,2,1 }, { 1,1,1,1 }, DEBUG_MODE::BOX | DEBUG_MODE::CAPSULE);
 
-		/// 点光源のデバッグ描画
-		for (auto& p : pointLights) {
-			shapeRenderer->RenderSphere(rc, { p.position.x, p.position.y, p.position.z }, 0.5f, { 1, 0, 0, 1 });
-		}
-		/// 線光源のデバッグ描画
-		for (int i = 0; i < 8; i++) {
-			shapeRenderer->RenderBox(rc, lightData[i].position, lightData[i].angle, { 1,0.4f,0.4f }, { 0,0,1,1 });
-		}
+		LightManager::Instance().RenderDebug(rc);
 	}
 
 	/// 2Dスプライト描画処理（未実装）
@@ -365,72 +330,7 @@ void SceneGraphics::DrawGUI()
 		ImGui::TreePop();
 	}
 
-	if (ImGui::TreeNode("Light"))
-	{
-		ImGui::SliderFloat("lightPower", &lightPower, 0, 100);
-		if (ImGui::TreeNode("pointLight"))
-		{
-			for (int i = 0; i < 8; ++i) {
-				std::string p = std::string("position") + std::to_string(i);
-				ImGui::DragFloat3(p.c_str(), &pointLights[i].position.x, -30.0f, +30.0f);
-				std::string c = std::string("color") + std::to_string(i);
-				ImGui::ColorEdit3(c.c_str(), &pointLights[i].color.x);
-				std::string r = std::string("range") + std::to_string(i);
-				ImGui::DragFloat3(r.c_str(), &pointLights[i].range, 0.0f, +100.0f);
-			}
-
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("lineLight"))
-		{
-
-			for (int i = 0; i < 8; ++i) {
-
-				DirectX::XMMATRIX M = DirectX::XMMatrixRotationRollPitchYaw(lightData[i].angle.x, lightData[i].angle.y, lightData[i].angle.z);
-				DirectX::XMVECTOR Dir = M.r[0];
-				DirectX::XMFLOAT3 direction;
-				DirectX::XMStoreFloat3(&direction, Dir);
-
-				DirectX::XMFLOAT3 start, end;
-				//DirectX::XMVECTOR Length = DirectX::XMVectorSubtract(DirectX::XMLoadFloat4(&lineLights[i].end), DirectX::XMLoadFloat4(&lineLights[i].start));
-				//Length = DirectX::XMVector3Length(Length);
-				//float length = DirectX::XMVectorGetX(Length);
-
-				start.x = lightData[i].position.x + direction.x * (lightData[i].length * 0.5f);
-				start.y = lightData[i].position.y + direction.y * (lightData[i].length * 0.5f);
-				start.z = lightData[i].position.z + direction.z * (lightData[i].length * 0.5f);
-				end.x = lightData[i].position.x - direction.x * (lightData[i].length * 0.5f);
-				end.y = lightData[i].position.y - direction.y * (lightData[i].length * 0.5f);
-				end.z = lightData[i].position.z - direction.z * (lightData[i].length * 0.5f);
-
-				lineLights[i].start.x = start.x;
-				lineLights[i].start.y = start.y;
-				lineLights[i].start.z = start.z;
-				lineLights[i].end.x = end.x;
-				lineLights[i].end.y = end.y;
-				lineLights[i].end.z = end.z;
-
-
-				//std::string s = std::string("start") + std::to_string(i);
-				//ImGui::SliderFloat3(s.c_str(), &lineLights[i].start.x, -10.0f, +30.0f);
-				//std::string e = std::string("end") + std::to_string(i);
-				//ImGui::SliderFloat3(e.c_str(), &lineLights[i].end.x, -10.0f, +30.0f);
-				std::string s = std::string("pos") + std::to_string(i);
-				ImGui::DragFloat3(s.c_str(), &lightData[i].position.x, -30.0f, +30.0f);
-				std::string l = std::string("length") + std::to_string(i);
-				ImGui::DragFloat(l.c_str(), &lightData[i].length, -10.0f, +10.0f);
-				std::string a = std::string("angle") + std::to_string(i);
-				ImGui::DragFloat3(a.c_str(), &lightData[i].angle.x, -30.0f, +30.0f);
-				std::string c = std::string("color") + std::to_string(i);
-				ImGui::ColorEdit3(c.c_str(), &lineLights[i].color.x);
-				std::string r = std::string("range") + std::to_string(i);
-				ImGui::DragFloat(r.c_str(), &lineLights[i].range, 0.0f, +100.0f);
-			}
-
-			ImGui::TreePop();
-		}
-		ImGui::TreePop();
-	}
+	LightManager::Instance().DebugGUI();
 }
 
 void SceneGraphics::UpdateConstants(RenderContext& rc)
@@ -454,20 +354,4 @@ void SceneGraphics::UpdateConstants(RenderContext& rc)
 
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
-
-	// ポイントライトの設定
-	rc.lightPower = lightPower;
-	for (int i = 0; i < 8; ++i) {
-		rc.pointLights[i].position = pointLights[i].position;
-		rc.pointLights[i].color = pointLights[i].color;
-		rc.pointLights[i].range = pointLights[i].range;
-		//rc.pointLights[i].dummy = { 0,0,0 };
-	}
-	for (int i = 0; i < 8; ++i) {
-		rc.lineLights[i].start = lineLights[i].start;
-		rc.lineLights[i].end = lineLights[i].end;
-		rc.lineLights[i].color = lineLights[i].color;
-		rc.lineLights[i].range = lineLights[i].range;
-		//rc.lineLights[i].dummy = { 0,0,0 };
-	}
 }

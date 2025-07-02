@@ -4,6 +4,7 @@
 #include "ICameraController.h"
 #include "FPCameraController.h"
 #include "FreeCameraController.h"
+#include "LightDebugCameraController.h"
 #include "Scene.h"
 #include <memory>
 #include "Player/Player.h"
@@ -15,9 +16,6 @@ class SceneGraphics :public Scene
 public:
 	SceneGraphics() {}
 	~SceneGraphics() override {}
-
-	// ライト関連の初期化
-	void SetPointLightData();
 
 	// 初期化
 	void Initialize()override;
@@ -87,43 +85,4 @@ private:
 
 	// カメラのワールド座標
 	DirectX::XMFLOAT3 cameraPosition = { 0.0f, 0.0f, 0.0f };
-
-
-	// ==============================
-	// 点光源・線光源の設定
-	// ==============================
-
-	// 点光源構造体（位置・色・範囲）
-	struct PointLightConstants
-	{
-		DirectX::XMFLOAT4 position;  // ワールド座標（w未使用）
-		DirectX::XMFLOAT4 color;     // 光の色
-		float range;                 // 有効距離（減衰終了距離）
-	};
-
-	// 線光源構造体（始点・終点・色・範囲）
-	struct LineLightConstants
-	{
-		DirectX::XMFLOAT4 start;     // ワールド空間での始点
-		DirectX::XMFLOAT4 end;       // ワールド空間での終点
-		DirectX::XMFLOAT4 color;     // 光の色
-		float range;                 // 有効距離（線との距離で減衰）
-		DirectX::XMFLOAT3 dummy = { 0,0,0 };  // 16バイトアラインメント調整用
-	};
-
-	// 光源位置・向きを格納する汎用データ（カスタム用途など）
-	struct LightData
-	{
-		DirectX::XMFLOAT3 position;  // ライトの位置
-		DirectX::XMFLOAT3 angle;     // 向きや回転（未使用ならゼロ）
-		float             length;    // 光源の長さ
-	};
-
-	// 光源情報
-	LightData lightData[8] = {};              // 汎用光源データ（初期化済み）
-	PointLightConstants pointLights[8];       // 最大8つの点光源
-	LineLightConstants lineLights[8];         // 最大8つの線光源
-
-	// 全体のライト強度（乗算係数）
-	float lightPower = 5.0f;
 };

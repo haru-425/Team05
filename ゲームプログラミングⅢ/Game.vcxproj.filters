@@ -201,6 +201,8 @@
     <ClInclude Include="Source\System\CustomShader.h">
       <Filter>Source\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\LightManager.h" />
+    <ClInclude Include="Source\LightDebugCameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -358,6 +360,12 @@
     </ClCompile>
     <ClCompile Include="Source\System\CustomShader.cpp">
       <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LightManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LightDebugCameraController.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

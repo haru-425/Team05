@@ -129,8 +129,8 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 ambient = ambientColor.rgb * ka.rgb;
 
     // 平行光源
-    //float3 diffuse = DiffuseBRDF(VdotH, F0, kd.rgb);
-    float3 diffuse = CalcLambert(N, L, float3(1, 1, 1), kd.rgb);
+    float3 diffuse = DiffuseBRDF(VdotH, F0, kd.rgb);
+    //float3 diffuse = CalcLambert(N, L, float3(1, 1, 1), kd.rgb);
     color.rgb *= diffuse;
     
     // 点光源の拡散・鏡面反射の初期化
@@ -138,7 +138,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 pointSpecular = 0;
 
     // 点光源のループ処理
-    for (int i = 0; i < 2; ++i)
+    for (int i = 0; i < 47; ++i)
     {
         float3 LP = pointLights[i].position.xyz - pin.position.xyz;
         float len = length(LP);
@@ -165,7 +165,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     
     // 線光源の実装
     float3 lineDiffuse = 0, lineSpecular = 0;
-    for (i = 0; i < 2; ++i)
+    for (i = 0; i < 8; ++i)
     {
         float3 closetPoint = ClosestPointOnLine(pin.position.xyz, lineLights[i].start.xyz, lineLights[i].end.xyz);
         float3 LP = normalize(closetPoint - pin.position.xyz);
@@ -194,7 +194,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     
     color.rgb += emisive;
 
-#if 0
+#if 1
     // フォグ処理
     float eyeLength = length(pin.position.xyz - cameraPosition.xyz);
     color = CalcFog(color, fogColor, fogRange.xy, eyeLength);

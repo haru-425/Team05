@@ -65,7 +65,7 @@ private:
 	// 全体のライティング定数（点光源・線光源などまとめて管理）
 	struct LightConstants
 	{
-		PointLightConstants pointLights[8];        // 点光源の配列（最大8個）
+		PointLightConstants pointLights[47];        // 点光源の配列（最大8個）
 		LineLightConstants lineLights[8];          // 線光源の配列（最大8個）
 		float power;                               // 照明全体の強度（グローバル係数）
 		DirectX::XMFLOAT3 dummy;                   // アラインメント調整用
