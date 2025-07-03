@@ -62,7 +62,7 @@ void Stage::DestinationPointSet()
 
     //
     wayPoint[0]->AddEdge(wayPoint[1].get());
-    wayPoint[0]->AddEdge(wayPoint[3].get());
+    wayPoint[1]->AddEdge(wayPoint[3].get());
     wayPoint[1]->AddEdge(wayPoint[2].get());
     wayPoint[2]->AddEdge(wayPoint[4].get());
     wayPoint[3]->AddEdge(wayPoint[4].get());
@@ -93,7 +93,7 @@ int Stage::NearWayPointIndex(DirectX::XMFLOAT3 target)
         DirectX::XMStoreFloat(&length, vectorLength);
 
         // ‹‚ß‚½‹——£‚ª•Û‘¶‚µ‚Ä‚¢‚é‚à‚Ì‚æ‚è¬‚³‚¯‚ê‚Î
-        if (minLength > length)
+        if (minLength >= length)
         {
             // ’l‚ğXV
             minLength = length;

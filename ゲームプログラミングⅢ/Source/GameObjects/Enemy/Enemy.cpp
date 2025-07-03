@@ -47,12 +47,21 @@ void Enemy::Update(float elapsedTime)
 		Updatemovement(elapsedTime);
 		break;
 	case State::Idle:
-		Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
+
+		Goal::Instance().SetPosition(stage->GetIndexWayPoint(rand() % (MAX_WAY_POINT-1)+1));
+
 		if (GetAsyncKeyState('T') & 0x8000)
 		{
+			//Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
+			Start::Instance().SetPosition(this->position);
 			SearchAI::Instance().DijkstraSearch(stage);
 			int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
 			int start = stage->NearWayPointIndex(this->GetPosition());
+
+			if (SearchAI::Instance().findRoot[current]==-1 || current == start)
+			{
+				break;
+			}
 
 			// ゴールからスタートまで親をたどる
 			while (current != start)
@@ -89,11 +98,13 @@ void Enemy::Update(float elapsedTime)
 
 void Enemy::Updatemovement(float elapsedTime)
 {
-
 	if (route.empty() || currentTargetIndex >= route.size())
 	{
 		//待機ステートへ遷移
 		state = State::Idle;
+		currentTargetIndex = 0;
+		stage->path.clear();
+		route.clear();
 		return;
 	}
 
@@ -114,8 +125,11 @@ void Enemy::Updatemovement(float elapsedTime)
 	float distance = DirectX::XMVectorGetX(DirectX::XMVector3Length(dir));
 	if (distance < 0.1f) { // 誤差で止まらないように閾値
 		currentTargetIndex++;
-		// 次のターゲット
-		targetPosition = route[currentTargetIndex];
+		if (currentTargetIndex < route.size())
+		{
+			// 次のターゲット
+			targetPosition = route[currentTargetIndex];
+		}
 	}
 
 	//// 目標地点までXZ平面での距離判定
