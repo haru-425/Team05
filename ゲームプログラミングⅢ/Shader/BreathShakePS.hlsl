@@ -5,7 +5,7 @@
 #define ANISOTROPIC 2
 #define PI 3.14159265358979323846
 SamplerState sampler_states[3] : register(s0);
-Texture2D texture_map : register(t0);
+Texture2D texture_map : register(t10);
 
 /**
  * @brief 呼吸や心拍の動きを模倣した画面揺れ・ズーム効果を付与するピクセルシェーダ

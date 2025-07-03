@@ -6,7 +6,7 @@
 #define SHARPEN_FACTOR 2
 
 SamplerState sampler_states[3] : register(s0);
-Texture2D texture_map : register(t0);
+Texture2D texture_map : register(t10);
 
 // --- 効果終了までの時間（秒）を設定 ---
 static const float effectEndTime = 2.0; // ここを変更すれば演出の長さを調整可能

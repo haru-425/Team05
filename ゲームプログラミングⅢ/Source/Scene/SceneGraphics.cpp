@@ -10,6 +10,7 @@
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 
+static int time = 0; // デバッグ用タイマー
 
 /**
  * @file SceneGraphics.cpp
@@ -61,6 +62,8 @@ void SceneGraphics::Initialize()
 	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
 	LightManager::Instance().Initialize();
+	/// デバッグ用タイマー初期化
+	time = 0;
 }
 
 /**
@@ -146,7 +149,10 @@ void SceneGraphics::Update(float elapsedTime)
 	}
 
 	/// グラフィックスの定数バッファ更新
-	Graphics::Instance().UpdateConstantBuffer(elapsedTime);
+	/// 時間の更新（デバッグ用）
+	time += elapsedTime; ///< ミリ秒単位で時間を更新
+
+	Graphics::Instance().UpdateConstantBuffer(time);
 
 	LightManager::Instance().Update();
 }
@@ -280,11 +286,54 @@ void SceneGraphics::Render()
 		Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Blur)].Get()
 	);
 
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		&shader_resource_views[0], 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::BreathShake)].Get());
+
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->deactivate(dc);
+
+	//TEMPORAL NOISE
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
+
+	//// WardenGaze
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->clear(dc);
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->activate(dc);
+	//Graphics::Instance().bit_block_transfer->blit(dc,
+	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::WardenGaze)].Get());
+	//{
+
+	//	sprite->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+	//}
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->deactivate(dc);
+
+
+	//// Sharpen
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Sharpen)]->clear(dc);
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Sharpen)]->activate(dc);
+	//Graphics::Instance().bit_block_transfer->blit(dc,
+	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Sharpen)].Get());
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Sharpen)]->deactivate(dc);
+
+
+	//crt
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
+
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
+
+
 #if 1
 	/// デバッグ用：ポストプロセス結果の描画
 	Graphics::Instance().bit_block_transfer->blit(
 		dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
 	);
 #endif
 }
