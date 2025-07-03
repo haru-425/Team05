@@ -28,6 +28,9 @@
     <Filter Include="Resource">
       <UniqueIdentifier>{d99213ba-b5cb-4c4b-bd81-a88735a666b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Pursuer">
+      <UniqueIdentifier>{633e6b8d-154a-4d81-a7d2-4b77156cb566}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h">
@@ -167,7 +170,39 @@
     <ClInclude Include="Source\Camera\CameraController\FreeCameraController.h" />
     <ClInclude Include="Source\GameObjects\Enemy\Enemy.h" />
     <ClInclude Include="Source\Scene\SceneMattsu.h" />
-    <ClInclude Include="Source\System\CollisionEditor.h" />
+    <ClInclude Include="Source\Pursuer\Edge.h">
+      <Filter>Source\Pursuer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pursuer\Object.h">
+      <Filter>Source\Pursuer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pursuer\SearchAI.h">
+      <Filter>Source\Pursuer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pursuer\WayPoint.h">
+      <Filter>Source\Pursuer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\FrameBuffer.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\FullScreenQuad.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneGraphics.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\fujimoto.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\LoadTextures.h" />
+    <ClInclude Include="Source\System\ShadowCaster.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\CustomShader.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LightManager.h" />
+    <ClInclude Include="Source\LightDebugCameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -299,7 +334,37 @@
     <ClCompile Include="Source\Scene\SceneMattsu.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\CollisionEditor.cpp">
+    <ClCompile Include="Source\Pursuer\Object.cpp">
+      <Filter>Source\Pursuer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pursuer\SearchAI.cpp">
+      <Filter>Source\Pursuer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\FrameBuffer.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\FullScreenQuad.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneGraphics.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\fujimoto.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\LoadTextures.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\ShadowCaster.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\CustomShader.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LightManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LightDebugCameraController.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -323,6 +388,15 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="Shader\Scene.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\FullScreenQuad.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Function.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Custom.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
@@ -355,6 +429,48 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\LambertVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\FullScreenQuadPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\FullScreenQuadVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\BreathShakePS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\CrackshaftPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\crtPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\GlitchPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\NoSignalFinalePS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SharpenPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\TemporalNoisePS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\VisionBootDownPS.hlsl">
+      <Filter>Source\System</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\BlurPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\HighLightPassPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\CustomPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\CustomVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

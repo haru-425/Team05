@@ -1,8 +1,8 @@
-#include "FreeCameraController.h"
+#include "LightDebugCameraController.h"
 #include "System/Input.h"
 #include "Camera/Camera.h"
 
-void FreeCameraController::Update(float dt)
+void LightDebugCameraController::Update(float dt)
 {
     GamePad& gamepad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
@@ -16,6 +16,7 @@ void FreeCameraController::Update(float dt)
     float speed = rollSpeed * dt;
 
     angle.x += ry * speed;// * speed;
+    //angle.x = DirectX::XMConvertToRadians(90);
     angle.y -= rx * speed;
 
     //XŽ²‚ÌƒJƒƒ‰‰ñ“]‚ð§ŒÀ
@@ -23,9 +24,9 @@ void FreeCameraController::Update(float dt)
     {
         angle.x = minAngleX;
     }
-    if (angle.x > maxAngleX)
+    if (angle.x > DirectX::XMConvertToRadians(85))
     {
-        angle.x = maxAngleX;
+        angle.x = DirectX::XMConvertToRadians(85);
     }
     //YŽ²‚Ì‰ñ“]’l‚ð-3.14~3.14‚ÉŽû‚Ü‚é‚æ‚¤‚É
     if (angle.y < -DirectX::XM_PI)
@@ -36,6 +37,8 @@ void FreeCameraController::Update(float dt)
     {
         angle.y -= DirectX::XM_2PI;
     }
+    if (GetAsyncKeyState('Q')) { angle.y -= 0.02f; }
+    else if (GetAsyncKeyState('E')) { angle.y += 0.02f; }
 
 
     //ƒJƒƒ‰‰ñ“]’l‚ð‰ñ“]s—ñ‚É•ÏŠ·
@@ -56,8 +59,8 @@ void FreeCameraController::Update(float dt)
     target.x += right.x * lx * 10 * dt;
     target.z += right.z * lx * 10 * dt;
 
-    target.x += front.x * ly * 10 * dt;
-    target.z += front.z * ly * 10 * dt;
+    target.x += front.x * ly * 100 * dt;
+    target.z += front.z * ly * 100 * dt;
 
     DirectX::XMFLOAT3 eye;
     eye.x = target.x - front.x * range;
@@ -67,8 +70,9 @@ void FreeCameraController::Update(float dt)
     //ƒJƒƒ‰‚ÌŽ‹“_‚Æ’Ž‹“_‚ðÝ’è
     Camera::Instance().SetLookAt(eye, target, DirectX::XMFLOAT3(0, 1, 0));
 
+    DebugGUI();
 }
 
-void FreeCameraController::DebugGUI()
+void LightDebugCameraController::DebugGUI()
 {
 }

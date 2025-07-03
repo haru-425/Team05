@@ -14,6 +14,8 @@ Stage::Stage()
     //scale = { 2,2,2 };
     scale = { 1,1,1 };
 
+    angle.y = DirectX::XMConvertToRadians(180);
+
     //スケール行列を作成
     DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.x);
     //回転行列
@@ -41,7 +43,8 @@ void Stage::Update(float elapsedTime)
 void Stage::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
     //レンダラにモデルを描画してもらう
-    renderer->Render(rc, world, model, ShaderId::Lambert);
+    renderer->Render(rc, world, model, ShaderId::Custom);
+    //renderer->Render(rc, world, model, ShaderId::Lambert);
 }
 
 

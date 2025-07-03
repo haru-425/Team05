@@ -1,5 +1,6 @@
 #include "Misc.h"
 #include "RenderState.h"
+#include <cfloat>
 
 // コンストラクタ
 RenderState::RenderState(ID3D11Device* device)
@@ -83,6 +84,27 @@ RenderState::RenderState(ID3D11Device* device)
 		HRESULT hr = device->CreateSamplerState(&desc,
 			samplerStates[static_cast<int>(SamplerState::LinearClamp)].GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+	}
+	// シャドウマップ
+	{
+		D3D11_SAMPLER_DESC desc = {};
+		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+		desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+		desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+		desc.MipLODBias = 0;
+		desc.MaxAnisotropy = 16;
+		desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		desc.BorderColor[0] = FLT_MAX;
+		desc.BorderColor[1] = FLT_MAX;
+		desc.BorderColor[2] = FLT_MAX;
+		desc.BorderColor[3] = FLT_MAX;
+		desc.MinLOD = 0;
+		desc.MaxLOD = D3D11_FLOAT32_MAX;
+		HRESULT hr = device->CreateSamplerState(&desc,
+			samplerStates[static_cast<int>(SamplerState::Shadow)].GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
 	}
 
 	// 深度テストあり＆深度書き込みあり
