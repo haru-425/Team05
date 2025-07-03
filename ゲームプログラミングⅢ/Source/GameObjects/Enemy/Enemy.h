@@ -29,6 +29,9 @@ public:
 	float GetPitch() const { return pitch; }
 	float GetYaw() const { return yaw; }
 
+	//デバッグ用
+	int GetindexWayPoint() const { return currentTargetIndex; }
+
 private:
 	enum class State
 	{

@@ -37,6 +37,9 @@ bool SearchAI::DijkstraSearch(Stage* stage, bool heuristicFlg)
 		//サーチしたEdgeの記録(実行結果の表示用）
 		findRoot[nowEdge->destinationPoint] = nowEdge->originPoint;
 
+		//デバッグ用
+		int x = stage->NearWayPointIndex((Goal::Instance().GetPosition()));
+
 		//もし、次のnowEdgeのdistnationNodeがゴールだったらtrueでreturnする。
 		if (nowEdge->destinationPoint == stage->NearWayPointIndex((Goal::Instance().GetPosition())))
 		{
@@ -77,6 +80,10 @@ bool SearchAI::DijkstraSearch(Stage* stage, bool heuristicFlg)
 		}
 
 		nowEdge = searchMinCostEdge(frontier, stage, heuristicFlg);
+		if (nowEdge->destinationPoint==0)
+		{
+			nowEdge = searchMinCostEdge(frontier, stage, heuristicFlg);
+		}
 
 		if (nowEdge == nullptr)
 		{

@@ -133,6 +133,8 @@ void fujimoto::Render()
 			player->GetPosition().y,
 			player->GetPosition().z);
 
+		ImGui::Text("index: X=%d",
+			enemy.get()->GetindexWayPoint());
 		ImGui::End();
 
 	}

@@ -38,7 +38,16 @@ public:
         DirectX::XMVECTOR cost = DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&destination->position), DirectX::XMLoadFloat3(&this->position)));
         edge->cost = DirectX::XMVectorGetX(cost);
         edge->cost += custum_pluss_cost;
+        for (auto inedge : destination->edges)
+        {
+            if (inedge->destinationPoint == this->pointNo)
+            {
+                edges.push_back(edge);
+                return;
+            }
+        }
         edges.push_back(edge);
+        destination->AddEdge(this);
     }
 
 };
