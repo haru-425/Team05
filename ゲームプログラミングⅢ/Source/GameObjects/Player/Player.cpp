@@ -7,7 +7,7 @@ Player::Player()
 {
 #ifdef TEST
     // 確認用
-    model = std::make_unique<Model>("./Data/Model/Test/gun.mdl");
+    model = std::make_shared<Model>("./Data/Model/Test/test_walk_animation_model.mdl");
     t_position.x += 0.2f;
     t_position.z += 0.5f;
     t_position.y = 1.15f;
@@ -19,9 +19,15 @@ Player::Player()
 #endif
 
     // プレイヤーのパラメータ初期設定
-    viewPoint = 1.5;   // カメラの目線を設定するため
-    radius = 2;        // デバッグ用
-    enableHijackTime = maxHijackTime;
+    {
+        viewPoint = 1.5;                    // カメラの目線を設定するため
+        radius = 2;                         // デバッグ用
+        enableHijackTime = maxHijackTime;   // ハイジャックできる時間の設定
+    }
+    animationController.SetModel(model);
+
+    animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
+    animationController.SetAnimationSecondScale(5.0f);
 }
 
 Player::~Player()
@@ -51,6 +57,12 @@ void Player::Update(float dt)
     // 
     // 行列更新処理
     UpdateTransform();
+
+    // アニメーションの更新処理
+    UpdateAnimation(dt);
+
+    // モデルの行列更新処理
+    model->UpdateTransform();
 }
 
 // 描画処理
@@ -153,9 +165,9 @@ void Player::ChangeCamera()
     if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
     {
         if (useCam)
-            isChange = true;
+            isChange = true; // 敵→プレイヤー
         else
-            isHijack = true;
+            isHijack = true; // プレイヤーがカメラを持ってハイジャックしたか
 
         useCam = !useCam;
     }
@@ -176,7 +188,7 @@ void Player::UpdateHijack(float dt)
     if (enableHijackTime < 8.0f && !useCam)
         enableHijack = false;
 
-    // 視界変更に夜一定数のゲージの減り
+    // 視界変更に一定数のゲージの減り
     if (isHijack)
     {
         // 一定数のゲージ消費
@@ -193,14 +205,20 @@ void Player::UpdateHijack(float dt)
     else
     {
         // ハイジャックできる時間がハイジャックできる最大時間より小さい場合
-        // ゲージの回復
-        // ゲージの制限
         if (maxHijackTime > enableHijackTime)
         {
+            // ゲージの回復
             enableHijackTime += hijackRecoveryPerSec * dt;
 
+            // ゲージの制限
             if (enableHijackTime > maxHijackTime)
                 enableHijackTime = maxHijackTime;
         }
     }
+}
+
+// アニメーション更新処理
+void Player::UpdateAnimation(float dt)
+{
+    animationController.UpdateAnimation(dt);
 }

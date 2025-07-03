@@ -202,6 +202,7 @@
     </ClInclude>
     <ClInclude Include="Source\LightManager.h" />
     <ClInclude Include="Source\LightDebugCameraController.h" />
+    <ClInclude Include="Source\System\AnimationController.h" />
     <ClInclude Include="Source\Scene\SceneMattsu.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -366,6 +367,8 @@
     <ClCompile Include="Source\LightDebugCameraController.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\AnimationController.cpp">
+      <Filter>Source</Filter>
     <ClCompile Include="Source\Scene\SceneMattsu.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
