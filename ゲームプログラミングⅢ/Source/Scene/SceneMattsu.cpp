@@ -23,10 +23,10 @@ void SceneMattsu::Initialize()
 	i_CameraController = std::make_unique<FPCameraController>();
 
 	player = std::make_shared<Player>();
-	enemy = std::make_shared<Enemy>();
+	enemy = std::make_shared<Enemy>(player, stage);
 
 	player->SetEnemy(enemy);
-	enemy->SetPlayer(player);
+	//enemy->SetPlayer(player);
 }
 
 void SceneMattsu::Finalize()

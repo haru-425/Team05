@@ -169,7 +169,6 @@
     <ClInclude Include="Source\Camera\CameraController\ICameraController.h" />
     <ClInclude Include="Source\Camera\CameraController\FreeCameraController.h" />
     <ClInclude Include="Source\GameObjects\Enemy\Enemy.h" />
-    <ClInclude Include="Source\Scene\SceneMattsu.h" />
     <ClInclude Include="Source\Pursuer\Edge.h">
       <Filter>Source\Pursuer</Filter>
     </ClInclude>
@@ -203,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="Source\LightManager.h" />
     <ClInclude Include="Source\LightDebugCameraController.h" />
+    <ClInclude Include="Source\Scene\SceneMattsu.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -331,9 +333,6 @@
     <ClCompile Include="Source\GameObjects\Enemy\Enemy.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scene\SceneMattsu.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Pursuer\Object.cpp">
       <Filter>Source\Pursuer</Filter>
     </ClCompile>
@@ -366,6 +365,9 @@
     </ClCompile>
     <ClCompile Include="Source\LightDebugCameraController.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneMattsu.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
