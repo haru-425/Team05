@@ -161,8 +161,11 @@ float4 main(VS_OUT pin) : SV_TARGET
         // ŠgU”½Ë‚Æ‹¾–Ê”½Ë‚Ì‰ÁZ
         pointDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * attenuation * pointLights[i].color.rgb;
         pointSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * attenuation * pointLights[i].color.rgb;
+        
+        pointSpecular = max(0, pointSpecular);
+
     }
-    
+
     // üŒõŒ¹‚ÌÀ‘•
     float3 lineDiffuse = 0, lineSpecular = 0;
     for (i = 0; i < 42; ++i)
@@ -186,7 +189,12 @@ float4 main(VS_OUT pin) : SV_TARGET
         lineDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * power * attenuation * lineLights[i].color.rgb;
         lineSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * power * attenuation * lineLights[i].color.rgb;
 
+
+        
+        lineSpecular = max(0, lineSpecular);
     }
+    //return float4(lineDiffuse, 1);
+    
     
     // “_ŒõŒ¹‚Ì‰e‹¿‚ğ‰ÁZ
     color.rgb += color.rgb * (pointDiffuse + lineDiffuse) * power;
