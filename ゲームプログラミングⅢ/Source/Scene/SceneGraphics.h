@@ -9,7 +9,6 @@
 #include <memory>
 #include "Player/Player.h"
 #include "System/ShadowCaster.h"
-
 // ƒQ[ƒ€ƒV[ƒ“
 class SceneGraphics :public Scene
 {

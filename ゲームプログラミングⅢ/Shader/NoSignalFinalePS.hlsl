@@ -6,7 +6,7 @@
 #define SHARPEN_FACTOR 2
 
 SamplerState sampler_states[3] : register(s0);
-Texture2D texture_map : register(t0);
+Texture2D texture_map : register(t10);
 
 // 開始時間（秒）と継続時間（秒）を設定
 static const float startTime = 1.0; // 例: 1秒後に開始

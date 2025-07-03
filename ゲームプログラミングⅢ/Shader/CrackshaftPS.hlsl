@@ -6,7 +6,7 @@
 #define SHARPEN_FACTOR 2
 
 SamplerState sampler_states[3] : register(s0);
-Texture2D texture_map : register(t0);
+Texture2D texture_map : register(t10);
 
 //float rand(float2 co)
 //{

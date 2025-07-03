@@ -43,8 +43,8 @@ void Stage::Update(float elapsedTime)
 void Stage::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
     //ƒŒƒ“ƒ_ƒ‰‚Éƒ‚ƒfƒ‹‚ð•`‰æ‚µ‚Ä‚à‚ç‚¤
-    renderer->Render(rc, world, model, ShaderId::Custom);
-    //renderer->Render(rc, world, model, ShaderId::Lambert);
+    //renderer->Render(rc, world, model, ShaderId::Custom);
+    renderer->Render(rc, world, model, ShaderId::Lambert);
 }
 
 
