@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include <memory>
 #include "Enemy/Enemy.h"
+#include "System/AnimationController.h"
 
 // テスト用のモデルだったりを切り替えるよう
 #define TEST
@@ -12,6 +13,11 @@ static constexpr int hijackCost             = 5;   // ハイジャックコスト
 static constexpr int hijackCostPerSec       = 5;   // 一秒ごとのハイジャックコスト
 static constexpr int hijackRecoveryPerSec   = 3;   // 一秒ごとのハイジャックコストの回復量
 static constexpr float speed                = 3;   // プレイヤー移動速度
+
+static enum class AnimationState
+{
+    MOVE
+};
 
 class Player : public GameObject
 {
@@ -43,8 +49,12 @@ private:
 
     void UpdateHijack(float dt);
 
+    void UpdateAnimationState();
+
+    void UpdateAnimation(float dt);
+
 private:
-    std::unique_ptr<Model> model;
+    std::shared_ptr<Model> model;
     std::shared_ptr<Enemy> enemyRef = nullptr; // 敵用
 
     bool useCam         = false; // true : 敵視点 ,false : プレイヤー視点
@@ -54,6 +64,9 @@ private:
 
     float enableHijackTime; // ハイジャック時間
     float hijackSpeed = 0.0f;  // 視界ジャックの時間を減らす速度
+
+    AnimationController animationController; // アニメーション
+    AnimationState state = AnimationState::MOVE;
 
     // テスト用なので気にしないで下さい
 #pragma region テスト用

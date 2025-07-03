@@ -203,6 +203,7 @@
     </ClInclude>
     <ClInclude Include="Source\LightManager.h" />
     <ClInclude Include="Source\LightDebugCameraController.h" />
+    <ClInclude Include="Source\System\AnimationController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -365,6 +366,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\LightDebugCameraController.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\AnimationController.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
