@@ -54,10 +54,12 @@ public:
 
 	void UpdateConstants(RenderContext& rc);
 
+	void PointLightDebug(char* c,int begin,int end);
+	void LineLightDebug(char* c, int begin,int end);
+
 	const std::vector<PointLightConstants>& GetPointLights() const { return pointLights; }
 	const std::vector<LineLightConstants>& GetLineLights() const { return lineLights; }
-	// 全体のライト強度（乗算係数）
-	float lightPower = 5.0f;
+
 
 private:
 	// 光源情報
@@ -65,12 +67,26 @@ private:
 	std::vector<LineLightConstants>  lineLights;
 	std::vector<LightData>           lightData;;
 
+	// 全体のライト強度（乗算係数）
+	float lightPower = 5.0f;
+
+	struct LightColors
+	{
+		DirectX::XMFLOAT4 red    = { 1,0,0,1 };
+		DirectX::XMFLOAT4 blue   = { 0,0,1,1 };
+		DirectX::XMFLOAT4 yellow = { 1,1,0,1 };
+		DirectX::XMFLOAT4 green  = { 0,1,0,1 };
+		DirectX::XMFLOAT4 purple = { 1,0,1,1 };
+	};
+	LightColors lightColor;
+
 #define POINTLIGHT_MAX     47
 #define LINELIGHT_MAX      42
 
-#define POINTLIGHT_S_RANGE  8
-#define POINTLIGHT_L_RANGE 14
+#define POINTLIGHT_S_RANGE 10
+#define POINTLIGHT_L_RANGE 15
 #define LINELIGHT_RANGE     5
 #define CEILNG_HEIGHT       3
+
 };
 
