@@ -70,8 +70,10 @@ void fujimoto::Update(float elapsedTime)
 	// フリーカメラ
 	else
 	{
+		/// カメラコントローラーの更新
 		i_CameraController->Update(elapsedTime);
 
+		/// CTRL+Xボタンで一人称カメラに切り替え
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
 			i_CameraController = std::make_unique<FPCameraController>();

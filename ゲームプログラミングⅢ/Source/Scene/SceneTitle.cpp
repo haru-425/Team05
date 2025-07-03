@@ -41,7 +41,7 @@ void SceneTitle::Update(float elapsedTime)
 	if (anyButton & gamePad.GetButton())
 	{
 		//SceneManager::instance().ChangeScene(new SceneGame);
-		SceneManager::instance().ChangeScene(new SceneLoading(new SceneGraphics));
+		SceneManager::instance().ChangeScene(new SceneLoading(new SceneGame));
 	}
 	if (GetAsyncKeyState('F') & 0x8000)
 	{
@@ -50,6 +50,10 @@ void SceneTitle::Update(float elapsedTime)
 	if (GetAsyncKeyState('M') & 0x8000)
 	{
 		SceneManager::instance().ChangeScene(new SceneLoading(new SceneMattsu));
+	}
+	if (GetAsyncKeyState('G') & 0x8000)
+	{
+		SceneManager::instance().ChangeScene(new SceneLoading(new SceneGraphics));
 	}
 }
 
