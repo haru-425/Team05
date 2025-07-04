@@ -343,9 +343,9 @@ void SceneGraphics::Render()
 	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
 	Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get());
 
-	//immediate_context->OMSetDepthStencilState(depth_stencil_states[static_cast<size_t>(DEPTH_STATE::ZT_OFF_ZW_OFF)].Get(), 0);
-	//immediate_context->RSSetState(rasterizer_states[static_cast<size_t>(RASTER_STATE::CULL_NONE)].Get());
-	//immediate_context->OMSetBlendState(blend_states[static_cast<size_t>(BLEND_STATE::ALPHA)].Get(), nullptr, 0xFFFFFFFF);
+	//dc->OMSetDepthStencilState(depth_stencil_states[static_cast<size_t>(DEPTH_STATE::ZT_OFF_ZW_OFF)].Get(), 0);
+	//dc->RSSetState(rasterizer_states[static_cast<size_t>(RASTER_STATE::CULL_NONE)].Get());
+	//dc->OMSetBlendState(blend_states[static_cast<size_t>(BLEND_STATE::ALPHA)].Get(), nullptr, 0xFFFFFFFF);
 	ID3D11ShaderResourceView* shader_resource_views[] =
 	{
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get(),
@@ -415,7 +415,7 @@ void SceneGraphics::DrawGUI()
 
 void SceneGraphics::UpdateConstants(RenderContext& rc)
 {
-	rc.lightDirection = lightDirection;	// (ToT)
+	rc.lightDirection = lightDirection;	// (ToT)+
 	// ÉVÉÉÉhÉEÇÃê›íË
 	rc.shadowColor = shadowColor;
 	rc.shadowBias = shadowBias;

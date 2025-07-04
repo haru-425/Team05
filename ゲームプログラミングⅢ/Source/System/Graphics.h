@@ -87,7 +87,8 @@ private:
 	{
 
 		float time;
-		float pad[3];
+		float SignalTime;
+		float pad[2];
 	};
 	struct ScreenSizeCBuffer
 	{
@@ -131,6 +132,7 @@ public:
 	void UpdateConstantBuffer(float Time) {
 		TimeCBuffer timeCBuffer;
 		timeCBuffer.time = Time;
+		timeCBuffer.SignalTime = 0; //SignalTimeを更新するとテレビのような画面切り替え(0.3ｓ)
 		immediateContext->UpdateSubresource(cbuffer[int(ConstantBufferType::TimeCBuffer)].Get(), 0, 0, &timeCBuffer, 0, 0);
 		immediateContext->PSSetConstantBuffers(10, 1, cbuffer[int(ConstantBufferType::TimeCBuffer)].GetAddressOf());
 		immediateContext->VSSetConstantBuffers(10, 1, cbuffer[int(ConstantBufferType::TimeCBuffer)].GetAddressOf());

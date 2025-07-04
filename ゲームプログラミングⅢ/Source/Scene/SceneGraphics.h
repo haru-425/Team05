@@ -84,4 +84,7 @@ private:
 
 	// カメラのワールド座標
 	DirectX::XMFLOAT3 cameraPosition = { 0.0f, 0.0f, 0.0f };
+
+
+	float GraphicsScenetime = 0; //gameタイマー
 };

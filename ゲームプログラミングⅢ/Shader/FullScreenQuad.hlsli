@@ -35,6 +35,7 @@ cbuffer TimeCBuffer : register(b10)
      * シェーダー内でアニメーションや時間制御に利用されます。
      */
     float iTime;
+    float signalTime; // サイン波の時間変化
 
     /**
      * @brief 予備のパディング用変数

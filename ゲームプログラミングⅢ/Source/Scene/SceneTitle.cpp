@@ -69,6 +69,13 @@ void SceneTitle::Render()
 	rc.deviceContext = dc;
 	rc.renderState = graphics.GetRenderState();
 
+
+
+	/// フレームバッファのクリアとアクティベート（ポストプロセス用）
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 0.5f, 0.5f, 1, 1);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
+
+	//タイトルの背景、UIはここで描画
 	//2Dスプライト描画
 	{
 		//タイトル描画
@@ -79,6 +86,35 @@ void SceneTitle::Render()
 			0,
 			1, 1, 1, 1);
 	}
+
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
+
+	//ポストプロセス適用
+//TEMPORAL NOISE
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
+	//Grtch
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Glitch)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->deactivate(dc);
+
+	//crt
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
+
+	/// ポストプロセス結果の描画
+	Graphics::Instance().bit_block_transfer->blit(
+		dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
+	);
 }
 
 //GUI描画
