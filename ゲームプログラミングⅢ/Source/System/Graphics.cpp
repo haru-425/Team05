@@ -165,6 +165,7 @@ void Graphics::Initialize(HWND hWnd)
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/HighLightPassPS.cso", pixel_shaders[int(PPShaderType::HighLightPass)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BlurPS.cso", pixel_shaders[int(PPShaderType::Blur)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BloomFinal.cso", pixel_shaders[int(PPShaderType::BloomFinal)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TVNoiseFadePS.cso", pixel_shaders[int(PPShaderType::TVNoiseFade)].ReleaseAndGetAddressOf());
 
 }
 

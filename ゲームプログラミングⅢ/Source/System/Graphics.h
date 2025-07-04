@@ -119,6 +119,7 @@ public:
 		HighLightPass,
 		Blur,
 		BloomFinal,
+		TVNoiseFade,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
