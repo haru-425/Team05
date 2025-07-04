@@ -16,6 +16,8 @@ VS_OUT main(float4 position : POSITION,
     vout.texcoord = texcoord;
 
     vout.normal = SkinningVector(normal, boneWeights, boneIndices);
+    
+    //vout.normal = normalize(float4(normal.xyz, 0)).xyz;
     vout.normal = normalize(vout.normal.xyz);
     
     vout.binormal = float3(0.0f, 1.0f, 0.001f); 

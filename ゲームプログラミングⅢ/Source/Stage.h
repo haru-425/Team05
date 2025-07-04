@@ -4,6 +4,11 @@
 #include "Pursuer/WayPoint.h"
 #include "Pursuer/Edge.h"
 #include "Pursuer/Object.h"
+#include "System/LoadTextures.h"
+
+#include <memory>
+#include <wrl.h>
+
 #define MAX_WAY_POINT 5
 
 //ステージ
@@ -45,4 +50,6 @@ private:
     };
 
     Model* model = nullptr;
+
+    std::unique_ptr<LoadTextures> textures;
 };

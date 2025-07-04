@@ -36,7 +36,7 @@ struct RenderContext
 		DirectX::XMFLOAT3 dummy = { 0,0,0 };          // アラインメント調整用（16バイト境界）
 	};
 
-	PointLightConstants pointLights[47];               // 点光源を最大8つまで定義可能
+	PointLightConstants pointLights[256];               // 点光源を最大8つまで定義可能
 
 	// 線光源設定
 	struct LineLightConstants
@@ -48,5 +48,5 @@ struct RenderContext
 		DirectX::XMFLOAT3 dummy = { 0,0,0 };          // アラインメント調整用
 	};
 
-	LineLightConstants lineLights[42];                 // 線光源を最大8つまで定義可能
+	LineLightConstants lineLights[256];                 // 線光源を最大8つまで定義可能
 };

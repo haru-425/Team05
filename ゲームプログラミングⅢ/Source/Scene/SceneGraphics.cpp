@@ -110,6 +110,8 @@ void SceneGraphics::Update(float elapsedTime)
 	// 一人称カメラコントローラーの場合
 	if (typeid(*i_CameraController) == typeid(FPCameraController))
 	{
+		//i_CameraController = std::make_unique<LightDebugCameraController>();
+#if 1
 		/// 画面中央の座標を取得し、マウスカーソルを中央に移動
 		POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
 		ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
@@ -131,6 +133,7 @@ void SceneGraphics::Update(float elapsedTime)
 			//i_CameraController = std::make_unique<FreeCameraController>();
 			i_CameraController = std::make_unique<LightDebugCameraController>();
 		}
+#endif
 	}
 	// フリーカメラコントローラーの場合
 	else

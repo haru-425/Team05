@@ -1,4 +1,5 @@
 #include"Stage.h"
+#include <imgui.h>
 
 //コンストラクタ
 Stage::Stage()
@@ -7,12 +8,15 @@ Stage::Stage()
 #if 1
     model = new Model("Data/Model/Stage/stage.mdl");
 #else
-    model = new Model("Data/Model/Stage/ExampleStage.mdl");
+    //model = new Model("Data/Model/Stage/ExampleStage.mdl");
 #endif
 
     //scale = { 1.5f,1.5f,1.5f };
     //scale = { 2,2,2 };
     scale = { 1,1,1 };
+
+    //position = { -4,0,18 };
+    //scale = { 0.05f,0.05f,0.05f };
 
     angle.y = DirectX::XMConvertToRadians(180);
 
@@ -28,6 +32,8 @@ Stage::Stage()
     DirectX::XMStoreFloat4x4(&world, W);
 
     DestinationPointSet();
+
+    textures = std::make_unique<LoadTextures>();
 }
 Stage::~Stage()
 {
@@ -42,9 +48,13 @@ void Stage::Update(float elapsedTime)
 //描画
 void Stage::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
+    textures->Set(rc);
+
     //レンダラにモデルを描画してもらう
     renderer->Render(rc, world, model, ShaderId::Custom);
     //renderer->Render(rc, world, model, ShaderId::Lambert);
+
+    textures->Clear(rc);
 }
 
 
