@@ -37,6 +37,9 @@ bool SearchAI::DijkstraSearch(Stage* stage, bool heuristicFlg)
 		//サーチしたEdgeの記録(実行結果の表示用）
 		findRoot[nowEdge->destinationPoint] = nowEdge->originPoint;
 
+		//デバッグ用
+		int x = stage->NearWayPointIndex((Goal::Instance().GetPosition()));
+
 		//もし、次のnowEdgeのdistnationNodeがゴールだったらtrueでreturnする。
 		if (nowEdge->destinationPoint == stage->NearWayPointIndex((Goal::Instance().GetPosition())))
 		{
@@ -45,7 +48,7 @@ bool SearchAI::DijkstraSearch(Stage* stage, bool heuristicFlg)
 		}
 
 		//nowEdgeの先のノードを取得する。(今いるノード)
-		WayPoint* wayPoint = stage->wayPoint[nowEdge->destinationPoint];
+		WayPoint* wayPoint = stage->wayPoint[nowEdge->destinationPoint].get();
 
 		//nowEdgeの先のノードに登録してある８本のエッジをサーチするループ
 		for (auto edge : wayPoint->edges) {
@@ -56,7 +59,7 @@ bool SearchAI::DijkstraSearch(Stage* stage, bool heuristicFlg)
 			if (nextEdge->destinationPoint >= 0 && nextEdge->destinationPoint < 400) {
 
 				//進み先のノード
-				WayPoint* nextPoint = stage->wayPoint[nextEdge->destinationPoint];
+				WayPoint* nextPoint = stage->wayPoint[nextEdge->destinationPoint].get();
 
 				//TODO 07_01
 				// 進み先のノードまでのコストを計算
@@ -77,6 +80,10 @@ bool SearchAI::DijkstraSearch(Stage* stage, bool heuristicFlg)
 		}
 
 		nowEdge = searchMinCostEdge(frontier, stage, heuristicFlg);
+		if (nowEdge->destinationPoint==0)
+		{
+			nowEdge = searchMinCostEdge(frontier, stage, heuristicFlg);
+		}
 
 		if (nowEdge == nullptr)
 		{
@@ -135,7 +142,7 @@ Edge* SearchAI::searchMinCostEdge(std::vector<Edge*>& frontier, Stage* stage, bo
 			// TODO 08_01
 			// frontCostに見積コストの加算
 			// 見積コストの計算にはheuristicCulc関数を使用しても良い
-			frontCost += heuristicCulc(stage->wayPoint[edge->destinationPoint], stage->wayPoint[stage->NearWayPointIndex(Goal::Instance().GetPosition())]);
+			frontCost += heuristicCulc(stage->wayPoint[edge->destinationPoint].get(), stage->wayPoint[stage->NearWayPointIndex(Goal::Instance().GetPosition())].get());
 		}
 
 		// TODO 07_06
@@ -288,8 +295,8 @@ void SearchAI::SearchClear(Stage* stage)
 
 	//サーチ済みのFGをリセット
 	for (int i = 0; i < MAX_WAY_POINT; i++) {
-		stage->wayPoint[i]->searchFg = false;
-		stage->wayPoint[i]->costFromStart = -1.0f;
+		stage->wayPoint[i].get()->searchFg = false;
+		stage->wayPoint[i].get()->costFromStart = -1.0f;
 		findRoot[i] = -1;
 	}
 }

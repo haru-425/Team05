@@ -8,7 +8,7 @@
 #define ANISOTROPIC 2
 
 SamplerState sampler_states[3] : register(s0);
-Texture2D texture_map : register(t0);
+Texture2D texture_map : register(t10);
 
 /**
  * @brief CRTディスプレイ風の歪み・色収差・走査線・エッジフェード効果を付与するピクセルシェーダ

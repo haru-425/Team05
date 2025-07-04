@@ -9,6 +9,8 @@
 #include "FrameBuffer.h"
 #include "FullScreenquad.h"
 #include "GpuResourceUtils.h"
+#include "Bloom.h"
+#include "imgui.h"
 
 // グラフィックス
 class Graphics
@@ -113,11 +115,19 @@ public:
 		NoSignalFinale,
 		VisionBootDown,
 		Crackshaft,
+		HighLightPass,
+		Blur,
+		BloomFinal,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
 	std::unique_ptr<fullscreen_quad> bit_block_transfer;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixel_shaders[int(PPShaderType::Count)];
+
+	// BLOOM
+	std::unique_ptr<bloom> bloomer;
+
+
 	void UpdateConstantBuffer(float Time) {
 		TimeCBuffer timeCBuffer;
 		timeCBuffer.time = Time;
@@ -132,5 +142,18 @@ public:
 		immediateContext->PSSetConstantBuffers(11, 1, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].GetAddressOf());
 		immediateContext->VSSetConstantBuffers(11, 1, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].GetAddressOf());
 
+	}
+
+	void DebugGUI()
+	{
+		if (ImGui::TreeNode("Bloom"))
+		{
+
+			// BLOOM
+			ImGui::SliderFloat("bloom_extraction_threshold", &bloomer->bloom_extraction_threshold, +0.0f, +5.0f);
+			ImGui::SliderFloat("bloom_intensity", &bloomer->bloom_intensity, +0.0f, +5.0f);
+
+			ImGui::TreePop();
+		}
 	}
 };

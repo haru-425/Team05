@@ -2,9 +2,11 @@
 #include"SceneTitle.h"
 #include"System/Input.h"
 #include"SceneGame.h"
+#include"fujimoto.h"
 #include"SceneManager.h"
 #include"SceneLoading.h"
 #include"SceneGraphics.h"
+#include "Scene/SceneMattsu.h"
 
 //èâä˙âª
 void SceneTitle::Initialize()
@@ -39,6 +41,18 @@ void SceneTitle::Update(float elapsedTime)
 	if (anyButton & gamePad.GetButton())
 	{
 		//SceneManager::instance().ChangeScene(new SceneGame);
+		SceneManager::instance().ChangeScene(new SceneLoading(new SceneGame));
+	}
+	if (GetAsyncKeyState('F') & 0x8000)
+	{
+		SceneManager::instance().ChangeScene(new SceneLoading(new fujimoto));
+	}
+	if (GetAsyncKeyState('M') & 0x8000)
+	{
+		SceneManager::instance().ChangeScene(new SceneLoading(new SceneMattsu));
+	}
+	if (GetAsyncKeyState('G') & 0x8000)
+	{
 		SceneManager::instance().ChangeScene(new SceneLoading(new SceneGraphics));
 	}
 }
