@@ -461,10 +461,50 @@
     <ClInclude Include="Source\System\bloom.h">
       <Filter>Source\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Math\Collision.h" />
+    <ClInclude Include="Source\GameObjects\GameObject.h" />
+    <ClInclude Include="Source\GameObjects\Player\Player.h" />
+    <ClInclude Include="Source\Camera\CameraController\FPCameraController.h" />
+    <ClInclude Include="Source\Camera\CameraController\ICameraController.h" />
+    <ClInclude Include="Source\Camera\CameraController\FreeCameraController.h" />
+    <ClInclude Include="Source\GameObjects\Enemy\Enemy.h" />
+    <ClInclude Include="Source\Scene\SceneMattsu.h" />
+    <ClInclude Include="Source\MiniMap.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Scene.hlsli">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameObjects\Character.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Collision.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameObjects\Player\Player.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera\CameraController\FPCameraController.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera\CameraController\FreeCameraController.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameObjects\Enemy\Enemy.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneMattsu.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MiniMap.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Sprite.hlsli">
+      <Filter>Shader</Filter>
     </None>
     <None Include="Shader\Basic.hlsli">
       <Filter>Shader</Filter>
