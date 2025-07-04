@@ -55,6 +55,7 @@ void Stage::Render(const RenderContext& rc, ModelRenderer* renderer)
     //renderer->Render(rc, world, model, ShaderId::Lambert);
 
     textures->Clear(rc);
+
 }
 
 

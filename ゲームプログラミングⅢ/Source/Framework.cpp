@@ -35,8 +35,7 @@ Framework::Framework(HWND hWnd)
 	ImGuiRenderer::Initialize(hWnd, Graphics::Instance().GetDevice(), Graphics::Instance().GetDeviceContext());
 
 	// シーン初期化
-	//SceneManager::instance().ChangeScene(new SceneTitle);
-	SceneManager::instance().ChangeScene(new SceneGraphics);
+	SceneManager::instance().ChangeScene(new SceneTitle);
 }
 
 // デストラクタ
@@ -74,7 +73,7 @@ void Framework::Render(float elapsedTime)
 	ID3D11DeviceContext* dc = Graphics::Instance().GetDeviceContext();
 
 	// 画面クリア
-	Graphics::Instance().Clear(0, 0, 1, 1);
+	Graphics::Instance().Clear(0, 0, 0, 1);
 
 	// レンダーターゲット設定
 	Graphics::Instance().SetRenderTargets();
