@@ -10,7 +10,7 @@
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 
-static int time = 0; // デバッグ用タイマー
+static float time = 0; // デバッグ用タイマー
 
 /**
  * @file SceneGraphics.cpp
