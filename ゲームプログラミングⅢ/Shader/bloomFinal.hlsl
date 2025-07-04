@@ -31,5 +31,5 @@ float4 main(VS_OUT pin) : SV_TARGET
     const float INV_GAMMA = 1.0 / 2.2;
     fragment_color = pow(fragment_color, INV_GAMMA);
 
-    return float4(fragment_color, alpha);
+    return float4(fragment_color, 1);
 }
