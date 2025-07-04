@@ -167,6 +167,9 @@
     <ClInclude Include="Source\Camera\CameraController\FreeCameraController.h" />
     <ClInclude Include="Source\GameObjects\Enemy\Enemy.h" />
     <ClInclude Include="Source\Scene\SceneMattsu.h" />
+    <ClInclude Include="Source\MiniMap.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -296,6 +299,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\SceneMattsu.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MiniMap.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

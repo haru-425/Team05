@@ -3,7 +3,7 @@
 #include "Sprite.h"
 #include "Misc.h"
 #include "GpuResourceUtils.h"
-
+#include"imgui.h"
 // コンストラクタ
 Sprite::Sprite()
 	: Sprite(nullptr)
@@ -31,6 +31,19 @@ Sprite::Sprite(const char* filename)
 		hr = device->CreateBuffer(&buffer_desc, nullptr, vertexBuffer.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
+	//円形に描画するために必要なデータを入れる定数バッファ
+	{
+		D3D11_BUFFER_DESC buffer_desc = {};
+		buffer_desc.ByteWidth = sizeof(MiniMap);
+		buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+		buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		buffer_desc.CPUAccessFlags = 0;
+		buffer_desc.MiscFlags = 0;
+		buffer_desc.StructureByteStride = 0;
+
+		hr = device->CreateBuffer(&buffer_desc, nullptr, minimap_constant_Buffer.GetAddressOf());
+	}
+
 
 	// 頂点シェーダー
 	{
@@ -94,8 +107,12 @@ void Sprite::Render(const RenderContext& rc,
 	float sw, float sh,					// 画像切り抜きサイズ
 	float angle,						// 角度
 	float r, float g, float b, float a	// 色
+	,bool minimapFlg//ミニマップのように表示するかどうか
+	,float radius,//半径
+	float parametar
 	) const
 {
+
 	ID3D11DeviceContext* dc = rc.deviceContext;
 
 	// 頂点座標
@@ -181,9 +198,21 @@ void Sprite::Render(const RenderContext& rc,
 	// 頂点バッファの内容の編集を終了する。
 	dc->Unmap(vertexBuffer.Get(), 0);
 
+
 	// GPUに描画するためのデータを渡す
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
+
+
+	//定数バッファ更新
+	{
+		MiniMap minimap{};
+		minimap.Flag = minimapFlg;
+		minimap.radius = radius;
+		minimap.paramatar = parametar;
+		dc->UpdateSubresource(minimap_constant_Buffer.Get(), 0, 0, &minimap, 0, 0);
+	}
+
 	dc->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 	dc->IASetInputLayout(inputLayout.Get());
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -191,6 +220,9 @@ void Sprite::Render(const RenderContext& rc,
 	dc->PSSetShader(pixelShader.Get(), nullptr, 0);
 	dc->PSSetShaderResources(0, 1, shaderResourceView.GetAddressOf());
 
+	//定数バッファセット
+	dc->PSSetConstantBuffers(0, 1, minimap_constant_Buffer.GetAddressOf());
+	
 	// レンダーステート設定
 	dc->OMSetDepthStencilState(rc.renderState->GetDepthStencilState(DepthState::NoTestNoWrite), 0);
 	dc->RSSetState(rc.renderState->GetRasterizerState(RasterizerState::SolidCullNone));

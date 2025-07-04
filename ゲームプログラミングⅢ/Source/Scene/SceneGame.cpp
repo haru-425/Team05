@@ -4,6 +4,7 @@
 #include "System/GamePad.h"
 #include "System/Input.h"
 
+
 // 初期化
 void SceneGame::Initialize()
 {
@@ -23,6 +24,9 @@ void SceneGame::Initialize()
 	i_CameraController = std::make_unique<FPCameraController>();
 
 	player = std::make_shared<Player>();
+
+	//ミニマップスプライト初期化
+	minimap = new MiniMap();
 }
 
 // 終了化
@@ -34,6 +38,12 @@ void SceneGame::Finalize()
 		delete stage;
 		stage = nullptr;
 	}
+	//ミニマップ終了化
+	if (minimap != nullptr)
+	{
+		delete minimap;
+		minimap = nullptr;
+	}
 }
 
 // 更新処理
@@ -44,6 +54,7 @@ void SceneGame::Update(float elapsedTime)
 	//ステージ更新処理
 	stage->Update(elapsedTime);
 	player->Update(elapsedTime);
+	minimap->Update(player->GetPosition());
 
 	// 一人称用カメラ
 	if (typeid(*i_CameraController) == typeid(FPCameraController))
@@ -112,11 +123,12 @@ void SceneGame::Render()
 	
 	// 2Dスプライト描画
 	{
-
+		minimap->Render(player->GetPosition());
 	}
 }
 
 // GUI描画
 void SceneGame::DrawGUI()
 {
+	minimap->DrawImGui();
 }

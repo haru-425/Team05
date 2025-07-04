@@ -129,6 +129,7 @@
     <ClInclude Include="Source\GameObjects\GameObject.h" />
     <ClInclude Include="Source\GameObjects\Player\Player.h" />
     <ClInclude Include="Source\Math\Collision.h" />
+    <ClInclude Include="Source\MiniMap.h" />
     <ClInclude Include="Source\Projectile.h" />
     <ClInclude Include="Source\ProjectileHoming.h" />
     <ClInclude Include="Source\ProjectileManager.h" />
@@ -179,6 +180,7 @@
     <ClCompile Include="Source\GameObjects\Player\Player.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Math\Collision.cpp" />
+    <ClCompile Include="Source\MiniMap.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />
     <ClCompile Include="Source\ProjectileHoming.cpp" />
     <ClCompile Include="Source\ProjectileManager.cpp" />
