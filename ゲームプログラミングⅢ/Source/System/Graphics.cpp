@@ -129,6 +129,43 @@ void Graphics::Initialize(HWND hWnd)
 	shapeRenderer = std::make_unique<ShapeRenderer>(device.Get());
 	modelRenderer = std::make_unique<ModelRenderer>(device.Get());
 
+	// 定数バッファ生成
+	// 時間を格納する定数バッファ
+	D3D11_BUFFER_DESC bufferDesc{};
+	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(TimeCBuffer));
+	bufferDesc.StructureByteStride = sizeof(TimeCBuffer);
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.MiscFlags = 0;
+	hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::TimeCBuffer)].ReleaseAndGetAddressOf());
+	// 画面サイズを格納する定数バッファ
+	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(ScreenSizeCBuffer));
+	bufferDesc.StructureByteStride = sizeof(ScreenSizeCBuffer);
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.MiscFlags = 0;
+	hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].ReleaseAndGetAddressOf());
+	//framebufferの生成
+	for (int i = 0; i <int(PPShaderType::Count); i++)
+	{
+
+		framebuffers[i] = std::make_unique<framebuffer>(device.Get(), screenWidth, screenHeight);
+	}
+
+	bloomer = std::make_unique<bloom>(device.Get(), 1280, 720);
+	bit_block_transfer = std::make_unique<fullscreen_quad>(device.Get());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/crtPS.cso", pixel_shaders[int(PPShaderType::crt)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/GlitchPS.cso", pixel_shaders[int(PPShaderType::Glitch)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/SharpenPS.cso", pixel_shaders[int(PPShaderType::Sharpen)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BreathShakePS.cso", pixel_shaders[int(PPShaderType::BreathShake)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TemporalNoisePS.cso", pixel_shaders[int(PPShaderType::TemporalNoise)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/NoSignalFinalePS.cso", pixel_shaders[int(PPShaderType::NoSignalFinale)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/VisionBootDownPS.cso", pixel_shaders[int(PPShaderType::VisionBootDown)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/CrackshaftPS.cso", pixel_shaders[int(PPShaderType::Crackshaft)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/HighLightPassPS.cso", pixel_shaders[int(PPShaderType::HighLightPass)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BlurPS.cso", pixel_shaders[int(PPShaderType::Blur)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BloomFinal.cso", pixel_shaders[int(PPShaderType::BloomFinal)].ReleaseAndGetAddressOf());
+
 }
 
 // クリア

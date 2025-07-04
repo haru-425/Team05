@@ -9,6 +9,7 @@
 #include "SceneGame.h"
 #include "SceneTitle.h"
 #include "SceneMattsu.h"
+#include"SceneGraphics.h"
 #include "SceneManager.h"
 #include "System/Audio.h"
 
@@ -58,7 +59,7 @@ void Framework::Update(float elapsedTime)
 	// インプット更新処理
 	Input::Instance().Update();
 
-	// IMGUIフレーム開始処理	
+	// IMGUIフレーム開始処理
 	ImGuiRenderer::NewFrame();
 
 	// シーン更新処理
@@ -99,8 +100,8 @@ void Framework::Render(float elapsedTime)
 // フレームレート計算
 void Framework::CalculateFrameStats()
 {
-	// Code computes the average frames per second, and also the 
-	// average time it takes to render one frame.  These stats 
+	// Code computes the average frames per second, and also the
+	// average time it takes to render one frame.  These stats
 	// are appended to the window caption bar.
 	static int frames = 0;
 	static float time_tlapsed = 0.0f;
