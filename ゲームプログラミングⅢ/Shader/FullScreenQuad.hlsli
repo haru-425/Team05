@@ -42,7 +42,7 @@ cbuffer TimeCBuffer : register(b10)
      *
      * メモリアライメントや将来の拡張のために確保されています。
      */
-    float3 pud0;
+    float2 pud0;
 }
 
 cbuffer ScreenSizeCBuffer : register(b11)
