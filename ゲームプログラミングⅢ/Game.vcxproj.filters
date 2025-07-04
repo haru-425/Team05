@@ -7,18 +7,6 @@
     <FxCompile Include="Shader\BasicVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\BlurPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\BreathShakePS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\CrackshaftPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\crtPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Shader\CustomPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -31,19 +19,10 @@
     <FxCompile Include="Shader\FullScreenQuadVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\GlitchPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\HighLightPassPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Shader\LambertPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\LambertVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\NoSignalFinalePS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\PrimitiveRendererPS.hlsl">
@@ -58,20 +37,59 @@
     <FxCompile Include="Shader\ShapeRendererVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\SharpenPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Shader\SpritePS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\SpriteVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\TemporalNoisePS.hlsl">
-      <Filter>Shader</Filter>
+    <FxCompile Include="Shader\bloomFinal.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\crtPS.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\CrackshaftPS.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\BreathShakePS.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\BlurPS.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\GlitchPS.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\HighLightPassPS.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\NoSignalFinalePS.hlsl">
+      <Filter>Shader\PP</Filter>
     </FxCompile>
     <FxCompile Include="Shader\VisionBootDownPS.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\TemporalNoisePS.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\SharpenPS.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_downsampling_ps.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_horizontal_ps.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_upsampling_ps.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_vertical_ps.hlsl">
+      <Filter>Shader\PP</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\glow_extraction_ps.hlsl">
+      <Filter>Shader\PP</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +257,9 @@
     </ClCompile>
     <ClCompile Include="Source\System\Sprite.cpp">
       <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Bloom.cpp">
+      <Filter>Source\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -437,6 +458,9 @@
     <ClInclude Include="Source\System\Sprite.h">
       <Filter>Source\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\System\bloom.h">
+      <Filter>Source\Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Scene.hlsli">
@@ -469,6 +493,9 @@
     <None Include="Shader\Sprite.hlsli">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shader\Bloom.hlsli">
+      <Filter>Shader\PP</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scene">
@@ -500,6 +527,9 @@
     </Filter>
     <Filter Include="Source\Shader">
       <UniqueIdentifier>{3bdf260f-9a7a-4a2b-9bcf-710c92aa814f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\PP">
+      <UniqueIdentifier>{a1406410-bfff-4e0f-96a8-00592851c9ca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
