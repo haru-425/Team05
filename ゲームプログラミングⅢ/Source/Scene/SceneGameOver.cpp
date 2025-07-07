@@ -54,7 +54,7 @@ void Game_Over::Render()
 		}
 	}
 	/// フレームバッファのクリアとアクティベート（ポストプロセス用）
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 0.5f, 0.5f, 1, 1);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 0, 0, 0, 1);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
 
 	{//ノイズの影響を受けるものはここ
