@@ -12,6 +12,7 @@
 #include"SceneGraphics.h"
 #include "SceneManager.h"
 #include "System/Audio.h"
+#include "System/SettingsManager.h"
 
 // 垂直同期間隔設定
 static const int syncInterval = 1;
@@ -20,6 +21,9 @@ static const int syncInterval = 1;
 Framework::Framework(HWND hWnd)
 	: hWnd(hWnd)
 {
+	// 設定読み込み
+	SettingsManager::Instance().Load();
+
 	// オーディオ初期化
 	Audio::Instance().Instance();
 

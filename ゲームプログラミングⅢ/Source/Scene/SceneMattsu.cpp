@@ -5,6 +5,10 @@
 #include "System/Input.h"
 #include "Collision.h"
 
+// データ保存テスト
+#include "System/SettingsManager.h"
+#include "imgui.h"
+
 void SceneMattsu::Initialize()
 {
 	//ステージ初期化
@@ -43,17 +47,44 @@ void SceneMattsu::Update(float elapsedTime)
 {
 	GamePad& gamepad = Input::Instance().GetGamePad();
 
-	UpdateCamera(elapsedTime);
+	bool cameraUpdateFlag = false;
 
-	//ステージ更新処理
-	stage->Update(elapsedTime);
-	player->Update(elapsedTime);
-	enemy->Update(elapsedTime);
+	static DirectX::XMFLOAT2 savePitchYaw = { i_CameraController->GetPitch(), i_CameraController->GetYaw() };
+	if (GetAsyncKeyState('P') & 0x01)
+	{
+		isPause = !isPause;
+		if (isPause)
+			savePitchYaw = { i_CameraController->GetPitch(), i_CameraController->GetYaw() };
+		else
+		{
+			i_CameraController->SetPitch(savePitchYaw.x);
+			i_CameraController->SetYaw(savePitchYaw.y);
 
-	Collision();
+			POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
+			ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
+			SetCursorPos(screenPoint.x, screenPoint.y);
 
-	player->UpdateTransform();
-	enemy->UpdateTransform();
+			// カメラの座標をセットしても、反映されるのは次のフレームだから
+			// 1フレームだけ更新処理をずらす
+			cameraUpdateFlag = true;
+		}
+	}
+
+	if (!isPause && !cameraUpdateFlag)
+	{
+
+		UpdateCamera(elapsedTime);
+
+		//ステージ更新処理
+		stage->Update(elapsedTime);
+		player->Update(elapsedTime);
+		enemy->Update(elapsedTime);
+
+		Collision();
+
+		player->UpdateTransform();
+		enemy->UpdateTransform();
+	}
 }
 
 void SceneMattsu::Render()
@@ -105,12 +136,36 @@ void SceneMattsu::DrawGUI()
 {
 	player->DrawDebug();
 	i_CameraController->DebugGUI();
+
+	// データ保存テスト
+	static GameSettings settings = SettingsManager::Instance().GetGameSettings();
+	if (ImGui::Begin("TestSetting"))
+	{
+		
+		ImGui::SliderFloat("mouse Sensitivity", &settings.sensitivity, 0.00f, 2.00f);
+
+		if(SettingsManager::Instance().GetGameSettings().sensitivity * 100 != settings.sensitivity * 100)
+			SettingsManager::Instance().SetGameSettings(settings);
+
+		if (ImGui::Button("Save"))
+		{
+			SettingsManager::Instance().Save();
+		}
+		if (ImGui::Button("Reset settings"))
+		{
+			SettingsManager::Instance().ResetToDefault();
+			settings = SettingsManager::Instance().GetGameSettings();
+		}
+	}
+	ImGui::End();
 }
 
 // シーン内オブジェクトの当たり判定
 void SceneMattsu::Collision()
 {
 	PlayerVsStage();
+
+	//PlayerVsEnemy();
 }
 
 void SceneMattsu::PlayerVsStage()
@@ -273,6 +328,26 @@ void SceneMattsu::PlayerVsStage()
 		player->SetPosition(saveLastPosition);
 	}
 #endif
+}
+
+void SceneMattsu::PlayerVsEnemy()
+{
+	float pRadius = player->GetRadius(); /// プレイヤーの当たり判定半径
+	float eRadius = enemy->GetRadius();	 /// 敵の当たり判定半径
+	DirectX::XMFLOAT3 pPos = player->GetPosition();
+	DirectX::XMFLOAT3 ePos = enemy->GetPosition();
+
+	DirectX::XMFLOAT3 outPos = {};
+	if (Collision::IntersectSphereVsSphere(pPos, pRadius, ePos, eRadius, outPos))
+	{
+		player->SetIsHit(true);
+		enemy->SetIsHit(true);
+	}
+	else
+	{
+		player->SetIsHit(false);
+		enemy->SetIsHit(false);
+	}
 }
 
 void SceneMattsu::UpdateCamera(float dt)

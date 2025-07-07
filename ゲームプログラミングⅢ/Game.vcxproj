@@ -176,6 +176,7 @@
     <ClInclude Include="Source\System\Mouse.h" />
     <ClInclude Include="Source\System\RenderContext.h" />
     <ClInclude Include="Source\System\RenderState.h" />
+    <ClInclude Include="Source\System\SettingsManager.h" />
     <ClInclude Include="Source\System\Shader.h" />
     <ClInclude Include="Source\System\ShadowCaster.h" />
     <ClInclude Include="Source\System\ShapeRenderer.h" />
@@ -238,6 +239,7 @@
     <ClCompile Include="Source\System\ModelResource.cpp" />
     <ClCompile Include="Source\System\Mouse.cpp" />
     <ClCompile Include="Source\System\RenderState.cpp" />
+    <ClCompile Include="Source\System\SettingsManager.cpp" />
     <ClCompile Include="Source\System\ShadowCaster.cpp" />
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
     <ClCompile Include="Source\System\Sprite.cpp" />

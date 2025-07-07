@@ -5,14 +5,15 @@
 #include "System/AnimationController.h"
 
 // テスト用のモデルだったりを切り替えるよう
-#define TEST
+//#define TEST
 
 // プレイヤーパラメータ設定
 static constexpr float maxHijackTime        = 50; // ハイジャックの最大時間
 static constexpr int hijackCost             = 5;   // ハイジャックコスト
 static constexpr int hijackCostPerSec       = 5;   // 一秒ごとのハイジャックコスト
 static constexpr int hijackRecoveryPerSec   = 3;   // 一秒ごとのハイジャックコストの回復量
-static constexpr float speed                = 3;   // プレイヤー移動速度
+static constexpr float maxSpeed             = 3.0f; // プレイヤーの最高速度
+static float acceleration                   = 1.1f; // 加速度
 
 static enum class AnimationState
 {
@@ -57,10 +58,13 @@ private:
     std::shared_ptr<Model> model;
     std::shared_ptr<Enemy> enemyRef = nullptr; // 敵用
 
+    float accel         = 0.0f; // 加速度
+    float speed         = 0.0f;  // プレイヤー移動速度
     bool useCam         = false; // true : 敵視点 ,false : プレイヤー視点
     bool isChange       = false; // カメラを変えたかどうか
-    bool isHijack       = false; // 敵の視界をハイジャックしたのか
+    bool isHijack       = false; // 敵の視界をハイジャックしたのか 多分使ってない
     bool enableHijack   = false; // ハイジャックできるのか
+    bool isEvent        = false; // 死亡演出フラグ
 
     float enableHijackTime; // ハイジャック時間
     float hijackSpeed = 0.0f;  // 視界ジャックの時間を減らす速度

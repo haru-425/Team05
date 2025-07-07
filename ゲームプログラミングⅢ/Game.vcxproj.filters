@@ -12,6 +12,7 @@
     <FxCompile Include="Shader\CustomVS.hlsl" />
     <FxCompile Include="Shader\FullScreenQuadPS.hlsl" />
     <FxCompile Include="Shader\FullScreenQuadVS.hlsl" />
+    <FxCompile Include="Shader\GlitchPS.hlsl" />
     <FxCompile Include="Shader\gaussian_blur_downsampling_ps.hlsl" />
     <FxCompile Include="Shader\gaussian_blur_horizontal_ps.hlsl" />
     <FxCompile Include="Shader\gaussian_blur_upsampling_ps.hlsl" />
@@ -92,6 +93,7 @@
     <ClCompile Include="Source\System\ShadowCaster.cpp" />
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
     <ClCompile Include="Source\System\Sprite.cpp" />
+    <ClCompile Include="Source\System\SettingsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -161,6 +163,10 @@
     <ClInclude Include="Source\System\ShadowCaster.h" />
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\System\Sprite.h" />
+    <ClInclude Include="Source\System\SettingsManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Basic.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />

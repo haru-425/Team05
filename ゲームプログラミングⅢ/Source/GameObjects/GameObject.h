@@ -68,10 +68,14 @@ public:
 
     float GetViewPoint() const { return viewPoint; }
 
+    float GetRadius() const { return radius; }
+
     // セッター
     void SetPosition(const DirectX::XMFLOAT3& position) { this->position = position; }
     void SetAngle(const DirectX::XMFLOAT3& angle) { this->angle = angle; }
     void SetScale(const DirectX::XMFLOAT3& scale) { this->scale = scale; }
+
+    void SetIsHit(bool isHit) { this->isHit = isHit; }
 
 protected:
     DirectX::XMFLOAT3 position = { 0,0,0 };
@@ -90,5 +94,7 @@ protected:
     float radius = 0;                   // 探索に使う？
     float acceleration = 0;             // 加速度
     DirectX::XMFLOAT3 saveDirection;    // 最後のカメラの方向を保存するため
+
+    bool isHit = false;
 };
 
