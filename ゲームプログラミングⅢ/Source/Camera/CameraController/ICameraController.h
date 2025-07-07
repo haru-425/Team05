@@ -17,6 +17,9 @@ public:
     void SetIsChange(bool isChange) { this->isChange = isChange; }
     void SetUseEnemyCam(bool useEnemyCam) { this->useEnemyCam = useEnemyCam; }
 
+    float GetPitch() const { return pitch; }
+    float GetYaw() const { return yaw; }
+
     void SetPitch(float pitch) { this->pitch = pitch; }
     void SetYaw(float yaw) { this->yaw = yaw; }
 

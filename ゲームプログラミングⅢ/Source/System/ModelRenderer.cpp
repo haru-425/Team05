@@ -132,7 +132,7 @@ void ModelRenderer::Render(const RenderContext& rc, const DirectX::XMFLOAT4X4& w
 
 	// レンダーステート設定
 	dc->OMSetDepthStencilState(rc.renderState->GetDepthStencilState(DepthState::TestAndWrite), 0);
-	dc->RSSetState(rc.renderState->GetRasterizerState(RasterizerState::SolidCullBack));
+	dc->RSSetState(rc.renderState->GetRasterizerState(RasterizerState::SolidCullNone));
 
 	// ブレンドステート設定
 	dc->OMSetBlendState(rc.renderState->GetBlendState(BlendState::Transparency), nullptr, 0xFFFFFFFF);

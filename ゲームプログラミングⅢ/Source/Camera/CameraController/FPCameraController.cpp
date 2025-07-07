@@ -4,6 +4,7 @@
 #include <DirectXMath.h>
 #include "Camera/Camera.h"
 #include "imgui.h"
+#include "System/SettingsManager.h"
 
 void FPCameraController::Update(float dt)
 {
@@ -15,12 +16,13 @@ void FPCameraController::Update(float dt)
     //////////////////////////////////////////////////////////////
 
     static constexpr float MAX_PITCH = 89.9f * 0.01745f;
-    float sensitivity = 0.005f; // マウス感度
+    float sensitivity = 0.005f * SettingsManager::Instance().GetGameSettings().sensitivity; // マウス感度
 
+    float mouseX = mouse.GetPositionX(), mouseY = mouse.GetPositionY(), screenW = mouse.GetScreenWidth(), screenH = mouse.GetScreenHeight();
     if (!useEnemyCam)
     {
-        yaw += (mouse.GetPositionX() - mouse.GetScreenWidth() / 2) * sensitivity;
-        pitch += -(mouse.GetPositionY() - mouse.GetScreenHeight() / 2) * sensitivity;
+        yaw += (mouseX - screenW / 2) * sensitivity;
+        pitch += -(mouseY - screenH / 2) * sensitivity;
     }
     // 90度だとバグるので
     pitch = std::clamp(pitch, -MAX_PITCH, MAX_PITCH);
