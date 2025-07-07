@@ -21,7 +21,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 color = texture_maps[0].Sample(sampler_states[POINT], pin.texcoord);
     color.a = 1;
     float4 bloom = texture_maps[1].Sample(sampler_states[POINT], pin.texcoord);
-
+    color.a = 1.0; // Ensure alpha is set to 1 for the final output
     float3 fragment_color = color.rgb + bloom.rgb;
     float alpha = color.a;
 
@@ -32,5 +32,5 @@ float4 main(VS_OUT pin) : SV_TARGET
     const float INV_GAMMA = 1.0 / 2.2;
     fragment_color = pow(fragment_color, INV_GAMMA);
 
-    return float4(fragment_color, alpha);
+    return float4(fragment_color, 1);
 }

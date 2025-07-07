@@ -119,6 +119,7 @@ public:
 		HighLightPass,
 		Blur,
 		BloomFinal,
+		TVNoiseFade,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
@@ -129,10 +130,10 @@ public:
 	std::unique_ptr<bloom> bloomer;
 
 
-	void UpdateConstantBuffer(float Time) {
+	void UpdateConstantBuffer(float Time, float signalTime = 0) {
 		TimeCBuffer timeCBuffer;
 		timeCBuffer.time = Time;
-		timeCBuffer.SignalTime = 0; //SignalTimeを更新するとテレビのような画面切り替え(0.3ｓ)
+		timeCBuffer.SignalTime = signalTime; //SignalTimeを更新するとテレビのような画面切り替え(0.3ｓ)
 		immediateContext->UpdateSubresource(cbuffer[int(ConstantBufferType::TimeCBuffer)].Get(), 0, 0, &timeCBuffer, 0, 0);
 		immediateContext->PSSetConstantBuffers(10, 1, cbuffer[int(ConstantBufferType::TimeCBuffer)].GetAddressOf());
 		immediateContext->VSSetConstantBuffers(10, 1, cbuffer[int(ConstantBufferType::TimeCBuffer)].GetAddressOf());
