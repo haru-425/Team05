@@ -37,7 +37,7 @@ struct LineLight
 
 cbuffer CbLights : register(b4)
 {
-    PointLight pointLights[47];
-    LineLight lineLights[42];
+    PointLight pointLights[256];
+    LineLight lineLights[256];
     float power;
 }

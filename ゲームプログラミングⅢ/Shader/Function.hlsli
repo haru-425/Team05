@@ -178,32 +178,30 @@ float3 SpecularBRDF(float NdotV, float NdotL, float NdotH, float VdotH, float3 f
 //roughness				: ‘e‚³
 void DirectBDRF(float3 diffuseReflectance,
 				float3 F0,
-				float3 N,
-				float3 V,
-				float3 L,
-                float3 H,
+				float3 normal,
+				float3 eyeVector,
+				float3 lightVector,
 				float3 lightColor,
 				float roughness,
 				out float3 outDiffuse,
 				out float3 outSpecular)
 {
-    //float3 N = normal;
-    //float3 L = -lightVector;
-    //float3 V = -eyeVector;
-    //float3 H = normalize(L + V);
+    float3 N = normal;
+    float3 L = lightVector;
+    float3 V = eyeVector;
+    float3 H = normalize(L + V);
 
     float NdotV = max(0.0001f, dot(N, V));
     float NdotL = max(0.0001f, dot(N, L));
     float NdotH = max(0.0001f, dot(N, H));
     float VdotH = max(0.0001f, dot(V, H));
 
-    float3 irradiance = lightColor * NdotL;
 
     //	ŠgŽU”½ŽËBRDF
-    outDiffuse = DiffuseBRDF(VdotH, F0, diffuseReflectance) * irradiance;
+    outDiffuse = DiffuseBRDF(VdotH, F0, diffuseReflectance) * lightColor;
 
 	//	‹¾–Ê”½ŽËBRDF
-    outSpecular = SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * irradiance;
+    outSpecular = SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * lightColor;
 }
 
 
