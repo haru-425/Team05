@@ -19,13 +19,14 @@ float3 reinhard_tone_mapping(float3 color)
 float4 main(VS_OUT pin) : SV_TARGET
 {
     float4 color = texture_maps[0].Sample(sampler_states[POINT], pin.texcoord);
+    color.a = 1;
     float4 bloom = texture_maps[1].Sample(sampler_states[POINT], pin.texcoord);
 
     float3 fragment_color = color.rgb + bloom.rgb;
     float alpha = color.a;
 
 	// Tone map
-    fragment_color = reinhard_tone_mapping(fragment_color);
+        fragment_color = reinhard_tone_mapping(fragment_color);
 
 	// Gamma correction
     const float INV_GAMMA = 1.0 / 2.2;

@@ -11,10 +11,15 @@ public:
 	MiniMap() {
 		minimap = new Sprite("Data/Sprite/Map.png");
 		icon = new Sprite("Data/Sprite/icon.png");
+		metar = new Sprite("Data/Sprite/metar.png");
+		ring = new Sprite("Data/Sprite/ring.png");
+
 	}
 	~MiniMap() { 
 		delete minimap;
 		delete icon;
+		delete metar;
+		delete ring;
 	}
 
 	void Update(DirectX::XMFLOAT3 playerPosition);
@@ -26,6 +31,8 @@ public:
 private:
 	Sprite* minimap = nullptr;
 	Sprite* icon = nullptr;
+	Sprite* metar = nullptr;
+	Sprite* ring = nullptr;
 
 	DirectX::XMFLOAT2 MapPosition = {0,720 - 200};
 	DirectX::XMFLOAT2 iconPosition = { 0,0 };
