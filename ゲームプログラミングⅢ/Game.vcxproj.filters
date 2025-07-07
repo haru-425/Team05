@@ -3,6 +3,7 @@
   <ItemGroup>
     <FxCompile Include="Shader\BasicPS.hlsl" />
     <FxCompile Include="Shader\BasicVS.hlsl" />
+    <FxCompile Include="Shader\bloomFinal.hlsl" />
     <FxCompile Include="Shader\BlurPS.hlsl" />
     <FxCompile Include="Shader\BreathShakePS.hlsl" />
     <FxCompile Include="Shader\CrackshaftPS.hlsl" />
@@ -12,6 +13,12 @@
     <FxCompile Include="Shader\FullScreenQuadPS.hlsl" />
     <FxCompile Include="Shader\FullScreenQuadVS.hlsl" />
     <FxCompile Include="Shader\GlitchPS.hlsl" />
+    <FxCompile Include="Shader\gaussian_blur_downsampling_ps.hlsl" />
+    <FxCompile Include="Shader\gaussian_blur_horizontal_ps.hlsl" />
+    <FxCompile Include="Shader\gaussian_blur_upsampling_ps.hlsl" />
+    <FxCompile Include="Shader\gaussian_blur_vertical_ps.hlsl" />
+    <FxCompile Include="Shader\GlitchPS.hlsl" />
+    <FxCompile Include="Shader\glow_extraction_ps.hlsl" />
     <FxCompile Include="Shader\HighLightPassPS.hlsl" />
     <FxCompile Include="Shader\LambertPS.hlsl" />
     <FxCompile Include="Shader\LambertVS.hlsl" />
@@ -25,6 +32,8 @@
     <FxCompile Include="Shader\SpriteVS.hlsl" />
     <FxCompile Include="Shader\TemporalNoisePS.hlsl" />
     <FxCompile Include="Shader\VisionBootDownPS.hlsl" />
+    <FxCompile Include="Shader\TVNoiseFadePS.hlsl" />
+    <FxCompile Include="Shader\GameOverPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp" />
@@ -44,6 +53,7 @@
     <ClCompile Include="Source\LightManager.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Math\Collision.cpp" />
+    <ClCompile Include="Source\MiniMap.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />
     <ClCompile Include="Source\ProjectileHoming.cpp" />
     <ClCompile Include="Source\ProjectileManager.cpp" />
@@ -64,6 +74,7 @@
     <ClCompile Include="Source\System\AudioResource.cpp" />
     <ClCompile Include="Source\System\AudioSource.cpp" />
     <ClCompile Include="Source\System\BasicShader.cpp" />
+    <ClCompile Include="Source\System\Bloom.cpp" />
     <ClCompile Include="Source\System\CustomShader.cpp" />
     <ClCompile Include="Source\System\FrameBuffer.cpp" />
     <ClCompile Include="Source\System\FullScreenQuad.cpp" />
@@ -105,6 +116,7 @@
     <ClInclude Include="Source\LightDebugCameraController.h" />
     <ClInclude Include="Source\LightManager.h" />
     <ClInclude Include="Source\Math\Collision.h" />
+    <ClInclude Include="Source\MiniMap.h" />
     <ClInclude Include="Source\Projectile.h" />
     <ClInclude Include="Source\ProjectileHoming.h" />
     <ClInclude Include="Source\ProjectileManager.h" />
@@ -128,6 +140,7 @@
     <ClInclude Include="Source\System\AudioResource.h" />
     <ClInclude Include="Source\System\AudioSource.h" />
     <ClInclude Include="Source\System\BasicShader.h" />
+    <ClInclude Include="Source\System\bloom.h" />
     <ClInclude Include="Source\System\CustomShader.h" />
     <ClInclude Include="Source\System\FrameBuffer.h" />
     <ClInclude Include="Source\System\FullScreenQuad.h" />
@@ -154,6 +167,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Basic.hlsli" />
+    <None Include="Shader\Bloom.hlsli" />
     <None Include="Shader\Custom.hlsli" />
     <None Include="Shader\FullScreenQuad.hlsli" />
     <None Include="Shader\Function.hlsli" />

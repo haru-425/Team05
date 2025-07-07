@@ -152,6 +152,7 @@ void Graphics::Initialize(HWND hWnd)
 		framebuffers[i] = std::make_unique<framebuffer>(device.Get(), screenWidth, screenHeight);
 	}
 
+	bloomer = std::make_unique<bloom>(device.Get(), 1280, 720);
 	bit_block_transfer = std::make_unique<fullscreen_quad>(device.Get());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/crtPS.cso", pixel_shaders[int(PPShaderType::crt)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/GlitchPS.cso", pixel_shaders[int(PPShaderType::Glitch)].ReleaseAndGetAddressOf());
@@ -163,6 +164,9 @@ void Graphics::Initialize(HWND hWnd)
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/CrackshaftPS.cso", pixel_shaders[int(PPShaderType::Crackshaft)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/HighLightPassPS.cso", pixel_shaders[int(PPShaderType::HighLightPass)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BlurPS.cso", pixel_shaders[int(PPShaderType::Blur)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BloomFinal.cso", pixel_shaders[int(PPShaderType::BloomFinal)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TVNoiseFadePS.cso", pixel_shaders[int(PPShaderType::TVNoiseFade)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/GameOverPS.cso", pixel_shaders[int(PPShaderType::GameOver)].ReleaseAndGetAddressOf());
 
 }
 

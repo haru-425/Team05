@@ -128,9 +128,11 @@
     <ClInclude Include="Source\GameObjects\Enemy\Enemy.h" />
     <ClInclude Include="Source\GameObjects\GameObject.h" />
     <ClInclude Include="Source\GameObjects\Player\Player.h" />
+    <ClInclude Include="Source\Life.h" />
     <ClInclude Include="Source\LightDebugCameraController.h" />
     <ClInclude Include="Source\LightManager.h" />
     <ClInclude Include="Source\Math\Collision.h" />
+    <ClInclude Include="Source\MiniMap.h" />
     <ClInclude Include="Source\Projectile.h" />
     <ClInclude Include="Source\ProjectileHoming.h" />
     <ClInclude Include="Source\ProjectileManager.h" />
@@ -143,6 +145,7 @@
     <ClInclude Include="Source\Scene\fujimoto.h" />
     <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Scene\SceneGame.h" />
+    <ClInclude Include="Source\Scene\SceneGameOver.h" />
     <ClInclude Include="Source\Scene\SceneGraphics.h" />
     <ClInclude Include="Source\Scene\SceneLoading.h" />
     <ClInclude Include="Source\Scene\SceneManager.h" />
@@ -154,6 +157,7 @@
     <ClInclude Include="Source\System\AudioResource.h" />
     <ClInclude Include="Source\System\AudioSource.h" />
     <ClInclude Include="Source\System\BasicShader.h" />
+    <ClInclude Include="Source\System\bloom.h" />
     <ClInclude Include="Source\System\CustomShader.h" />
     <ClInclude Include="Source\System\FrameBuffer.h" />
     <ClInclude Include="Source\System\FullScreenQuad.h" />
@@ -192,10 +196,12 @@
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\GameObjects\Enemy\Enemy.cpp" />
     <ClCompile Include="Source\GameObjects\Player\Player.cpp" />
+    <ClCompile Include="Source\Life.cpp" />
     <ClCompile Include="Source\LightDebugCameraController.cpp" />
     <ClCompile Include="Source\LightManager.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Math\Collision.cpp" />
+    <ClCompile Include="Source\MiniMap.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />
     <ClCompile Include="Source\ProjectileHoming.cpp" />
     <ClCompile Include="Source\ProjectileManager.cpp" />
@@ -205,6 +211,7 @@
     <ClCompile Include="Source\Pursuer\SearchAI.cpp" />
     <ClCompile Include="Source\Scene\fujimoto.cpp" />
     <ClCompile Include="Source\Scene\SceneGame.cpp" />
+    <ClCompile Include="Source\Scene\SceneGameOver.cpp" />
     <ClCompile Include="Source\Scene\SceneGraphics.cpp" />
     <ClCompile Include="Source\Scene\SceneLoading.cpp" />
     <ClCompile Include="Source\Scene\SceneManager.cpp" />
@@ -216,6 +223,7 @@
     <ClCompile Include="Source\System\AudioResource.cpp" />
     <ClCompile Include="Source\System\AudioSource.cpp" />
     <ClCompile Include="Source\System\BasicShader.cpp" />
+    <ClCompile Include="Source\System\Bloom.cpp" />
     <ClCompile Include="Source\System\CustomShader.cpp" />
     <ClCompile Include="Source\System\FrameBuffer.cpp" />
     <ClCompile Include="Source\System\FullScreenQuad.cpp" />
@@ -238,6 +246,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
+    <None Include="Shader\Bloom.hlsli" />
     <None Include="Shader\Custom.hlsli" />
     <None Include="Shader\FullScreenQuad.hlsli" />
     <None Include="Shader\Function.hlsli" />
@@ -256,6 +265,10 @@
     <FxCompile Include="Shader\BasicVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\bloomFinal.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\BlurPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -288,7 +301,31 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="Shader\GameOverPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_downsampling_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_horizontal_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_upsampling_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_vertical_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Shader\GlitchPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\glow_extraction_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
@@ -337,6 +374,10 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\TemporalNoisePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\TVNoiseFadePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>

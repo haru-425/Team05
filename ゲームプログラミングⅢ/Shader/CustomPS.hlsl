@@ -7,7 +7,7 @@ cbuffer CbMesh : register(b1)
     float4 materialColor;
 };
 
-Texture2D Textures[5] : register(t0);
+Texture2D Textures[6] : register(t0);
 Texture2D shadowMap : register(t8);
 
 SamplerState LinearSampler : register(s0);
@@ -18,6 +18,7 @@ SamplerState ShadowSamplerState : register(s2);
 #define ROUGHNESS_TEXTURE    2
 #define METALNESS_TEXTURE    3
 #define EMISIVE_TEXTURE      4
+#define OCCLUSION_TEXTURE    5
 
 float ComputeShadowPCF_Gaussian(float3 shadowCoord)
 {
@@ -98,19 +99,28 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3x3 mat = { normalize(pin.tangent), normalize(pin.binormal), normalize(pin.normal) };
     float3 N = Textures[NORMAL_TEXTURE].Sample(LinearSampler, pin.texcoord).rgb;
     N = normalize(mul(N * 2.0f - 1.0f, mat));
-
+    
     // emisive -----------------------------------------------------------
     float3 emisive = Textures[EMISIVE_TEXTURE].Sample(LinearSampler, pin.texcoord).rgb;
     
     // Roughness, metalness ----------------------------------------------
     float roughness = Textures[ROUGHNESS_TEXTURE].Sample(LinearSampler, pin.texcoord).r;
+    roughness = max(0, roughness);
+    roughness = 0.1f;
+
     float metalness = Textures[METALNESS_TEXTURE].Sample(LinearSampler, pin.texcoord).r;
+    metalness = max(0, metalness);       
    
+    // occlusion ---------------------------------------------------------
+    float3 occlusion = Textures[OCCLUSION_TEXTURE].Sample(LinearSampler, pin.texcoord).rgb;
+    //occlusion = 1.0f;
+    const float occlusionStrength = 1.0f;
+    
     // フレネル反射率の初期値（非金属は最低4%）
     float4 albedo = color;
     float3 F0 = lerp(0.04f, albedo.rgb, metalness); //	垂直反射時のフレネル反射率(非金属でも最低4%は鏡面反射する
     F0 = (0.04f, 0.04f, 0.04f);
-    
+
     // 視線方向と光源方向の計算
     float3 L = normalize(-lightDirection.xyz);
     float3 V = normalize(cameraPosition.xyz - pin.position.xyz);
@@ -123,16 +133,11 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 ks = { 1.0f, 1.0f, 1.0f, 1.0f }; // 鏡面光に対する反射係数    
 
     // シャドウ適用
-    color.rgb = ApplyShadowToObject(pin, color.rgb);
+    //color.rgb = ApplyShadowToObject(pin, color.rgb);
    
     // 環境光の計算
     float3 ambient = ambientColor.rgb * ka.rgb;
 
-    // 平行光源
-    float3 diffuse = DiffuseBRDF(VdotH, F0, kd.rgb);
-    //float3 diffuse = CalcLambert(N, L, float3(1, 1, 1), kd.rgb);
-    color.rgb *= diffuse;
-    
     // 点光源の拡散・鏡面反射の初期化
     float3 pointDiffuse = 0;
     float3 pointSpecular = 0;
@@ -153,14 +158,20 @@ float4 main(VS_OUT pin) : SV_TARGET
         float3 H = normalize(V + LP);
         
         // 各種ドット積の計算
-        float NdotL = saturate(dot(N, LP));
+        float NdotL = saturate(dot(N, LP));        
+
         float NdotV = saturate(dot(N, V));
         float NdotH = saturate(dot(N, H));
         float VdotH = saturate(dot(V, H));
+        
+        //return float4(NdotL.xxx, 1);
 
         // 拡散反射と鏡面反射の加算
         pointDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * attenuation * pointLights[i].color.rgb;
         pointSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * attenuation * pointLights[i].color.rgb;
+        
+        pointDiffuse = max(0, pointDiffuse);
+        pointSpecular = max(0, pointSpecular);
     }
     
     // 線光源の実装
@@ -169,10 +180,12 @@ float4 main(VS_OUT pin) : SV_TARGET
     {
         float3 closetPoint = ClosestPointOnLine(pin.position.xyz, lineLights[i].start.xyz, lineLights[i].end.xyz);
         float3 LP = normalize(closetPoint - pin.position.xyz);
-        float dist = length(closetPoint - pin.position.xyz);
+        float len = length(closetPoint - pin.position.xyz);
         
-        float attenuateLength = saturate(1.0f - dist / lineLights[i].range);
+        float attenuateLength = saturate(1.0f - len / lineLights[i].range);
         float attenuation = attenuateLength * attenuateLength;
+
+        LP /= len;
         
         // ハーフベクトルの計算
         float3 H = normalize(V + LP);
@@ -183,14 +196,22 @@ float4 main(VS_OUT pin) : SV_TARGET
         float NdotH = saturate(dot(N, H));
         float VdotH = saturate(dot(V, H));
         
-        lineDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * power * attenuation * lineLights[i].color.rgb;
-        lineSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * power * attenuation * lineLights[i].color.rgb;
+        lineDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * attenuation * lineLights[i].color.rgb;
+        lineSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * attenuation * lineLights[i].color.rgb;
 
+        lineDiffuse = max(0, lineDiffuse);
+        lineSpecular = max(0, lineSpecular);
     }
+
+    float3 totalDiffuse = (pointDiffuse + lineDiffuse) * power;
+    float3 totalSpecular = (pointSpecular + lineSpecular);
     
-    // 点光源の影響を加算
-    color.rgb += color.rgb * (pointDiffuse + lineDiffuse) * power;
-    color.rgb += (pointSpecular + lineSpecular) * power;
+    //	遮蔽処理
+    totalDiffuse = lerp(totalDiffuse, totalDiffuse * occlusion, occlusionStrength);
+    totalSpecular = lerp(totalSpecular, totalSpecular * occlusion, occlusionStrength);
+    
+    color.rgb *= totalDiffuse * power;
+    color.rgb += totalSpecular;
     
     color.rgb += emisive;
 

@@ -7,7 +7,7 @@
 void LightManager::Initialize()
 {
 	// ƒ‰ƒCƒg‚Ì‹­‚³
-	lightPower = 6;
+	lightPower = 1;
 
 	// “_ŒõŒ¹‚Ì‰Šú‰»
 	{
@@ -395,5 +395,6 @@ void LightManager::LineLightDebug(char* c, int begin, int end)
 			std::string r = std::string("range") + std::to_string(i);
 			ImGui::DragFloat(r.c_str(), &lineLights.at(i).range, 0.1f, 0.0f, +100.0f);
 		}
+		ImGui::TreePop();
 	}
 }

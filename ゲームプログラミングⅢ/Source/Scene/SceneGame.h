@@ -7,6 +7,7 @@
 #include "Scene.h"
 #include <memory>
 #include "Player/Player.h"
+#include"miniMap.h"
 
 // ƒQ[ƒ€ƒV[ƒ“
 class SceneGame:public Scene
@@ -35,4 +36,5 @@ private:
 
 	std::unique_ptr<ICameraController> i_CameraController = nullptr;
 	std::shared_ptr<Player> player;
+	MiniMap* minimap = nullptr;
 };

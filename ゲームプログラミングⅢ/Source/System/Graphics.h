@@ -9,6 +9,8 @@
 #include "FrameBuffer.h"
 #include "FullScreenquad.h"
 #include "GpuResourceUtils.h"
+#include "Bloom.h"
+#include "imgui.h"
 
 // グラフィックス
 class Graphics
@@ -85,7 +87,8 @@ private:
 	{
 
 		float time;
-		float pad[3];
+		float SignalTime;
+		float pad[2];
 	};
 	struct ScreenSizeCBuffer
 	{
@@ -115,14 +118,23 @@ public:
 		Crackshaft,
 		HighLightPass,
 		Blur,
+		BloomFinal,
+		TVNoiseFade,
+		GameOver,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
 	std::unique_ptr<fullscreen_quad> bit_block_transfer;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixel_shaders[int(PPShaderType::Count)];
-	void UpdateConstantBuffer(float Time) {
+
+	// BLOOM
+	std::unique_ptr<bloom> bloomer;
+
+
+	void UpdateConstantBuffer(float Time, float signalTime = 0) {
 		TimeCBuffer timeCBuffer;
 		timeCBuffer.time = Time;
+		timeCBuffer.SignalTime = signalTime; //SignalTimeを更新するとテレビのような画面切り替え(0.3ｓ)
 		immediateContext->UpdateSubresource(cbuffer[int(ConstantBufferType::TimeCBuffer)].Get(), 0, 0, &timeCBuffer, 0, 0);
 		immediateContext->PSSetConstantBuffers(10, 1, cbuffer[int(ConstantBufferType::TimeCBuffer)].GetAddressOf());
 		immediateContext->VSSetConstantBuffers(10, 1, cbuffer[int(ConstantBufferType::TimeCBuffer)].GetAddressOf());
@@ -134,5 +146,18 @@ public:
 		immediateContext->PSSetConstantBuffers(11, 1, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].GetAddressOf());
 		immediateContext->VSSetConstantBuffers(11, 1, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].GetAddressOf());
 
+	}
+
+	void DebugGUI()
+	{
+		if (ImGui::TreeNode("Bloom"))
+		{
+
+			// BLOOM
+			ImGui::SliderFloat("bloom_extraction_threshold", &bloomer->bloom_extraction_threshold, +0.0f, +5.0f);
+			ImGui::SliderFloat("bloom_intensity", &bloomer->bloom_intensity, +0.0f, +5.0f);
+
+			ImGui::TreePop();
+		}
 	}
 };

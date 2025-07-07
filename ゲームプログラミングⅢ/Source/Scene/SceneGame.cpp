@@ -3,6 +3,8 @@
 #include "Camera/Camera.h"
 #include "System/GamePad.h"
 #include "System/Input.h"
+#include"Scene/SceneGameOver.h"
+#include"Scene/SceneManager.h"
 
 // 初期化
 void SceneGame::Initialize()
@@ -23,6 +25,9 @@ void SceneGame::Initialize()
 	i_CameraController = std::make_unique<FPCameraController>();
 
 	player = std::make_shared<Player>();
+
+	//ミニマップスプライト初期化
+	minimap = new MiniMap();
 }
 
 // 終了化
@@ -34,6 +39,12 @@ void SceneGame::Finalize()
 		delete stage;
 		stage = nullptr;
 	}
+	//ミニマップ終了化
+	if (minimap != nullptr)
+	{
+		delete minimap;
+		minimap = nullptr;
+	}
 }
 
 // 更新処理
@@ -41,9 +52,18 @@ void SceneGame::Update(float elapsedTime)
 {
 	GamePad& gamepad = Input::Instance().GetGamePad();
 
+	//ゲームオーバーに強制遷移
+	if (GetAsyncKeyState('Z') & 0x8000)
+	{
+		// Zキーが押されているときに実行される
+		SceneManager::instance().ChangeScene(new Game_Over);
+	}
+
+
 	//ステージ更新処理
 	stage->Update(elapsedTime);
 	player->Update(elapsedTime);
+	minimap->Update(player->GetPosition());
 
 	// 一人称用カメラ
 	if (typeid(*i_CameraController) == typeid(FPCameraController))
@@ -89,7 +109,8 @@ void SceneGame::Render()
 	// 描画準備
 	RenderContext rc;
 	rc.deviceContext = dc;
-	rc.lightDirection = { 0.0f, -1.0f, 0.0f };	// ライト方向（下方向）
+	
+rc.lightDirection = { 0.0f, -1.0f, 0.0f };	// ライト方向（下方向）
 	rc.renderState = graphics.GetRenderState();
 
 	//カメラパラメータ設定
@@ -97,6 +118,8 @@ void SceneGame::Render()
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
 
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 0.5f, 0.5f, 1, 1);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
 	// 3Dモデル描画
 	{
 		//ステージ描画
@@ -112,11 +135,42 @@ void SceneGame::Render()
 	
 	// 2Dスプライト描画
 	{
-
+		//minimap->Render(player->GetPosition());
 	}
+	/// フレームバッファのディアクティベート
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
+
+	// BLOOM
+	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->clear(dc);
+	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
+	Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get());
+
+	//dc->OMSetDepthStencilState(depth_stencil_states[static_cast<size_t>(DEPTH_STATE::ZT_OFF_ZW_OFF)].Get(), 0);
+	//dc->RSSetState(rasterizer_states[static_cast<size_t>(RASTER_STATE::CULL_NONE)].Get());
+	//dc->OMSetBlendState(blend_states[static_cast<size_t>(BLEND_STATE::ALPHA)].Get(), nullptr, 0xFFFFFFFF);
+	ID3D11ShaderResourceView* shader_resource_views[] =
+	{
+		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get(),
+		Graphics::Instance().bloomer->shader_resource_view(),
+	};
+	Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
+		minimap->Render(player->GetPosition());
+	
+	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
+
+	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::crt]->clear(dc);
+	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::crt]->activate(dc);
+
+	Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
+	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::crt]->deactivate(dc);
+
+	Graphics::Instance().bit_block_transfer->blit(
+		dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1);
 }
 
 // GUI描画
 void SceneGame::DrawGUI()
 {
+	minimap->DrawImGui();
 }
