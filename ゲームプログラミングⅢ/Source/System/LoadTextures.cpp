@@ -17,20 +17,22 @@ void LoadTextures::Set(const RenderContext& rc)
 {
     ID3D11DeviceContext* dc = rc.deviceContext;
 
-    CreateDummyNormalTexture(dummySRV.GetAddressOf());
-
     // SRVîzóÒÇçÏê¨
-    ID3D11ShaderResourceView* srvs[4];
+    ID3D11ShaderResourceView* srvs[5];
     for (int i = 0; i < _countof(shaderResourceView); ++i) {
         srvs[i] = shaderResourceView[i].Get();
     }
 
     if (!shaderResourceView[0])
     {
-        shaderResourceView[0] = dummySRV.Get();
+        CreateDummyTexture(shaderResourceView[0].GetAddressOf(), 0xFFFF7F7F);
+    }
+    if (!shaderResourceView[4])
+    {
+        CreateDummyTexture(shaderResourceView[4].GetAddressOf(), 0xFFFFFFFF);
     }
 
-    dc->PSSetShaderResources(1, 4, srvs);
+    dc->PSSetShaderResources(1, 5, srvs);
 
 }
 
@@ -40,7 +42,7 @@ void LoadTextures::LoadNormal(const char* filename)
     HRESULT hr = S_OK;
 
     D3D11_TEXTURE2D_DESC desc;
-    //hr = GpuResourceUtils::LoadTexture(device, filename, normalSRV.GetAddressOf(), &desc);
+
     hr = GpuResourceUtils::LoadTexture(device, filename, shaderResourceView[0].GetAddressOf(), &desc);
     _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 }
@@ -75,6 +77,16 @@ void LoadTextures::LoadEmisive(const char* filename)
     _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 }
 
+void LoadTextures::LoadOcclusion(const char* filename)
+{
+    ID3D11Device* device = Graphics::Instance().GetDevice();
+    HRESULT hr = S_OK;
+
+    D3D11_TEXTURE2D_DESC desc;
+    hr = GpuResourceUtils::LoadTexture(device, filename, shaderResourceView[4].GetAddressOf(), &desc);
+    _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+}
+
 void LoadTextures::Clear(const RenderContext& rc)
 {
     ID3D11DeviceContext* dc = rc.deviceContext;
@@ -86,7 +98,7 @@ void LoadTextures::Clear(const RenderContext& rc)
     dc->PSGetShaderResources(4, 1, clearShaderResourceView);
 }
 
-HRESULT LoadTextures::CreateDummyNormalTexture(ID3D11ShaderResourceView** shaderResourceView)
+HRESULT LoadTextures::CreateDummyTexture(ID3D11ShaderResourceView** shaderResourceView, DWORD value)
 {
     ID3D11Device* device = Graphics::Instance().GetDevice();
     HRESULT hr = S_OK;

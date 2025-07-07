@@ -199,7 +199,7 @@ void SceneGraphics::Render()
 	Camera& camera = Camera::Instance();
 	rc.view = camera.GetView(); ///< ビュー行列
 	rc.projection = camera.GetProjection(); ///< 射影行列
-#if 1
+#if 0
 	// shadow
 	{
 		Camera& camera = Camera::Instance();
@@ -259,7 +259,7 @@ void SceneGraphics::Render()
 		// ここに2Dスプライト描画処理を追加可能
 	}
 
-	shadow->Release(dc);
+	//shadow->Release(dc);
 
 	/// フレームバッファのディアクティベート
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);

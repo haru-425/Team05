@@ -7,7 +7,7 @@ cbuffer CbMesh : register(b1)
     float4 materialColor;
 };
 
-Texture2D Textures[5] : register(t0);
+Texture2D Textures[6] : register(t0);
 Texture2D shadowMap : register(t8);
 
 SamplerState LinearSampler : register(s0);
@@ -18,6 +18,7 @@ SamplerState ShadowSamplerState : register(s2);
 #define ROUGHNESS_TEXTURE    2
 #define METALNESS_TEXTURE    3
 #define EMISIVE_TEXTURE      4
+#define OCCLUSION_TEXTURE    5
 
 float ComputeShadowPCF_Gaussian(float3 shadowCoord)
 {
@@ -99,9 +100,6 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 N = Textures[NORMAL_TEXTURE].Sample(LinearSampler, pin.texcoord).rgb;
     N = normalize(mul(N * 2.0f - 1.0f, mat));
     
-    //N = normalize(pin.normal);
-   
-    
     // emisive -----------------------------------------------------------
     float3 emisive = Textures[EMISIVE_TEXTURE].Sample(LinearSampler, pin.texcoord).rgb;
     
@@ -113,6 +111,11 @@ float4 main(VS_OUT pin) : SV_TARGET
     float metalness = Textures[METALNESS_TEXTURE].Sample(LinearSampler, pin.texcoord).r;
     metalness = max(0, metalness);       
    
+    // occlusion ---------------------------------------------------------
+    float3 occlusion = Textures[OCCLUSION_TEXTURE].Sample(LinearSampler, pin.texcoord).rgb;
+    //occlusion = 1.0f;
+    const float occlusionStrength = 1.0f;
+    
     // フレネル反射率の初期値（非金属は最低4%）
     float4 albedo = color;
     float3 F0 = lerp(0.04f, albedo.rgb, metalness); //	垂直反射時のフレネル反射率(非金属でも最低4%は鏡面反射する
@@ -200,10 +203,15 @@ float4 main(VS_OUT pin) : SV_TARGET
         lineSpecular = max(0, lineSpecular);
     }
 
+    float3 totalDiffuse = (pointDiffuse + lineDiffuse) * power;
+    float3 totalSpecular = (pointSpecular + lineSpecular);
     
-    // 点光源の影響を加算
-    color.rgb *= color.rgb * (pointDiffuse + lineDiffuse) * power;
-    color.rgb += (pointSpecular + lineSpecular);
+    //	遮蔽処理
+    totalDiffuse = lerp(totalDiffuse, totalDiffuse * occlusion, occlusionStrength);
+    totalSpecular = lerp(totalSpecular, totalSpecular * occlusion, occlusionStrength);
+    
+    color.rgb *= totalDiffuse * power;
+    color.rgb += totalSpecular;
     
     color.rgb += emisive;
 
