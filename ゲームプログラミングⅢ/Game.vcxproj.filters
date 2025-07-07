@@ -32,6 +32,7 @@
     <FxCompile Include="Shader\TemporalNoisePS.hlsl" />
     <FxCompile Include="Shader\VisionBootDownPS.hlsl" />
     <FxCompile Include="Shader\TVNoiseFadePS.hlsl" />
+    <FxCompile Include="Shader\GameOverPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp" />

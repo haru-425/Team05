@@ -12,7 +12,7 @@
 void SceneTitle::Initialize()
 {
 	//スプライト初期化
-	sprite = new Sprite("Data/Sprite/Title.png");
+	sprite = new Sprite("Data/Sprite/GameTitleStrings.png");
 	TitleTimer = 0.0f; // タイトル画面のタイマー初期化
 	TitleSignalTimer = 0.0f; // タイトル画面の信号タイマー初期化
 	sceneTrans = false; // シーン遷移フラグ初期化
@@ -109,20 +109,34 @@ void SceneTitle::Render()
 
 
 	/// フレームバッファのクリアとアクティベート（ポストプロセス用）
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 0.5f, 0.5f, 1, 1);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 1, 1, 1, 1);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
 
 	//タイトルの背景、UIはここで描画
-	//2Dスプライト描画
+// 2Dスプライト描画
 	{
-		//タイトル描画
+		// タイトル描画
 		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
 		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-		sprite->Render(rc,
-			0, 0, 0, screenWidth, screenHeight,
+
+		// スプライトサイズ（実際の描画サイズ）
+		float spriteWidth = 2260.0f / 3.0f;
+		float spriteHeight = 1077.0f / 3.0f;
+
+		float spritePos[2];
+		spritePos[0] = screenWidth / 2.0f - spriteWidth / 2.0f;  // 中央寄せ（X）
+		spritePos[1] = 50.0f;  // 上側に固定（Y）
+
+		sprite->Render(
+			rc,
+			spritePos[0], spritePos[1],
 			0,
-			1, 1, 1, 1);
+			spriteWidth, spriteHeight,
+			0,
+			1, 1, 1, 1
+		);
 	}
+
 
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
 
