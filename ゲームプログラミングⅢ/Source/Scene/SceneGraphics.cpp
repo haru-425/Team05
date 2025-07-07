@@ -356,13 +356,19 @@ void SceneGraphics::Render()
 	};
 	Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
 	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
+	//TemporalNoise
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
 
 	//crt
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
 
 	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
 
 	//VisionBootDown

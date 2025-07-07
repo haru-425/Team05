@@ -149,7 +149,7 @@ void Graphics::Initialize(HWND hWnd)
 	for (int i = 0; i <int(PPShaderType::Count); i++)
 	{
 
-		framebuffers[i] = std::make_unique<framebuffer>(device.Get(), screenWidth, screenHeight);
+		framebuffers[i] = std::make_unique<framebuffer>(device.Get(), screenWidth, screenHeight, true);
 	}
 
 	bloomer = std::make_unique<bloom>(device.Get(), 1280, 720);
