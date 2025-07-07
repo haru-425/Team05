@@ -34,6 +34,7 @@
     <FxCompile Include="Shader\VisionBootDownPS.hlsl" />
     <FxCompile Include="Shader\TVNoiseFadePS.hlsl" />
     <FxCompile Include="Shader\GameOverPS.hlsl" />
+    <FxCompile Include="Shader\FilmGrainDustPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp" />
@@ -94,6 +95,8 @@
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
     <ClCompile Include="Source\System\Sprite.cpp" />
     <ClCompile Include="Source\System\SettingsManager.cpp" />
+    <ClCompile Include="Source\Life.cpp" />
+    <ClCompile Include="Source\Scene\SceneGameOver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -164,6 +167,8 @@
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\System\Sprite.h" />
     <ClInclude Include="Source\System\SettingsManager.h" />
+    <ClInclude Include="Source\Life.h" />
+    <ClInclude Include="Source\Scene\SceneGameOver.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />

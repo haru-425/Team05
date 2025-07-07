@@ -121,6 +121,7 @@ public:
 		BloomFinal,
 		TVNoiseFade,
 		GameOver,
+		FilmGrainDust,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
