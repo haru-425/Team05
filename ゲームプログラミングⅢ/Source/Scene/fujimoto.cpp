@@ -152,10 +152,10 @@ void fujimoto::Render()
 			enemy.get()->GetindexWayPoint());
 
 
-		ImGui::Text("Position: X=%.2f, Y=%.2f, Z=%.2f",
+		/*ImGui::Text("Position: X=%.2f, Y=%.2f, Z=%.2f",
 			i_CameraController->GetTarget().x,
 			i_CameraController->GetTarget().y,
-			i_CameraController->GetTarget().z);
+			i_CameraController->GetTarget().z);*/
 		ImGui::End();
 
 	}
