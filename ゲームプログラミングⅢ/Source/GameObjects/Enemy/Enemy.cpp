@@ -211,10 +211,14 @@ void Enemy::Updatemovement(float elapsedTime)
             Animationplay();
             currentTargetIndex = 0;
 
-            if (!route.empty() || !stage->path.empty())
+            if (!route.empty())
             {
-                stage->path.clear();
                 route.clear();
+            }
+            if (!stage->path.empty())
+            {
+
+                stage->path.clear();
             }
             return;
         }
@@ -281,6 +285,10 @@ void Enemy::Updatemovement(float elapsedTime)
         jageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
         state = State::turn;
         Animationplay();
+       /* if (stage->NearWayPointIndex(targetPosition) == 12 || stage->NearWayPointIndex(targetPosition) == 21)
+        {
+            int x = 19;
+        }*/
     }
 }
 

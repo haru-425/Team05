@@ -4,7 +4,7 @@
 #include "Pursuer/WayPoint.h"
 #include "Pursuer/Edge.h"
 #include "Pursuer/Object.h"
-#define MAX_WAY_POINT 5
+#define MAX_WAY_POINT 31
 
 //ステージ
 class Stage
