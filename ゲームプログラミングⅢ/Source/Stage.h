@@ -9,7 +9,7 @@
 #include <memory>
 #include <wrl.h>
 
-#define MAX_WAY_POINT 5
+#define MAX_WAY_POINT 31
 
 //ステージ
 class Stage
