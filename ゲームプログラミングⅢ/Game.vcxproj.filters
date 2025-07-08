@@ -36,6 +36,7 @@
     <FxCompile Include="Shader\GameOverPS.hlsl" />
     <FxCompile Include="Shader\FilmGrainDustPS.hlsl" />
     <FxCompile Include="Shader\FadeToBlackPS.hlsl" />
+    <FxCompile Include="Shader\WardenGazePS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp" />

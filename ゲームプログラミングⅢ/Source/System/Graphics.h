@@ -123,6 +123,7 @@ public:
 		GameOver,
 		FilmGrainDust,
 		FadeToBlack,
+		WardenGaze,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
