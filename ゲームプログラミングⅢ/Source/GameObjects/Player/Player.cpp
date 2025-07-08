@@ -80,7 +80,7 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
     /// プレイヤーを描画するとどうしても、モデルとカメラが被ってしまうので、
     /// 敵視点の時のみの描画にする
     if(model && useCam)
-        renderer->Render(rc, world, model.get(), ShaderId::Lambert);
+        renderer->Render(rc, world, model.get(), ShaderId::Custom);
 #else
     DirectX::XMMATRIX T_T = DirectX::XMLoadFloat4x4(&t_transform);
     DirectX::XMMATRIX PT = DirectX::XMLoadFloat4x4(&world);

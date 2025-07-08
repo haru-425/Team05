@@ -94,6 +94,9 @@
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
     <ClCompile Include="Source\System\Sprite.cpp" />
     <ClCompile Include="Source\System\SettingsManager.cpp" />
+    <ClCompile Include="Source\Life.cpp" />
+    <ClCompile Include="Source\Scene\SceneGameOver.cpp" />
+    <ClCompile Include="Source\Camera\CameraController\SceneCameraController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -164,6 +167,9 @@
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\System\Sprite.h" />
     <ClInclude Include="Source\System\SettingsManager.h" />
+    <ClInclude Include="Source\Life.h" />
+    <ClInclude Include="Source\Scene\SceneGameOver.h" />
+    <ClInclude Include="Source\Camera\CameraController\SceneCameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />

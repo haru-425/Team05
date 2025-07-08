@@ -124,6 +124,7 @@
     <ClInclude Include="Source\Camera\CameraController\FPCameraController.h" />
     <ClInclude Include="Source\Camera\CameraController\FreeCameraController.h" />
     <ClInclude Include="Source\Camera\CameraController\ICameraController.h" />
+    <ClInclude Include="Source\Camera\CameraController\SceneCameraController.h" />
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\GameObjects\Enemy\Enemy.h" />
     <ClInclude Include="Source\GameObjects\GameObject.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="Source\Camera\CameraController.cpp" />
     <ClCompile Include="Source\Camera\CameraController\FPCameraController.cpp" />
     <ClCompile Include="Source\Camera\CameraController\FreeCameraController.cpp" />
+    <ClCompile Include="Source\Camera\CameraController\SceneCameraController.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\GameObjects\Enemy\Enemy.cpp" />
     <ClCompile Include="Source\GameObjects\Player\Player.cpp" />
