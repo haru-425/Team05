@@ -167,6 +167,11 @@ void Graphics::Initialize(HWND hWnd)
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BloomFinal.cso", pixel_shaders[int(PPShaderType::BloomFinal)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TVNoiseFadePS.cso", pixel_shaders[int(PPShaderType::TVNoiseFade)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/GameOverPS.cso", pixel_shaders[int(PPShaderType::GameOver)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/FilmGrainDustPS.cso", pixel_shaders[int(PPShaderType::FilmGrainDust)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/FadeToBlackPS.cso", pixel_shaders[int(PPShaderType::FadeToBlack)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/WardenGazePS.cso", pixel_shaders[int(PPShaderType::WardenGaze)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/NoiseChangePS.cso", pixel_shaders[int(PPShaderType::NoiseChange)].ReleaseAndGetAddressOf());
+
 
 }
 
