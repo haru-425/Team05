@@ -19,7 +19,16 @@ float4 main(VS_OUT pin) : SV_Target
     float TransitionDuration = 0.5; // フェードイン・アウト時間（秒）
 
     float2 uv = pin.texcoord;
-    float cycleTime = fmod(iTime, TriggerInterval);
+
+    // 最初の1回目（0～TriggerInterval秒）の間はノイズ合成しない
+    if (iTime < TriggerInterval)
+    {
+        // 何もしない＝ノイズ合成せず元の画面を返す
+        return sceneTex.Sample(samp, uv);
+    }
+
+    // 2回目以降のノイズ制御
+    float cycleTime = fmod(iTime - TriggerInterval, TriggerInterval);
 
     float strength = 0.0f;
     if (cycleTime < TransitionDuration)
@@ -28,13 +37,10 @@ float4 main(VS_OUT pin) : SV_Target
         strength = sin(t * 3.14159); // 滑らかに 0 → 1 → 0
     }
 
-    // ベースカラー
     float4 baseColor = sceneTex.Sample(samp, uv);
 
-    // 横線ノイズ生成
     float noise = LineNoise(uv.y);
     float4 noiseColor = float4(noise, noise, noise, 1.0);
 
-    // ノイズをフェードで合成
     return lerp(baseColor, noiseColor, strength);
 }
