@@ -24,6 +24,15 @@ private:
 		DirectX::XMFLOAT4 color;     // 光の色
 		float range;                 // 有効距離（減衰終了距離）
 	};
+	struct TorusLightConstants
+	{
+		DirectX::XMFLOAT4 position;
+		DirectX::XMFLOAT4 direction;
+		DirectX::XMFLOAT4 color;
+		float majorRadius;   // ドーナツの中心円の半径
+		float minorRadius;   // ドーナツの太さ（断面円の半径）
+		float range;
+	};
 
 	// 線光源構造体（始点・終点・色・範囲）
 	struct LineLightConstants
@@ -55,6 +64,7 @@ public:
 	void UpdateConstants(RenderContext& rc);
 
 	void PointLightDebug(char* c,int begin,int end);
+	void TorusLightDebug(char* c, int begin,int end);
 	void LineLightDebug(char* c, int begin,int end);
 
 	const std::vector<PointLightConstants>& GetPointLights() const { return pointLights; }
@@ -64,6 +74,7 @@ public:
 private:
 	// 光源情報
 	std::vector<PointLightConstants> pointLights;
+	std::vector<TorusLightConstants> torusLights;
 	std::vector<LineLightConstants>  lineLights;
 	std::vector<LightData>           lightData;;
 
@@ -80,11 +91,14 @@ private:
 	};
 	LightColors lightColor;
 
-#define POINTLIGHT_MAX     47
+#define POINTLIGHT_MAX     34
+#define TORUSLIGHT_MAX     13
 #define LINELIGHT_MAX      42
 
-#define POINTLIGHT_S_RANGE  6
-#define POINTLIGHT_L_RANGE  8
+#define POINTLIGHT_RANGE  6
+#define TORUSLIGHT_RANGE    8
+#define TORUSLIGHT_MAJOR    3
+#define TORUSLIGHT_MINOR    1
 #define LINELIGHT_RANGE     5
 #define CEILNG_HEIGHT       3
 

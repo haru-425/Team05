@@ -143,7 +143,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 pointSpecular = 0;
 
     // 点光源のループ処理
-    for (int i = 0; i < 47; ++i)
+    for (int i = 0; i < 34; ++i)
     {
         float3 LP = pointLights[i].position.xyz - pin.position.xyz;
         float len = length(LP);
@@ -173,7 +173,53 @@ float4 main(VS_OUT pin) : SV_TARGET
         pointDiffuse = max(0, pointDiffuse);
         pointSpecular = max(0, pointSpecular);
     }
-    
+    float3 torusDiffuse = 0, torusSpecular = 0;
+    for (i = 0; i < 13; ++i)
+    {
+        // トーラス中心からピクセルへのベクトル
+        float3 toPixel = pin.position.xyz - torusLights[i].position.xyz;
+      
+        // トーラスの軸方向に投影して、中心円の平面上に投影
+        float3 projected = toPixel - dot(toPixel, torusLights[i].direction.xyz) * torusLights[i].direction.xyz;
+      
+        // 中心円の距離と、トーラス表面の最近点
+        float distToCenterCircle = length(projected);
+        float3 centerOnTorus = torusLights[i].position.xyz + normalize(projected) * torusLights[i].majorRadius;
+
+        // ピクセルからトーラス表面までの距離
+        float3 toCenter = pin.position.xyz - centerOnTorus;
+        float distToTorusSurface = length(toCenter);
+        
+        // トーラスの範囲外ならスキップ
+        if (abs(distToCenterCircle - torusLights[i].majorRadius) > torusLights[i].minorRadius)
+            continue;
+        if (distToTorusSurface > torusLights[i].minorRadius)
+            continue;
+        
+        // 距離減衰（仮に最大距離10.0fとする）
+        float len = length(centerOnTorus - pin.position.xyz);
+        float attenuateLength = saturate(1.0f - len / torusLights[i].range);
+        float attenuation = attenuateLength * attenuateLength;
+        
+        //return float4(attenuation.xxx, 1);
+        
+        // ライト方向とハーフベクトル
+        float3 lightDir = normalize(centerOnTorus - pin.position.xyz);
+        float3 H = normalize(V + lightDir);
+        
+        // 各種ドット積
+        float NdotL = saturate(dot(N, lightDir));
+        float NdotV = saturate(dot(N, V));
+        float NdotH = saturate(dot(N, H));
+        float VdotH = saturate(dot(V, H));
+        
+        // 拡散・鏡面反射
+        torusDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * attenuation * torusLights[i].color.rgb;
+        torusSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * attenuation * torusLights[i].color.rgb;
+        
+        torusDiffuse = max(0, torusDiffuse);
+        torusSpecular = max(0, torusSpecular);
+    }
     // 線光源の実装
     float3 lineDiffuse = 0, lineSpecular = 0;
     for (i = 0; i < 42; ++i)
@@ -181,6 +227,8 @@ float4 main(VS_OUT pin) : SV_TARGET
         float3 closetPoint = ClosestPointOnLine(pin.position.xyz, lineLights[i].start.xyz, lineLights[i].end.xyz);
         float3 LP = normalize(closetPoint - pin.position.xyz);
         float len = length(closetPoint - pin.position.xyz);
+        if (len >= lineLights[i].range)
+            continue;
         
         float attenuateLength = saturate(1.0f - len / lineLights[i].range);
         float attenuation = attenuateLength * attenuateLength;
@@ -203,14 +251,19 @@ float4 main(VS_OUT pin) : SV_TARGET
         lineSpecular = max(0, lineSpecular);
     }
 
-    float3 totalDiffuse = (pointDiffuse + lineDiffuse) * power;
-    float3 totalSpecular = (pointSpecular + lineSpecular);
+    float3 totalDiffuse = (pointDiffuse + torusDiffuse + lineDiffuse) * power;
+    float3 totalSpecular = (pointSpecular + torusSpecular + lineSpecular);
+    
+    //totalDiffuse = torusDiffuse * power;
+    //totalSpecular = torusSpecular;
+    
+    //float3 totalDiffuse=
     
     //	遮蔽処理
     totalDiffuse = lerp(totalDiffuse, totalDiffuse * occlusion, occlusionStrength);
     totalSpecular = lerp(totalSpecular, totalSpecular * occlusion, occlusionStrength);
     
-    color.rgb *= totalDiffuse * power;
+    color.rgb *= totalDiffuse;
     color.rgb += totalSpecular;
     
     color.rgb += emisive;
