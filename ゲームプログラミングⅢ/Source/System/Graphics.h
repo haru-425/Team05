@@ -122,6 +122,7 @@ public:
 		TVNoiseFade,
 		GameOver,
 		FilmGrainDust,
+		FadeToBlack,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];

@@ -35,6 +35,7 @@
     <FxCompile Include="Shader\TVNoiseFadePS.hlsl" />
     <FxCompile Include="Shader\GameOverPS.hlsl" />
     <FxCompile Include="Shader\FilmGrainDustPS.hlsl" />
+    <FxCompile Include="Shader\FadeToBlackPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp" />

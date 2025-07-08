@@ -23,7 +23,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float waitDuration = 0.5;
     float fadeDuration = 0.0;
 
-    float time = max(iTime - startTime, 0.0);
+    float time = max(signalTime - startTime, 0.0);
 
 // ノイズ強度計算
     float noise_strength = saturate(time / noiseDuration);

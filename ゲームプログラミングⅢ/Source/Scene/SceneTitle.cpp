@@ -45,7 +45,7 @@ void SceneTitle::Update(float elapsedTime)
 	bool fKey = GetAsyncKeyState('F') & 0x8000;
 	bool mKey = GetAsyncKeyState('M') & 0x8000;
 	bool gKey = GetAsyncKeyState('G') & 0x8000;
-
+	bool pKey = GetAsyncKeyState('P') & 0x8000;
 	// ƒtƒ‰ƒO‚ª‚Ü‚¾—§‚Á‚Ä‚¢‚È‚¢ê‡‚É“ü—ÍŒŸo
 	if (!sceneTrans)
 	{
@@ -70,6 +70,11 @@ void SceneTitle::Update(float elapsedTime)
 		else if (gKey)
 		{
 			nextScene = new SceneGraphics;
+			sceneTrans = true;
+			TitleSignalTimer = 0.0f;
+		}
+		else if (pKey) {
+			nextScene = new SceneGame;
 			sceneTrans = true;
 			TitleSignalTimer = 0.0f;
 		}
