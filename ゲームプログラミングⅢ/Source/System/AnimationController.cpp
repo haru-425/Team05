@@ -12,6 +12,7 @@ void AnimationController::UpdateAnimation(float dt)
 
     if (animationPlaying)
     {
+        isEndAnimation = false;
 
         std::vector<Model::Node>& nodes = model->GetNodes();
 
@@ -30,11 +31,13 @@ void AnimationController::UpdateAnimation(float dt)
             if (animationLoop)
             {
                 animationSecond = 0;
+                isEndAnimation = true;
             }
             else
             {
                 animationPlaying = false;
                 animationSecond = animation.secondsLength;
+                isEndAnimation = true;
             }
         }
 
