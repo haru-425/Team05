@@ -10,9 +10,9 @@ Texture2D texture_map : register(t10);
 
 /**
  * @brief 289で割った余りを返す関数
- * 
+ *
  * 値を289でラップすることで、パーミュテーションテーブルの範囲内に収めるために使用します。
- * 
+ *
  * @param x 入力値
  * @return float 289でラップされた値
  */
@@ -23,9 +23,9 @@ float mod289(float x)
 
 /**
  * @brief 289で割った余りを返す関数（float2バージョン）
- * 
+ *
  * 2次元ベクトルの各成分を289でラップします。
- * 
+ *
  * @param x 入力値（float2）
  * @return float2 289でラップされた値
  */
@@ -36,9 +36,9 @@ float2 mod289(float2 x)
 
 /**
  * @brief 289で割った余りを返す関数（float3バージョン）
- * 
+ *
  * 3次元ベクトルの各成分を289でラップします。
- * 
+ *
  * @param x 入力値（float3）
  * @return float3 289でラップされた値
  */
@@ -49,9 +49,9 @@ float3 mod289(float3 x)
 
 /**
  * @brief 値をシャッフルするためのパーミュート関数
- * 
+ *
  * ノイズ生成時の乱数インデックスを作るために使用します。
- * 
+ *
  * @param x 入力値（float3）
  * @return float3 パーミュートされた値
  */
@@ -62,10 +62,10 @@ float3 permute(float3 x)
 
 /**
  * @brief 2次元のシンプレックスノイズを生成する関数
- * 
+ *
  * グラフィックエフェクトで自然な揺らぎやランダム性を表現するために使います。
  * Ian McEwan氏の実装をHLSLに移植したものです。
- * 
+ *
  * @param v 入力座標（float2）
  * @return float シンプレックスノイズ値
  */
@@ -102,9 +102,9 @@ float snoise(float2 v)
 
 /**
  * @brief 乱数を生成する関数
- * 
+ *
  * 入力座標から一様乱数を生成し、ノイズやエフェクトのバリエーションに利用します。
- * 
+ *
  * @param co 入力座標（float2）
  * @return float 乱数値（0～1）
  */
@@ -124,38 +124,28 @@ float rand(float2 co)
  */
 float4 main(VS_OUT pin) : SV_Target
 {
-    // テクスチャ座標（0～1の範囲）
     float2 uv = pin.texcoord;
-
-    // 時間を2倍にスケーリング（iTimeは外部から渡される経過時間）
     float time = iTime * 2.0;
+    float NoiseStrength = 0.2; // 揺らぎの強さ（例：0.0 ～ 1.0）
+    float NoiseScale = 6.0; // ノイズのスケール（細かさ）
 
-    // ノイズ値を計算（縦方向に揺らぎを加える）
-    // snoise関数で自然なノイズを生成し、グリッチ効果の揺らぎを作る
-    float noise = max(0.0, snoise(float2(time, uv.y * 0.3)) - 0.3) * (1.0 / 0.7);
-    noise += (snoise(float2(time * 10.0, uv.y * 2.4)) - 0.5) * 0.15;
+    // 拡張：ノイズにスケールと強度を反映
+    float baseNoise = max(0.0, snoise(float2(time, uv.y * 0.3 * NoiseScale)) - 0.3) * (1.0 / 0.7);
+    baseNoise += (snoise(float2(time * 10.0, uv.y * 2.4 * NoiseScale)) - 0.5) * 0.15;
+    float noise = baseNoise * NoiseStrength;
 
-    // ノイズによりX座標をずらすことで、横方向のグリッチを表現
     float xpos = uv.x - noise * noise * 0.01;
-
-    // テクスチャから色をサンプリング（異方性サンプラを使用）
     float4 color = texture_map.Sample(sampler_states[2], float2(xpos, uv.y));
     color.a = 1;
 
-    // 赤色成分にランダムな値を加えることで、ノイズ感を強調
     float r = rand(uv.y * time);
     float3 redTint = float3(r, r, r);
-    // ノイズに応じて赤みを加える（グリッチの色ズレ表現）
     color.rgb = lerp(color.rgb, redTint, noise * 0.3);
 
-    // 緑・青成分をノイズでずらした位置からサンプリングし、RGBずらし（色収差）を表現
     float g = lerp(color.r, texture_map.Sample(sampler_states[2], float2(xpos + noise * 0.05, uv.y)).g, 1);
     float b = lerp(color.r, texture_map.Sample(sampler_states[2], float2(xpos - noise * 0.05, uv.y)).b, 1);
-
-    // 緑・青成分を更新
     color.g = g;
     color.b = b;
 
-    // 最終的な色を返す
     return color;
 }
