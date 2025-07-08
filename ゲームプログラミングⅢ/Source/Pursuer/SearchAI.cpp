@@ -80,15 +80,14 @@ bool SearchAI::DijkstraSearch(Stage* stage, bool heuristicFlg)
 		}
 
 		nowEdge = searchMinCostEdge(frontier, stage, heuristicFlg);
-		if (nowEdge->destinationPoint==0)
-		{
-			nowEdge = searchMinCostEdge(frontier, stage, heuristicFlg);
-		}
-
 		if (nowEdge == nullptr)
 		{
 			delete nowEdge;
 			return false;
+		}
+		if (nowEdge->destinationPoint == 0)
+		{
+			nowEdge = searchMinCostEdge(frontier, stage, heuristicFlg);
 		}
 	}
 
@@ -163,7 +162,7 @@ Edge* SearchAI::searchMinCostEdge(std::vector<Edge*>& frontier, Stage* stage, bo
 	{
 		return 0;
 	}
-	searchEdge.push_back(answer);//サーチしたEdgeの記録(灰色ライン)
+	searchEdge.push_back(answer);//サーチしたEdgeの記録
 
 	frontier.erase(frontier.begin() + answerNo);//答えのエッジはダイクストラのサーチ候補から外す
 
@@ -188,105 +187,6 @@ float SearchAI::heuristicCulc(WayPoint* w1, WayPoint* w2)
 
 	return DirectX::XMVectorGetX(length);
 }
-//// 処理負荷が高すぎるので実装見送り
-//void SearchAI::AddSerchArrow(Stage06* stage)
-//{
-//	for (const auto edge : searchEdge)
-//	{
-//		if (edge->destinationPoint < 0) continue;
-//		// 探索したエッジを矢印で表示
-//		Arrow06* arrow = new Arrow06();
-//		arrow->SetPosition(stage->wayPoint[edge->originPoint]->position);
-//		arrow->height = edge->cost;
-//		arrow->color = DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-//		if (arrow->height > 2.0f)
-//		{
-//			arrow->height /= 5.0f;
-//		}
-//		arrow->radius = 0.05f;
-//
-//		// originPointからdestinationPointの角度を計算
-//		DirectX::XMVECTOR origin = DirectX::XMLoadFloat3(&stage->wayPoint[edge->originPoint]->position);
-//		DirectX::XMVECTOR destination = DirectX::XMLoadFloat3(&stage->wayPoint[edge->destinationPoint]->position);
-//		DirectX::XMVECTOR vector = DirectX::XMVectorSubtract(destination, origin);
-//		DirectX::XMFLOAT3 v, out;
-//		DirectX::XMStoreFloat3(&v, vector);
-//		float f = sqrtf(v.x * v.x + v.z * v.z);
-//		out.x = 0.0f;
-//		out.y = atan2f(v.z, -v.x);
-//		out.z = atan2f(f, v.y);
-//
-//		arrow->SetAngle(out);
-//		arrow->SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-//		ArrowManager06::Instance().AddArrow(arrow);
-//	}
-//}
-//float SearchAI::AddAnswerArrow(Stage06* stage)
-//{
-//	float totalCost = 0.0f;
-//	// ゴール座標からインデックス番号を取得。ゴールから描画する
-//	int startIndex = stage->NearWayPointIndex(Start06::Instance().GetPosition());
-//	int startNo = stage->NearWayPointIndex(Goal06::Instance().GetPosition());
-//	int endNo = -1;
-//	while (endNo != startIndex) {
-//		endNo = findRoot[startNo];
-//		if (endNo == -1)break;
-//
-//		// arrowで描画する場合
-//		// 探索したエッジを矢印で表示
-//		Arrow06* arrow = new Arrow06();
-//		arrow->SetPosition(stage->wayPoint[endNo]->position);
-//
-//		DirectX::XMVECTOR start, end;
-//		start = DirectX::XMLoadFloat3(&stage->wayPoint[endNo]->position);
-//		end = DirectX::XMLoadFloat3(&stage->wayPoint[startNo]->position);
-//		DirectX::XMVECTOR vector = DirectX::XMVectorSubtract(end, start);
-//		DirectX::XMVECTOR dist = DirectX::XMVector3Length(DirectX::XMVectorSubtract(end, start));
-//		DirectX::XMFLOAT3 cost;
-//		DirectX::XMStoreFloat3(&cost, dist);
-//		arrow->height = cost.x;
-//		arrow->radius = 0.05f;
-//		arrow->color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-//		totalCost += cost.x;
-//
-//		// startからendの角度を計算
-//		DirectX::XMFLOAT3 v, out;
-//		DirectX::XMStoreFloat3(&v, vector);
-//		float f = sqrtf(v.x * v.x + v.z * v.z);
-//		out.x = 0.0f;
-//		out.y = atan2f(v.z, -v.x);
-//		out.z = atan2f(f, v.y);
-//
-//		arrow->SetAngle(out);
-//		arrow->SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-//		ArrowManager06::Instance().AddArrow(arrow);
-//
-//		startNo = endNo;
-//	}
-//	return totalCost;
-//}
-//void SearchAI::SearchRender(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection, Stage06* stage)
-//{
-//	LineRenderer* lineRenderer = Graphics::Instance().GetLineRenderer();
-//
-//	// サーチしたエッジを描画
-//	for (const auto edge : searchEdge)
-//	{
-//		// 探索したエッジを描画
-//		lineRenderer->AddVertex(DirectX::XMFLOAT3(stage->wayPoint[edge->originPoint]->position.x,
-//			stage->wayPoint[edge->originPoint]->position.y + 2.0f,
-//			stage->wayPoint[edge->originPoint]->position.z),
-//			DirectX::XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-//		lineRenderer->AddVertex(DirectX::XMFLOAT3(stage->wayPoint[edge->destinationPoint]->position.x,
-//			stage->wayPoint[edge->destinationPoint]->position.y + 2.0f,
-//			stage->wayPoint[edge->destinationPoint]->position.z),
-//			DirectX::XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-//
-//	}
-//
-//	lineRenderer->Render(dc, view, projection);
-//
-//}
 void SearchAI::SearchClear(Stage* stage)
 {
 	//ArrowManager::Instance().Clear();
@@ -300,17 +200,3 @@ void SearchAI::SearchClear(Stage* stage)
 		findRoot[i] = -1;
 	}
 }
-//
-//void SearchAI::GoldenPathSpawn(Stage06* stage, DirectX::XMFLOAT3 startPosition)
-//{
-//	// 表示している敵を消す
-//	EnemyManager06::Instance().Clear();
-//
-//	// TODO 09_01
-//	// A*で探索した経路の周辺オブジェクトにプレイヤーから隠れるようにエネミーを1体配置させなさい。
-//	// 全て自分で考えて実装しなさい。
-//	// エネミーのスポーンコードは下記の通り。
-//	// Enemy06* enemy = new Enemy06(出現させるウェイポイントを指定);
-//	// EnemyManager06::Instance().AddEnemy(enemy);
-//
-//}

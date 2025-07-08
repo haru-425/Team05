@@ -4,6 +4,7 @@
 #include "ICameraController.h"
 #include "FPCameraController.h"
 #include "FreeCameraController.h"
+#include "LightDebugCameraController.h"
 #include "Scene.h"
 #include "Player/Player.h"
 #include "Enemy.h"

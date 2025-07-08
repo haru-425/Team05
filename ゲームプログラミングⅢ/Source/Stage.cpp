@@ -57,10 +57,10 @@ void Stage::DestinationPointSet()
 {
     //WayPointê∂ê¨
     wayPoint[0] = std::make_shared<WayPoint>(0, DirectX::XMFLOAT3{ 0,0,0 });
-    wayPoint[1] = std::make_shared<WayPoint>(1, DirectX::XMFLOAT3{ 15,0,9 });
-    wayPoint[2] = std::make_shared<WayPoint>(2, DirectX::XMFLOAT3{ 10,0,2 });
-    wayPoint[3] = std::make_shared<WayPoint>(3, DirectX::XMFLOAT3{ 4,0,12 });
-    wayPoint[4] = std::make_shared<WayPoint>(4, DirectX::XMFLOAT3{ 22,0,22 });
+    wayPoint[1] = std::make_shared<WayPoint>(1, DirectX::XMFLOAT3{ 0,0,5 });
+    wayPoint[2] = std::make_shared<WayPoint>(2, DirectX::XMFLOAT3{ 7.5,0,5 });
+    wayPoint[3] = std::make_shared<WayPoint>(3, DirectX::XMFLOAT3{ 0,0,13 });
+    wayPoint[4] = std::make_shared<WayPoint>(4, DirectX::XMFLOAT3{ 7.5,0,13 });
 
 
     //
