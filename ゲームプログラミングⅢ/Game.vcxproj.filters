@@ -38,6 +38,7 @@
     <FxCompile Include="Shader\FilmGrainDustPS.hlsl" />
     <FxCompile Include="Shader\NoiseChangePS.hlsl" />
     <FxCompile Include="Shader\WardenGazePS.hlsl" />
+    <FxCompile Include="Shader\LightFlickerPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp" />
