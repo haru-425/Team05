@@ -11,6 +11,9 @@ void SceneLoading::Initialize()
 
 	//スレッド開始
 	thread = new std::thread(LoadingThread, this);
+	timer = 0.0f;
+	transtimer = 0.0f;
+	nextSceneReadyTime = -1.0f; // 次のシーンの準備完了時刻を初期化
 }
 
 //終了化
@@ -35,16 +38,29 @@ void SceneLoading::Finalize()
 //更新処理
 void SceneLoading::Update(float elapsedTime)
 {
-	constexpr float speed = 180;
+	constexpr float speed = 180.0f;
 	angle += speed * elapsedTime;
+	positionX -= 10.0f * elapsedTime;
 
-	positionX -= 10 * elapsedTime;
+	// 経過時間を加算
+	timer += elapsedTime;
 
-	//次のシーンの準備が完了したらシーンを切り替える
 	if (nextScene->IsReady())
 	{
-		SceneManager::instance().ChangeScene(nextScene);
+		// 準備完了時の時刻を記録（1回だけ）
+		if (nextSceneReadyTime < 0.0f)
+		{
+			nextSceneReadyTime = timer;
+		}
+
+		// 準備完了から2秒経過したらシーン遷移
+		if ((timer - nextSceneReadyTime) >= 2.0f)
+		{
+			SceneManager::instance().ChangeScene(nextScene);
+		}
+		transtimer += elapsedTime;
 	}
+	Graphics::Instance().UpdateConstantBuffer(timer, transtimer);
 }
 
 //描画処理
@@ -59,21 +75,70 @@ void SceneLoading::Render()
 	rc.deviceContext = dc;
 	rc.renderState = graphics.GetRenderState();
 
-	////2Dスプライト描画
-	//{
-	//    //画面右下にローディングアイコンを描画
-	//    float screenWidth = static_cast<float>(graphics.GetScreenWidth());
-	//    float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-	//    float spriteWidth = 256;
-	//    float spriteHeight = 256;
-	//    //positionX = screenWidth - spriteWidth;
-	//    //positionY = screenHeight - spriteHeight;
 
-	//    sprite->Render(rc,
-	//        positionX, positionY, 0, spriteWidth, spriteHeight,
-	//        angle,
-	//        1, 1, 1, 1);
-	//}
+	/// フレームバッファのクリアとアクティベート（ポストプロセス用）
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 0, 0, 0, 1);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
+
+
+
+	/// フレームバッファのディアクティベート
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
+	// GameOver
+
+
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::GameOver)].Get());
+
+
+	////2Dスプライト描画
+	{
+		//画面右下にローディングアイコンを描画
+		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
+		float spriteWidth = 256;
+		float spriteHeight = 256;
+		positionX = screenWidth - spriteWidth;
+		positionY = screenHeight - spriteHeight;
+
+		sprite->Render(rc,
+			positionX, positionY, 0, spriteWidth, spriteHeight,
+			angle,
+			1, 1, 1, 1);
+	}
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->deactivate(dc);
+
+
+	//crt
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
+
+	//vIsionBootDown
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->deactivate(dc);
+
+	//fAdeToBlack
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::FadeToBlack)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->deactivate(dc);
+
+
+	Graphics::Instance().bit_block_transfer->blit(
+		dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->shader_resource_views[0].GetAddressOf(), 10, 1
+	);
+
+
 }
 
 //GUI描画
