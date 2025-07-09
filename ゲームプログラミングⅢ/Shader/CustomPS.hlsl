@@ -108,7 +108,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     roughness = max(0, roughness);
 
     float metalness = Textures[METALNESS_TEXTURE].Sample(LinearSampler, pin.texcoord).r;
-    metalness = max(0, metalness);       
+    metalness = max(0, metalness);
    
     // occlusion ---------------------------------------------------------
     float3 occlusion = Textures[OCCLUSION_TEXTURE].Sample(LinearSampler, pin.texcoord).rgb;
@@ -155,7 +155,7 @@ float4 main(VS_OUT pin) : SV_TARGET
         float3 H = normalize(V + LP);
         
         // 各種ドット積の計算
-        float NdotL = saturate(dot(N, LP));        
+        float NdotL = saturate(dot(N, LP));
 
         float NdotV = saturate(dot(N, V));
         float NdotH = saturate(dot(N, H));
@@ -219,7 +219,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     }
     // 線光源の実装
     float3 lineDiffuse = 0, lineSpecular = 0;
-    for (i = 0; i < 42; ++i)
+    for (i = 0; i < 45; ++i)
     {
         for (int s = 0; s < 4; ++s)
         {
@@ -246,8 +246,8 @@ float4 main(VS_OUT pin) : SV_TARGET
         lineSpecular = max(0, lineSpecular);
     }
 
-    float3 totalDiffuse = (pointDiffuse + torusDiffuse + lineDiffuse) * power;
-    float3 totalSpecular = (pointSpecular + torusSpecular + lineSpecular);
+    float3 totalDiffuse = (pointDiffuse + lineDiffuse + torusDiffuse) * power;
+    float3 totalSpecular = (pointSpecular + lineSpecular + torusSpecular);
     
     //	遮蔽処理
     totalDiffuse = lerp(totalDiffuse, totalDiffuse * occlusion, occlusionStrength);

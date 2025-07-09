@@ -7,7 +7,7 @@
 #include "imgui.h"                    // ImGuiの基本機能
 #include "imgui_impl_win32.h"        // Win32用バックエンド
 #include "imgui_impl_dx11.h"         // DirectX11用バックエンド
-#include "../LightManager.h"
+#include "./LightModels/LightManager.h"
 
 
 // 初期化

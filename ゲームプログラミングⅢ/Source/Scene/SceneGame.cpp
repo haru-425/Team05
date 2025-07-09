@@ -5,7 +5,7 @@
 #include "System/Input.h"
 #include"Scene/SceneGameOver.h"
 #include"Scene/SceneManager.h"
-#include "../LightManager.h"
+#include "./LightModels/LightManager.h"
 
 #include <imgui.h>
 

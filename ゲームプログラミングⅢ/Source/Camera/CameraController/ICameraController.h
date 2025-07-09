@@ -28,7 +28,7 @@ protected:
     DirectX::XMFLOAT3   cameraPos = { 0.0f, 2.0f, -5.0f };  // 一人称カメラに使う、カメラの位置やけどプレイヤーに持たせるから意味はない
     DirectX::XMFLOAT3   angle = { 45,0,0 };
     float               rollSpeed = DirectX::XMConvertToRadians(90);
-    float               range = 20;//カメラの距離
+    float               range = 10;//カメラの距離
     float               maxAngleX = DirectX::XMConvertToRadians(45);//カメラの角度
     float               minAngleX = DirectX::XMConvertToRadians(-45);//亀
     // 一人称

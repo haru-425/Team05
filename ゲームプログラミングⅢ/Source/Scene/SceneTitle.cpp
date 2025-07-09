@@ -7,7 +7,7 @@
 #include"SceneLoading.h"
 #include"SceneGraphics.h"
 #include "Scene/SceneMattsu.h"
-#include "../LightManager.h"
+#include "./LightModels/LightManager.h"
 #include "Camera/CameraController/SceneCameraController.h"
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };

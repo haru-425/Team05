@@ -3,7 +3,8 @@
 #include "Camera/Camera.h"
 #include "System/GamePad.h"
 #include "System/Input.h"
-#include "../LightManager.h"
+#include "./LightModels/LightManager.h"
+#include "Aircon/AirconManager.h"
 
 #include <imgui.h>
 
@@ -62,6 +63,8 @@ void SceneGraphics::Initialize()
 	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
 	LightManager::Instance().Initialize();
+	AirconManager::Instance().Initialize();
+
 	/// デバッグ用タイマー初期化
 	time = 0;
 }
@@ -247,6 +250,8 @@ void SceneGraphics::Render()
 
 		/// ライトモデルの描画
 		LightManager::Instance().Render(rc);
+
+		AirconManager::Instance().Render(rc);
 	}
 
 	/// 3Dデバッグ描画処理
@@ -256,6 +261,9 @@ void SceneGraphics::Render()
 
 		/// ライトモデルのデバッグ描画
 		//LightManager::Instance().RenderDebugPrimitive(rc);
+
+		/// エアコンのデバッグ描画
+		//AirconManager::Instance().RenderDebugPrimitive(rc);
 	}
 
 	/// 2Dスプライト描画処理（未実装）
@@ -462,6 +470,7 @@ void SceneGraphics::DrawGUI()
 	}
 	Graphics::Instance().DebugGUI();
 	LightManager::Instance().DebugGUI();
+	AirconManager::Instance().DebugGUI();
 }
 
 void SceneGraphics::UpdateConstants(RenderContext& rc)

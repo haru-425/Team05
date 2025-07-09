@@ -86,9 +86,9 @@ private:
 	std::vector<LightData>           lightData;
 
 	// モデル
-	std::vector<LightPoint>  pointLightsModel;
-	std::vector<LightTorus>  torusLightsModel;
-	std::vector<LightBar>    lineLightsModel;
+	std::vector<std::unique_ptr<LightPoint>>  pointLightsModel;
+	std::vector<std::unique_ptr<LightTorus>>  torusLightsModel;
+	std::vector<std::unique_ptr<LightBar>>    lineLightsModel;
 
 	// 全体のライト強度（乗算係数）
 	float lightPower = 5.0f;
@@ -105,13 +105,13 @@ private:
 
 #define POINTLIGHT_MAX     34
 #define TORUSLIGHT_MAX     13
-#define LINELIGHT_MAX      42
+#define LINELIGHT_MAX      45
 
-#define POINTLIGHT_RANGE    6
+#define POINTLIGHT_RANGE    5.5f
 
-#define TORUSLIGHT_RANGE    8
-#define TORUSLIGHT_MAJOR    5
-#define TORUSLIGHT_MINOR    0.6
+#define TORUSLIGHT_RANGE    6
+#define TORUSLIGHT_MAJOR    5.5
+#define TORUSLIGHT_MINOR    0.2
 
 #define LINELIGHT_RANGE     5
 

@@ -7,7 +7,7 @@
 void LightManager::Initialize()
 {
 	// ÉâÉCÉgÇÃã≠Ç≥
-	lightPower = 1;
+	lightPower = 3;
 
 	// ì_åıåπÇÃèâä˙âª
 	{
@@ -77,7 +77,7 @@ void LightManager::Initialize()
 		// ÉÇÉfÉãÇÃèâä˙âª
 		pointLightsModel.clear();
 		for (int i = 0; i < POINTLIGHT_MAX; ++i) {
-			pointLightsModel.push_back(LightPoint({ pointLights.at(i).position.x,pointLights.at(i).position.y,pointLights.at(i).position.z }));
+			pointLightsModel.push_back(std::make_unique<LightPoint>(DirectX::XMFLOAT3{ pointLights.at(i).position.x, pointLights.at(i).position.y, pointLights.at(i).position.z }));
 		}
 	}
 
@@ -100,7 +100,7 @@ void LightManager::Initialize()
 		torusLights.emplace_back(TorusLightConstants{ {28.0f, CEILNG_HEIGHT, -13.0f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
 		// â©ÉâÉCÉg -------------------------------------------------------------------------------------------------------
-        /* ìÏòLâ∫ */
+        /* ñkòLâ∫ */
 		torusLights.emplace_back(TorusLightConstants{ {-8.5f, CEILNG_HEIGHT, 14.0f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 		torusLights.emplace_back(TorusLightConstants{ {8.5f,  CEILNG_HEIGHT, 14.0f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
@@ -120,7 +120,7 @@ void LightManager::Initialize()
 		// ÉÇÉfÉãÇÃèâä˙âª
 		torusLightsModel.clear();
 		for (int i = 0; i < TORUSLIGHT_MAX; ++i) {
-			torusLightsModel.push_back(LightTorus({ torusLights.at(i).position.x,torusLights.at(i).position.y,torusLights.at(i).position.z }));
+			torusLightsModel.push_back(std::make_unique<LightTorus>(DirectX::XMFLOAT3{ torusLights.at(i).position.x, torusLights.at(i).position.y, torusLights.at(i).position.z }));
 		}
 	}
 
@@ -162,18 +162,20 @@ void LightManager::Initialize()
 
 		/* OBJäp */
 		lightData.emplace_back(LightData{ {-23.0f, CEILNG_HEIGHT, -13.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ {-21.0f, CEILNG_HEIGHT, -16.00f}, 0, 1 });
+		lightData.emplace_back(LightData{ {-21.0f, CEILNG_HEIGHT, -16.0f},  0, 1 });
+		lightData.emplace_back(LightData{ {-23.0f, CEILNG_HEIGHT, -23.0f}, 90, 1 });
 
 		/* OBJÇ»Çµ */
-		lightData.emplace_back(LightData{ { 21.0f,CEILNG_HEIGHT, -17.0f},0, 1 });
+		lightData.emplace_back(LightData{ { 24.0f,CEILNG_HEIGHT, -13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 21.0f,CEILNG_HEIGHT, -16.0f},0, 1 });
 		lightData.emplace_back(LightData{ { 24.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
 
-		for (int i = 0; i < 14; ++i) {
+		for (int i = 0; i < 16; ++i) {
 			lineLights.emplace_back(LineLightConstants{ {0,0,0,0},{0,0,0,0},{lightColor.red},LINELIGHT_RANGE });
 		}
 
 		// â©ÉâÉCÉg -------------------------------------------------------------------------------------------------------
-		/* ìÏòLâ∫ */
+		/* ñkòLâ∫ */
 		lightData.emplace_back(LightData{ {-15.0f,CEILNG_HEIGHT, 13.0f}, 90, 1 });
 		lightData.emplace_back(LightData{ { -3.0f,CEILNG_HEIGHT, 13.0f}, 90, 1 });
 		lightData.emplace_back(LightData{ {  3.0f,CEILNG_HEIGHT, 13.0f}, 90, 1 });
@@ -183,13 +185,14 @@ void LightManager::Initialize()
 
 		/* ì¸å˚ */
 		lightData.emplace_back(LightData{ {  1.0f,CEILNG_HEIGHT, -17.0f},  0, 1 });
-		lightData.emplace_back(LightData{ {-17.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { -9.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-18.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-13.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { -8.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
 		lightData.emplace_back(LightData{ {  7.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
 		lightData.emplace_back(LightData{ { 11.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
 		lightData.emplace_back(LightData{ { 17.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
 		 
-		for (int i = 0; i < 12; ++i) {
+		for (int i = 0; i < 13; ++i) {
 			lineLights.emplace_back(LineLightConstants{ {0,0,0,0},{0,0,0,0},{lightColor.yellow},LINELIGHT_RANGE });
 		}
 
@@ -230,7 +233,7 @@ void LightManager::Initialize()
 		// ÉÇÉfÉãÇÃèâä˙âª
 		lineLightsModel.clear();
 		for (int i = 0; i < LINELIGHT_MAX; ++i) {
-			lineLightsModel.push_back(LightBar(lightData.at(i).position, DirectX::XMConvertToRadians(lightData.at(i).angle)));
+			lineLightsModel.push_back(std::make_unique<LightBar>(lightData.at(i).position, DirectX::XMConvertToRadians(lightData.at(i).angle)));
 		}
 	}
 }
@@ -289,9 +292,9 @@ void LightManager::Update()
 		// ê¸åıåπ
 		for (int i = 0; i < LINELIGHT_MAX; ++i) {
 			if (i < 4) { lineLights.at(i).color       = { lightColor.blue }; }
-			else if (i < 18) { lineLights.at(i).color = { lightColor.red }; }
-			else if (i < 30) { lineLights.at(i).color = { lightColor.yellow }; }
-			else if (i < 36) { lineLights.at(i).color = { lightColor.green }; }
+			else if (i < 20) { lineLights.at(i).color = { lightColor.red }; }
+			else if (i < 33) { lineLights.at(i).color = { lightColor.yellow }; }
+			else if (i < 39) { lineLights.at(i).color = { lightColor.green }; }
 			else if (i < LINELIGHT_MAX) { lineLights.at(i).color = { lightColor.purple }; }
 		}
 	}
@@ -305,15 +308,15 @@ void LightManager::Render(RenderContext& rc)
 
 	/// ì_åıåπÇÃÉÇÉfÉãï`âÊ
 	for (auto& p : pointLightsModel) {
-		p.Render(rc, modelRenderer);
+		p->Render(rc, modelRenderer);
 	}
 	/// â~åıåπÇÃÉÇÉfÉãï`âÊ
 	for (auto& p : torusLightsModel) {
-		p.Render(rc, modelRenderer);
+		p->Render(rc, modelRenderer);
 	}
 	/// ê¸åıåπÇÃÉÇÉfÉãï`âÊ
 	for (auto& p : lineLightsModel) {
-		p.Render(rc, modelRenderer);
+		p->Render(rc, modelRenderer);
 	}
 }
 
@@ -381,7 +384,7 @@ void LightManager::DebugGUI()
 			TorusLightDebug("OBJ corner(red)", 4, 4);
 			TorusLightDebug("No OBJ(red)", 5, 5);
 
-			TorusLightDebug("south corridor(yellow)", 6, 7);
+			TorusLightDebug("north corridor(yellow)", 6, 7);
 			TorusLightDebug("entrance(yellow)", 8, 10);
 
 			TorusLightDebug("west corridor(green)", 11, 11);
@@ -399,19 +402,19 @@ void LightManager::DebugGUI()
 			LineLightDebug("three seats room(red)",      4,  6);
 			LineLightDebug("one seats room(red)",        7,  9);
 			LineLightDebug("large corridor(red)",       10, 13);
-			LineLightDebug("OBJ corner(red)",           14, 15);
-			LineLightDebug("No OBJ(red)",               16, 17);
+			LineLightDebug("OBJ corner(red)",           14, 16);
+			LineLightDebug("No OBJ(red)",               17, 19);
 
-			LineLightDebug("south corridor(yellow)",    18, 23);
-			LineLightDebug("entrance(yellow)",          24, 29);
+			LineLightDebug("north corridor(yellow)",    20, 25);
+			LineLightDebug("entrance(yellow)",          26, 32);
 
-			LineLightDebug("Laboratory(green)",         30, 31);
-			LineLightDebug("west corridor(green)",      32, 33);
-			LineLightDebug("OBJ green(green)",          34, 35);
+			LineLightDebug("Laboratory(green)",         33, 34);
+			LineLightDebug("west corridor(green)",      35, 36);
+			LineLightDebug("OBJ green(green)",          37, 38);
 
-			LineLightDebug("TV room(purple)",           36, 37);
-			LineLightDebug("east corridor(purple)",     38, 39);
-			LineLightDebug("OBJ purple(purple)",        40, LINELIGHT_MAX - 1);			
+			LineLightDebug("TV room(purple)",           39, 40);
+			LineLightDebug("east corridor(purple)",     41, 42);
+			LineLightDebug("OBJ purple(purple)",        443, LINELIGHT_MAX - 1);			
 
 			ImGui::TreePop();
 		}
