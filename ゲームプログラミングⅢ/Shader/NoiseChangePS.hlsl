@@ -15,7 +15,7 @@ float LineNoise(float y)
 // メインピクセルシェーダー
 float4 main(VS_OUT pin) : SV_Target
 {
-    float TriggerInterval = 5.0; // ノイズ発生間隔（秒）
+    float TriggerInterval = 10.0; // ノイズ発生間隔（秒）
     float TransitionDuration = 0.5; // フェードイン・アウト時間（秒）
 
     float2 uv = pin.texcoord;
@@ -42,5 +42,6 @@ float4 main(VS_OUT pin) : SV_Target
     float noise = LineNoise(uv.y);
     float4 noiseColor = float4(noise, noise, noise, 1.0);
 
+    //return baseColor;
     return lerp(baseColor, noiseColor, strength);
 }

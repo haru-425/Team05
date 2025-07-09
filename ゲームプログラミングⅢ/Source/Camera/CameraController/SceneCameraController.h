@@ -3,7 +3,7 @@
 
 #define VIEW_POINT_COUNT 5
 
-static constexpr float cameraChangeLimit = 5.0f;
+static constexpr float cameraChangeLimit = 10.0f;
 
 class SceneCameraController : public ICameraController
 {
@@ -32,4 +32,9 @@ private:
     int viewPoint = 0;
 
     ViewPointInfo viewPointInfo[VIEW_POINT_COUNT];
+
+    /// カメラクラスですべきことではない気がする
+    float angler = 10 * 0.01745f; ///< カメラ首振り速度
+    bool isChangeDir = false; ///< 首振りが変わるかどうか
+    float coolTime = 3.0f; ///< カメラの首振り方向が変わるタイミング
 };

@@ -16,7 +16,7 @@ void SceneTitle::Initialize()
 {
 	//スプライト初期化
 	sprite = new Sprite("Data/Sprite/GameTitleStrings.png");
-	TitleTimer = 0.0f; // タイトル画面のタイマー初期化
+	TitleTimer = 0.25f; // タイトル画面のタイマー初期化
 	TitleSignalTimer = 0.0f; // タイトル画面の信号タイマー初期化
 	sceneTrans = false; // シーン遷移フラグ初期化
 
@@ -55,6 +55,16 @@ void SceneTitle::Finalize()
 //更新処理
 void SceneTitle::Update(float elapsedTime)
 {
+	Mouse& mouse = Input::Instance().GetMouse();
+
+	bool isChangeScene = false;
+	/// マウス左クリックでメインシーンに遷移
+	if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+	{
+		isChangeScene = true;
+	}
+
+#if 1
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
 	// 任意のゲームパッドボタンが押されているか
@@ -113,6 +123,7 @@ void SceneTitle::Update(float elapsedTime)
 			sceneTrans = false; // シーン遷移フラグをリセット
 		}
 	}
+#endif
 
 	TitleTimer += elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(TitleTimer, TitleSignalTimer);
@@ -158,11 +169,20 @@ void SceneTitle::Render()
 	}
 
 	{
-		LightManager::Instance().RenderDebug(rc);
+		//LightManager::Instance().RenderDebug(rc);
 	}
 
 #if 1
 // 2Dスプライト描画
+	
+#endif
+
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
+	//NoiseChange
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoiseChange)].Get());
 	{
 		// タイトル描画
 		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
@@ -186,16 +206,13 @@ void SceneTitle::Render()
 			1, 1, 1, 1
 		);
 	}
-#endif
-
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
-
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->deactivate(dc);
 	//ポストプロセス適用
-	// 	//Grtch
+	//Grtch
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Glitch)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Glitch)].Get());
 	//グリッジを掛けない場合はここ
 
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->deactivate(dc);
