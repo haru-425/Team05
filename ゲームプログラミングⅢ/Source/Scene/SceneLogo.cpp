@@ -7,7 +7,7 @@
 void SceneLogo::Initialize()
 {
 	//スプライト初期化
-	sprite = new Sprite("Data/Sprite/LoadingIcon.png");
+	sprite = new Sprite("Data/Sprite/teamlogo.png");
 
 	//スレッド開始
 	thread = new std::thread(LoadingThread, this);
@@ -95,18 +95,29 @@ void SceneLogo::Render()
 
 	////2Dスプライト描画
 	{
-		//画面右下にローディングアイコンを描画
+		// 画面サイズを取得
 		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
 		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-		float spriteWidth = 256;
-		float spriteHeight = 256;
-		positionX = screenWidth - spriteWidth;
-		positionY = screenHeight - spriteHeight;
 
-		sprite->Render(rc,
-			positionX, positionY, 0, spriteWidth, spriteHeight,
-			angle,
-			1, 1, 1, 1);
+		// スプライトのサイズ（例：512x512ピクセル）
+		float spriteWidth = 512.0f;
+		float spriteHeight = 512.0f;
+
+		// スプライトを画面中央に配置（左上が中心に来るようにオフセット）
+		positionX = (screenWidth - spriteWidth) * 0.5f;
+		positionY = (screenHeight - spriteHeight) * 0.5f;
+
+		// スプライトを描画
+		sprite->Render(
+			rc,                 // 描画コンテキスト
+			positionX,          // 中央X位置
+			positionY,          // 中央Y位置
+			0.0f,               // Z座標
+			spriteWidth,        // 幅
+			spriteHeight,       // 高さ
+			0,              // 回転角
+			1.0f, 1.0f, 1.0f, 1.0f // 色（白・不透明）
+		);
 	}
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->deactivate(dc);
 
