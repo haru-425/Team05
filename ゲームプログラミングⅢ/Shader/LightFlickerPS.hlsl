@@ -5,51 +5,50 @@ SamplerState samp : register(s0);
 
 cbuffer FlickerParams : register(b13)
 {
-    float flickerSpeed; // ノイズベースのちらつき速度（例: 20.0）
-    float flickerStrength; // ノイズによる明るさの振れ幅（例: 0.4）
-    float flashInterval; // 大きな暗転の周期（例: 4.0秒）
-    float flashDuration; // 暗転時間（例: 0.2秒）
+    float flickerSpeed; // ちらつき中のノイズ速度（例：40.0）
+    float flickerStrength; // 明るさの揺らぎの強さ（例：0.4）
+    float flickerDuration; // ちらつき状態が続く時間（秒）（例：1.0）
+    float flickerChance; // ちらつきが起こる確率（例：0.05）
 };
 
 
-// 擬似ランダム関数
+// 擬似ランダム
 float rand(float x)
 {
     return frac(sin(x * 12.9898) * 43758.5453);
 }
 
-// パーリンノイズ風ちらつき（高速明滅）
+// ノイズによるちらつき（高周波の明るさゆらぎ）
 float getFlickerNoise(float time, float speed)
 {
     float base = floor(time * speed);
-    float fracPart = frac(time * speed);
-    float n0 = rand(base);
-    float n1 = rand(base + 1.0);
-    return lerp(n0, n1, fracPart);
+    float t = frac(time * speed);
+    float a = rand(base);
+    float b = rand(base + 1.0);
+    return lerp(a, b, t);
 }
 
-// 蛍光灯のような大きな暗転判定
-float getFlash(float time, float interval, float duration)
+// "ちらつき状態に入っているかどうか" を判定
+bool isInFlickerState(float time, float duration, float chance)
 {
-    float cycleTime = fmod(time, interval);
-    return (cycleTime < duration) ? 0.0 : 1.0;
+    float groupTime = floor(time / duration); // ちらつき候補ブロック
+    float r = rand(groupTime);
+    return r < chance;
 }
-
 
 float4 main(VS_OUT input) : SV_Target
 {
     float2 uv = input.texcoord;
     float4 color = sceneTex.Sample(samp, uv);
 
-    // 高周波ノイズで明るさを細かく揺らす
-    float flicker = getFlickerNoise(iTime, flickerSpeed);
-    float brightness = 1.0 - (flicker * flickerStrength);
+    float brightness = 1.0;
 
-    // 一定周期で完全に暗転するフェーズを入れる
-    float flash = getFlash(iTime, flashInterval, flashDuration);
-
-    // フラッシュによる強制消灯とノイズを合成
-    brightness *= flash;
+    // 一定確率でちらつき状態になる
+    if (isInFlickerState(iTime, flickerDuration, flickerChance))
+    {
+        float noise = getFlickerNoise(iTime, flickerSpeed);
+        brightness = 1.0 - (noise * flickerStrength);
+    }
 
     color.rgb *= brightness;
     return color;

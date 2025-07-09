@@ -98,12 +98,12 @@ private:
 	};
 	struct LightFlickerCBuffer
 	{
-		float flickerSpeed; // ノイズベースのちらつき速度（例: 20.0）
-		float flickerStrength; // ノイズによる明るさの振れ幅（例: 0.4）
-		float flashInterval; // 大きな暗転の周期（例: 4.0秒）
-		float flashDuration; // 暗転時間（例: 0.2秒）
+		float flickerSpeed; // ちらつき中のノイズ速度（例：40.0）
+		float flickerStrength; // 明るさの揺らぎの強さ（例：0.4）
+		float flickerDuration; // ちらつき状態が続く時間（秒）（例：1.0）
+		float flickerChance; // ちらつきが起こる確率（例：0.05）
 	};
-	LightFlickerCBuffer lightFlickerCBuffer = { 20.0f, 0.4f,4.f,0.2f };
+	LightFlickerCBuffer lightFlickerCBuffer = { 40.0f, 0.4f,0.5f,0.1f };
 	enum class ConstantBufferType
 	{
 		TimeCBuffer,
