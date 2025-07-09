@@ -6,6 +6,7 @@
 #include"Scene/SceneGameOver.h"
 #include"Scene/SceneManager.h"
 #include "./LightModels/LightManager.h"
+#include "./Aircon/AirconManager.h"
 
 #include <imgui.h>
 
@@ -44,7 +45,11 @@ void SceneGame::Initialize()
 	ID3D11Device* device = Graphics::Instance().GetDevice();
 	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
+	// ライトの初期化
 	LightManager::Instance().Initialize();
+
+	// エアコンの初期化
+	AirconManager::Instance().Initialize();
 }
 
 // 終了化
@@ -186,13 +191,16 @@ void SceneGame::Render()
 		stage->Render(rc, modelRenderer);
 
 		player->Render(rc, modelRenderer);
+
+		LightManager::Instance().Render(rc);
+
+		AirconManager::Instance().Render(rc);
 	}
 
 	// 3Dデバッグ描画
 	{
 		player->RenderDebug(rc, shapeRenderer, { 1,2,1 }, { 1,1,1,1 }, DEBUG_MODE::BOX | DEBUG_MODE::CAPSULE);
 
-		LightManager::Instance().Render(rc);
 	}
 
 	// 2Dスプライト描画
@@ -384,6 +392,7 @@ void SceneGame::DrawGUI()
 	}
 	Graphics::Instance().DebugGUI();
 	LightManager::Instance().DebugGUI();
+	AirconManager::Instance().DebugGUI();
 }
 void SceneGame::UpdateConstants(RenderContext& rc)
 {
