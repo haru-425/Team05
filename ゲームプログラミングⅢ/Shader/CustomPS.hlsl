@@ -221,29 +221,27 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 lineDiffuse = 0, lineSpecular = 0;
     for (i = 0; i < 42; ++i)
     {
-        float3 closetPoint = ClosestPointOnLine(pin.position.xyz, lineLights[i].start.xyz, lineLights[i].end.xyz);
-        float3 LP = normalize(closetPoint - pin.position.xyz);
-        float len = length(closetPoint - pin.position.xyz);
-        if (len >= lineLights[i].range)
-            continue;
-        
-        float attenuateLength = saturate(1.0f - len / lineLights[i].range);
-        float attenuation = attenuateLength * attenuateLength;
-
-        LP /= len;
-        
-        // ハーフベクトルの計算
-        float3 H = normalize(V + LP);
-        
-        // 各種ドット積の計算
-        float NdotL = saturate(dot(N, LP));
-        float NdotV = saturate(dot(N, V));
-        float NdotH = saturate(dot(N, H));
-        float VdotH = saturate(dot(V, H));
-        
-        lineDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * attenuation * lineLights[i].color.rgb;
-        lineSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * attenuation * lineLights[i].color.rgb;
-
+        for (int s = 0; s < 4; ++s)
+        {
+            float t = s / 3.0f;
+            float3 pointOnLine = lerp(lineLights[i].start.xyz, lineLights[i].end.xyz, t);
+             
+            float3 LP = normalize(pointOnLine - pin.position.xyz);
+            float len = length(pointOnLine - pin.position.xyz);
+            if (len >= lineLights[i].range)
+                continue;
+             
+            float attenuation = pow(saturate(1.0f - len / lineLights[i].range), 2.0f);
+             
+            float3 H = normalize(V + LP);
+            float NdotL = saturate(dot(N, LP));
+            float NdotV = saturate(dot(N, V));
+            float NdotH = saturate(dot(N, H));
+            float VdotH = saturate(dot(V, H));
+             
+            lineDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * attenuation * lineLights[i].color.rgb;
+            lineSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * attenuation * lineLights[i].color.rgb;
+        }
         lineDiffuse = max(0, lineDiffuse);
         lineSpecular = max(0, lineSpecular);
     }

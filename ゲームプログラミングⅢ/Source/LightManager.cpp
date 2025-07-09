@@ -92,6 +92,7 @@ void LightManager::Initialize()
 		torusLights.emplace_back(TorusLightConstants{  {-11.0f, CEILNG_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 		torusLights.emplace_back(TorusLightConstants{  {  0.0f, CEILNG_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 		torusLights.emplace_back(TorusLightConstants{  { 11.0f, CEILNG_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+
 		/* OBJ角 */
 		torusLights.emplace_back(TorusLightConstants{ {-28.0f, CEILNG_HEIGHT, -23.0f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
@@ -326,14 +327,14 @@ void LightManager::RenderDebugPrimitive(RenderContext& rc)
 	for (auto& p : pointLights) {
 		shapeRenderer->RenderSphere(rc, { p.position.x, p.position.y, p.position.z }, 0.2f, { 1, 1, 0, 1 });
 	}
-	//// 円光源のデバッグ描画
-	//for (auto& p : toruslights) {
-	//	shaperenderer->rendersphere(rc, { p.position.x, p.position.y, p.position.z }, 0.4f, { 1, 0, 0, 1 });
-	//}
-	///// 線光源のデバッグ描画
-	//for (auto& p : lightdata) {
-	//	shaperenderer->renderbox(rc, p.position, { 0,directx::xmconverttoradians(p.angle) ,0 }, { 1,0.4f,0.4f }, { 0,0,1,1 });
-	//}
+	// 円光源のデバッグ描画
+	for (auto& p : torusLights) {
+		shapeRenderer->RenderSphere(rc, { p.position.x, p.position.y, p.position.z }, 0.4f, { 1, 0, 0, 1 });
+	}
+	/// 線光源のデバッグ描画
+	for (auto& p : lightData) {
+		shapeRenderer->RenderBox(rc, p.position, { 0,DirectX::XMConvertToRadians(p.angle) ,0 }, { 1,0.4f,0.4f }, { 0,0,1,1 });
+	}
 }
 
 void LightManager::DebugGUI()
@@ -380,12 +381,12 @@ void LightManager::DebugGUI()
 			TorusLightDebug("OBJ corner(red)", 4, 4);
 			TorusLightDebug("No OBJ(red)", 5, 5);
 
-			TorusLightDebug("south corridor(yellow)", 6, 8);
-			TorusLightDebug("entrance(yellow)", 9, 11);
+			TorusLightDebug("south corridor(yellow)", 6, 7);
+			TorusLightDebug("entrance(yellow)", 8, 10);
 
-			TorusLightDebug("west corridor(green)", 12, 12);
+			TorusLightDebug("west corridor(green)", 11, 11);
 
-			TorusLightDebug("east corridor(purple)", 13, 13);
+			TorusLightDebug("east corridor(purple)", 12, 12);
 
 			ImGui::TreePop();
 		}

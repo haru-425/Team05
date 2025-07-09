@@ -95,11 +95,11 @@ private:
 
 	struct LightColors
 	{
-		DirectX::XMFLOAT4 red    = { 1,0,0,1 };
-		DirectX::XMFLOAT4 blue   = { 0,0,1,1 };
-		DirectX::XMFLOAT4 yellow = { 1,1,0,1 };
-		DirectX::XMFLOAT4 green  = { 0,1,0,1 };
-		DirectX::XMFLOAT4 purple = { 1,0,1,1 };
+		DirectX::XMFLOAT4 red    = { 0.5f,    0.0f   , 0.0f    ,1 };
+		DirectX::XMFLOAT4 blue   = { 0.0f,    0.0664f, 0.3242f ,1 };
+		DirectX::XMFLOAT4 yellow = { 1.0f,    0.9453f, 0.0f    ,1 };
+		DirectX::XMFLOAT4 green  = { 0.2578f ,0.2578f, 0.0f    ,1 };
+		DirectX::XMFLOAT4 purple = { 0.3242f ,0.0f   , 0.4492f ,1 };
 	};
 	LightColors lightColor;
 
@@ -109,8 +109,8 @@ private:
 
 #define POINTLIGHT_RANGE    6
 
-#define TORUSLIGHT_RANGE    3
-#define TORUSLIGHT_MAJOR    3
+#define TORUSLIGHT_RANGE    8
+#define TORUSLIGHT_MAJOR    5
 #define TORUSLIGHT_MINOR    0.6
 
 #define LINELIGHT_RANGE     5

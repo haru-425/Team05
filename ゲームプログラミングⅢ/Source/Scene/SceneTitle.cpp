@@ -166,10 +166,12 @@ void SceneTitle::Render()
 	{
 		//renderer->Render(rc, world, model.get(), ShaderId::Custom);
 		model->Render(rc, renderer);
+
+		LightManager::Instance().Render(rc);
 	}
 
 	{
-		//LightManager::Instance().RenderDebug(rc);
+		
 	}
 
 #if 1

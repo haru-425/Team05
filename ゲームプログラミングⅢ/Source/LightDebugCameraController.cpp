@@ -8,7 +8,7 @@ void LightDebugCameraController::Update(float dt)
 {
     GamePad& gamepad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
-    target.y = 3;
+    target.y = 2;
 
     // IMGUIのマウス入力値を使ってカメラ操作する
     ImGuiIO io = ImGui::GetIO();
