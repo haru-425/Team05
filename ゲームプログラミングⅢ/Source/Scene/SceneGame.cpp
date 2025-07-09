@@ -192,7 +192,7 @@ void SceneGame::Render()
 	{
 		player->RenderDebug(rc, shapeRenderer, { 1,2,1 }, { 1,1,1,1 }, DEBUG_MODE::BOX | DEBUG_MODE::CAPSULE);
 
-		LightManager::Instance().RenderDebug(rc);
+		LightManager::Instance().Render(rc);
 	}
 
 	// 2Dスプライト描画

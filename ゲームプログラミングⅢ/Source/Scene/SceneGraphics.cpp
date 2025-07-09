@@ -244,6 +244,9 @@ void SceneGraphics::Render()
 
 		/// プレイヤーの描画
 		player->Render(rc, modelRenderer);
+
+		/// ライトモデルの描画
+		LightManager::Instance().Render(rc);
 	}
 
 	/// 3Dデバッグ描画処理
@@ -251,7 +254,8 @@ void SceneGraphics::Render()
 		/// プレイヤーのデバッグ描画（ボックス・カプセル表示）
 		player->RenderDebug(rc, shapeRenderer, { 1,2,1 }, { 1,1,1,1 }, DEBUG_MODE::BOX | DEBUG_MODE::CAPSULE);
 
-		LightManager::Instance().RenderDebug(rc);
+		/// ライトモデルのデバッグ描画
+		LightManager::Instance().RenderDebugPrimitive(rc);
 	}
 
 	/// 2Dスプライト描画処理（未実装）

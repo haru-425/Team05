@@ -8,6 +8,7 @@ void LightDebugCameraController::Update(float dt)
 {
     GamePad& gamepad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
+    target.y = 3;
 
     // IMGUIのマウス入力値を使ってカメラ操作する
     ImGuiIO io = ImGui::GetIO();
@@ -36,7 +37,7 @@ void LightDebugCameraController::Update(float dt)
     DirectX::XMVECTOR Front = Transform.r[2];
     DirectX::XMVECTOR Right = Transform.r[0];
 
-    float moveSpeed = 5.0f * dt;
+    float moveSpeed = 8.0f * dt;
 
         if (GetAsyncKeyState('W') & 0x8000) {
             target.x += DirectX::XMVectorGetX(Front) * moveSpeed;
@@ -57,7 +58,7 @@ void LightDebugCameraController::Update(float dt)
 
 
     int wheelDelta = io.MouseWheel; // ホイールのスクロール量を取得
-    float zoomSpeed = 30.0f; // ズーム速度
+    float zoomSpeed = 45.0f; // ズーム速度
 
     range -= wheelDelta * zoomSpeed * dt;
 

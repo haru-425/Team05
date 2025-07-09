@@ -106,20 +106,17 @@ float4 main(VS_OUT pin) : SV_TARGET
     // Roughness, metalness ----------------------------------------------
     float roughness = Textures[ROUGHNESS_TEXTURE].Sample(LinearSampler, pin.texcoord).r;
     roughness = max(0, roughness);
-    roughness = 0.1f;
 
     float metalness = Textures[METALNESS_TEXTURE].Sample(LinearSampler, pin.texcoord).r;
     metalness = max(0, metalness);       
    
     // occlusion ---------------------------------------------------------
     float3 occlusion = Textures[OCCLUSION_TEXTURE].Sample(LinearSampler, pin.texcoord).rgb;
-    //occlusion = 1.0f;
     const float occlusionStrength = 1.0f;
     
     // フレネル反射率の初期値（非金属は最低4%）
     float4 albedo = color;
     float3 F0 = lerp(0.04f, albedo.rgb, metalness); //	垂直反射時のフレネル反射率(非金属でも最低4%は鏡面反射する
-    F0 = (0.04f, 0.04f, 0.04f);
 
     // 視線方向と光源方向の計算
     float3 L = normalize(-lightDirection.xyz);
@@ -253,11 +250,6 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     float3 totalDiffuse = (pointDiffuse + torusDiffuse + lineDiffuse) * power;
     float3 totalSpecular = (pointSpecular + torusSpecular + lineSpecular);
-    
-    //totalDiffuse = torusDiffuse * power;
-    //totalSpecular = torusSpecular;
-    
-    //float3 totalDiffuse=
     
     //	遮蔽処理
     totalDiffuse = lerp(totalDiffuse, totalDiffuse * occlusion, occlusionStrength);

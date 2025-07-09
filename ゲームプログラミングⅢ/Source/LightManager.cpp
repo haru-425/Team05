@@ -23,7 +23,6 @@ void LightManager::Initialize()
 		/* 大ライト通路 */
 		pointLights.emplace_back(PointLightConstants{ {-0.1f, CEILNG_HEIGHT, -10.8f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
 		pointLights.emplace_back(PointLightConstants{ {2.25f, CEILNG_HEIGHT, -10.8f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
-		//pointLights.emplace_back(PointLightConstants{ {1.0f,  CEILNG_HEIGHT, -13.0f,.0f},{lightColor.blue} , TORUSLIGHT_RANGE });  // 大ライト
 
 		// 赤ライト ------------------------------------------------------------------------------------------------------
 	   /* 3席 */
@@ -34,30 +33,16 @@ void LightManager::Initialize()
 		pointLights.emplace_back(PointLightConstants{ { 29.0f, CEILNG_HEIGHT, 13.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
 		pointLights.emplace_back(PointLightConstants{ { 29.0f, CEILNG_HEIGHT, 5.0f,.0f}, {lightColor.red} , POINTLIGHT_RANGE });
 
-		/* 大廊下 */
-		//pointLights.emplace_back(PointLightConstants{ {-11.0f, CEILNG_HEIGHT, -4.5f,.0f},{lightColor.red} , TORUSLIGHT_RANGE });  // 大ライト
-		//pointLights.emplace_back(PointLightConstants{ {  0.0f, CEILNG_HEIGHT, -4.5f,.0f},{lightColor.red} , TORUSLIGHT_RANGE });  // 大ライト
-		//pointLights.emplace_back(PointLightConstants{ { 11.0f, CEILNG_HEIGHT, -4.5f,.0f},{lightColor.red} , TORUSLIGHT_RANGE });  // 大ライト
-
 		/* OBJ角 */
 		pointLights.emplace_back(PointLightConstants{ {-28.0f, CEILNG_HEIGHT, -13.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
-		//pointLights.emplace_back(PointLightConstants{ {-28.0f, CEILNG_HEIGHT, -23.0f,.0f},{lightColor.red} , TORUSLIGHT_RANGE });  // 大ライト
 
 		/* OBJなし */
 		pointLights.emplace_back(PointLightConstants{ {28.0f, CEILNG_HEIGHT, -23.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
-		//pointLights.emplace_back(PointLightConstants{ {28.0f, CEILNG_HEIGHT, -13.0f,.0f},{lightColor.red} , TORUSLIGHT_RANGE });  // 大ライト
 
 		// 黄ライト -------------------------------------------------------------------------------------------------------
-		/* 南廊下 */
-		//pointLights.emplace_back(PointLightConstants{ {-8.5f, CEILNG_HEIGHT, 14.0f,.0f},{lightColor.yellow} , TORUSLIGHT_RANGE });  // 大ライト
-		//pointLights.emplace_back(PointLightConstants{ {8.5f,  CEILNG_HEIGHT, 14.0f,.0f},{lightColor.yellow} , TORUSLIGHT_RANGE });  // 大ライト
-
 		/* 入口 */
 		pointLights.emplace_back(PointLightConstants{ {-0.5f, CEILNG_HEIGHT, -24.5f,.0f},{lightColor.yellow} , POINTLIGHT_RANGE });
 		pointLights.emplace_back(PointLightConstants{ { 2.5f, CEILNG_HEIGHT, -24.5f,.0f},{lightColor.yellow} , POINTLIGHT_RANGE });
-		//pointLights.emplace_back(PointLightConstants{ {-5.0f, CEILNG_HEIGHT, -17.0f,.0f},{lightColor.yellow} , TORUSLIGHT_RANGE });  // 大ライト
-		//pointLights.emplace_back(PointLightConstants{ { 1.0f, CEILNG_HEIGHT, -22.5f,.0f},{lightColor.yellow} , TORUSLIGHT_RANGE });  // 大ライト
-		//pointLights.emplace_back(PointLightConstants{ { 7.0f, CEILNG_HEIGHT, -17.0f,.0f},{lightColor.yellow} , TORUSLIGHT_RANGE });  // 大ライト
 
 		// 緑ライト -------------------------------------------------------------------------------------------------------
 		/* 研修部屋 */
@@ -67,9 +52,6 @@ void LightManager::Initialize()
 		pointLights.emplace_back(PointLightConstants{ {4.0f, CEILNG_HEIGHT, 2.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
 		pointLights.emplace_back(PointLightConstants{ {6.5f, CEILNG_HEIGHT, 2.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
 		pointLights.emplace_back(PointLightConstants{ {9.0f, CEILNG_HEIGHT, 2.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-
-		/* 西廊下 */
-		//pointLights.emplace_back(PointLightConstants{ {-21.0f, CEILNG_HEIGHT, -4.0f,.0f},{lightColor.green} , TORUSLIGHT_RANGE });  // 大ライト
 
 		/* OBJ緑 */
 		pointLights.emplace_back(PointLightConstants{ {-14.0f, CEILNG_HEIGHT, -11.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
@@ -86,14 +68,17 @@ void LightManager::Initialize()
 		pointLights.emplace_back(PointLightConstants{ {-12.0f, CEILNG_HEIGHT, 3.5f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
 		pointLights.emplace_back(PointLightConstants{ { -9.0f, CEILNG_HEIGHT, 3.5f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
 
-		/* 東廊下 */
-		//pointLights.emplace_back(PointLightConstants{ {21.0f, CEILNG_HEIGHT, -4.5f,.0f},{lightColor.purple} , TORUSLIGHT_RANGE });  // 大ライト
-
 		/* OBJ紫 */
 		pointLights.emplace_back(PointLightConstants{ { 9.5f, CEILNG_HEIGHT, -11.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
 		pointLights.emplace_back(PointLightConstants{ {12.5f, CEILNG_HEIGHT, -11.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
 		pointLights.emplace_back(PointLightConstants{ { 9.5f, CEILNG_HEIGHT, -14.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
 		pointLights.emplace_back(PointLightConstants{ {12.5f, CEILNG_HEIGHT, -14.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
+
+		// モデルの初期化
+		pointLightsModel.clear();
+		for (int i = 0; i < POINTLIGHT_MAX; ++i) {
+			pointLightsModel.push_back(LightPoint({ pointLights.at(i).position.x,pointLights.at(i).position.y,pointLights.at(i).position.z }));
+		}
 	}
 
 	// 円光源
@@ -130,10 +115,17 @@ void LightManager::Initialize()
 		// 紫ライト -------------------------------------------------------------------------------------------------------
 		/* 東廊下 */
 		torusLights.emplace_back(TorusLightConstants{ {21.0f, CEILNG_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.purple },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+
+		// モデルの初期化
+		torusLightsModel.clear();
+		for (int i = 0; i < TORUSLIGHT_MAX; ++i) {
+			torusLightsModel.push_back(LightTorus({ torusLights.at(i).position.x,torusLights.at(i).position.y,torusLights.at(i).position.z }));
+		}
 	}
 
 	// 線光源の初期化
 	{
+		// 光源情報の初期化
 		lineLights.clear();
 		lightData.clear();
 
@@ -233,6 +225,12 @@ void LightManager::Initialize()
 		for (int i = 0; i < 6; ++i) {
 			lineLights.emplace_back(LineLightConstants{ {0,0,0,0},{0,0,0,0},{lightColor.purple},LINELIGHT_RANGE });
 		}
+
+		// モデルの初期化
+		lineLightsModel.clear();
+		for (int i = 0; i < LINELIGHT_MAX; ++i) {
+			lineLightsModel.push_back(LightBar(lightData.at(i).position, DirectX::XMConvertToRadians(lightData.at(i).angle)));
+		}
 	}
 }
 
@@ -273,11 +271,19 @@ void LightManager::Update()
 	{
 		// 点光源
 		for (int i = 0; i < POINTLIGHT_MAX; ++i) {
-			if (i < 7) { pointLights.at(i).color       = { lightColor.blue }; }
-			else if (i < 18) { pointLights.at(i).color = { lightColor.red }; }
-			else if (i < 25) { pointLights.at(i).color = { lightColor.yellow }; }
-			else if (i < 38) { pointLights.at(i).color = { lightColor.green }; }
+			if (i < 6) { pointLights.at(i).color       = { lightColor.blue }; }
+			else if (i < 12) { pointLights.at(i).color = { lightColor.red }; }
+			else if (i < 14) { pointLights.at(i).color = { lightColor.yellow }; }
+			else if (i < 26) { pointLights.at(i).color = { lightColor.green }; }
 			else if (i < POINTLIGHT_MAX) { pointLights.at(i).color = { lightColor.purple }; }
+		}
+		// 円光源
+		for (int i = 0; i < TORUSLIGHT_MAX; ++i) {
+			if (i < 1) { torusLights.at(i).color = { lightColor.blue }; }
+			else if (i < 6) { torusLights.at(i).color = { lightColor.red }; }
+			else if (i < 11) { torusLights.at(i).color = { lightColor.yellow }; }
+			else if (i < 12) { torusLights.at(i).color = { lightColor.green }; }
+			else if (i < TORUSLIGHT_MAX) { torusLights.at(i).color = { lightColor.purple }; }
 		}
 		// 線光源
 		for (int i = 0; i < LINELIGHT_MAX; ++i) {
@@ -285,28 +291,49 @@ void LightManager::Update()
 			else if (i < 18) { lineLights.at(i).color = { lightColor.red }; }
 			else if (i < 30) { lineLights.at(i).color = { lightColor.yellow }; }
 			else if (i < 36) { lineLights.at(i).color = { lightColor.green }; }
-			else if (i < POINTLIGHT_MAX) { lineLights.at(i).color = { lightColor.purple }; }
+			else if (i < LINELIGHT_MAX) { lineLights.at(i).color = { lightColor.purple }; }
 		}
 	}
 }
 
-void LightManager::RenderDebug(RenderContext& rc)
+void LightManager::Render(RenderContext& rc)
 {
-    Graphics& graphics = Graphics::Instance(); ///< グラフィックス管理インスタンス
-    ID3D11DeviceContext* dc = graphics.GetDeviceContext(); ///< デバイスコンテキスト
-    ShapeRenderer* shapeRenderer = graphics.GetShapeRenderer(); ///< 形状描画用レンダラー
+	Graphics& graphics = Graphics::Instance(); ///< グラフィックス管理インスタンス
+	ID3D11DeviceContext* dc = graphics.GetDeviceContext(); ///< デバイスコンテキスト
+	ModelRenderer* modelRenderer = graphics.GetModelRenderer();
 
-    // 点光源のデバッグ描画
+	/// 点光源のモデル描画
+	for (auto& p : pointLightsModel) {
+		p.Render(rc, modelRenderer);
+	}
+	/// 円光源のモデル描画
+	for (auto& p : torusLightsModel) {
+		p.Render(rc, modelRenderer);
+	}
+	/// 線光源のモデル描画
+	for (auto& p : lineLightsModel) {
+		p.Render(rc, modelRenderer);
+	}
+}
+
+void LightManager::RenderDebugPrimitive(RenderContext& rc)
+{
+	Graphics& graphics = Graphics::Instance(); ///< グラフィックス管理インスタンス
+	ID3D11DeviceContext* dc = graphics.GetDeviceContext(); ///< デバイスコンテキスト
+	ShapeRenderer* shapeRenderer = graphics.GetShapeRenderer(); ///< 形状描画用レンダラー
+
+	// 点光源のデバッグ描画
 	for (auto& p : pointLights) {
 		shapeRenderer->RenderSphere(rc, { p.position.x, p.position.y, p.position.z }, 0.2f, { 1, 1, 0, 1 });
 	}
-	for (auto& p : torusLights) {
-		shapeRenderer->RenderSphere(rc, { p.position.x, p.position.y, p.position.z }, 0.4f, { 1, 0, 0, 1 });
-	}
-    /// 線光源のデバッグ描画
-    for (auto& p : lightData) {
-		shapeRenderer->RenderBox(rc, p.position, { 0,DirectX::XMConvertToRadians(p.angle) ,0 }, { 1,0.4f,0.4f }, { 0,0,1,1 });
-    }
+	//// 円光源のデバッグ描画
+	//for (auto& p : toruslights) {
+	//	shaperenderer->rendersphere(rc, { p.position.x, p.position.y, p.position.z }, 0.4f, { 1, 0, 0, 1 });
+	//}
+	///// 線光源のデバッグ描画
+	//for (auto& p : lightdata) {
+	//	shaperenderer->renderbox(rc, p.position, { 0,directx::xmconverttoradians(p.angle) ,0 }, { 1,0.4f,0.4f }, { 0,0,1,1 });
+	//}
 }
 
 void LightManager::DebugGUI()

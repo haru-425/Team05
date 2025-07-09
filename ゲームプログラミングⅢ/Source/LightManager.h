@@ -5,6 +5,11 @@
 
 #include "System/RenderContext.h"
 #include "System/ShapeRenderer.h"
+#include "System/ModelRenderer.h"
+
+#include "./LightModels/LightPoint/LightPoint.h"
+#include "./LightModels/LightBar/LightBar.h"
+#include "./LightModels/LightTorus/LightTorus.h"
 
 class LightManager
 {
@@ -57,7 +62,9 @@ public:
 
 	void Initialize();
 	void Update();
-	void RenderDebug(RenderContext& rc);
+
+	void Render(RenderContext& rc);
+	void RenderDebugPrimitive(RenderContext& rc);
 
 	void DebugGUI();
 
@@ -76,7 +83,12 @@ private:
 	std::vector<PointLightConstants> pointLights;
 	std::vector<TorusLightConstants> torusLights;
 	std::vector<LineLightConstants>  lineLights;
-	std::vector<LightData>           lightData;;
+	std::vector<LightData>           lightData;
+
+	// モデル
+	std::vector<LightPoint>  pointLightsModel;
+	std::vector<LightTorus>  torusLightsModel;
+	std::vector<LightBar>    lineLightsModel;
 
 	// 全体のライト強度（乗算係数）
 	float lightPower = 5.0f;
@@ -95,12 +107,15 @@ private:
 #define TORUSLIGHT_MAX     13
 #define LINELIGHT_MAX      42
 
-#define POINTLIGHT_RANGE  6
-#define TORUSLIGHT_RANGE    8
+#define POINTLIGHT_RANGE    6
+
+#define TORUSLIGHT_RANGE    3
 #define TORUSLIGHT_MAJOR    3
-#define TORUSLIGHT_MINOR    1
+#define TORUSLIGHT_MINOR    0.6
+
 #define LINELIGHT_RANGE     5
-#define CEILNG_HEIGHT       3
+
+#define CEILNG_HEIGHT       2.999f
 
 };
 
