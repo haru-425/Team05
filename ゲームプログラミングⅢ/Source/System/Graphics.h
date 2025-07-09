@@ -124,6 +124,7 @@ public:
 		FilmGrainDust,
 		FadeToBlack,
 		WardenGaze,
+		NoiseChange,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];

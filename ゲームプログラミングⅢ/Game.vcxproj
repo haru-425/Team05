@@ -127,6 +127,7 @@
     <ClInclude Include="Source\Camera\CameraController\FPCameraController.h" />
     <ClInclude Include="Source\Camera\CameraController\FreeCameraController.h" />
     <ClInclude Include="Source\Camera\CameraController\ICameraController.h" />
+    <ClInclude Include="Source\Camera\CameraController\SceneCameraController.h" />
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\GameObjects\Enemy\Enemy.h" />
     <ClInclude Include="Source\GameObjects\GameObject.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Source\System\Mouse.h" />
     <ClInclude Include="Source\System\RenderContext.h" />
     <ClInclude Include="Source\System\RenderState.h" />
+    <ClInclude Include="Source\System\ResourceManager.h" />
     <ClInclude Include="Source\System\SettingsManager.h" />
     <ClInclude Include="Source\System\Shader.h" />
     <ClInclude Include="Source\System\ShadowCaster.h" />
@@ -199,6 +201,7 @@
     <ClCompile Include="Source\Camera\CameraController.cpp" />
     <ClCompile Include="Source\Camera\CameraController\FPCameraController.cpp" />
     <ClCompile Include="Source\Camera\CameraController\FreeCameraController.cpp" />
+    <ClCompile Include="Source\Camera\CameraController\SceneCameraController.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\GameObjects\Enemy\Enemy.cpp" />
     <ClCompile Include="Source\GameObjects\Player\Player.cpp" />
@@ -245,6 +248,7 @@
     <ClCompile Include="Source\System\ModelResource.cpp" />
     <ClCompile Include="Source\System\Mouse.cpp" />
     <ClCompile Include="Source\System\RenderState.cpp" />
+    <ClCompile Include="Source\System\ResourceManager.cpp" />
     <ClCompile Include="Source\System\SettingsManager.cpp" />
     <ClCompile Include="Source\System\ShadowCaster.cpp" />
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
@@ -355,6 +359,10 @@
     <FxCompile Include="Shader\LambertVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\NoiseChangePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\NoSignalFinalePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

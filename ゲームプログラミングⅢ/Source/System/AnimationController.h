@@ -23,6 +23,8 @@ public:
 
     void SetAnimationSecondScale(float animationSecondScale) { this->animationSecondScale = animationSecondScale; }
 
+    bool GetEndAnimation() const { return isEndAnimation; }
+
 private:
     std::weak_ptr<Model> modelRef;
 
@@ -32,4 +34,6 @@ private:
     bool animationLoop = false;
     bool animationPlaying = false;
     float animationBlendSecondLength = 0.2f;
+
+    bool isEndAnimation = false; /// アニメーションが終わったか
 };

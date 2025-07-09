@@ -7,6 +7,8 @@
 #include "imgui.h"                    // ImGuiの基本機能
 #include "imgui_impl_win32.h"        // Win32用バックエンド
 #include "imgui_impl_dx11.h"         // DirectX11用バックエンド
+#include "../LightManager.h"
+
 
 // 初期化
 void fujimoto::Initialize()
@@ -52,22 +54,33 @@ void fujimoto::Update(float elapsedTime)
 	player->Update(elapsedTime);
 	enemy->Update(elapsedTime);
 
-	// 一人称用カメラ
+	/// カメラコントローラーの種類による分岐
+	// 一人称カメラコントローラーの場合
 	if (typeid(*i_CameraController) == typeid(FPCameraController))
 	{
+		/// 画面中央の座標を取得し、マウスカーソルを中央に移動
 		POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
 		ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
+
+		/// プレイヤーの位置をカメラ位置に設定
 		DirectX::XMFLOAT3 cameraPos = player->GetPosition();
+		cameraPos.y = 1.5f;
 		i_CameraController->SetCameraPos(cameraPos);
+
+		/// カメラコントローラーの更新
 		i_CameraController->Update(elapsedTime);
+
+		/// マウスカーソルを画面中央に移動
 		SetCursorPos(screenPoint.x, screenPoint.y);
 
+		/// CTRL+Xボタンでフリーカメラに切り替え
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
-			i_CameraController = std::make_unique<FreeCameraController>();
+			//i_CameraController = std::make_unique<FreeCameraController>();
+			i_CameraController = std::make_unique<LightDebugCameraController>();
 		}
 	}
-	// フリーカメラ
+	// フリーカメラコントローラーの場合
 	else
 	{
 		/// カメラコントローラーの更新
@@ -127,7 +140,7 @@ void fujimoto::Render()
 	}
 
 	{
-		ImGui::Begin("Player Info");
+		ImGui::Begin("Scene Info");
 
 		// positionを表示
 		ImGui::Text("Position: X=%.2f, Y=%.2f, Z=%.2f",
@@ -137,6 +150,12 @@ void fujimoto::Render()
 
 		ImGui::Text("index: X=%d",
 			enemy.get()->GetindexWayPoint());
+
+
+		/*ImGui::Text("Position: X=%.2f, Y=%.2f, Z=%.2f",
+			i_CameraController->GetTarget().x,
+			i_CameraController->GetTarget().y,
+			i_CameraController->GetTarget().z);*/
 		ImGui::End();
 
 	}
@@ -145,5 +164,5 @@ void fujimoto::Render()
 // GUI描画
 void fujimoto::DrawGUI()
 {
-
+	enemy->DrawDebug();
 }

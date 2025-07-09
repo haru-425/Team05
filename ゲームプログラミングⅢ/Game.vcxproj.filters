@@ -34,8 +34,9 @@
     <FxCompile Include="Shader\VisionBootDownPS.hlsl" />
     <FxCompile Include="Shader\TVNoiseFadePS.hlsl" />
     <FxCompile Include="Shader\GameOverPS.hlsl" />
-    <FxCompile Include="Shader\FilmGrainDustPS.hlsl" />
     <FxCompile Include="Shader\FadeToBlackPS.hlsl" />
+    <FxCompile Include="Shader\FilmGrainDustPS.hlsl" />
+    <FxCompile Include="Shader\NoiseChangePS.hlsl" />
     <FxCompile Include="Shader\WardenGazePS.hlsl" />
   </ItemGroup>
   <ItemGroup>
@@ -99,9 +100,8 @@
     <ClCompile Include="Source\System\SettingsManager.cpp" />
     <ClCompile Include="Source\Life.cpp" />
     <ClCompile Include="Source\Scene\SceneGameOver.cpp" />
-    <ClCompile Include="Source\GameObjects\LightModels\LightBar\LightBar.cpp" />
-    <ClCompile Include="Source\GameObjects\LightModels\LightPoint\LightPoint.cpp" />
-    <ClCompile Include="Source\GameObjects\LightModels\LightTorus\LightTorus.cpp" />
+    <ClCompile Include="Source\Camera\CameraController\SceneCameraController.cpp" />
+    <ClCompile Include="Source\System\ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -174,9 +174,8 @@
     <ClInclude Include="Source\System\SettingsManager.h" />
     <ClInclude Include="Source\Life.h" />
     <ClInclude Include="Source\Scene\SceneGameOver.h" />
-    <ClInclude Include="Source\GameObjects\LightModels\LightBar\LightBar.h" />
-    <ClInclude Include="Source\GameObjects\LightModels\LightPoint\LightPoint.h" />
-    <ClInclude Include="Source\GameObjects\LightModels\LightTorus\LightTorus.h" />
+    <ClInclude Include="Source\Camera\CameraController\SceneCameraController.h" />
+    <ClInclude Include="Source\System\ResourceManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
