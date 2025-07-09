@@ -156,7 +156,7 @@ void SceneTitle::Render()
 
 	UpdateConstants(rc);
 	LightManager::Instance().UpdateConstants(rc);
-		
+
 	/// フレームバッファのクリアとアクティベート（ポストプロセス用）
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 1, 1, 1, 1);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
@@ -171,12 +171,12 @@ void SceneTitle::Render()
 	}
 
 	{
-		
+
 	}
 
 #if 1
-// 2Dスプライト描画
-	
+	// 2Dスプライト描画
+
 #endif
 
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
@@ -184,7 +184,7 @@ void SceneTitle::Render()
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoiseChange)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoiseChange)].Get());
 	{
 		// タイトル描画
 		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
@@ -214,36 +214,50 @@ void SceneTitle::Render()
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Glitch)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Glitch)].Get());
 	//グリッジを掛けない場合はここ
 
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->deactivate(dc);
 
-//TEMPORAL NOISE
+	//TEMPORAL NOISE
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
+	//LaightFlicker
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::LightFlicker)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::LightFlicker)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::LightFlicker)].Get());
+
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::LightFlicker)]->deactivate(dc);
 
 	//crt
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::LightFlicker)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
 
 	//NoSignalFinale
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoSignalFinale)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoSignalFinale)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->deactivate(dc);
+
+	//VisionBootDown
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->deactivate(dc);
 
 	/// ポストプロセス結果の描画
 	Graphics::Instance().bit_block_transfer->blit(
 		dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->shader_resource_views[0].GetAddressOf(), 10, 1
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1
 	);
 
 

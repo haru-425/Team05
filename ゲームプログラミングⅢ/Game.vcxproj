@@ -154,6 +154,7 @@
     <ClInclude Include="Source\Scene\SceneGameOver.h" />
     <ClInclude Include="Source\Scene\SceneGraphics.h" />
     <ClInclude Include="Source\Scene\SceneLoading.h" />
+    <ClInclude Include="Source\Scene\SceneLogo.h" />
     <ClInclude Include="Source\Scene\SceneManager.h" />
     <ClInclude Include="Source\Scene\SceneMattsu.h" />
     <ClInclude Include="Source\Scene\SceneTitle.h" />
@@ -227,6 +228,7 @@
     <ClCompile Include="Source\Scene\SceneGameOver.cpp" />
     <ClCompile Include="Source\Scene\SceneGraphics.cpp" />
     <ClCompile Include="Source\Scene\SceneLoading.cpp" />
+    <ClCompile Include="Source\Scene\SceneLogo.cpp" />
     <ClCompile Include="Source\Scene\SceneManager.cpp" />
     <ClCompile Include="Source\Scene\SceneMattsu.cpp" />
     <ClCompile Include="Source\Scene\SceneTitle.cpp" />
@@ -363,6 +365,10 @@
     <FxCompile Include="Shader\LambertVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\LightFlickerPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\NoiseChangePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

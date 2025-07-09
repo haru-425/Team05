@@ -5,11 +5,11 @@
 #include<thread>
 
 //ローディングシーン
-class SceneLoading : public Scene
+class SceneLogo : public Scene
 {
 public:
-	SceneLoading(Scene* nextScene) :nextScene(nextScene) {}
-	~SceneLoading() {}
+	SceneLogo(Scene* nextScene) :nextScene(nextScene) {}
+	~SceneLogo() {}
 
 	//初期化
 	void Initialize() override;
@@ -28,7 +28,7 @@ public:
 
 private:
 	//ローディングスレッド
-	static void LoadingThread(SceneLoading* scene);
+	static void LoadingThread(SceneLogo* scene);
 
 private:
 	Sprite* sprite = nullptr;
