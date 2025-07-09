@@ -4,6 +4,8 @@
 #include <DirectXCollision.h>
 #include "System/Model.h"
 #include "Stage.h"
+#include "./System/AnimationController.h"
+#include <memory>
 
 /// 通常移動速度
 #define USUAL_SPEED 2.0f
@@ -75,6 +77,10 @@ public:
     /// 現在のヨー角を取得する
     float GetYaw() const { return yaw; }
 
+    void jageDirection(DirectX::XMVECTOR dir);
+
+    void Animationplay();
+
     /// 現在向かっている経路ポイントのインデックス（デバッグ用）
     int GetindexWayPoint() const { return static_cast<int>(currentTargetIndex); }
 
@@ -101,7 +107,7 @@ private:
     };
 
 private:
-    Model* model = nullptr;                                ///< モデルデータ
+    std::shared_ptr<Model> model = nullptr;                                ///< モデルデータ
     std::weak_ptr<Player> playerRef;                       ///< プレイヤーへの弱参照
     Stage* stage;                                          ///< ステージへの参照
 
@@ -127,6 +133,7 @@ private:
     float lockonRange = 30.0f;                             ///< 直線でプレイヤーを見つけれる距離
 
     //アニメーション管理フラグ・変数
+    AnimationController animationcontroller;
     float animation_Timer = 0.0f;
     enum Direction
     {
@@ -136,4 +143,5 @@ private:
         E,
     };
     Direction direction = Direction::N;
+    Direction olddirection = direction;
 };

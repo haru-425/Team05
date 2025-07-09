@@ -3,14 +3,19 @@
 #include "Pursuer/SearchAI.h"
 #include "Player/player.h"
 #include "./Collision.h"
+#include "imgui.h"                    // ImGuiの基本機能
+#include "imgui_impl_win32.h"        // Win32用バックエンド
+#include "imgui_impl_dx11.h"         // DirectX11用バックエンド
 
 // コンストラクタ：プレイヤーとステージへの参照を保持し、モデルを読み込む
 Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 {
     this->stage = stage;
     this->playerRef = playerRef;
-    model = new Model("Data/Model/Slime/Slime.mdl"); // スライムモデルを読み込み
-
+    //model = std::make_shared<Model>("Data/Model/Slime/Slime.mdl");
+    model = std::make_shared<Model>("Data/Model/test/enemy_motion.mdl");
+    this->animationcontroller.SetModel(model);
+    this->animationcontroller.SetAnimationPlaying(true);
     scale.x = scale.y = scale.z = 0.01f; // スケール設定（非常に小さい）
     radius = 0.5f;                        // 衝突用の半径
 
@@ -38,11 +43,12 @@ void Enemy::Update(float elapsedTime)
     yaw = atan2f(x, z);           // 左右の向き
 
     // プレイヤーとのレイキャスト処理
-    const DirectX::XMFLOAT3 RayStart = this->GetPosition();
-    const DirectX::XMFLOAT3 RayGoal = playerRef.lock()->GetPosition();
+    const DirectX::XMFLOAT3 RayStart = { this->GetPosition().x, this->GetPosition().y + viewPoint, this->GetPosition().z };
+    const DirectX::XMFLOAT3 RayGoal = { playerRef.lock()->GetPosition().x, playerRef.lock()->GetPosition().y + viewPoint, playerRef.lock()->GetPosition().z };
 
     DirectX::XMFLOAT3 hitpos, n;
-    loocking = Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n);
+    //bool a = Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n);      //(デバッグ用)
+    loocking = !(Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n));
 
     // ヒット位置とプレイヤー位置との距離を比較
     float hitdist = DirectX::XMVectorGetX(
@@ -54,7 +60,7 @@ void Enemy::Update(float elapsedTime)
             DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
 
     // プレイヤーが見えているか近づいているなら
-    if ((loocking && hitdist < lockonRange) || playerdist < searchRange)
+    if ((loocking && playerdist < lockonRange) || playerdist < searchRange)
     {
         if (!isTrackingPlayer)
         {
@@ -72,10 +78,16 @@ void Enemy::Update(float elapsedTime)
             refinePath(start, current); // 経路を作成
 
             // ステート遷移
-            if (loocking && hitdist < lockonRange)
+            if (loocking && playerdist < lockonRange)
+            {
                 state = State::detection;
+                Animationplay();
+            }
             else if (playerdist < searchRange)
+            {
                 state = State::feeling;
+                Animationplay();
+            }
 
             isTrackingPlayer = true;
         }
@@ -95,6 +107,8 @@ void Enemy::Update(float elapsedTime)
         }
     }
 
+    int current, start;
+
     // 敵の状態に応じて処理を分岐
     switch (state)
     {
@@ -103,16 +117,18 @@ void Enemy::Update(float elapsedTime)
         break;
 
     case State::turn:
-        if (true)
+        if (animationcontroller.GetEndAnimation())
         {
             state = State::Roaming;
+            Animationplay();
         }
         break;
 
     case State::Idle:
-        // ランダムな目標地点を設定し経路探索（デバッグ：Tキー）
+        // ランダムな目標地点を設定し経路探索
         Goal::Instance().SetPosition(stage->GetIndexWayPoint(rand() % (MAX_WAY_POINT - 1) + 1));
-
+#if 0
+        //（デバッグ：Tキー）
         if (GetAsyncKeyState('T') & 0x8000)
         {
             Start::Instance().SetPosition(this->position);
@@ -126,32 +142,52 @@ void Enemy::Update(float elapsedTime)
 
             refinePath(start, current);
             state = State::Roaming;
+            Animationplay();
         }
+#endif
+
+#if 1
+        Start::Instance().SetPosition(this->position);
+        SearchAI::Instance().DijkstraSearch(stage);
+
+        current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+        start = stage->NearWayPointIndex(this->GetPosition());
+
+        if (SearchAI::Instance().findRoot[current] == -1 || current == start)
+            break;
+
+        refinePath(start, current);
+        state = State::Roaming;
+        Animationplay();
+#endif
+
         break;
 
     case State::detection:
-        if (true)
+        if (animationcontroller.GetEndAnimation())
         {
             moveSpeed = TRACKING_SPEED; // 追跡スピード
             state = State::Roaming;
+            Animationplay();
         }
         break;
 
     case State::feeling:
-        if (true)
-        {
-            moveSpeed = FEELING_SPEED; // 近距離反応スピード
-            state = State::Roaming;
-        }
+
+        moveSpeed = FEELING_SPEED; // 近距離反応スピード
+        state = State::Roaming;
+        Animationplay();
+
         break;
 
     case State::miss:
 
-        if (true)
+        if (animationcontroller.GetEndAnimation())
         {
             isTrackingPlayer = false;
             moveSpeed = USUAL_SPEED; // 通常速度に戻す
             state = State::Idle;
+            Animationplay();
         }
         break;
     }
@@ -159,6 +195,7 @@ void Enemy::Update(float elapsedTime)
     // 行列更新とモデルの描画準備
     UpdateTransform();
     model->UpdateTransform();
+    animationcontroller.UpdateAnimation(elapsedTime);
 }
 
 
@@ -171,12 +208,17 @@ void Enemy::Updatemovement(float elapsedTime)
         {
             // 追跡終了時の処理
             state = State::miss;
+            Animationplay();
             currentTargetIndex = 0;
 
-            if (!route.empty() || !stage->path.empty())
+            if (!route.empty())
             {
-                stage->path.clear();
                 route.clear();
+            }
+            if (!stage->path.empty())
+            {
+
+                stage->path.clear();
             }
             return;
         }
@@ -195,15 +237,30 @@ void Enemy::Updatemovement(float elapsedTime)
         }
     }
 
+    bool nearTarget = false;
     // ターゲット方向に向けた移動
     DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&position);
     DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&targetPosition);
+    if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition()), posVec))) < 3.0f)
+    {
+        targetVec = DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition());
+        nearTarget = true;
+    }
+    else
+    {
+        nearTarget=false;
+    }
     DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(targetVec, posVec);
 
     DirectX::XMVECTOR dirNorm = DirectX::XMVector3Normalize(dir);
     DirectX::XMVECTOR moveVec = DirectX::XMVectorScale(dirNorm, moveSpeed * elapsedTime);
     posVec = DirectX::XMVectorAdd(posVec, moveVec);
     DirectX::XMStoreFloat3(&position, posVec);
+
+    if (nearTarget)
+    {
+        return;
+    }
 
     // ターゲット地点に近づいたら次の目的地へ
     float distance = DirectX::XMVectorGetX(DirectX::XMVector3Length(dir));
@@ -214,11 +271,24 @@ void Enemy::Updatemovement(float elapsedTime)
         {
             targetPosition = route[currentTargetIndex];
             float measurement = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec)));
-            while (measurement<0.5f && currentTargetIndex <= route.size())
+            while (measurement < 0.1f && currentTargetIndex <= route.size())
             {
                 currentTargetIndex++;
             }
+
         }
+        if (currentTargetIndex >= route.size())
+        {
+            return;
+        }
+        targetPosition = route[currentTargetIndex];
+        jageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
+        state = State::turn;
+        Animationplay();
+       /* if (stage->NearWayPointIndex(targetPosition) == 12 || stage->NearWayPointIndex(targetPosition) == 21)
+        {
+            int x = 19;
+        }*/
     }
 }
 
@@ -243,13 +313,237 @@ void Enemy::refinePath(int start, int current)
     }
 }
 
+void Enemy::jageDirection(DirectX::XMVECTOR dir)
+{
+    olddirection = direction;
+    DirectX::XMFLOAT3 dirf;
+    DirectX::XMStoreFloat3(&dirf, dir);
+    if (dirf.x > 0.1f)
+    {
+        direction = Direction::E;
+    }
+    else if (dirf.z > 0.1f)
+    {
+        direction = Direction::N;
+    }
+    else if (dirf.x < -0.1f)
+    {
+        direction = Direction::W;
+    }
+    else if (dirf.z < -0.1f)
+    {
+        direction = Direction::S;
+    }
+    return;
+}
+
+void Enemy::Animationplay()
+{
+    switch (direction)
+    {
+    case Enemy::N:
+
+        switch (state)
+        {
+        case Enemy::State::Idle:
+            break;
+        case Enemy::State::Roaming:
+            if (isTrackingPlayer)
+            {
+                animationcontroller.PlayAnimation("run_front", true);
+            }
+            else
+            {
+                animationcontroller.PlayAnimation("walk_front", true);
+            }
+            break;
+        case Enemy::State::detection:
+            animationcontroller.PlayAnimation("findTarget_front", false);
+            break;
+        case Enemy::State::miss:
+			animationcontroller.PlayAnimation("lostTarget_front", false);
+            break;
+        case Enemy::State::turn:
+            if (olddirection==Direction::E)
+            {
+                animationcontroller.PlayAnimation("rotate_rightToFront", false);
+            }
+            else if (olddirection==Direction::W)
+            {
+                animationcontroller.PlayAnimation("rotate_leftToFront", false);
+            }
+            
+            /*
+            else if (true)
+            {
+                animationcontroller.PlayAnimation("", false);
+            }*/
+            else
+            {
+                state = State::Roaming;
+                Animationplay();
+            }
+            break;
+        default:
+            break;
+        }
+        break;
+
+    case Enemy::S: 
+             
+        switch (state)
+        {
+        case Enemy::State::Idle:
+            break;
+        case Enemy::State::Roaming:
+            if (isTrackingPlayer)
+            {
+                animationcontroller.PlayAnimation("run_back", true);
+            }
+            else
+            {
+                animationcontroller.PlayAnimation("walk_back", true);
+            }
+            break;
+        case Enemy::State::detection:
+            animationcontroller.PlayAnimation("findTarget_back", false);
+            break;
+        case Enemy::State::miss:
+            animationcontroller.PlayAnimation("lostTarget_back", false);
+            break;
+        case Enemy::State::turn:
+            if (olddirection == Direction::E)
+            {
+                animationcontroller.PlayAnimation("rotate_rightToBack", false);
+            }
+            else if (olddirection == Direction::W)
+            {
+                animationcontroller.PlayAnimation("rotate_leftToBack", false);
+            }
+            /*
+            else if (true)
+            {
+                animationcontroller.PlayAnimation("", false);
+            }*/
+            else
+            {
+                state = State::Roaming;
+                Animationplay();
+            }
+            break;
+        default:
+            break;
+        }
+        break;
+
+    case Enemy::W:
+
+        switch (state)
+        {
+        case Enemy::State::Idle:
+            break;
+        case Enemy::State::Roaming:
+            if (isTrackingPlayer)
+            {
+                animationcontroller.PlayAnimation("run_left", true);
+            }
+            else
+            {
+                animationcontroller.PlayAnimation("walk_left", true);
+            }
+            break;
+        case Enemy::State::detection:
+            animationcontroller.PlayAnimation("findTarget_left", false);
+            break;
+        case Enemy::State::miss:
+            animationcontroller.PlayAnimation("lostTarget_left", false);
+            break;
+        case Enemy::State::turn:
+            if (olddirection == Direction::N)
+            {
+                animationcontroller.PlayAnimation("rotate_frontToLeft", false);
+            }
+            else if (olddirection == Direction::S)
+            {
+                animationcontroller.PlayAnimation("rotate_backToLeft", false);
+            }
+            /*else if (true)
+            {
+                animationcontroller.PlayAnimation("", false);
+            }*/
+            else
+            {
+                state = State::Roaming;
+                Animationplay();
+            }
+            break;
+        default:
+            break;
+        }
+        break;
+
+    case Enemy::E:
+
+        switch (state)
+        {
+        case Enemy::State::Idle:
+            break;
+        case Enemy::State::Roaming:
+            if (isTrackingPlayer)
+            {
+                animationcontroller.PlayAnimation("run_right", true);
+            }
+            else
+            {
+                animationcontroller.PlayAnimation("walk_right", true);
+            }
+            break;
+        case Enemy::State::detection:
+            animationcontroller.PlayAnimation("findTarget_right", false);
+            break;
+        case Enemy::State::miss:
+            animationcontroller.PlayAnimation("lostTarget_right", false);
+            break;
+        case Enemy::State::turn:
+            if (olddirection == Direction::S)
+            {
+                animationcontroller.PlayAnimation("rotate_backToright", false);
+            }
+            else if (olddirection == Direction::N)
+            {
+                animationcontroller.PlayAnimation("rotate_frontToright", false);
+            }
+            /*else if (true)
+            {
+                animationcontroller.PlayAnimation("", false);
+            }*/
+            else
+            {
+                state = State::Roaming;
+                Animationplay();
+            }
+            break;
+        default:
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+}
+
 // デバッグ描画（未実装）
 void Enemy::DrawDebug()
 {
+    ImGui::Begin("Enemy Info");
+
+    // positionを表示
+    ImGui::Text("Position: X=%d",this->state);
+    ImGui::End();
 }
 
 // モデル描画処理
 void Enemy::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-    renderer->Render(rc, world, model, ShaderId::Lambert);
+    renderer->Render(rc, world, model.get(), ShaderId::Lambert);
 }
