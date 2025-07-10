@@ -33,6 +33,13 @@ Stage::Stage()
 	DestinationPointSet();
 
 	textures = std::make_unique<LoadTextures>();
+
+	collisionMesh = std::make_unique<Model>("Data/Model/Stage/CollisionMesh.mdl");
+	DirectX::XMMATRIX M = DirectX::XMMatrixIdentity();
+	DirectX::XMMATRIX RotationM = DirectX::XMMatrixRotationRollPitchYaw(0, 180 * 0.01745f, 0);
+	M *= RotationM;
+	DirectX::XMStoreFloat4x4(&collisionMeshMatrix, M);
+
 }
 Stage::~Stage()
 {
