@@ -6,6 +6,7 @@
 #include"Scene/SceneGameOver.h"
 #include"Scene/SceneManager.h"
 #include "../LightManager.h"
+#include "Collision.h"
 
 #include <imgui.h>
 
@@ -125,6 +126,7 @@ void SceneGame::Update(float elapsedTime)
 		POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
 		ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
 		DirectX::XMFLOAT3 cameraPos = player->GetPosition();
+		cameraPos.y = player->GetViewPoint();
 		i_CameraController->SetCameraPos(cameraPos);
 		i_CameraController->Update(elapsedTime);
 		SetCursorPos(screenPoint.x, screenPoint.y);
@@ -194,6 +196,11 @@ void SceneGame::Render()
 
 		LightManager::Instance().RenderDebug(rc);
 	}
+
+	/// 当たり判定の更新
+	Collision();
+
+	player->UpdateTransform();
 
 	// 2Dスプライト描画
 	{
@@ -385,6 +392,74 @@ void SceneGame::DrawGUI()
 	Graphics::Instance().DebugGUI();
 	LightManager::Instance().DebugGUI();
 }
+
+void SceneGame::Collision()
+{
+	/// プレイヤーとステージとの当たり判定
+	PlayerVsStage();
+}
+
+void SceneGame::PlayerVsStage()
+{
+	using namespace DirectX;
+
+	const XMFLOAT3 playerPos = player->GetPosition();
+	const XMFLOAT3 playerDir = player->GetDirection();
+	XMFLOAT3 playerRight;
+	const XMFLOAT3 up = { 0,1,0 };
+	XMStoreFloat3(&playerRight, XMVector3Cross(XMLoadFloat3(&up), XMLoadFloat3(&playerDir)));
+
+
+	const XMFLOAT3 rayStart = { playerPos.x, playerPos.y, playerPos.z };
+	const XMFLOAT3 rayEndF = { playerPos.x + playerDir.x, playerPos.y, playerPos.z + playerDir.z };
+	const XMFLOAT3 rayEndR = { playerPos.x + playerRight.x, playerPos.y, playerPos.z + playerRight.z };
+
+	DirectX::XMFLOAT3 hitPosition, hitNormal;
+	if (Collision::RayCast(rayStart, rayEndF, stage->GetCollisionMatrix(), stage->GetCollisionMesh(), hitPosition, hitNormal))
+	{
+		XMVECTOR P = XMLoadFloat3(&hitPosition);
+		XMVECTOR E = XMLoadFloat3(&rayEndF);
+		XMVECTOR PE = XMVectorSubtract(E, P);
+
+		// 三角関数で終点から壁までの長さを求める
+		XMVECTOR N = XMLoadFloat3(&hitNormal);
+		// PEの終点にNベクトルを持ってくる
+		// 正規化したNとPEで内積
+		XMVECTOR NegatePE = XMVectorNegate(PE); // このままPEとAで内積するとおかしくなっちゃうからPEの逆ベクトルを求める
+		N = XMVector3Normalize(N);
+		XMVECTOR A = XMVector3Dot(NegatePE, N); // 射影長を求める
+		//XMVECTOR A = XMVector3Dot(XMVectorNegate(PE), N);
+
+		// 壁までの長さを少しだけ長くなるように補正する
+		float a = XMVectorGetX(A) + 0.01f;
+
+		// 壁刷りのベクトルを求める
+		A = XMVectorScale(N, a);
+		XMVECTOR R = XMVectorAdd(PE, A);
+		//XMVECTOR R = XMVectorAdd(PE, XMVectorScale(N, a));
+		//XMVECTOR R = XMVector3Dot(XMVectorNegate(PE), N);
+
+		// 壁刷り後の位置を求める
+		XMVECTOR Q = XMVectorAdd(P, R);
+		XMFLOAT3 q;
+		XMStoreFloat3(&q, Q);
+
+		XMFLOAT3 playerPos = player->GetPosition();
+#if 0
+		playerPos.x = q.x - playerDir.x;
+		playerPos.z = q.z - playerDir.z;
+#else
+		playerPos.x = q.x;
+		playerPos.z = q.z;
+#endif
+		player->SetPosition(playerPos);
+	}
+}
+
+void SceneGame::UpdateCamera(float elapsedTime)
+{
+}
+
 void SceneGame::UpdateConstants(RenderContext& rc)
 {
 	rc.lightDirection = lightDirection;	// (ToT)+

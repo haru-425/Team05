@@ -1,6 +1,6 @@
 #pragma once
 
-#include <d3d11.h>
+//#include <d3d11.h>
 #include <wrl.h>
 #include <memory>
 #include "RenderState.h"
@@ -11,6 +11,8 @@
 #include "GpuResourceUtils.h"
 #include "Bloom.h"
 #include "imgui.h"
+#include <d3d11_1.h>
+#include <dxgi1_6.h>
 
 // グラフィックス
 class Graphics
@@ -63,11 +65,24 @@ public:
 	// モデルレンダラ取得
 	ModelRenderer* GetModelRenderer() const { return modelRenderer.get(); }
 
+	BOOL GetScreenMode() const { return screenMode; }
+
+	void OnResize(UINT64 width, UINT height);
+
+	void StylizeWindow(BOOL screenMode = FALSE);
+
+	/// 変更後のウィンドウサイズが初期ウィンドウサイズの何倍かを取得する関数
+	DirectX::XMFLOAT2 GetWindowScaleFactor() const;
+
+private:
+	void AcquireHighPerformanceAdapter(IDXGIFactory6* dxgiFactory6, IDXGIAdapter3** dxgiAdapter3);
+	void CreateSwapChain(IDXGIFactory6* dxgiFactory6);
+
 private:
 	HWND											hWnd = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11Device>			device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>		immediateContext;
-	Microsoft::WRL::ComPtr<IDXGISwapChain>			swapchain;
+	Microsoft::WRL::ComPtr<IDXGISwapChain1>			swapchain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	renderTargetView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>	depthStencilView;
 	D3D11_VIEWPORT									viewport;
@@ -79,8 +94,16 @@ private:
 	std::unique_ptr<ShapeRenderer>					shapeRenderer;
 	std::unique_ptr<ModelRenderer>					modelRenderer;
 
-
-
+	Microsoft::WRL::ComPtr<IDXGIAdapter3> adapter;
+	Microsoft::WRL::ComPtr<IDXGIFactory6> dxgiFactory6;
+	SIZE framebufferDimensions = {};
+#ifdef _DEBUG
+	BOOL screenMode = FALSE;
+#else
+	BOLL screenMode = TRUE;
+#endif
+	BOOL tearingSupported = FALSE;
+	RECT windowedRect = {};
 
 private:
 	struct TimeCBuffer

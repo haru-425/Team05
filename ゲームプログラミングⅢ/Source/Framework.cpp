@@ -69,6 +69,11 @@ void Framework::Update(float elapsedTime)
 	// シーン更新処理
 	//sceneGame.Update(elapsedTime);
 	SceneManager::instance().Update(elapsedTime);
+
+	if (GetAsyncKeyState(VK_LMENU) & 0x8000 && GetAsyncKeyState(VK_RETURN) & 0x0001)
+	{
+		Graphics::Instance().StylizeWindow(!Graphics::Instance().GetScreenMode());
+	}
 }
 
 // 描画処理
@@ -189,6 +194,12 @@ LRESULT CALLBACK Framework::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LP
 		// Here we reset everything based on the new window dimensions.
 		timer.Start();
 		break;
+	case WM_SIZE :
+	{
+		RECT clientRect = {};
+		GetClientRect(hWnd, &clientRect);
+		Graphics::Instance().OnResize(static_cast<UINT64>(clientRect.right - clientRect.left), clientRect.bottom - clientRect.top);
+	}
 	default:
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
