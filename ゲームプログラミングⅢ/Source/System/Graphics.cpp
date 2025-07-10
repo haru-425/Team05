@@ -162,6 +162,7 @@ void Graphics::Initialize(HWND hWnd)
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDesc.MiscFlags = 0;
 	hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::TimeCBuffer)].ReleaseAndGetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	// 画面サイズを格納する定数バッファ
 	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(ScreenSizeCBuffer));
 	bufferDesc.StructureByteStride = sizeof(ScreenSizeCBuffer);
@@ -169,6 +170,18 @@ void Graphics::Initialize(HWND hWnd)
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDesc.MiscFlags = 0;
 	hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].ReleaseAndGetAddressOf());
+
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+	// フリッカー効果の定数バッファ
+	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(LightFlickerCBuffer));
+	bufferDesc.StructureByteStride = sizeof(LightFlickerCBuffer);
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.MiscFlags = 0;
+	hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::LightFlickerCBuffer)].ReleaseAndGetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+
 	//framebufferの生成
 	for (int i = 0; i <int(PPShaderType::Count); i++)
 	{
@@ -195,6 +208,7 @@ void Graphics::Initialize(HWND hWnd)
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/FadeToBlackPS.cso", pixel_shaders[int(PPShaderType::FadeToBlack)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/WardenGazePS.cso", pixel_shaders[int(PPShaderType::WardenGaze)].ReleaseAndGetAddressOf());
 	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/NoiseChangePS.cso", pixel_shaders[int(PPShaderType::NoiseChange)].ReleaseAndGetAddressOf());
+	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/LightFlickerPS.cso", pixel_shaders[int(PPShaderType::LightFlicker)].ReleaseAndGetAddressOf());
 
 
 }

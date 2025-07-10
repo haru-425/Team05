@@ -119,10 +119,19 @@ private:
 		float screenHeight;
 		float pad[2];
 	};
+	struct LightFlickerCBuffer
+	{
+		float flickerSpeed; // ちらつき中のノイズ速度（例：40.0）
+		float flickerStrength; // 明るさの揺らぎの強さ（例：0.4）
+		float flickerDuration; // ちらつき状態が続く時間（秒）（例：1.0）
+		float flickerChance; // ちらつきが起こる確率（例：0.05）
+	};
+	LightFlickerCBuffer lightFlickerCBuffer = { 40.0f, 0.4f,0.5f,0.1f };
 	enum class ConstantBufferType
 	{
 		TimeCBuffer,
 		ScreenSizeCBuffer,
+		LightFlickerCBuffer,
 		Count
 	};
 	Microsoft::WRL::ComPtr<ID3D11Buffer> cbuffer[int(ConstantBufferType::Count)];
@@ -148,6 +157,7 @@ public:
 		FadeToBlack,
 		WardenGaze,
 		NoiseChange,
+		LightFlicker,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
@@ -172,6 +182,15 @@ public:
 		immediateContext->UpdateSubresource(cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].Get(), 0, 0, &screenSizeCBuffer, 0, 0);
 		immediateContext->PSSetConstantBuffers(11, 1, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].GetAddressOf());
 		immediateContext->VSSetConstantBuffers(11, 1, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].GetAddressOf());
+
+		// フリッカー効果の定数バッファを更新
+
+		immediateContext->UpdateSubresource(cbuffer[int(ConstantBufferType::LightFlickerCBuffer)].Get(), 0, 0, &lightFlickerCBuffer, 0, 0);
+		immediateContext->PSSetConstantBuffers(13, 1, cbuffer[int(ConstantBufferType::LightFlickerCBuffer)].GetAddressOf());
+		immediateContext->VSSetConstantBuffers(13, 1, cbuffer[int(ConstantBufferType::LightFlickerCBuffer)].GetAddressOf());
+
+
+
 
 	}
 

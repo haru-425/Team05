@@ -10,6 +10,7 @@
 #include "SceneTitle.h"
 #include "SceneMattsu.h"
 #include"SceneGraphics.h"
+#include "SceneLogo.h"
 #include "SceneManager.h"
 #include "System/Audio.h"
 #include "System/SettingsManager.h"
@@ -39,7 +40,8 @@ Framework::Framework(HWND hWnd)
 	ImGuiRenderer::Initialize(hWnd, Graphics::Instance().GetDevice(), Graphics::Instance().GetDeviceContext());
 
 	// シーン初期化
-	SceneManager::instance().ChangeScene(new SceneTitle);
+	//SceneManager::instance().ChangeScene(new SceneTitle);
+	SceneManager::instance().ChangeScene(new SceneLogo(new SceneTitle));
 }
 
 // デストラクタ

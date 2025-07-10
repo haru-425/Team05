@@ -5,21 +5,22 @@
 #include "System/Input.h"
 #include"Scene/SceneGameOver.h"
 #include"Scene/SceneManager.h"
-#include "../LightManager.h"
 #include "Collision.h"
+#include "./LightModels/LightManager.h"
+#include "./Aircon/AirconManager.h"
 
 #include <imgui.h>
 
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 
-// ‰Šú‰»
+// åˆæœŸåŒ–
 void SceneGame::Initialize()
 {
-	//ƒXƒe[ƒW‰Šú‰»
+	//ã‚¹ãƒ†ãƒ¼ã‚¸åˆæœŸåŒ–
 	stage = new Stage();
 
-	//ƒJƒƒ‰‰Šúİ’è
+	//ã‚«ãƒ¡ãƒ©åˆæœŸè¨­å®š
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
 	camera.SetLookAt(
@@ -28,36 +29,40 @@ void SceneGame::Initialize()
 		DirectX::XMFLOAT3(0, 1, 0)
 	);
 
-	//ƒJƒƒ‰ƒRƒ“ƒgƒ[ƒ‰[‰Šú‰»
+	//ã‚«ãƒ¡ãƒ©ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼åˆæœŸåŒ–
 	i_CameraController = std::make_unique<FPCameraController>();
 
 	player = std::make_shared<Player>();
 
-	//ƒ~ƒjƒ}ƒbƒvƒXƒvƒ‰ƒCƒg‰Šú‰»
+	//ãƒŸãƒ‹ãƒãƒƒãƒ—ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆåˆæœŸåŒ–
 	minimap = new MiniMap();
-	timer = 0.0f; // ƒ^ƒCƒ}[‰Šú‰»
-	transTimer = 0.0f; // ƒV[ƒ“‘JˆÚƒ^ƒCƒ}[‰Šú‰»
+	timer = 0.0f; // ã‚¿ã‚¤ãƒãƒ¼åˆæœŸåŒ–
+	transTimer = 0.0f; // ã‚·ãƒ¼ãƒ³é·ç§»ã‚¿ã‚¤ãƒãƒ¼åˆæœŸåŒ–
 
-	selectTrans = SelectTrans::GameOver; // ƒV[ƒ“‘JˆÚ‘I‘ğ‰Šú‰»
-	sceneTrans = false; // ƒV[ƒ“‘JˆÚƒtƒ‰ƒO‰Šú‰»
+	selectTrans = SelectTrans::GameOver; // ã‚·ãƒ¼ãƒ³é·ç§»é¸æŠåˆæœŸåŒ–
+	sceneTrans = false; // ã‚·ãƒ¼ãƒ³é·ç§»ãƒ•ãƒ©ã‚°åˆæœŸåŒ–
 
 	// shadowMap
 	ID3D11Device* device = Graphics::Instance().GetDevice();
 	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
+	// ãƒ©ã‚¤ãƒˆã®åˆæœŸåŒ–
 	LightManager::Instance().Initialize();
+
+	// ã‚¨ã‚¢ã‚³ãƒ³ã®åˆæœŸåŒ–
+	AirconManager::Instance().Initialize();
 }
 
-// I—¹‰»
+// çµ‚äº†åŒ–
 void SceneGame::Finalize()
 {
-	//ƒXƒe[ƒWI—¹‰»
+	//ã‚¹ãƒ†ãƒ¼ã‚¸çµ‚äº†åŒ–
 	if (stage != nullptr)
 	{
 		delete stage;
 		stage = nullptr;
 	}
-	//ƒ~ƒjƒ}ƒbƒvI—¹‰»
+	//ãƒŸãƒ‹ãƒãƒƒãƒ—çµ‚äº†åŒ–
 	if (minimap != nullptr)
 	{
 		delete minimap;
@@ -65,12 +70,12 @@ void SceneGame::Finalize()
 	}
 }
 
-// XVˆ—
+// æ›´æ–°å‡¦ç†
 void SceneGame::Update(float elapsedTime)
 {
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
-	// ”CˆÓ‚ÌƒQ[ƒ€ƒpƒbƒhƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚©
+	// ä»»æ„ã®ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ã‹
 	const GamePadButton anyButton =
 		GamePad::BTN_A
 		| GamePad::BTN_B
@@ -80,7 +85,7 @@ void SceneGame::Update(float elapsedTime)
 	bool buttonPressed = (anyButton & gamePad.GetButton()) != 0;
 	bool zKey = GetAsyncKeyState('Z') & 0x8000;
 
-	// ƒtƒ‰ƒO‚ª‚Ü‚¾—§‚Á‚Ä‚¢‚È‚¢ê‡‚É“ü—ÍŒŸo
+	// ãƒ•ãƒ©ã‚°ãŒã¾ã ç«‹ã£ã¦ã„ãªã„å ´åˆã«å…¥åŠ›æ¤œå‡º
 	if (!sceneTrans)
 	{
 		if (zKey)
@@ -88,39 +93,39 @@ void SceneGame::Update(float elapsedTime)
 			nextScene = new Game_Over;
 			sceneTrans = true;
 			transTimer = 0.0f;
-			selectTrans = SelectTrans::GameOver; // ƒQ[ƒ€ƒI[ƒo[ƒV[ƒ“‚É‘JˆÚ
+			selectTrans = SelectTrans::GameOver; // ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ã‚·ãƒ¼ãƒ³ã«é·ç§»
 		}
 
 	}
 	else
 	{
-		// ƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚éŠÔƒ^ƒCƒ}[‚ğ‰ÁZ‚µA1•bˆÈãŒo‚Á‚½‚çƒV[ƒ“Ø‚è‘Ö‚¦
+		// ãƒ•ãƒ©ã‚°ãŒç«‹ã£ã¦ã„ã‚‹é–“ã‚¿ã‚¤ãƒãƒ¼ã‚’åŠ ç®—ã—ã€1ç§’ä»¥ä¸ŠçµŒã£ãŸã‚‰ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆ
 		transTimer += elapsedTime;
 		if (transTimer >= 3.0f && nextScene != nullptr)
 		{
 			SceneManager::instance().ChangeScene(nextScene);
-			nextScene = nullptr; // ‘½d‘JˆÚ–h~
-			sceneTrans = false; // ƒV[ƒ“‘JˆÚƒtƒ‰ƒO‚ğƒŠƒZƒbƒg
+			nextScene = nullptr; // å¤šé‡é·ç§»é˜²æ­¢
+			sceneTrans = false; // ã‚·ãƒ¼ãƒ³é·ç§»ãƒ•ãƒ©ã‚°ã‚’ãƒªã‚»ãƒƒãƒˆ
 		}
 	}
 
 	timer += elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
 
-	////ƒQ[ƒ€ƒI[ƒo[‚É‹­§‘JˆÚ
+	////ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ã«å¼·åˆ¶é·ç§»
 	//if (GetAsyncKeyState('Z') & 0x8000)
 	//{
-	//	// ZƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚Æ‚«‚ÉÀs‚³‚ê‚é
+	//	// Zã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ã¨ãã«å®Ÿè¡Œã•ã‚Œã‚‹
 	//	SceneManager::instance().ChangeScene(new Game_Over);
 	//}
 
 
-	//ƒXƒe[ƒWXVˆ—
+	//ã‚¹ãƒ†ãƒ¼ã‚¸æ›´æ–°å‡¦ç†
 	stage->Update(elapsedTime);
 	player->Update(elapsedTime);
 	minimap->Update(player->GetPosition());
 
-	// ˆêlÌ—pƒJƒƒ‰
+	// ä¸€äººç§°ç”¨ã‚«ãƒ¡ãƒ©
 	if (typeid(*i_CameraController) == typeid(FPCameraController))
 	{
 		POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
@@ -136,7 +141,7 @@ void SceneGame::Update(float elapsedTime)
 			i_CameraController = std::make_unique<FreeCameraController>();
 		}
 	}
-	// ƒtƒŠ[ƒJƒƒ‰
+	// ãƒ•ãƒªãƒ¼ã‚«ãƒ¡ãƒ©
 	else
 	{
 		i_CameraController->Update(elapsedTime);
@@ -152,7 +157,7 @@ void SceneGame::Update(float elapsedTime)
 	LightManager::Instance().Update();
 }
 
-// •`‰æˆ—
+// æç”»å‡¦ç†
 void SceneGame::Render()
 {
 	Graphics& graphics = Graphics::Instance();
@@ -166,47 +171,50 @@ void SceneGame::Render()
 		1000.0f);
 
 
-	// •`‰æ€”õ
+	// æç”»æº–å‚™
 	RenderContext rc;
 	rc.deviceContext = dc;
 
-	rc.lightDirection = { 0.0f, -1.0f, 0.0f };	// ƒ‰ƒCƒg•ûŒüi‰º•ûŒüj
+	rc.lightDirection = { 0.0f, -1.0f, 0.0f };	// ãƒ©ã‚¤ãƒˆæ–¹å‘ï¼ˆä¸‹æ–¹å‘ï¼‰
 	rc.renderState = graphics.GetRenderState();
 
-	//ƒJƒƒ‰ƒpƒ‰ƒ[ƒ^İ’è
+	//ã‚«ãƒ¡ãƒ©ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿è¨­å®š
 	Camera& camera = Camera::Instance();
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
-	// ’è”‚ÌXV
+	// å®šæ•°ã®æ›´æ–°
 	UpdateConstants(rc);
 	LightManager::Instance().UpdateConstants(rc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 0.5f, 0.5f, 1, 1);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
-	// 3Dƒ‚ƒfƒ‹•`‰æ
+	// 3Dãƒ¢ãƒ‡ãƒ«æç”»
 	{
-		//ƒXƒe[ƒW•`‰æ
+		//ã‚¹ãƒ†ãƒ¼ã‚¸æç”»
 		stage->Render(rc, modelRenderer);
 
 		player->Render(rc, modelRenderer);
+
+		LightManager::Instance().Render(rc);
+
+		AirconManager::Instance().Render(rc);
 	}
 
-	// 3DƒfƒoƒbƒO•`‰æ
+	// 3Dãƒ‡ãƒãƒƒã‚°æç”»
 	{
 		player->RenderDebug(rc, shapeRenderer, { 1,2,1 }, { 1,1,1,1 }, DEBUG_MODE::BOX | DEBUG_MODE::CAPSULE);
 
-		LightManager::Instance().RenderDebug(rc);
 	}
 
-	/// “–‚½‚è”»’è‚ÌXV
+	/// å½“ãŸã‚Šåˆ¤å®šã®æ›´æ–°
 	Collision();
 
 	player->UpdateTransform();
 
-	// 2DƒXƒvƒ‰ƒCƒg•`‰æ
+	// 2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
 	{
 		//minimap->Render(player->GetPosition());
 	}
-	/// ƒtƒŒ[ƒ€ƒoƒbƒtƒ@‚ÌƒfƒBƒAƒNƒeƒBƒx[ƒg
+	/// ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒƒãƒ•ã‚¡ã®ãƒ‡ã‚£ã‚¢ã‚¯ãƒ†ã‚£ãƒ™ãƒ¼ãƒˆ
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
 	if (player->GetUseCam())
 	{
@@ -352,7 +360,7 @@ void SceneGame::Render()
 	}
 }
 
-// GUI•`‰æ
+// GUIæç”»
 void SceneGame::DrawGUI()
 {
 	minimap->DrawImGui();
@@ -391,11 +399,12 @@ void SceneGame::DrawGUI()
 	}
 	Graphics::Instance().DebugGUI();
 	LightManager::Instance().DebugGUI();
+	AirconManager::Instance().DebugGUI();
 }
 
 void SceneGame::Collision()
 {
-	/// ƒvƒŒƒCƒ„[‚ÆƒXƒe[ƒW‚Æ‚Ì“–‚½‚è”»’è
+	/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã‚¹ãƒ†ãƒ¼ã‚¸ã¨ã®å½“ãŸã‚Šåˆ¤å®š
 	PlayerVsStage();
 }
 
@@ -421,25 +430,25 @@ void SceneGame::PlayerVsStage()
 		XMVECTOR E = XMLoadFloat3(&rayEndF);
 		XMVECTOR PE = XMVectorSubtract(E, P);
 
-		// OŠpŠÖ”‚ÅI“_‚©‚ç•Ç‚Ü‚Å‚Ì’·‚³‚ğ‹‚ß‚é
+		// ä¸‰è§’é–¢æ•°ã§çµ‚ç‚¹ã‹ã‚‰å£ã¾ã§ã®é•·ã•ã‚’æ±‚ã‚ã‚‹
 		XMVECTOR N = XMLoadFloat3(&hitNormal);
-		// PE‚ÌI“_‚ÉNƒxƒNƒgƒ‹‚ğ‚Á‚Ä‚­‚é
-		// ³‹K‰»‚µ‚½N‚ÆPE‚Å“àÏ
-		XMVECTOR NegatePE = XMVectorNegate(PE); // ‚±‚Ì‚Ü‚ÜPE‚ÆA‚Å“àÏ‚·‚é‚Æ‚¨‚©‚µ‚­‚È‚Á‚¿‚á‚¤‚©‚çPE‚Ì‹tƒxƒNƒgƒ‹‚ğ‹‚ß‚é
+		// PEã®çµ‚ç‚¹ã«Nãƒ™ã‚¯ãƒˆãƒ«ã‚’æŒã£ã¦ãã‚‹
+		// æ­£è¦åŒ–ã—ãŸNã¨PEã§å†…ç©
+		XMVECTOR NegatePE = XMVectorNegate(PE); // ã“ã®ã¾ã¾PEã¨Aã§å†…ç©ã™ã‚‹ã¨ãŠã‹ã—ããªã£ã¡ã‚ƒã†ã‹ã‚‰PEã®é€†ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹
 		N = XMVector3Normalize(N);
-		XMVECTOR A = XMVector3Dot(NegatePE, N); // Ë‰e’·‚ğ‹‚ß‚é
+		XMVECTOR A = XMVector3Dot(NegatePE, N); // å°„å½±é•·ã‚’æ±‚ã‚ã‚‹
 		//XMVECTOR A = XMVector3Dot(XMVectorNegate(PE), N);
 
-		// •Ç‚Ü‚Å‚Ì’·‚³‚ğ­‚µ‚¾‚¯’·‚­‚È‚é‚æ‚¤‚É•â³‚·‚é
+		// å£ã¾ã§ã®é•·ã•ã‚’å°‘ã—ã ã‘é•·ããªã‚‹ã‚ˆã†ã«è£œæ­£ã™ã‚‹
 		float a = XMVectorGetX(A) + 0.01f;
 
-		// •Çü‚è‚ÌƒxƒNƒgƒ‹‚ğ‹‚ß‚é
+		// å£åˆ·ã‚Šã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹
 		A = XMVectorScale(N, a);
 		XMVECTOR R = XMVectorAdd(PE, A);
 		//XMVECTOR R = XMVectorAdd(PE, XMVectorScale(N, a));
 		//XMVECTOR R = XMVector3Dot(XMVectorNegate(PE), N);
 
-		// •Çü‚èŒã‚ÌˆÊ’u‚ğ‹‚ß‚é
+		// å£åˆ·ã‚Šå¾Œã®ä½ç½®ã‚’æ±‚ã‚ã‚‹
 		XMVECTOR Q = XMVectorAdd(P, R);
 		XMFLOAT3 q;
 		XMStoreFloat3(&q, Q);
@@ -463,16 +472,16 @@ void SceneGame::UpdateCamera(float elapsedTime)
 void SceneGame::UpdateConstants(RenderContext& rc)
 {
 	rc.lightDirection = lightDirection;	// (ToT)+
-	// ƒVƒƒƒhƒE‚Ìİ’è
+	// ã‚·ãƒ£ãƒ‰ã‚¦ã®è¨­å®š
 	rc.shadowColor = shadowColor;
 	rc.shadowBias = shadowBias;
 
-	// ƒtƒHƒO‚Ìİ’è
+	// ãƒ•ã‚©ã‚°ã®è¨­å®š
 	rc.ambientColor = ambientColor;
 	rc.fogColor = fogColor;
 	rc.fogRange = fogRange;
 
-	//ƒJƒƒ‰ƒpƒ‰ƒ[ƒ^İ’è
+	//ã‚«ãƒ¡ãƒ©ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿è¨­å®š
 	Camera& camera = Camera::Instance();
 	cameraPosition = camera.GetEye();
 	rc.cameraPosition.x = cameraPosition.x;

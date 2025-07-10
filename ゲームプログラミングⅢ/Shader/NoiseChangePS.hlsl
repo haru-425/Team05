@@ -1,47 +1,52 @@
 // フルスクリーンクワッド用の入力
 #include "FullScreenQuad.hlsli"
 
-
 Texture2D sceneTex : register(t10);
 SamplerState samp : register(s0);
 
 float LineNoise(float y)
 {
-    // 画面の高さ方向を N 本の水平ラインに丸める
-    float Nline = floor(y * 300.0); // ラインインデックス
+    float Nline = floor(y * 300.0);
     return frac(sin(Nline + iTime * 20.0) * 43758.5453);
 }
 
-// メインピクセルシェーダー
 float4 main(VS_OUT pin) : SV_Target
 {
-    float TriggerInterval = 10.0; // ノイズ発生間隔（秒）
-    float TransitionDuration = 0.5; // フェードイン・アウト時間（秒）
+    float TriggerInterval = 10.0;
+    float TransitionDuration = 0.5;
 
     float2 uv = pin.texcoord;
+    float4 baseColor = sceneTex.Sample(samp, uv);
 
-    // 最初の1回目（0～TriggerInterval秒）の間はノイズ合成しない
     if (iTime < TriggerInterval)
     {
-        // 何もしない＝ノイズ合成せず元の画面を返す
-        return sceneTex.Sample(samp, uv);
+        return baseColor;
     }
 
-    // 2回目以降のノイズ制御
     float cycleTime = fmod(iTime - TriggerInterval, TriggerInterval);
-
     float strength = 0.0f;
+
     if (cycleTime < TransitionDuration)
     {
         float t = cycleTime / TransitionDuration;
-        strength = sin(t * 3.14159); // 滑らかに 0 → 1 → 0
+        strength = sin(t * 3.14159); // 滑らかなフェード
     }
 
-    float4 baseColor = sceneTex.Sample(samp, uv);
-
+    // ノイズ生成
     float noise = LineNoise(uv.y);
-    float4 noiseColor = float4(noise, noise, noise, 1.0);
 
-    //return baseColor;
-    return lerp(baseColor, noiseColor, strength);
+    // 暗い背景への馴染みを考慮したノイズカラー補正
+    float3 tint = float3(0.1, 0.05, 0.0); // 暖色寄りのベーストーン
+    float3 noiseColor = lerp(tint, float3(noise, noise, noise), 0.7);
+
+    // 背景の輝度を元に合成強度を調整
+    float luminance = dot(baseColor.rgb, float3(0.299, 0.587, 0.114));
+    float contrastFactor = saturate(1.0 - luminance);
+
+    float blend = strength * contrastFactor;
+
+    // 合成：暗い背景にも違和感なくノイズが溶け込む
+    float3 finalColor = lerp(baseColor.rgb, noiseColor, blend);
+
+    return float4(finalColor, 1.0);
 }

@@ -52,6 +52,16 @@ private:
 		DirectX::XMFLOAT3 dummy;                   // アラインメント調整用（16バイト境界維持）
 	};
 
+	struct TorusLightConstants
+	{
+		DirectX::XMFLOAT4 position;
+		DirectX::XMFLOAT4 direction;
+		DirectX::XMFLOAT4 color;
+		float majorRadius;   // ドーナツの中心円の半径
+		float minorRadius;   // ドーナツの太さ（断面円の半径）
+		float range;
+		float dummy;
+	};
 	// 線光源（Line Light）の情報を格納する構造体
 	struct LineLightConstants
 	{
@@ -66,6 +76,7 @@ private:
 	struct LightConstants
 	{
 		PointLightConstants pointLights[256];        // 点光源の配列（最大8個）
+		TorusLightConstants torusLights[256];        // 円光源の配列（最大8個）
 		LineLightConstants lineLights[256];          // 線光源の配列（最大8個）
 		float power;                               // 照明全体の強度（グローバル係数）
 		DirectX::XMFLOAT3 dummy;                   // アラインメント調整用
