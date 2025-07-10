@@ -38,6 +38,9 @@ public:
     DirectX::XMFLOAT4X4 GetWorld() const { return world; }
     Model* GetModel() { return model; }
 
+    DirectX::XMFLOAT4X4 GetCollisionMatrix() const { return collisionMeshMatrix; }
+    Model* GetCollisionMesh() { return collisionMesh.get(); }
+
 private:
     DirectX::XMFLOAT3 position = { 0,0,0 };
     DirectX::XMFLOAT3 angle = { 0,0,0 };
@@ -52,4 +55,7 @@ private:
     Model* model = nullptr;
 
     std::unique_ptr<LoadTextures> textures;
+
+    std::unique_ptr<Model> collisionMesh;
+    DirectX::XMFLOAT4X4 collisionMeshMatrix;
 };
