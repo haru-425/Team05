@@ -14,6 +14,15 @@ void SceneLogo::Initialize()
 	timer = 0.0f;
 	transtimer = 0.0f;
 	nextSceneReadyTime = -1.0f; // 次のシーンの準備完了時刻を初期化
+
+	// 3Dオーディオシステムの初期化
+	audioSystem.Initialize();
+	// 3Dオーディオシステムにエミッターを追加
+	audioSystem.AddEmitter("Data/Sound/electrical_noise.wav", { 0.0f, 0.0f, 0.0f }, "electrical_noise", true, true, true, 0.0f);
+	// リスナーの初期位置と向きを設定
+	audioSystem.UpdateListener({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
+	// 3Dオーディオシステムの再生開始
+	audioSystem.PlayByTag("electrical_noise");
 }
 
 //終了化
@@ -33,6 +42,8 @@ void SceneLogo::Finalize()
 		delete sprite;
 		sprite = nullptr;
 	}
+	// 3Dオーディオシステムの終了処理
+	audioSystem.StopByTag("electrical_noise"); // 音声停止
 }
 
 //更新処理
@@ -61,6 +72,10 @@ void SceneLogo::Update(float elapsedTime)
 		transtimer += elapsedTime;
 	}
 	Graphics::Instance().UpdateConstantBuffer(timer, transtimer);
+	// 3Dオーディオシステムのエミッター更新
+	audioSystem.UpdateEmitters();
+
+
 }
 
 //描画処理

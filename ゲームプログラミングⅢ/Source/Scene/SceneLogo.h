@@ -3,6 +3,7 @@
 #include"System/Sprite.h"
 #include"Scene.h"
 #include<thread>
+#include"3DAudio/3dAudio.h"
 
 //ローディングシーン
 class SceneLogo : public Scene
@@ -41,4 +42,5 @@ private:
 	float timer;
 	float transtimer;
 	float nextSceneReadyTime = -1.0f; // 次のシーンの準備完了時刻
+	Audio3DSystem audioSystem; ///< 3Dオーディオシステムのインスタンス
 };

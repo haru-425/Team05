@@ -39,6 +39,15 @@ void SceneTitle::Initialize()
 	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
 	LightManager::Instance().Initialize();
+
+
+	audioSystem.Initialize();
+	// 3Dオーディオシステムにエミッターを追加
+	audioSystem.AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", true, true, true, 0.0f);
+	// リスナーの初期位置と向きを設定
+	audioSystem.UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	// 3Dオーディオシステムの再生開始
+	audioSystem.PlayByTag("atmosphere_noise");
 }
 
 //終了化
@@ -50,6 +59,8 @@ void SceneTitle::Finalize()
 		delete sprite;
 		sprite = nullptr;
 	}
+
+	audioSystem.StopByTag("atmosphere_noise"); // 音声停止
 }
 
 //更新処理
@@ -131,6 +142,8 @@ void SceneTitle::Update(float elapsedTime)
 
 	i_cameraController->Update(elapsedTime);
 	LightManager::Instance().Update();
+
+	audioSystem.UpdateEmitters();
 }
 
 

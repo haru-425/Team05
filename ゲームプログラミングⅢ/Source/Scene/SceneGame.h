@@ -8,6 +8,7 @@
 #include <memory>
 #include "Player/Player.h"
 #include"miniMap.h"
+#include "3DAudio/3DAudio.h"
 
 #include "System/ShadowCaster.h"
 
@@ -100,4 +101,9 @@ private:
 	// カメラのワールド座標
 	DirectX::XMFLOAT3 cameraPosition = { 0.0f, 0.0f, 0.0f };
 	void UpdateConstants(RenderContext& rc);
+
+
+	// 3Dオーディオシステム
+
+	Audio3DSystem audioSystem; ///< 3Dオーディオシステムのインスタンス
 };
