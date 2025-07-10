@@ -1,5 +1,6 @@
 #include "Misc.h"
 #include "Graphics.h"
+#include "Input.h"
 
 // 初期化
 void Graphics::Initialize(HWND hWnd)
@@ -256,6 +257,9 @@ void Graphics::OnResize(UINT64 width, UINT height)
 
 			// スワップチェーン再作成
 			CreateSwapChain(dxgiFactory6.Get());
+
+			Input::Instance().GetMouse().SetScreenWidth(framebufferDimensions.cx);
+			Input::Instance().GetMouse().SetScreenHeight(framebufferDimensions.cy);
 		}
 	}
 }

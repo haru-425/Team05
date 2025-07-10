@@ -106,6 +106,9 @@ void SceneGraphics::Finalize()
  */
 void SceneGraphics::Update(float elapsedTime)
 {
+	//Sleep(10);
+
+
 	GamePad& gamepad = Input::Instance().GetGamePad(); ///< ゲームパッド入力
 
 	/// ステージとプレイヤーの更新
