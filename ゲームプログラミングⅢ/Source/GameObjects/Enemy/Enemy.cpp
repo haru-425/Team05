@@ -373,11 +373,11 @@ void Enemy::Animationplay()
                 animationcontroller.PlayAnimation("rotate_leftToFront", false);
             }
             
-            /*
-            else if (true)
+            
+            else if (olddirection == Direction::S)
             {
-                animationcontroller.PlayAnimation("", false);
-            }*/
+                animationcontroller.PlayAnimation("rotate_backToFront", false);
+            }
             else
             {
                 state = State::Roaming;
@@ -420,11 +420,10 @@ void Enemy::Animationplay()
             {
                 animationcontroller.PlayAnimation("rotate_leftToBack", false);
             }
-            /*
-            else if (true)
+            else if (olddirection == Direction::N)
             {
-                animationcontroller.PlayAnimation("", false);
-            }*/
+                animationcontroller.PlayAnimation("rotate_frontToBack", false);
+            }
             else
             {
                 state = State::Roaming;
@@ -467,10 +466,10 @@ void Enemy::Animationplay()
             {
                 animationcontroller.PlayAnimation("rotate_backToLeft", false);
             }
-            /*else if (true)
+            else if (olddirection == Direction::E)
             {
-                animationcontroller.PlayAnimation("", false);
-            }*/
+                animationcontroller.PlayAnimation("rotate_rightToLeft", false);
+            }
             else
             {
                 state = State::Roaming;
@@ -507,16 +506,16 @@ void Enemy::Animationplay()
         case Enemy::State::turn:
             if (olddirection == Direction::S)
             {
-                animationcontroller.PlayAnimation("rotate_backToright", false);
+                animationcontroller.PlayAnimation("rotate_backToRight", false);
             }
             else if (olddirection == Direction::N)
             {
-                animationcontroller.PlayAnimation("rotate_frontToright", false);
+                animationcontroller.PlayAnimation("rotate_frontToRight", false);
             }
-            /*else if (true)
+            else if (olddirection == Direction::W)
             {
-                animationcontroller.PlayAnimation("", false);
-            }*/
+                animationcontroller.PlayAnimation("rotate_leftToRight", false);
+            }
             else
             {
                 state = State::Roaming;

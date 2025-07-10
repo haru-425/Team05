@@ -5,18 +5,20 @@
 Stage::Stage()
 {
 	//ステージモデルを読み込み
-#if 1
+#if 0
 	model = new Model("Data/Model/Stage/map.mdl");
+	scale = { 0.01f,0.01f,0.01f };
 #else
-	//model = new Model("Data/Model/Stage/ExampleStage.mdl");
+	model = new Model("Data/Model/Stage/stage.mdl");
+	scale = { 1,1,1 };
 #endif
 
 	//scale = { 1.5f,1.5f,1.5f };
 	//scale = { 2,2,2 };
-	//scale = { 1,1,1 };
+	
 
 	//position = { -4,0,18 };
-	scale = { 0.01f,0.01f,0.01f };
+	
 	angle.y = DirectX::XMConvertToRadians(180);
 
 	//スケール行列を作成
@@ -114,7 +116,7 @@ void Stage::DestinationPointSet()
 	wayPoint[38] = std::make_shared<WayPoint>(38, DirectX::XMFLOAT3{ 21,0,5 });
 	wayPoint[39] = std::make_shared<WayPoint>(39, DirectX::XMFLOAT3{ -0.5,0,22 });
 	wayPoint[40] = std::make_shared<WayPoint>(40, DirectX::XMFLOAT3{ 15,0,5 });
-	wayPoint[41] = std::make_shared<WayPoint>(41, DirectX::XMFLOAT3{ 7.5,0,0.5 });
+	wayPoint[41] = std::make_shared<WayPoint>(41, DirectX::XMFLOAT3{ 9.5,0,0.5 });
 	wayPoint[42] = std::make_shared<WayPoint>(42, DirectX::XMFLOAT3{ 11,0,-4.5 });
 	wayPoint[43] = std::make_shared<WayPoint>(43, DirectX::XMFLOAT3{ -11,0,-13 });
 	wayPoint[44] = std::make_shared<WayPoint>(44, DirectX::XMFLOAT3{ -21,0,-13 });
@@ -134,7 +136,32 @@ void Stage::DestinationPointSet()
 	wayPoint[58] = std::make_shared<WayPoint>(58, DirectX::XMFLOAT3{ 8.5,0,-12 });
 	wayPoint[59] = std::make_shared<WayPoint>(59, DirectX::XMFLOAT3{ 8.5,0,-10 });
 	wayPoint[60] = std::make_shared<WayPoint>(60, DirectX::XMFLOAT3{ 1,0,-12 });
-
+	wayPoint[61] = std::make_shared<WayPoint>(61, DirectX::XMFLOAT3{ -21,0,-23 });
+	wayPoint[62] = std::make_shared<WayPoint>(62, DirectX::XMFLOAT3{ -28,0,-18 });
+	wayPoint[63] = std::make_shared<WayPoint>(63, DirectX::XMFLOAT3{ 28,0,-13 });
+	wayPoint[64] = std::make_shared<WayPoint>(64, DirectX::XMFLOAT3{ 21,0,-18 });
+	wayPoint[65] = std::make_shared<WayPoint>(65, DirectX::XMFLOAT3{ 8.5,0,-15.5 });
+	wayPoint[66] = std::make_shared<WayPoint>(66, DirectX::XMFLOAT3{ 1,0,-17 });
+	wayPoint[67] = std::make_shared<WayPoint>(67, DirectX::XMFLOAT3{ -17,0,-23 });
+	wayPoint[68] = std::make_shared<WayPoint>(68, DirectX::XMFLOAT3{ -26.5,0,-23 });
+	wayPoint[69] = std::make_shared<WayPoint>(69, DirectX::XMFLOAT3{ -28,0,-21.5 });
+	wayPoint[70] = std::make_shared<WayPoint>(70, DirectX::XMFLOAT3{ 28,0,-18 });
+	wayPoint[71] = std::make_shared<WayPoint>(71, DirectX::XMFLOAT3{ 21,0,-23 });
+	wayPoint[72] = std::make_shared<WayPoint>(72, DirectX::XMFLOAT3{ 7,0,-17 });
+	wayPoint[73] = std::make_shared<WayPoint>(73, DirectX::XMFLOAT3{ 1,0,-23 });
+	wayPoint[74] = std::make_shared<WayPoint>(74, DirectX::XMFLOAT3{ -5,0,-17 });
+	wayPoint[75] = std::make_shared<WayPoint>(75, DirectX::XMFLOAT3{ -13,0,-23 });
+	wayPoint[76] = std::make_shared<WayPoint>(76, DirectX::XMFLOAT3{ -26.5,0,-21.5 });
+	wayPoint[77] = std::make_shared<WayPoint>(77, DirectX::XMFLOAT3{ -26.5,0,-24.5 });
+	wayPoint[78] = std::make_shared<WayPoint>(78, DirectX::XMFLOAT3{ -29.5,0,-21.5 });
+	wayPoint[79] = std::make_shared<WayPoint>(79, DirectX::XMFLOAT3{ 28,0,-23 });
+	wayPoint[80] = std::make_shared<WayPoint>(80, DirectX::XMFLOAT3{ 18,0,-23 });
+	wayPoint[81] = std::make_shared<WayPoint>(81, DirectX::XMFLOAT3{ 7,0,-23 });
+	wayPoint[82] = std::make_shared<WayPoint>(82, DirectX::XMFLOAT3{ -5,0,-23 });
+	wayPoint[83] = std::make_shared<WayPoint>(83, DirectX::XMFLOAT3{ -9,0,-23 });
+	wayPoint[84] = std::make_shared<WayPoint>(84, DirectX::XMFLOAT3{ -29.5,0,-24.5 });
+	wayPoint[85] = std::make_shared<WayPoint>(85, DirectX::XMFLOAT3{ 15,0,-23 });
+	wayPoint[86] = std::make_shared<WayPoint>(86, DirectX::XMFLOAT3{ 11,0,-23 });
 
 	//
 	wayPoint[0]->AddEdge(wayPoint[1].get());
@@ -245,6 +272,27 @@ void Stage::DestinationPointSet()
 
 	wayPoint[48]->AddEdge(wayPoint[49].get());
 	wayPoint[48]->AddEdge(wayPoint[55].get());
+
+	wayPoint[50]->AddEdge(wayPoint[57].get());
+	wayPoint[50]->AddEdge(wayPoint[58].get());
+
+	wayPoint[51]->AddEdge(wayPoint[60].get());
+
+	wayPoint[53]->AddEdge(wayPoint[61].get());
+
+	wayPoint[54]->AddEdge(wayPoint[62].get());
+
+	wayPoint[55]->AddEdge(wayPoint[63].get());
+	wayPoint[55]->AddEdge(wayPoint[64].get());
+	wayPoint[55]->AddEdge(wayPoint[56].get());
+
+	wayPoint[56]->AddEdge(wayPoint[57].get());
+
+	wayPoint[58]->AddEdge(wayPoint[59].get());
+	wayPoint[58]->AddEdge(wayPoint[60].get());
+	wayPoint[58]->AddEdge(wayPoint[65].get());
+
+
 }
 
 // インデックス番号からウェイポイントの座標を取得
