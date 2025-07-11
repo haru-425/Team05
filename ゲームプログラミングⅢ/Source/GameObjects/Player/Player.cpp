@@ -16,7 +16,8 @@ Player::Player()
 
 #else
     // 実際に使うモデル
-    model = std::make_unique<Model>("./Data/Model/Player/player.mdl");
+    //model = std::make_unique<Model>("./Data/Model/Player/player.mdl");
+    model = std::make_unique<Model>("./Data/Model/Player/player_mesh.mdl");
 #endif
 
     // プレイヤーのパラメータ初期設定
@@ -35,6 +36,13 @@ Player::Player()
         animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
         animationController.SetAnimationSecondScale(1.0f);
     }
+
+    /// テクスチャの読み込み
+    textures = std::make_unique<LoadTextures>();
+    textures->LoadNormal("Data/Model/Player/Texture/player_mtl_Normal_DirectX.png");
+    textures->LoadMetalness("Data/Model/Player/Texture/player_mtl_Metallic.png");
+    textures->LoadEmisive("Data/Model/Player/Texture/player_mtl_Emissive.png");
+    textures->LoadOcclusion("Data/Model/Player/Texture/player_mtl_Opacity.png");
 }
 
 Player::~Player()
@@ -76,11 +84,18 @@ void Player::Update(float dt)
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
 #ifndef TEST
+
+    /// テクスチャのセット
+    textures->Set(rc);
+
     /// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
     /// プレイヤーを描画するとどうしても、モデルとカメラが被ってしまうので、
     /// 敵視点の時のみの描画にする
     if(model && useCam)
-        renderer->Render(rc, world, model.get(), ShaderId::Lambert);
+        renderer->Render(rc, world, model.get(), ShaderId::Custom);
+
+    // テクスチャのクリア
+    textures->Clear(rc);
 #else
     DirectX::XMMATRIX T_T = DirectX::XMLoadFloat4x4(&t_transform);
     DirectX::XMMATRIX PT = DirectX::XMLoadFloat4x4(&world);

@@ -203,13 +203,3 @@ void DirectBDRF(float3 diffuseReflectance,
 	//	‹¾–Ê”½ŽËBRDF
     outSpecular = SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * lightColor;
 }
-
-
-float3 ClosestPointOnLine(float3 p, float3 start, float3 end)
-{
-    float3 lineDir = end - start;
-    float lineLengthSq = dot(lineDir, lineDir);
-    float t = dot(p -start, lineDir) / lineLengthSq;
-    t = saturate(t);
-    return start + t * lineDir;
-}

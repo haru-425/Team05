@@ -38,6 +38,18 @@ struct RenderContext
 
 	PointLightConstants pointLights[256];               // 点光源を最大8つまで定義可能
 
+	struct TorusLightConstants
+	{
+		DirectX::XMFLOAT4 position;
+		DirectX::XMFLOAT4 direction;
+		DirectX::XMFLOAT4 color;
+		float majorRadius;   // ドーナツの中心円の半径
+		float minorRadius;   // ドーナツの太さ（断面円の半径）
+		float range;
+		float dummy = 0;
+	};
+	TorusLightConstants torusLights[256];
+
 	// 線光源設定
 	struct LineLightConstants
 	{

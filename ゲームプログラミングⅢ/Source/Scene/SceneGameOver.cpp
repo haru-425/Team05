@@ -75,7 +75,7 @@ void Game_Over::Render()
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::GameOver)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::GameOver)].Get());
 
 	{
 		GameOver->Render(rc, 100, 100, 0, 1095, 316, 0, 1, 1, 1, 1);

@@ -8,33 +8,37 @@
 class SceneLoading : public Scene
 {
 public:
-    SceneLoading(Scene* nextScene):nextScene(nextScene){}
-    ~SceneLoading(){}
+	SceneLoading(Scene* nextScene) :nextScene(nextScene) {}
+	~SceneLoading() {}
 
-    //初期化
-    void Initialize() override;
+	//初期化
+	void Initialize() override;
 
-    //終了化
-    void Finalize()override;
+	//終了化
+	void Finalize()override;
 
-    //更新処理
-    void Update(float elapsedTime) override;
+	//更新処理
+	void Update(float elapsedTime) override;
 
-    //描画処理
-    void Render()override;
+	//描画処理
+	void Render()override;
 
-    //GUI描画
-    void DrawGUI()override;
-
-private:
-    //ローディングスレッド
-    static void LoadingThread(SceneLoading* scene);
+	//GUI描画
+	void DrawGUI()override;
 
 private:
-    Sprite* sprite = nullptr;
-    float angle = 0.0f;
-    float positionX = 0;
-    float positionY = 0;
-    Scene* nextScene = nullptr;
-    std::thread* thread = nullptr;
+	//ローディングスレッド
+	static void LoadingThread(SceneLoading* scene);
+
+private:
+	Sprite* sprite = nullptr;
+	float angle = 0.0f;
+	float positionX = 0;
+	float positionY = 0;
+	Scene* nextScene = nullptr;
+	std::thread* thread = nullptr;
+
+	float timer;
+	float transtimer;
+	float nextSceneReadyTime = -1.0f; // 次のシーンの準備完了時刻
 };

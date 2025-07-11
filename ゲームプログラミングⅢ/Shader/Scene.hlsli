@@ -26,6 +26,16 @@ struct PointLight
     float range;
     float3 dummy;
 };
+struct TorusLight
+{
+    float4 position;
+    float4 direction;
+    float4 color;
+    float range;
+    float majorRadius;
+    float minorRadius;
+    float dummy;
+};
 struct LineLight
 {
     float4 start;
@@ -38,6 +48,8 @@ struct LineLight
 cbuffer CbLights : register(b4)
 {
     PointLight pointLights[256];
+    TorusLight torusLights[256];
     LineLight lineLights[256];
     float power;
+    float3 dummy;
 }

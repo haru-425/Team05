@@ -4,9 +4,11 @@
 #include <DirectXCollision.h>
 #include "System/Model.h"
 #include "Stage.h"
+#include "./System/AnimationController.h"
+#include <memory>
 
 /// 通常移動速度
-#define USUAL_SPEED 2.0f
+#define USUAL_SPEED 1.05f
 /// プレイヤー追跡時の移動速度
 #define TRACKING_SPEED 4.0f
 /// 気配を感じたときの移動速度
@@ -69,11 +71,18 @@ public:
     /// デバッグ用の可視化処理
     void DrawDebug() override;
 
+    /// 現在の座標を取得する
+    DirectX::XMFLOAT3 GetPosition() const { return position; }
+
     /// 現在のピッチ角を取得する
     float GetPitch() const { return pitch; }
 
     /// 現在のヨー角を取得する
     float GetYaw() const { return yaw; }
+
+    void jageDirection(DirectX::XMVECTOR dir);
+
+    void Animationplay();
 
     /// 現在向かっている経路ポイントのインデックス（デバッグ用）
     int GetindexWayPoint() const { return static_cast<int>(currentTargetIndex); }
@@ -97,11 +106,12 @@ private:
         detection,  ///< プレイヤー発見
         feeling,    ///< 気配感知
         miss,       ///< 見失い
-        turn,       ///>< 回転
+        turn,       ///< 回転
+        Attack,     ///< 攻撃
     };
 
 private:
-    Model* model = nullptr;                                ///< モデルデータ
+    std::shared_ptr<Model> model = nullptr;                                ///< モデルデータ
     std::weak_ptr<Player> playerRef;                       ///< プレイヤーへの弱参照
     Stage* stage;                                          ///< ステージへの参照
 
@@ -127,6 +137,7 @@ private:
     float lockonRange = 30.0f;                             ///< 直線でプレイヤーを見つけれる距離
 
     //アニメーション管理フラグ・変数
+    AnimationController animationcontroller;
     float animation_Timer = 0.0f;
     enum Direction
     {
@@ -136,4 +147,5 @@ private:
         E,
     };
     Direction direction = Direction::N;
+    Direction olddirection = direction;
 };
