@@ -27,4 +27,8 @@ private:
 	Sprite* GameOver;
 	Life* life[3];
 	float GameOvertime = 0.0f; ///< デバッグ用タイマー
+
+	int life_rest = 2;
+
+	static int life_number;
 };

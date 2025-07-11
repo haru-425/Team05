@@ -1,6 +1,6 @@
 #include "SceneGameOver.h"
 
-
+int Game_Over::life_number = 2;
 void Game_Over::Initialize()
 {
 	GameOver = new Sprite("Data/Sprite/GameOver.png");
@@ -26,12 +26,19 @@ void Game_Over::Finalize()
 		GameOver = nullptr;
 	}
 	GameOvertime = 0.0f; ///< デバッグ用タイマー初期化
+
+	life_number--;
 }
 
 void Game_Over::Update(float elapsedTime)
 {
+	life[life_rest]->SetFlag(true);
 
 	Graphics::Instance().UpdateConstantBuffer(GameOvertime);
+	for (int i = 0; i < 3; i++)
+	{
+		life[i]->Update(elapsedTime);
+	}
 }
 
 void Game_Over::Render()
@@ -71,7 +78,17 @@ void Game_Over::Render()
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::GameOver)].Get());
 
 	{
+		GameOver->Render(rc, 100, 100, 0, 1095, 316, 0, 1, 1, 1, 1);
+
+
 		//ノイズの影響を受けないものはここ
+		for (int i = 0; i < 3; i++)
+		{
+			if (life[i] != nullptr)
+			{
+				life[i]->Render();
+			}
+		}
 
 	}
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->deactivate(dc);
