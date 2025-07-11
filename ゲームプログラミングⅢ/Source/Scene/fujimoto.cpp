@@ -126,7 +126,6 @@ void fujimoto::Update(float elapsedTime)
 	//	SceneManager::instance().ChangeScene(new Game_Over);
 	//}
 
-
 	//ステージ更新処理
 	stage->Update(elapsedTime);
 	player->Update(elapsedTime);

@@ -292,7 +292,54 @@ void Stage::DestinationPointSet()
 	wayPoint[58]->AddEdge(wayPoint[60].get());
 	wayPoint[58]->AddEdge(wayPoint[65].get());
 
+	wayPoint[60]->AddEdge(wayPoint[66].get());
 
+	wayPoint[61]->AddEdge(wayPoint[67].get());
+	wayPoint[61]->AddEdge(wayPoint[68].get());
+
+	wayPoint[62]->AddEdge(wayPoint[69].get());
+
+	wayPoint[63]->AddEdge(wayPoint[70].get());
+
+	wayPoint[64]->AddEdge(wayPoint[71].get());
+
+	wayPoint[66]->AddEdge(wayPoint[72].get());
+	wayPoint[66]->AddEdge(wayPoint[73].get());
+	wayPoint[66]->AddEdge(wayPoint[74].get());
+
+	wayPoint[67]->AddEdge(wayPoint[75].get());
+
+	wayPoint[68]->AddEdge(wayPoint[76].get());
+	wayPoint[68]->AddEdge(wayPoint[77].get());
+
+	wayPoint[69]->AddEdge(wayPoint[76].get());
+	wayPoint[69]->AddEdge(wayPoint[78].get());
+
+	wayPoint[70]->AddEdge(wayPoint[79].get());
+
+	wayPoint[71]->AddEdge(wayPoint[79].get());
+	wayPoint[71]->AddEdge(wayPoint[80].get());
+
+	wayPoint[72]->AddEdge(wayPoint[81].get());
+
+	wayPoint[73]->AddEdge(wayPoint[81].get());
+	wayPoint[73]->AddEdge(wayPoint[82].get());
+
+	wayPoint[74]->AddEdge(wayPoint[82].get());
+
+	wayPoint[75]->AddEdge(wayPoint[83].get());
+
+	wayPoint[77]->AddEdge(wayPoint[84].get());
+
+	wayPoint[78]->AddEdge(wayPoint[84].get());
+
+	wayPoint[80]->AddEdge(wayPoint[85].get());
+
+	wayPoint[81]->AddEdge(wayPoint[86].get());
+
+	wayPoint[82]->AddEdge(wayPoint[83].get());
+
+	wayPoint[85]->AddEdge(wayPoint[86].get());
 }
 
 // インデックス番号からウェイポイントの座標を取得
