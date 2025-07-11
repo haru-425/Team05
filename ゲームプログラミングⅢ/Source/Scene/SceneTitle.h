@@ -101,5 +101,4 @@ private:
 
 	float GraphicsScenetime = 0; //gameタイマー
 
-	Audio3DSystem audioSystem; ///< 3Dオーディオシステムのインスタンス
 };

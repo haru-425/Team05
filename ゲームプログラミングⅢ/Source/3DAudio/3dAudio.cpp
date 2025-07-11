@@ -308,6 +308,7 @@ void Audio3DSystem::SetEmitterPositionByTag(const std::string& tag, const XMFLOA
 void Audio3DSystem::PlayAll()
 {
 	for (auto& e : emitters) {
+		e.sourceVoice->FlushSourceBuffers(); // バッファリセット
 		e.sourceVoice->SubmitSourceBuffer(&e.buffer);
 		e.sourceVoice->Start();
 	}

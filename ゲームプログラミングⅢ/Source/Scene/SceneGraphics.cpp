@@ -67,38 +67,15 @@ void SceneGraphics::Initialize()
 
 	/// デバッグ用タイマー初期化
 	time = 0;
-	audioSystem.Initialize();
 	// 3Dオーディオシステムにエミッターを追加
 	//BGM
-	audioSystem.AddEmitter("Data/Sound/atmosphere_noise.wav", Camera::Instance().GetEye(), "atmosphere_noise", true, true, true, 0.0f);
-	audioSystem.SetVolumeByTag("atmosphere_noise", 1.f);
-	//エアコン
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { -8.0f, 3.0f, 22.0f }, "aircon", true, false, false, 0.2f);
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 8.0f, 3.0f, 22.0f }, "aircon", true, false, false, 0.2f);
 
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 13.0f }, "aircon", true, false, false, 0.2f);
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f, 3.0f, 13.0f }, "aircon", true, false, false, 0.2f);
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 13.0f }, "aircon", true, false, false, 0.2f);
 
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 5.0f }, "aircon", true, false, false, 0.2f);
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f , 3.0f, 5.0f }, "aircon", true, false, false, 0.2f);
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 5.0f }, "aircon", true, false, false, 0.2f);
-
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, -13.0f }, "aircon", true, false, false, 0.2f);
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, -13.0f }, "aircon", true, false, false, 0.2f);
-
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f,-23.0f }, "aircon", true, false, false, 0.2f);
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 5.0f, 3.0f,-23.0f }, "aircon", true, false, false, 0.2f);
-	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f,-23.0f }, "aircon", true, false, false, 0.2f);
-
-	audioSystem.SetVolumeByTag("aircon", 0.5f);
-
-	audioSystem.UpdateEmitters();
 	// リスナーの初期位置と向きを設定
-	audioSystem.UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
 	// 3Dオーディオシステムの再生開始
-	audioSystem.PlayByTag("atmosphere_noise");
-	audioSystem.PlayByTag("aircon");
+	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
+	Audio3DSystem::Instance().PlayByTag("aircon");
 }
 
 /**
@@ -119,8 +96,8 @@ void SceneGraphics::Finalize()
 		delete stage;
 		stage = nullptr;
 	}
-	audioSystem.StopByTag("atmosphere_noise"); // 音声停止
-	audioSystem.StopByTag("aircon"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("atmosphere_noise"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("aircon"); // 音声停止
 }
 
 /**
@@ -196,9 +173,9 @@ void SceneGraphics::Update(float elapsedTime)
 
 	LightManager::Instance().Update();
 
-	audioSystem.SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
-	audioSystem.UpdateEmitters();
-	audioSystem.UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().UpdateEmitters();
 }
 
 /**

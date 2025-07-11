@@ -89,6 +89,5 @@ private:
 
 	float GraphicsScenetime = 0; //gameタイマー
 
-	Audio3DSystem audioSystem;
 	float time = 0; // デバッグ用タイマー
 };

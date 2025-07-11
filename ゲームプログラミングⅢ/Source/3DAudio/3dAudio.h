@@ -23,6 +23,11 @@ using namespace DirectX;
 class Audio3DSystem
 {
 public:
+	static Audio3DSystem& Instance()
+	{
+		static Audio3DSystem instance;
+		return instance;
+	}
 	/**
 	 * @brief オーディオシステムの初期化を行う
 	 *
