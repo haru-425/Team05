@@ -17,28 +17,8 @@ void SceneLogo::Initialize()
 
 	// 3Dオーディオシステムの初期化
 	Audio3DSystem::Instance().Initialize();
-	// 3Dオーディオシステムにエミッターを追加
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/electrical_noise.wav", { 0.0f, 0.0f, 0.0f }, "electrical_noise", true, true, true, 0.0f);
 
-	//BGM
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", true);
 
-	Audio3DSystem::Instance().SetVolumeByTag("atmosphere_noise", 1.f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { -8.0f, 3.0f, 22.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 8.0f, 3.0f, 22.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 13.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f, 3.0f, 13.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 13.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 5.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f , 3.0f, 5.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 5.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, -13.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, -13.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f,-23.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 5.0f, 3.0f,-23.0f }, "aircon", true);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f,-23.0f }, "aircon", true);
-
-	Audio3DSystem::Instance().SetVolumeByTag("aircon", 0.5f);
 	// リスナーの初期位置と向きを設定
 	Audio3DSystem::Instance().UpdateListener({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
 	// 3Dオーディオシステムの再生開始

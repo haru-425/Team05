@@ -46,6 +46,9 @@ void SceneTitle::Initialize()
 
 	// リスナーの初期位置と向きを設定
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+
+	Audio3DSystem::Instance().SetVolumeByTag("atmosphere_noise", 0.4f);
+	Audio3DSystem::Instance().SetVolumeByTag("aircon", 1.f);
 	// 3Dオーディオシステムの再生開始
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");

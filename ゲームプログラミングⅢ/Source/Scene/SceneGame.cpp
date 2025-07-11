@@ -51,6 +51,14 @@ void SceneGame::Initialize()
 
 	// エアコンの初期化
 	AirconManager::Instance().Initialize();
+
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+
+	Audio3DSystem::Instance().SetVolumeByTag("atmosphere_noise", 0.2f);
+	Audio3DSystem::Instance().SetVolumeByTag("aircon", 1.f);
+	// 3Dオーディオシステムの再生開始
+	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
+	Audio3DSystem::Instance().PlayByTag("aircon");
 }
 
 // 終了化
@@ -68,6 +76,8 @@ void SceneGame::Finalize()
 		delete minimap;
 		minimap = nullptr;
 	}
+	Audio3DSystem::Instance().StopByTag("atmosphere_noise"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("aircon"); // 音声停止
 }
 
 // 更新処理
@@ -155,6 +165,9 @@ void SceneGame::Update(float elapsedTime)
 
 
 	LightManager::Instance().Update();
+	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().UpdateEmitters();
 }
 
 // 描画処理
