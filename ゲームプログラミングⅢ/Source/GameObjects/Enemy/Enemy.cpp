@@ -60,7 +60,7 @@ void Enemy::Update(float elapsedTime)
             DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
 
     // ƒvƒŒƒCƒ„[‚ªŒ©‚¦‚Ä‚¢‚é‚©‹ß‚Ã‚¢‚Ä‚¢‚é‚È‚ç
-    if ((loocking && playerdist < lockonRange) || playerdist < searchRange)
+    if (((loocking && playerdist < lockonRange) || playerdist < searchRange ) && state!=State::miss)
     {
         if (!isTrackingPlayer)
         {
@@ -244,6 +244,8 @@ void Enemy::Updatemovement(float elapsedTime)
     if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition()), posVec))) < 3.0f)
     {
         targetVec = DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition());
+        jageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
+        Animationplay();
         nearTarget = true;
     }
     else
@@ -318,19 +320,19 @@ void Enemy::jageDirection(DirectX::XMVECTOR dir)
     olddirection = direction;
     DirectX::XMFLOAT3 dirf;
     DirectX::XMStoreFloat3(&dirf, dir);
-    if (dirf.x > 0.1f)
+    if (dirf.x > 0.1f && dirf.z < dirf.x)
     {
         direction = Direction::E;
     }
-    else if (dirf.z > 0.1f)
+    else if (dirf.z > 0.1f && dirf.z > dirf.x)
     {
         direction = Direction::N;
     }
-    else if (dirf.x < -0.1f)
+    else if (dirf.x < -0.1f && dirf.z > dirf.x)
     {
         direction = Direction::W;
     }
-    else if (dirf.z < -0.1f)
+    else if (dirf.z < -0.1f && dirf.z < dirf.x)
     {
         direction = Direction::S;
     }
