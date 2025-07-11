@@ -34,6 +34,7 @@
     <FxCompile Include="Shader\VisionBootDownPS.hlsl" />
     <FxCompile Include="Shader\TVNoiseFadePS.hlsl" />
     <FxCompile Include="Shader\GameOverPS.hlsl" />
+    <FxCompile Include="Shader\Noise_ps.hlsl" />
     <FxCompile Include="Shader\FadeToBlackPS.hlsl" />
     <FxCompile Include="Shader\FilmGrainDustPS.hlsl" />
     <FxCompile Include="Shader\NoiseChangePS.hlsl" />

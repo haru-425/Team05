@@ -44,6 +44,18 @@ Sprite::Sprite(const char* filename)
 		hr = device->CreateBuffer(&buffer_desc, nullptr, minimap_constant_Buffer.GetAddressOf());
 	}
 
+	//グリッジノイズに必要な定数バッファ
+	{
+		D3D11_BUFFER_DESC buffer_desc{};
+		buffer_desc.ByteWidth = sizeof(Noise);
+		buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+		buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		buffer_desc.CPUAccessFlags = 0;
+		buffer_desc.MiscFlags = 0;
+		buffer_desc.StructureByteStride = 0;
+
+		hr = device->CreateBuffer(&buffer_desc, nullptr, noise_constant_Buffer.GetAddressOf());
+	}
 
 	// 頂点シェーダー
 	{
@@ -72,7 +84,15 @@ Sprite::Sprite(const char* filename)
 			"Data/Shader/SpritePS.cso",
 			pixelShader.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+		hr = GpuResourceUtils::LoadPixelShader(
+			device,
+			"Data/Shader/Noise_ps.cso",
+			NoiseShader.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
+
+
 
 	// テクスチャの生成	
 	if (filename != nullptr)
@@ -110,7 +130,7 @@ void Sprite::Render(const RenderContext& rc,
 	,bool minimapFlg//ミニマップのように表示するかどうか
 	,float radius,//半径
 	float parametar
-	) const
+	) 
 {
 
 	ID3D11DeviceContext* dc = rc.deviceContext;
@@ -206,30 +226,52 @@ void Sprite::Render(const RenderContext& rc,
 
 	//定数バッファ更新
 	{
+		//ミニマップ
 		MiniMap minimap{};
 		minimap.Flag = minimapFlg;
 		minimap.radius = radius;
 		minimap.paramatar = parametar;
 		dc->UpdateSubresource(minimap_constant_Buffer.Get(), 0, 0, &minimap, 0, 0);
+
 	}
 
 	dc->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 	dc->IASetInputLayout(inputLayout.Get());
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	dc->VSSetShader(vertexShader.Get(), nullptr, 0);
-	dc->PSSetShader(pixelShader.Get(), nullptr, 0);
-	dc->PSSetShaderResources(0, 1, shaderResourceView.GetAddressOf());
 
 	//定数バッファセット
 	dc->PSSetConstantBuffers(0, 1, minimap_constant_Buffer.GetAddressOf());
-	
+	if (noise_flag == 1)
+	{
+		dc->PSSetShader(NoiseShader.Get(), nullptr, 0);
+
+		//グリッジノイズ
+		Noise noise{ };
+		noise.time = time;
+		noise.strength = strength;
+		dc->UpdateSubresource(noise_constant_Buffer.Get(),0,nullptr,&noise,0,0);
+		dc->PSSetConstantBuffers(1, 1, noise_constant_Buffer.GetAddressOf());
+
+		dc->PSSetShaderResources(0, 1, shaderResourceView.GetAddressOf());
+	}
+	else
+	{
+		dc->PSSetShader(pixelShader.Get(), nullptr, 0);
+
+		dc->PSSetShaderResources(0, 1, shaderResourceView.GetAddressOf());
+	}
+
 	// レンダーステート設定
 	dc->OMSetDepthStencilState(rc.renderState->GetDepthStencilState(DepthState::NoTestNoWrite), 0);
 	dc->RSSetState(rc.renderState->GetRasterizerState(RasterizerState::SolidCullNone));
 	dc->OMSetBlendState(rc.renderState->GetBlendState(BlendState::Transparency), nullptr, 0xFFFFFFFF);
+	ID3D11SamplerState* sampler = rc.renderState->GetSamplerState(SamplerState::PointClamp);
+	dc->PSSetSamplers(0, 1, &sampler);
 
 	// 描画
 	dc->Draw(4, 0);
+	time += 0.01f;
 }
 
 // 描画実行（テクスチャ切り抜き指定なし）
@@ -239,7 +281,8 @@ void Sprite::Render(const RenderContext& rc,
 	float dw, float dh,					// 幅、高さ
 	float angle,						// 角度
 	float r, float g, float b, float a	// 色
-	) const
+	) 
 {
 	Render(rc, dx, dy, dz, dw, dh, 0, 0, textureWidth, textureHeight, angle, r, g, b, a);
 }
+
