@@ -114,6 +114,14 @@ public:
 	void StopByTag(const std::string& tag);
 
 	/**
+	* @brief 指定タグのエミッターのみ音量を変更する
+	*
+	* @param tag 音量変更対象のタグ文字列
+	* @param volume 音量(0~1)
+	*/
+	void SetVolumeByTag(const std::string& tag, float volume);
+
+	/**
 	 * @brief エミッター更新用スレッドの開始
 	 */
 	void StartUpdateThread();

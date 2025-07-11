@@ -23,6 +23,7 @@ void SceneLogo::Initialize()
 	audioSystem.UpdateListener({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
 	// 3Dオーディオシステムの再生開始
 	audioSystem.PlayByTag("electrical_noise");
+	audioSystem.SetVolumeByTag("electrical_noise", 0.1f);
 }
 
 //終了化
@@ -72,6 +73,7 @@ void SceneLogo::Update(float elapsedTime)
 		transtimer += elapsedTime;
 	}
 	Graphics::Instance().UpdateConstantBuffer(timer, transtimer);
+
 	// 3Dオーディオシステムのエミッター更新
 	audioSystem.UpdateEmitters();
 

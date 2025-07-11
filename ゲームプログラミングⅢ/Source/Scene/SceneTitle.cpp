@@ -43,11 +43,35 @@ void SceneTitle::Initialize()
 
 	audioSystem.Initialize();
 	// 3Dオーディオシステムにエミッターを追加
-	audioSystem.AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", true, true, true, 0.0f);
+	//BGM
+	audioSystem.AddEmitter("Data/Sound/atmosphere_noise.wav", Camera::Instance().GetEye(), "atmosphere_noise", true, true, true, 0.0f);
+	audioSystem.SetVolumeByTag("atmosphere_noise", 1.f);
+	//エアコン
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { -8.0f, 3.0f, 22.0f }, "aircon", true);
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 8.0f, 3.0f, 22.0f }, "aircon", true);
+
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 13.0f }, "aircon", true);
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f, 3.0f, 13.0f }, "aircon", true);
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 13.0f }, "aircon", true);
+
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 5.0f }, "aircon", true);
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f , 3.0f, 5.0f }, "aircon", true);
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 5.0f }, "aircon", true);
+
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, -13.0f }, "aircon", true);
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, -13.0f }, "aircon", true);
+
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f,-23.0f }, "aircon", true);
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 5.0f, 3.0f,-23.0f }, "aircon", true);
+	audioSystem.AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f,-23.0f }, "aircon", true);
+
+	audioSystem.SetVolumeByTag("aircon", 0.5f);
+
 	// リスナーの初期位置と向きを設定
 	audioSystem.UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
 	// 3Dオーディオシステムの再生開始
 	audioSystem.PlayByTag("atmosphere_noise");
+	audioSystem.PlayByTag("aircon");
 }
 
 //終了化
@@ -61,6 +85,7 @@ void SceneTitle::Finalize()
 	}
 
 	audioSystem.StopByTag("atmosphere_noise"); // 音声停止
+	audioSystem.StopByTag("aircon"); // 音声停止
 }
 
 //更新処理
@@ -143,7 +168,10 @@ void SceneTitle::Update(float elapsedTime)
 	i_cameraController->Update(elapsedTime);
 	LightManager::Instance().Update();
 
+	audioSystem.SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	audioSystem.UpdateEmitters();
+	audioSystem.UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+
 }
 
 

@@ -375,3 +375,20 @@ void Audio3DSystem::StopUpdateThread()
 		updateThread.join();
 	}
 }
+/**
+ * @brief 指定タグのエミッターのみ音量を変更する
+ *
+ * @param tag 音量変更対象のタグ文字列
+ */
+void Audio3DSystem::SetVolumeByTag(const std::string& tag, float volume)
+{
+	std::lock_guard<std::mutex> lock(dataMutex); ///< 排他制御
+
+	for (auto& e : emitters) {
+		if (e.tag == tag) {
+			if (e.sourceVoice) {
+				e.sourceVoice->SetVolume(volume);
+			}
+		}
+	}
+}
