@@ -36,7 +36,7 @@ public:
     std::vector<int> path;
 
     DirectX::XMFLOAT4X4 GetWorld() const { return world; }
-    Model* GetModel() { return model; }
+    Model* GetModel() { return model[0].get(); }
 
     DirectX::XMFLOAT4X4 GetCollisionMatrix() const { return collisionMeshMatrix; }
     Model* GetCollisionMesh() { return collisionMesh.get(); }
@@ -52,9 +52,9 @@ private:
         0,0,0,1
     };
 
-    Model* model = nullptr;
+    std::unique_ptr<Model> model[4] = {};
 
-    std::unique_ptr<LoadTextures> textures;
+    std::unique_ptr<LoadTextures> textures[4] = {};
 
     std::unique_ptr<Model> collisionMesh;
     DirectX::XMFLOAT4X4 collisionMeshMatrix;

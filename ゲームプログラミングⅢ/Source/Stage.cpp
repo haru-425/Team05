@@ -5,20 +5,13 @@
 Stage::Stage()
 {
 	//ステージモデルを読み込み
-#if 0
-	model = new Model("Data/Model/Stage/map.mdl");
+	model[0] = std::make_unique<Model>("Data/Model/Stage/Map/Aisle/Map_aisle_01.mdl");
+	model[1] = std::make_unique<Model>("Data/Model/Stage/Map/Corner_Cross/Map_corner_cross_01.mdl");
+	model[2] = std::make_unique<Model>("Data/Model/Stage/Map/Floor/Map_floor_01.mdl");
+	model[3] = std::make_unique<Model>("Data/Model/Stage/Map/Room/Map_room_01.mdl");
+
 	scale = { 0.01f,0.01f,0.01f };
-#else
-	model = new Model("Data/Model/Stage/stage.mdl");
-	scale = { 1,1,1 };
-#endif
 
-	//scale = { 1.5f,1.5f,1.5f };
-	//scale = { 2,2,2 };
-	
-
-	//position = { -4,0,18 };
-	
 	angle.y = DirectX::XMConvertToRadians(180);
 
 	//スケール行列を作成
@@ -34,19 +27,40 @@ Stage::Stage()
 
 	DestinationPointSet();
 
-	textures = std::make_unique<LoadTextures>();
+
+	// テクスチャの読み込み
+	{
+		for (auto& p : textures) {
+			p = std::make_unique<LoadTextures>();
+		}
+
+		// Aisle
+		textures[0]->LoadNormal("Data/Model/Stage/Map/Aisle/Aisle_mtl/Aisle_mtl_Normal.1001.png");
+		textures[0]->LoadRoughness("Data/Model/Stage/Map/Aisle/Aisle_mtl/Aisle_mtl_Roughness.1001.png");
+
+		// CornerCross
+		textures[1]->LoadNormal("Data/Model/Stage/Map/Corner_Cross/Corner_Cross_mtl/Corner_Cross_mtl_Normal.1001.png");
+		textures[1]->LoadRoughness("Data/Model/Stage/Map/Corner_Cross/Corner_Cross_mtl/Corner_Cross_mtl_Roughness.1001.png");
+
+		// Floor
+		textures[2]->LoadNormal("Data/Model/Stage/Map/Floor/Floor_mtl/Floor_mtl_Normal.1001.png");
+		textures[2]->LoadRoughness("Data/Model/Stage/Map/Floor/Floor_mtl/Floor_mtl_Roughness.1001.png");
+
+		// Room
+		textures[2]->LoadNormal("Data/Model/Stage/Map/Room/Room_mtl/Room_mtl_Normal.1001.png");
+		textures[2]->LoadRoughness("Data/Model/Stage/Map/Room/Room_mtl/Room_mtl_Roughness.1001.png");
+	}
+
 
 	collisionMesh = std::make_unique<Model>("Data/Model/Stage/CollisionMesh.mdl");
 	DirectX::XMMATRIX M = DirectX::XMMatrixIdentity();
 	DirectX::XMMATRIX RotationM = DirectX::XMMatrixRotationRollPitchYaw(0, 180 * 0.01745f, 0);
 	M *= RotationM;
 	DirectX::XMStoreFloat4x4(&collisionMeshMatrix, M);
-
 }
 Stage::~Stage()
 {
-	//ステージモデルを破棄
-	delete model;
+
 }
 //更新処理
 void Stage::Update(float elapsedTime)
@@ -56,14 +70,11 @@ void Stage::Update(float elapsedTime)
 //描画
 void Stage::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-	textures->Set(rc);
-
-	//レンダラにモデルを描画してもらう
-	renderer->Render(rc, world, model, ShaderId::Custom);
-	//renderer->Render(rc, world, model, ShaderId::Lambert);
-
-	textures->Clear(rc);
-
+	for (int i = 0; i < _countof(model); ++i) {
+		textures[i]->Set(rc);
+		renderer->Render(rc, world, model[i].get(), ShaderId::Custom);
+		textures[i]->Clear(rc);
+	}
 }
 
 
