@@ -1,13 +1,16 @@
-#include "Enemy.h"
+ï»¿#include "Enemy.h"
+#include <cmath>
+#include <iostream>
+#include <random>
 #include "Pursuer/Object.h"
 #include "Pursuer/SearchAI.h"
 #include "Player/player.h"
 #include "./Collision.h"
-#include "imgui.h"                    // ImGui‚ÌŠî–{‹@”\
-#include "imgui_impl_win32.h"        // Win32—pƒoƒbƒNƒGƒ“ƒh
-#include "imgui_impl_dx11.h"         // DirectX11—pƒoƒbƒNƒGƒ“ƒh
+#include "imgui.h"                    // ImGuiã®åŸºæœ¬æ©Ÿèƒ½
+#include "imgui_impl_win32.h"        // Win32ç”¨ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰
+#include "imgui_impl_dx11.h"         // DirectX11ç”¨ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^FƒvƒŒƒCƒ„[‚ÆƒXƒe[ƒW‚Ö‚ÌQÆ‚ğ•Û‚µAƒ‚ƒfƒ‹‚ğ“Ç‚İ‚Ş
+// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ï¼šãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã‚¹ãƒ†ãƒ¼ã‚¸ã¸ã®å‚ç…§ã‚’ä¿æŒã—ã€ãƒ¢ãƒ‡ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 {
     this->stage = stage;
@@ -16,22 +19,22 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
     model = std::make_shared<Model>("Data/Model/test/enemy_motion.mdl");
     this->animationcontroller.SetModel(model);
     this->animationcontroller.SetAnimationPlaying(true);
-    scale.x = scale.y = scale.z = 0.01f; // ƒXƒP[ƒ‹İ’èi”ñí‚É¬‚³‚¢j
-    radius = 0.5f;                        // Õ“Ë—p‚Ì”¼Œa
+    scale.x = scale.y = scale.z = 0.01f; // ã‚¹ã‚±ãƒ¼ãƒ«è¨­å®šï¼ˆéå¸¸ã«å°ã•ã„ï¼‰
+    radius = 0.5f;                        // è¡çªç”¨ã®åŠå¾„
 
-    position = { 0.0f, 0.0f, 0.0f };      // ‰ŠúˆÊ’u
-    viewPoint = 1.5f;                     // –Úü‚Ì‚‚³
+    position = { 0.0f, 0.0f, 0.0f };      // åˆæœŸä½ç½®
+    viewPoint = 1.5f;                     // ç›®ç·šã®é«˜ã•
 }
 
 Enemy::~Enemy()
 {
-    // ƒ‚ƒfƒ‹‚Ìƒƒ‚ƒŠ‰ğ•ú‚ª•K—v‚Èê‡‚Í‚±‚±‚Ås‚¤
+    // ãƒ¢ãƒ‡ãƒ«ã®ãƒ¡ãƒ¢ãƒªè§£æ”¾ãŒå¿…è¦ãªå ´åˆã¯ã“ã“ã§è¡Œã†
 }
 
-// –ˆƒtƒŒ[ƒ€ŒÄ‚Ño‚³‚ê‚éXVˆ—
+// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å‘¼ã³å‡ºã•ã‚Œã‚‹æ›´æ–°å‡¦ç†
 void Enemy::Update(float elapsedTime)
 {
-    // “G‚ÌŒü‚«‚ğƒvƒŒƒCƒ„[‚É‡‚í‚¹‚é‚½‚ß‚ÉAƒrƒ…[s—ñ‚©‚çZ²•ûŒü‚ğæ“¾
+    // æ•µã®å‘ãã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«åˆã‚ã›ã‚‹ãŸã‚ã«ã€ãƒ“ãƒ¥ãƒ¼è¡Œåˆ—ã‹ã‚‰Zè»¸æ–¹å‘ã‚’å–å¾—
     DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&world);
     DirectX::XMVECTOR Forward = M.r[2];
 
@@ -39,18 +42,18 @@ void Enemy::Update(float elapsedTime)
     float y = DirectX::XMVectorGetY(Forward);
     float z = DirectX::XMVectorGetZ(Forward);
 
-    pitch = asinf(y);             // ã‰º‚ÌŒü‚«
-    yaw = atan2f(x, z);           // ¶‰E‚ÌŒü‚«
+    pitch = asinf(y);             // ä¸Šä¸‹ã®å‘ã
+    yaw = atan2f(x, z);           // å·¦å³ã®å‘ã
 
-    // ƒvƒŒƒCƒ„[‚Æ‚ÌƒŒƒCƒLƒƒƒXƒgˆ—
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã®ãƒ¬ã‚¤ã‚­ãƒ£ã‚¹ãƒˆå‡¦ç†
     const DirectX::XMFLOAT3 RayStart = { this->GetPosition().x, this->GetPosition().y + viewPoint, this->GetPosition().z };
     const DirectX::XMFLOAT3 RayGoal = { playerRef.lock()->GetPosition().x, playerRef.lock()->GetPosition().y + viewPoint, playerRef.lock()->GetPosition().z };
 
     DirectX::XMFLOAT3 hitpos, n;
-    //bool a = Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n);      //(ƒfƒoƒbƒO—p)
+    //bool a = Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n);      //(ãƒ‡ãƒãƒƒã‚°ç”¨)
     loocking = !(Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n));
 
-    // ƒqƒbƒgˆÊ’u‚ÆƒvƒŒƒCƒ„[ˆÊ’u‚Æ‚Ì‹——£‚ğ”äŠr
+    // ãƒ’ãƒƒãƒˆä½ç½®ã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ä½ç½®ã¨ã®è·é›¢ã‚’æ¯”è¼ƒ
     float hitdist = DirectX::XMVectorGetX(
         DirectX::XMVector3Length(
             DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&hitpos), DirectX::XMLoadFloat3(&RayStart))));
@@ -59,12 +62,12 @@ void Enemy::Update(float elapsedTime)
         DirectX::XMVector3Length(
             DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
 
-    // ƒvƒŒƒCƒ„[‚ªŒ©‚¦‚Ä‚¢‚é‚©‹ß‚Ã‚¢‚Ä‚¢‚é‚È‚ç
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒè¦‹ãˆã¦ã„ã‚‹ã‹è¿‘ã¥ã„ã¦ã„ã‚‹ãªã‚‰
     if (((loocking && playerdist < lockonRange) || playerdist < searchRange ) && state!=State::miss)
     {
         if (!isTrackingPlayer)
         {
-            // Œo˜H‚ğƒŠƒZƒbƒg‚µAV‚½‚É’TõŠJn
+            // çµŒè·¯ã‚’ãƒªã‚»ãƒƒãƒˆã—ã€æ–°ãŸã«æ¢ç´¢é–‹å§‹
             stage->path.clear();
             route.clear();
 
@@ -75,9 +78,9 @@ void Enemy::Update(float elapsedTime)
             int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
             int start = stage->NearWayPointIndex(this->position);
 
-            refinePath(start, current); // Œo˜H‚ğì¬
+            refinePath(start, current); // çµŒè·¯ã‚’ä½œæˆ
 
-            // ƒXƒe[ƒg‘JˆÚ
+            // ã‚¹ãƒ†ãƒ¼ãƒˆé·ç§»
             if (loocking && playerdist < lockonRange)
             {
                 state = State::detection;
@@ -93,7 +96,7 @@ void Enemy::Update(float elapsedTime)
         }
         else
         {
-            // ’ÇÕ’†‚ÍƒŠƒAƒ‹ƒ^ƒCƒ€‚ÉÄ’Tõ
+            // è¿½è·¡ä¸­ã¯ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ ã«å†æ¢ç´¢
             stage->path.clear();
             Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
             if (!route.empty())
@@ -108,12 +111,17 @@ void Enemy::Update(float elapsedTime)
     }
 
     int current, start;
+    // ãƒãƒ¼ãƒ‰ã‚¦ã‚§ã‚¢ç”±æ¥ã®ãƒ©ãƒ³ãƒ€ãƒ ã‚·ãƒ¼ãƒ‰ã‚’å–å¾—
+    std::random_device rd;
 
-    // “G‚Ìó‘Ô‚É‰‚¶‚Äˆ—‚ğ•ªŠò
+    // ãƒ¡ãƒ«ã‚»ãƒ³ãƒŒãƒ„ã‚¤ã‚¹ã‚¿ï¼ˆé«˜æ€§èƒ½ãªä¹±æ•°ç”Ÿæˆå™¨ï¼‰ã«ã‚·ãƒ¼ãƒ‰ã‚’ä¸ãˆã‚‹
+    std::mt19937 gen(rd());
+
+    // æ•µã®çŠ¶æ…‹ã«å¿œã˜ã¦å‡¦ç†ã‚’åˆ†å²
     switch (state)
     {
     case State::Roaming:
-        Updatemovement(elapsedTime); // Œo˜H‚É‰ˆ‚Á‚ÄˆÚ“®
+        Updatemovement(elapsedTime); // çµŒè·¯ã«æ²¿ã£ã¦ç§»å‹•
         break;
 
     case State::turn:
@@ -125,10 +133,15 @@ void Enemy::Update(float elapsedTime)
         break;
 
     case State::Idle:
-        // ƒ‰ƒ“ƒ_ƒ€‚È–Ú•W’n“_‚ğİ’è‚µŒo˜H’Tõ
-        Goal::Instance().SetPosition(stage->GetIndexWayPoint(rand() % (MAX_WAY_POINT - 1) + 1));
+    {
+        std::uniform_int_distribution<> dist(0, MAX_WAY_POINT - 1);
+        int value = dist(gen);
+
+        // ãƒ©ãƒ³ãƒ€ãƒ ãªç›®æ¨™åœ°ç‚¹ã‚’è¨­å®šã—çµŒè·¯æ¢ç´¢
+        Goal::Instance().SetPosition(stage->GetIndexWayPoint(value + 1));
+
 #if 0
-        //iƒfƒoƒbƒOFTƒL[j
+        //ï¼ˆãƒ‡ãƒãƒƒã‚°ï¼šTã‚­ãƒ¼ï¼‰
         if (GetAsyncKeyState('T') & 0x8000)
         {
             Start::Instance().SetPosition(this->position);
@@ -162,11 +175,11 @@ void Enemy::Update(float elapsedTime)
 #endif
 
         break;
-
+    }
     case State::detection:
         if (animationcontroller.GetEndAnimation())
         {
-            moveSpeed = TRACKING_SPEED; // ’ÇÕƒXƒs[ƒh
+            moveSpeed = TRACKING_SPEED; // è¿½è·¡ã‚¹ãƒ”ãƒ¼ãƒ‰
             state = State::Roaming;
             Animationplay();
         }
@@ -174,7 +187,7 @@ void Enemy::Update(float elapsedTime)
 
     case State::feeling:
 
-        moveSpeed = FEELING_SPEED; // ‹ß‹——£”½‰ƒXƒs[ƒh
+        moveSpeed = FEELING_SPEED; // è¿‘è·é›¢åå¿œã‚¹ãƒ”ãƒ¼ãƒ‰
         state = State::Roaming;
         Animationplay();
 
@@ -185,28 +198,28 @@ void Enemy::Update(float elapsedTime)
         if (animationcontroller.GetEndAnimation())
         {
             isTrackingPlayer = false;
-            moveSpeed = USUAL_SPEED; // ’Êí‘¬“x‚É–ß‚·
+            moveSpeed = USUAL_SPEED; // é€šå¸¸é€Ÿåº¦ã«æˆ»ã™
             state = State::Idle;
             Animationplay();
         }
         break;
     }
 
-    // s—ñXV‚Æƒ‚ƒfƒ‹‚Ì•`‰æ€”õ
+    // è¡Œåˆ—æ›´æ–°ã¨ãƒ¢ãƒ‡ãƒ«ã®æç”»æº–å‚™
     UpdateTransform();
     model->UpdateTransform();
     animationcontroller.UpdateAnimation(elapsedTime);
 }
 
 
-// Œo˜H‚É‰ˆ‚Á‚Ä“G‚ğˆÚ“®‚³‚¹‚éˆ—
+// çµŒè·¯ã«æ²¿ã£ã¦æ•µã‚’ç§»å‹•ã•ã›ã‚‹å‡¦ç†
 void Enemy::Updatemovement(float elapsedTime)
 {
     if (route.empty() || currentTargetIndex >= route.size())
     {
         if (isTrackingPlayer)
         {
-            // ’ÇÕI—¹‚Ìˆ—
+            // è¿½è·¡çµ‚äº†æ™‚ã®å‡¦ç†
             state = State::miss;
             Animationplay();
             currentTargetIndex = 0;
@@ -224,7 +237,7 @@ void Enemy::Updatemovement(float elapsedTime)
         }
         else
         {
-            // Œo˜H‚ğg‚¢‰Ê‚½‚µ‚½‚Æ‚«‚Ì‘Ò‹@ˆ—
+            // çµŒè·¯ã‚’ä½¿ã„æœãŸã—ãŸã¨ãã®å¾…æ©Ÿå‡¦ç†
             state = State::Idle;
             currentTargetIndex = 0;
 
@@ -238,7 +251,7 @@ void Enemy::Updatemovement(float elapsedTime)
     }
 
     bool nearTarget = false;
-    // ƒ^[ƒQƒbƒg•ûŒü‚ÉŒü‚¯‚½ˆÚ“®
+    // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆæ–¹å‘ã«å‘ã‘ãŸç§»å‹•
     DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&position);
     DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&targetPosition);
     if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition()), posVec))) < 3.0f)
@@ -264,7 +277,7 @@ void Enemy::Updatemovement(float elapsedTime)
         return;
     }
 
-    // ƒ^[ƒQƒbƒg’n“_‚É‹ß‚Ã‚¢‚½‚çŸ‚Ì–Ú“I’n‚Ö
+    // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆåœ°ç‚¹ã«è¿‘ã¥ã„ãŸã‚‰æ¬¡ã®ç›®çš„åœ°ã¸
     float distance = DirectX::XMVectorGetX(DirectX::XMVector3Length(dir));
     if (distance < 0.1f)
     {
@@ -294,10 +307,10 @@ void Enemy::Updatemovement(float elapsedTime)
     }
 }
 
-// Dijkstra’TõŒã‚ÌŒo˜H•œŒ³ˆ—
+// Dijkstraæ¢ç´¢å¾Œã®çµŒè·¯å¾©å…ƒå‡¦ç†
 void Enemy::refinePath(int start, int current)
 {
-    // ƒXƒ^[ƒg‚©‚çƒS[ƒ‹‚Ü‚Å‚ÌƒpƒX‚ğ‹t‡‚É‚½‚Ç‚é
+    // ã‚¹ã‚¿ãƒ¼ãƒˆã‹ã‚‰ã‚´ãƒ¼ãƒ«ã¾ã§ã®ãƒ‘ã‚¹ã‚’é€†é †ã«ãŸã©ã‚‹
     while (current != start)
     {
         stage->path.push_back(current);
@@ -305,10 +318,10 @@ void Enemy::refinePath(int start, int current)
     }
     stage->path.push_back(start);
 
-    // ƒpƒX‚ğ³‚µ‚¢‡‚É•À‚×‘Ö‚¦
+    // ãƒ‘ã‚¹ã‚’æ­£ã—ã„é †ã«ä¸¦ã¹æ›¿ãˆ
     std::reverse(stage->path.begin(), stage->path.end());
 
-    // Œo˜H‚ğ waypoint À•W‚É•ÏŠ·‚µ‚Ä route ‚ÉŠi”[
+    // çµŒè·¯ã‚’ waypoint åº§æ¨™ã«å¤‰æ›ã—ã¦ route ã«æ ¼ç´
     for (auto i : stage->path)
     {
         this->Addroute(stage->wayPoint[i]->position);
@@ -324,13 +337,13 @@ void Enemy::jageDirection(DirectX::XMVECTOR dir)
     {
         direction = Direction::E;
     }
-    else if (dirf.z > 0.1f && dirf.z > dirf.x)
-    {
-        direction = Direction::N;
-    }
     else if (dirf.x < -0.1f && dirf.z > dirf.x)
     {
         direction = Direction::W;
+    }
+    else if (dirf.z > 0.1f && dirf.z > dirf.x)
+    {
+        direction = Direction::N;
     }
     else if (dirf.z < -0.1f && dirf.z < dirf.x)
     {
@@ -341,6 +354,23 @@ void Enemy::jageDirection(DirectX::XMVECTOR dir)
 
 void Enemy::Animationplay()
 {
+    if (state == State::Attack)
+    {
+        // ãƒ™ã‚¯ãƒˆãƒ«å¤‰æ›
+        DirectX::XMVECTOR enemy = DirectX::XMLoadFloat3(&position);
+        DirectX::XMVECTOR player = DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition());
+
+        // å‘ããƒ™ã‚¯ãƒˆãƒ«ï¼ˆãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ â†’ æ•µï¼‰
+        DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(player, enemy);
+
+        // XZ å¹³é¢ä¸Šã§è§’åº¦ã‚’æ±‚ã‚ã‚‹
+        float dx = DirectX::XMVectorGetX(dir);
+        float dz = DirectX::XMVectorGetZ(dir);
+
+        // atan2 ã§ Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ï¼‰
+        angle.y = std::atan2(dx, dz);
+        animationcontroller.PlayAnimation("attack", false);
+    }
     switch (direction)
     {
     case Enemy::N:
@@ -533,17 +563,17 @@ void Enemy::Animationplay()
     }
 }
 
-// ƒfƒoƒbƒO•`‰æi–¢À‘•j
+// ãƒ‡ãƒãƒƒã‚°æç”»ï¼ˆæœªå®Ÿè£…ï¼‰
 void Enemy::DrawDebug()
 {
     ImGui::Begin("Enemy Info");
 
-    // position‚ğ•\¦
+    // positionã‚’è¡¨ç¤º
     ImGui::Text("Position: X=%d",this->state);
     ImGui::End();
 }
 
-// ƒ‚ƒfƒ‹•`‰æˆ—
+// ãƒ¢ãƒ‡ãƒ«æç”»å‡¦ç†
 void Enemy::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
     renderer->Render(rc, world, model.get(), ShaderId::Lambert);
