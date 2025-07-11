@@ -3,6 +3,7 @@
 #include <memory>
 #include "Enemy/Enemy.h"
 #include "System/AnimationController.h"
+#include "System/LoadTextures.h"
 
 // テスト用のモデルだったりを切り替えるよう
 //#define TEST
@@ -71,6 +72,8 @@ private:
 
     AnimationController animationController; // アニメーション
     AnimationState state = AnimationState::MOVE;
+
+    std::unique_ptr<LoadTextures> textures;  // テクスチャ
 
     // テスト用なので気にしないで下さい
 #pragma region テスト用

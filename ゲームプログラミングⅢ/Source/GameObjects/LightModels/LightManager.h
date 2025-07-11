@@ -98,8 +98,8 @@ private:
 		DirectX::XMFLOAT4 red    = { 0.5f,    0.0f   , 0.0f    ,1 };
 		DirectX::XMFLOAT4 blue   = { 0.0f,    0.0664f, 0.3242f ,1 };
 		DirectX::XMFLOAT4 yellow = { 1.0f,    0.9453f, 0.0f    ,1 };
-		DirectX::XMFLOAT4 green  = { 0.2578f ,0.2578f, 0.0f    ,1 };
-		DirectX::XMFLOAT4 purple = { 0.3242f ,0.0f   , 0.4492f ,1 };
+		DirectX::XMFLOAT4 green  = { 0.0f    ,0.2812f, 0.0f    ,1 };
+		DirectX::XMFLOAT4 purple = { 0.3242f ,0.0f   , 0.1953f ,1 };
 	};
 	LightColors lightColor;
 
@@ -111,11 +111,11 @@ private:
 
 #define TORUSLIGHT_RANGE    6
 #define TORUSLIGHT_MAJOR    5.5
-#define TORUSLIGHT_MINOR    0.2
+#define TORUSLIGHT_MINOR    0.6
 
-#define LINELIGHT_RANGE     5
+#define LINELIGHT_RANGE     5.5f
 
-#define CEILNG_HEIGHT       2.999f
-
+#define LIGHT_HEIGHT       2.7f
+#define CHEILING_HEIGHT    2.999f
 };
 

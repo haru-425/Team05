@@ -7,7 +7,7 @@
 void LightManager::Initialize()
 {
 	// ライトの強さ
-	lightPower = 3;
+	lightPower = 1;
 
 	// 点光源の初期化
 	{
@@ -15,69 +15,69 @@ void LightManager::Initialize()
 
 		// 青ライト ------------------------------------------------------------------------------------------------------
 		/* 最奥部屋 */
-		pointLights.emplace_back(PointLightConstants{ {-1.3f, CEILNG_HEIGHT, 23.5f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {-1.3f, CEILNG_HEIGHT, 20.5f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {2.3f,  CEILNG_HEIGHT, 23.5f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {2.3f,  CEILNG_HEIGHT, 20.5f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-1.3f, LIGHT_HEIGHT, 23.5f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-1.3f, LIGHT_HEIGHT, 20.5f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {2.3f,  LIGHT_HEIGHT, 23.5f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {2.3f,  LIGHT_HEIGHT, 20.5f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
 
 		/* 大ライト通路 */
-		pointLights.emplace_back(PointLightConstants{ {-0.1f, CEILNG_HEIGHT, -10.8f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {2.25f, CEILNG_HEIGHT, -10.8f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-0.1f, LIGHT_HEIGHT, -10.8f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {2.25f, LIGHT_HEIGHT, -10.8f,.0f},{lightColor.blue} , POINTLIGHT_RANGE });
 
 		// 赤ライト ------------------------------------------------------------------------------------------------------
 	   /* 3席 */
-		pointLights.emplace_back(PointLightConstants{ {-29.0f, CEILNG_HEIGHT, 13.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {-29.0f, CEILNG_HEIGHT, 5.0f,.0f}, {lightColor.red} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-29.0f, LIGHT_HEIGHT, 13.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-29.0f, LIGHT_HEIGHT, 5.0f,.0f}, {lightColor.red} , POINTLIGHT_RANGE });
 
 		/* 1席 */
-		pointLights.emplace_back(PointLightConstants{ { 29.0f, CEILNG_HEIGHT, 13.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ { 29.0f, CEILNG_HEIGHT, 5.0f,.0f}, {lightColor.red} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ { 29.0f, LIGHT_HEIGHT, 13.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ { 29.0f, LIGHT_HEIGHT, 5.0f,.0f}, {lightColor.red} , POINTLIGHT_RANGE });
 
 		/* OBJ角 */
-		pointLights.emplace_back(PointLightConstants{ {-28.0f, CEILNG_HEIGHT, -13.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-28.0f, LIGHT_HEIGHT, -13.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
 
 		/* OBJなし */
-		pointLights.emplace_back(PointLightConstants{ {28.0f, CEILNG_HEIGHT, -23.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {28.0f, LIGHT_HEIGHT, -23.0f,.0f},{lightColor.red} , POINTLIGHT_RANGE });
 
 		// 黄ライト -------------------------------------------------------------------------------------------------------
 		/* 入口 */
-		pointLights.emplace_back(PointLightConstants{ {-0.5f, CEILNG_HEIGHT, -24.5f,.0f},{lightColor.yellow} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ { 2.5f, CEILNG_HEIGHT, -24.5f,.0f},{lightColor.yellow} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-0.5f, LIGHT_HEIGHT, -24.5f,.0f},{lightColor.yellow} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ { 2.5f, LIGHT_HEIGHT, -24.5f,.0f},{lightColor.yellow} , POINTLIGHT_RANGE });
 
 		// 緑ライト -------------------------------------------------------------------------------------------------------
 		/* 研修部屋 */
-		pointLights.emplace_back(PointLightConstants{ {4.0f, CEILNG_HEIGHT, 5.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {6.5f, CEILNG_HEIGHT, 5.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {9.0f, CEILNG_HEIGHT, 5.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {4.0f, CEILNG_HEIGHT, 2.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {6.5f, CEILNG_HEIGHT, 2.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {9.0f, CEILNG_HEIGHT, 2.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {4.0f, LIGHT_HEIGHT, 5.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {6.5f, LIGHT_HEIGHT, 5.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {9.0f, LIGHT_HEIGHT, 5.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {4.0f, LIGHT_HEIGHT, 2.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {6.5f, LIGHT_HEIGHT, 2.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {9.0f, LIGHT_HEIGHT, 2.0f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
 
 		/* OBJ緑 */
-		pointLights.emplace_back(PointLightConstants{ {-14.0f, CEILNG_HEIGHT, -11.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {-11.0f, CEILNG_HEIGHT, -11.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {-8.0f,  CEILNG_HEIGHT, -11.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {-14.0f, CEILNG_HEIGHT, -14.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {-11.0f, CEILNG_HEIGHT, -14.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {-8.0f,  CEILNG_HEIGHT, -14.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-14.0f, LIGHT_HEIGHT, -11.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-11.0f, LIGHT_HEIGHT, -11.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-8.0f,  LIGHT_HEIGHT, -11.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-14.0f, LIGHT_HEIGHT, -14.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-11.0f, LIGHT_HEIGHT, -14.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-8.0f,  LIGHT_HEIGHT, -14.5f,.0f},{lightColor.green} , POINTLIGHT_RANGE });
 
 		// 紫ライト -------------------------------------------------------------------------------------------------------
 		/* テレビ部屋 */
-		pointLights.emplace_back(PointLightConstants{ {-12.0f, CEILNG_HEIGHT, 6.5f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ { -9.0f, CEILNG_HEIGHT, 6.5f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {-12.0f, CEILNG_HEIGHT, 3.5f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ { -9.0f, CEILNG_HEIGHT, 3.5f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-12.0f, LIGHT_HEIGHT, 6.5f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ { -9.0f, LIGHT_HEIGHT, 6.5f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {-12.0f, LIGHT_HEIGHT, 3.5f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ { -9.0f, LIGHT_HEIGHT, 3.5f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
 
 		/* OBJ紫 */
-		pointLights.emplace_back(PointLightConstants{ { 9.5f, CEILNG_HEIGHT, -11.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {12.5f, CEILNG_HEIGHT, -11.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ { 9.5f, CEILNG_HEIGHT, -14.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
-		pointLights.emplace_back(PointLightConstants{ {12.5f, CEILNG_HEIGHT, -14.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ { 9.5f, LIGHT_HEIGHT, -11.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {12.5f, LIGHT_HEIGHT, -11.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ { 9.5f, LIGHT_HEIGHT, -14.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
+		pointLights.emplace_back(PointLightConstants{ {12.5f, LIGHT_HEIGHT, -14.0f,.0f},{lightColor.purple} , POINTLIGHT_RANGE });
 
 		// モデルの初期化
 		pointLightsModel.clear();
 		for (int i = 0; i < POINTLIGHT_MAX; ++i) {
-			pointLightsModel.push_back(std::make_unique<LightPoint>(DirectX::XMFLOAT3{ pointLights.at(i).position.x, pointLights.at(i).position.y, pointLights.at(i).position.z }));
+			pointLightsModel.push_back(std::make_unique<LightPoint>(DirectX::XMFLOAT3{ pointLights.at(i).position.x, CHEILING_HEIGHT, pointLights.at(i).position.z }));
 		}
 	}
 
@@ -85,42 +85,42 @@ void LightManager::Initialize()
 	{
 		// 青ライト ------------------------------------------------------------------------------------------------------
 		/* 大ライト通路 */
-		torusLights.emplace_back(TorusLightConstants{ {1.0f,  CEILNG_HEIGHT, -13.0f,.0f},{0,-1,0,0}, { lightColor.blue },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{ {1.0f,  CHEILING_HEIGHT, -13.0f,.0f},{0,-1,0,0}, { lightColor.blue },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
 		// 赤ライト ------------------------------------------------------------------------------------------------------
 		/* 大廊下 */
-		torusLights.emplace_back(TorusLightConstants{  {-11.0f, CEILNG_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
-		torusLights.emplace_back(TorusLightConstants{  {  0.0f, CEILNG_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
-		torusLights.emplace_back(TorusLightConstants{  { 11.0f, CEILNG_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{  {-11.0f, CHEILING_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{  {  0.0f, CHEILING_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{  { 11.0f, CHEILING_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
 		/* OBJ角 */
-		torusLights.emplace_back(TorusLightConstants{ {-28.0f, CEILNG_HEIGHT, -23.0f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{ {-28.0f, CHEILING_HEIGHT, -23.0f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
 		/* OBJなし */
-		torusLights.emplace_back(TorusLightConstants{ {28.0f, CEILNG_HEIGHT, -13.0f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{ {28.0f, CHEILING_HEIGHT, -13.0f,.0f},{0,-1,0,0}, { lightColor.red },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
 		// 黄ライト -------------------------------------------------------------------------------------------------------
         /* 北廊下 */
-		torusLights.emplace_back(TorusLightConstants{ {-8.5f, CEILNG_HEIGHT, 14.0f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
-		torusLights.emplace_back(TorusLightConstants{ {8.5f,  CEILNG_HEIGHT, 14.0f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{ {-8.5f, CHEILING_HEIGHT, 14.0f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{ {8.5f,  CHEILING_HEIGHT, 14.0f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
 		/* 入口 */
-		torusLights.emplace_back(TorusLightConstants{ {-5.0f, CEILNG_HEIGHT, -17.0f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
-		torusLights.emplace_back(TorusLightConstants{ { 1.0f, CEILNG_HEIGHT, -22.5f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
-		torusLights.emplace_back(TorusLightConstants{ { 7.0f, CEILNG_HEIGHT, -17.0f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{ {-5.0f, CHEILING_HEIGHT, -17.0f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{ { 1.0f, CHEILING_HEIGHT, -22.5f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{ { 7.0f, CHEILING_HEIGHT, -17.0f,.0f},{0,-1,0,0}, { lightColor.yellow },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
 		// 緑ライト -------------------------------------------------------------------------------------------------------
 		/* 西廊下 */
-		torusLights.emplace_back(TorusLightConstants{ {-21.0f, CEILNG_HEIGHT, -4.0f,.0f},{0,-1,0,0}, { lightColor.green },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{ {-21.0f, CHEILING_HEIGHT, -4.0f,.0f},{0,-1,0,0}, { lightColor.green },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
 		// 紫ライト -------------------------------------------------------------------------------------------------------
 		/* 東廊下 */
-		torusLights.emplace_back(TorusLightConstants{ {21.0f, CEILNG_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.purple },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
+		torusLights.emplace_back(TorusLightConstants{ {21.0f, CHEILING_HEIGHT, -4.5f,.0f},{0,-1,0,0}, { lightColor.purple },{TORUSLIGHT_MAJOR},{TORUSLIGHT_MINOR },TORUSLIGHT_RANGE });
 
 		// モデルの初期化
 		torusLightsModel.clear();
 		for (int i = 0; i < TORUSLIGHT_MAX; ++i) {
-			torusLightsModel.push_back(std::make_unique<LightTorus>(DirectX::XMFLOAT3{ torusLights.at(i).position.x, torusLights.at(i).position.y, torusLights.at(i).position.z }));
+			torusLightsModel.push_back(std::make_unique<LightTorus>(DirectX::XMFLOAT3{ torusLights.at(i).position.x, CHEILING_HEIGHT, torusLights.at(i).position.z }));
 		}
 	}
 
@@ -132,12 +132,12 @@ void LightManager::Initialize()
 
 		// 青ライト ------------------------------------------------------------------------------------------------------
 		/* 最奥部屋 */
-		lightData.emplace_back(LightData{ {-8.0f, CEILNG_HEIGHT, 20.0f},0, 1 });
-		lightData.emplace_back(LightData{ { 8.0f, CEILNG_HEIGHT, 20.0f},0, 1 });
+		lightData.emplace_back(LightData{ {-8.0f, LIGHT_HEIGHT, 20.0f},0, 1 });
+		lightData.emplace_back(LightData{ { 8.0f, LIGHT_HEIGHT, 20.0f},0, 1 });
 
 		/* 大ライト通路 */
-		lightData.emplace_back(LightData{ {-3.5f, CEILNG_HEIGHT, -12.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { 5.5f, CEILNG_HEIGHT, -12.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-3.5f, LIGHT_HEIGHT, -12.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 5.5f, LIGHT_HEIGHT, -12.0f}, 90, 1 });
 
 		for (int i = 0; i < 4; ++i) {
 			lineLights.emplace_back(LineLightConstants{ {0,0,0,0},{0,0,0,0},{lightColor.blue},LINELIGHT_RANGE });
@@ -145,30 +145,30 @@ void LightManager::Initialize()
 
 		// 赤ライト ------------------------------------------------------------------------------------------------------
 		/* 3席 */
-		lightData.emplace_back(LightData{ {-23.0f, CEILNG_HEIGHT, 13.0f},90, 1 });
-		lightData.emplace_back(LightData{ {-21.0f, CEILNG_HEIGHT, 9.0f},  0, 1 });
-		lightData.emplace_back(LightData{ {-23.0f, CEILNG_HEIGHT, 5.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-23.0f, LIGHT_HEIGHT, 13.0f},90, 1 });
+		lightData.emplace_back(LightData{ {-21.0f, LIGHT_HEIGHT, 9.0f},  0, 1 });
+		lightData.emplace_back(LightData{ {-23.0f, LIGHT_HEIGHT, 5.0f}, 90, 1 });
 
 		/* 1席 */
-		lightData.emplace_back(LightData{ {24.0f, CEILNG_HEIGHT, 13.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ {21.0f, CEILNG_HEIGHT, 9.0f},   0, 1 });
-		lightData.emplace_back(LightData{ {24.0f, CEILNG_HEIGHT, 5.0f},  90, 1 });
+		lightData.emplace_back(LightData{ {24.0f, LIGHT_HEIGHT, 13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {21.0f, LIGHT_HEIGHT, 9.0f},   0, 1 });
+		lightData.emplace_back(LightData{ {24.0f, LIGHT_HEIGHT, 5.0f},  90, 1 });
 
 		/* 大廊下 */
-		lightData.emplace_back(LightData{ {-16.0f,CEILNG_HEIGHT, -4.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { -6.0f,CEILNG_HEIGHT, -4.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ {  6.0f,CEILNG_HEIGHT, -4.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { 16.0f,CEILNG_HEIGHT, -4.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-16.0f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { -6.0f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {  6.0f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 16.0f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
 
 		/* OBJ角 */
-		lightData.emplace_back(LightData{ {-23.0f, CEILNG_HEIGHT, -13.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ {-21.0f, CEILNG_HEIGHT, -16.0f},  0, 1 });
-		lightData.emplace_back(LightData{ {-23.0f, CEILNG_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-23.0f, LIGHT_HEIGHT, -13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-21.0f, LIGHT_HEIGHT, -16.0f},  0, 1 });
+		lightData.emplace_back(LightData{ {-23.0f, LIGHT_HEIGHT, -23.0f}, 90, 1 });
 
 		/* OBJなし */
-		lightData.emplace_back(LightData{ { 24.0f,CEILNG_HEIGHT, -13.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { 21.0f,CEILNG_HEIGHT, -16.0f},0, 1 });
-		lightData.emplace_back(LightData{ { 24.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 24.0f,LIGHT_HEIGHT, -13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT, -16.0f},0, 1 });
+		lightData.emplace_back(LightData{ { 24.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
 
 		for (int i = 0; i < 16; ++i) {
 			lineLights.emplace_back(LineLightConstants{ {0,0,0,0},{0,0,0,0},{lightColor.red},LINELIGHT_RANGE });
@@ -176,64 +176,64 @@ void LightManager::Initialize()
 
 		// 黄ライト -------------------------------------------------------------------------------------------------------
 		/* 北廊下 */
-		lightData.emplace_back(LightData{ {-15.0f,CEILNG_HEIGHT, 13.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { -3.0f,CEILNG_HEIGHT, 13.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ {  3.0f,CEILNG_HEIGHT, 13.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { 15.0f,CEILNG_HEIGHT, 13.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ {   .0f,CEILNG_HEIGHT,  8.0f},  0, 1 });
-		lightData.emplace_back(LightData{ {   .0f,CEILNG_HEIGHT,  2.0f},  0, 1 });
+		lightData.emplace_back(LightData{ {-15.0f,LIGHT_HEIGHT, 13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { -3.0f,LIGHT_HEIGHT, 13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {  3.0f,LIGHT_HEIGHT, 13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 15.0f,LIGHT_HEIGHT, 13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {   .0f,LIGHT_HEIGHT,  8.0f},  0, 1 });
+		lightData.emplace_back(LightData{ {   .0f,LIGHT_HEIGHT,  2.0f},  0, 1 });
 
 		/* 入口 */
-		lightData.emplace_back(LightData{ {  1.0f,CEILNG_HEIGHT, -17.0f},  0, 1 });
-		lightData.emplace_back(LightData{ {-18.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ {-13.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { -8.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ {  7.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { 11.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { 17.0f,CEILNG_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {  1.0f,LIGHT_HEIGHT, -17.0f},  0, 1 });
+		lightData.emplace_back(LightData{ {-18.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-13.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { -8.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {  7.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 11.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 17.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
 		 
 		for (int i = 0; i < 13; ++i) {
-			lineLights.emplace_back(LineLightConstants{ {0,0,0,0},{0,0,0,0},{lightColor.yellow},LINELIGHT_RANGE });
+			lineLights.emplace_back(LineLightConstants{ {0,CHEILING_HEIGHT,0,0},{0,0,0,0},{lightColor.yellow},LINELIGHT_RANGE });
 		}
 
 		// 緑ライト -------------------------------------------------------------------------------------------------------
 		/* 研修部屋 */
-		lightData.emplace_back(LightData{ { 12.0f,CEILNG_HEIGHT,  5.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { 17.0f,CEILNG_HEIGHT, 17.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 12.0f,LIGHT_HEIGHT,  5.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 17.0f,LIGHT_HEIGHT,  5.0f}, 90, 1 });
 
 		/* 西廊下 */
-		lightData.emplace_back(LightData{ {-21.0f,CEILNG_HEIGHT,   1.5f}, 0, 1 });
-		lightData.emplace_back(LightData{ {-21.0f,CEILNG_HEIGHT, -10.0f}, 0, 1 });
+		lightData.emplace_back(LightData{ {-21.0f,LIGHT_HEIGHT,   1.5f}, 0, 1 });
+		lightData.emplace_back(LightData{ {-21.0f,LIGHT_HEIGHT, -10.0f}, 0, 1 });
 
 		/* OBJ緑 */
-		lightData.emplace_back(LightData{ {-11.0f,CEILNG_HEIGHT,  -9.0f},  0, 1 });
-		lightData.emplace_back(LightData{ {-17.0f,CEILNG_HEIGHT, -13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-11.0f,LIGHT_HEIGHT,  -9.0f},  0, 1 });
+		lightData.emplace_back(LightData{ {-17.0f,LIGHT_HEIGHT, -13.0f}, 90, 1 });
 
 		for (int i = 0; i < 6; ++i) {
-			lineLights.emplace_back(LineLightConstants{ {0,0,0,0},{0,0,0,0},{lightColor.green},LINELIGHT_RANGE });
+			lineLights.emplace_back(LineLightConstants{ {0,CHEILING_HEIGHT,0,0},{0,0,0,0},{lightColor.green},LINELIGHT_RANGE });
 		}
 
 		// 紫ライト -------------------------------------------------------------------------------------------------------
 		/* テレビ部屋 */
-		lightData.emplace_back(LightData{ { 16.0f,CEILNG_HEIGHT, 5.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { -4.0f,CEILNG_HEIGHT, 5.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 16.0f,LIGHT_HEIGHT, -5.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { -4.0f,LIGHT_HEIGHT,  5.0f}, 90, 1 });
 
 		/* 東廊下 */
-		lightData.emplace_back(LightData{ { 21.0f,CEILNG_HEIGHT,  1.0f}, 0, 1 });
-		lightData.emplace_back(LightData{ { 21.0f,CEILNG_HEIGHT, -9.5f}, 0, 1 });
+		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT,  1.0f}, 0, 1 });
+		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT, -9.5f}, 0, 1 });
 
 		/* OBJ紫 */
-		lightData.emplace_back(LightData{ { 11.0f, CEILNG_HEIGHT,  -8.0f},  0, 1 });
-		lightData.emplace_back(LightData{ { 17.0f ,CEILNG_HEIGHT, -13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 11.0f, LIGHT_HEIGHT,  -8.0f},  0, 1 });
+		lightData.emplace_back(LightData{ { 17.0f ,LIGHT_HEIGHT, -13.0f}, 90, 1 });
 
 		for (int i = 0; i < 6; ++i) {
-			lineLights.emplace_back(LineLightConstants{ {0,0,0,0},{0,0,0,0},{lightColor.purple},LINELIGHT_RANGE });
+			lineLights.emplace_back(LineLightConstants{ {0,CHEILING_HEIGHT,0,0},{0,0,0,0},{lightColor.purple},LINELIGHT_RANGE });
 		}
 
 		// モデルの初期化
 		lineLightsModel.clear();
 		for (int i = 0; i < LINELIGHT_MAX; ++i) {
-			lineLightsModel.push_back(std::make_unique<LightBar>(lightData.at(i).position, DirectX::XMConvertToRadians(lightData.at(i).angle)));
+			lineLightsModel.push_back(std::make_unique<LightBar>(DirectX::XMFLOAT3{ lightData.at(i).position.x,CHEILING_HEIGHT,lightData.at(i).position.z }, DirectX::XMConvertToRadians(lightData.at(i).angle)));
 		}
 	}
 }
@@ -414,7 +414,7 @@ void LightManager::DebugGUI()
 
 			LineLightDebug("TV room(purple)",           39, 40);
 			LineLightDebug("east corridor(purple)",     41, 42);
-			LineLightDebug("OBJ purple(purple)",        443, LINELIGHT_MAX - 1);			
+			LineLightDebug("OBJ purple(purple)",        43, LINELIGHT_MAX - 1);			
 
 			ImGui::TreePop();
 		}
