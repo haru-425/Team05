@@ -29,6 +29,13 @@ public:
 		float dummy;
 	};
 
+	struct Noise
+	{
+		float time;
+		float strength;
+		DirectX::XMFLOAT2 dummy;
+	};
+
 	// 描画実行
 	void Render(const RenderContext& rc,
 		float dx, float dy,					// 左上位置
@@ -41,7 +48,7 @@ public:
 		, bool minimapFlg = false,
 		float radius = 0.0f,//半径
 		float parameter = 360.0f
-	) const;
+	);
 
 	// 描画実行（テクスチャ切り抜き指定なし）
 	void Render(const RenderContext& rc,
@@ -50,17 +57,22 @@ public:
 		float dw, float dh,					// 幅、高さ
 		float angle,						// 角度
 		float r, float g, float b, float a	// 色
-	) const;
+	);
 
 	//void DrawGui()const;
+
+	void SetNoise(int noise) {this->noise_flag = noise;}
+	void SetStrength(int strength) { this->strength = strength; }
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader>			vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>			pixelShader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader>			NoiseShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>			inputLayout;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer>				vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>				minimap_constant_Buffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>				noise_constant_Buffer;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	shaderResourceView;
 
 	float textureWidth = 0;
@@ -69,4 +81,9 @@ private:
 	float radius = 200.0f;
 
 	float parametar = 360.0f;
+
+	int noise_flag = 0;
+
+	float time;
+	float strength;
 };
