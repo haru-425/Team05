@@ -176,24 +176,31 @@ void Audio3DSystem::Initialize()
 	outputChannelCount = channelCount;
 
 	// 3Dオーディオシステムにエミッターを追加
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/electrical_noise.wav", { 0.0f, 0.0f, 0.0f }, "electrical_noise", true, true, true, 0.0f);
+	AddEmitter("Data/Sound/electrical_noise.wav", { 0.0f, 0.0f, 0.0f }, "electrical_noise", true, true, true, 0.0f);
 
-	//BGM
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", true);
 
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { -8.0f, 3.0f, 22.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 8.0f, 3.0f, 22.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 13.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f, 3.0f, 13.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 13.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 5.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f , 3.0f, 5.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 5.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, -13.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, -13.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f,-23.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 5.0f, 3.0f,-23.0f }, "aircon", true, true, false, 0.1f);
-	Audio3DSystem::Instance().AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f,-23.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", true);
+
+	AddEmitter("Data/Sound/air_conditioner.wav", { -8.0f, 3.0f, 22.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { 8.0f, 3.0f, 22.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 13.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f, 3.0f, 13.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 13.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 5.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f , 3.0f, 5.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 5.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, -13.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, -13.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f,-23.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { 5.0f, 3.0f,-23.0f }, "aircon", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f,-23.0f }, "aircon", true, true, false, 0.1f);
+
+
+	AddEmitter("Data/Sound/enemy_run.wav", { 21.0f, 3.0f,-23.0f }, "enemy_run", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/enemy_walk.wav", { 21.0f, 3.0f,-23.0f }, "enemy_walk", true, true, false, 0.1f);
+
+
+
 }
 
 /**
