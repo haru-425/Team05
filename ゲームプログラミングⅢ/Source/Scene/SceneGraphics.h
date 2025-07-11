@@ -9,6 +9,7 @@
 #include <memory>
 #include "Player/Player.h"
 #include "System/ShadowCaster.h"
+#include "3DAudio/3dAudio.h"
 // ゲームシーン
 class SceneGraphics :public Scene
 {
@@ -87,4 +88,6 @@ private:
 
 
 	float GraphicsScenetime = 0; //gameタイマー
+
+	float time = 0; // デバッグ用タイマー
 };

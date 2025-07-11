@@ -8,6 +8,7 @@
 #include <memory>
 #include "Player/Player.h"
 #include"miniMap.h"
+#include "3DAudio/3DAudio.h"
 
 #include "System/ShadowCaster.h"
 
@@ -32,6 +33,13 @@ public:
 
 	// GUI描画
 	void DrawGUI()override;
+
+private:
+	void Collision();
+
+	void PlayerVsStage();
+
+	void UpdateCamera(float elapsedTime);
 
 private:
 	Stage* stage = nullptr;
@@ -92,4 +100,9 @@ private:
 	// カメラのワールド座標
 	DirectX::XMFLOAT3 cameraPosition = { 0.0f, 0.0f, 0.0f };
 	void UpdateConstants(RenderContext& rc);
+
+
+	// 3Dオーディオシステム
+
+	Audio3DSystem audioSystem; ///< 3Dオーディオシステムのインスタンス
 };

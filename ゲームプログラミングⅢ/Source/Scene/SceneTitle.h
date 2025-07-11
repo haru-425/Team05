@@ -9,7 +9,7 @@
 #include "Camera/CameraController/ICameraController.h"
 #include "Camera/CameraController/FreeCameraController.h"
 #include "Stage.h"
-
+#include "3DAudio/3DAudio.h"
 //タイトルシーン
 class SceneTitle :public Scene
 {
@@ -46,9 +46,9 @@ private:
 
 	std::unique_ptr<Stage> model;
 
-	DirectX::XMFLOAT3 position = {0,0,0};
-	DirectX::XMFLOAT3 scale = {1,1,1};
-	DirectX::XMFLOAT3 angle = {0,0,0};
+	DirectX::XMFLOAT3 position = { 0,0,0 };
+	DirectX::XMFLOAT3 scale = { 1,1,1 };
+	DirectX::XMFLOAT3 angle = { 0,0,0 };
 	DirectX::XMFLOAT4X4 world;
 
 	std::unique_ptr<ICameraController> i_cameraController;
@@ -100,4 +100,5 @@ private:
 
 
 	float GraphicsScenetime = 0; //gameタイマー
+
 };

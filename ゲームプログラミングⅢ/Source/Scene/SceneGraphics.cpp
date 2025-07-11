@@ -11,7 +11,7 @@
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 
-static float time = 0; // デバッグ用タイマー
+
 
 /**
  * @file SceneGraphics.cpp
@@ -67,6 +67,15 @@ void SceneGraphics::Initialize()
 
 	/// デバッグ用タイマー初期化
 	time = 0;
+	// 3Dオーディオシステムにエミッターを追加
+	//BGM
+
+
+	// リスナーの初期位置と向きを設定
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	// 3Dオーディオシステムの再生開始
+	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
+	Audio3DSystem::Instance().PlayByTag("aircon");
 }
 
 /**
@@ -87,6 +96,8 @@ void SceneGraphics::Finalize()
 		delete stage;
 		stage = nullptr;
 	}
+	Audio3DSystem::Instance().StopByTag("atmosphere_noise"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("aircon"); // 音声停止
 }
 
 /**
@@ -161,6 +172,10 @@ void SceneGraphics::Update(float elapsedTime)
 	Graphics::Instance().UpdateConstantBuffer(time);
 
 	LightManager::Instance().Update();
+
+	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().UpdateEmitters();
 }
 
 /**

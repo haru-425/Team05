@@ -71,6 +71,9 @@ public:
     /// デバッグ用の可視化処理
     void DrawDebug() override;
 
+    /// 現在の座標を取得する
+    DirectX::XMFLOAT3 GetPosition() const { return position; }
+
     /// 現在のピッチ角を取得する
     float GetPitch() const { return pitch; }
 
