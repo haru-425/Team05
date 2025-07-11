@@ -4,7 +4,12 @@
 #include "Pursuer/WayPoint.h"
 #include "Pursuer/Edge.h"
 #include "Pursuer/Object.h"
-#define MAX_WAY_POINT 5
+#include "System/LoadTextures.h"
+
+#include <memory>
+#include <wrl.h>
+
+#define MAX_WAY_POINT 87
 
 //ステージ
 class Stage
@@ -31,7 +36,10 @@ public:
     std::vector<int> path;
 
     DirectX::XMFLOAT4X4 GetWorld() const { return world; }
-    Model* GetModel() { return model; }
+    Model* GetModel() { return model[0].get(); }
+
+    DirectX::XMFLOAT4X4 GetCollisionMatrix() const { return collisionMeshMatrix; }
+    Model* GetCollisionMesh() { return collisionMesh.get(); }
 
 private:
     DirectX::XMFLOAT3 position = { 0,0,0 };
@@ -44,5 +52,10 @@ private:
         0,0,0,1
     };
 
-    Model* model = nullptr;
+    std::unique_ptr<Model> model[4] = {};
+
+    std::unique_ptr<LoadTextures> textures[4] = {};
+
+    std::unique_ptr<Model> collisionMesh;
+    DirectX::XMFLOAT4X4 collisionMeshMatrix;
 };

@@ -28,6 +28,12 @@ public:
     //€”õŠ®—¹İ’è
     void SetReady() { ready = true; }
 
+protected:
+    // ’Ç‰Á 2025/07/04
+    // ƒ|[ƒY‰æ–Ê‚©‚Ç‚¤‚©
+    bool isPause = false;
+
 private:
     bool ready = false;
+
 };

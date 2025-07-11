@@ -35,6 +35,8 @@ private:
 
 	void PlayerVsStage();
 
+	void PlayerVsEnemy();
+
 	void UpdateCamera(float dt);
 
 private:

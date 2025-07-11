@@ -10,8 +10,10 @@
 #include "SceneTitle.h"
 #include "SceneMattsu.h"
 #include"SceneGraphics.h"
+#include "SceneLogo.h"
 #include "SceneManager.h"
 #include "System/Audio.h"
+#include "System/SettingsManager.h"
 
 // 垂直同期間隔設定
 static const int syncInterval = 1;
@@ -20,6 +22,9 @@ static const int syncInterval = 1;
 Framework::Framework(HWND hWnd)
 	: hWnd(hWnd)
 {
+	// 設定読み込み
+	SettingsManager::Instance().Load();
+
 	// オーディオ初期化
 	Audio::Instance().Instance();
 
@@ -35,7 +40,8 @@ Framework::Framework(HWND hWnd)
 	ImGuiRenderer::Initialize(hWnd, Graphics::Instance().GetDevice(), Graphics::Instance().GetDeviceContext());
 
 	// シーン初期化
-	SceneManager::instance().ChangeScene(new SceneTitle);
+	//SceneManager::instance().ChangeScene(new SceneTitle);
+	SceneManager::instance().ChangeScene(new SceneLogo(new SceneTitle));
 }
 
 // デストラクタ
@@ -65,6 +71,11 @@ void Framework::Update(float elapsedTime)
 	// シーン更新処理
 	//sceneGame.Update(elapsedTime);
 	SceneManager::instance().Update(elapsedTime);
+
+	if (GetAsyncKeyState(VK_LMENU) & 0x8000 && GetAsyncKeyState(VK_RETURN) & 0x0001)
+	{
+		Graphics::Instance().StylizeWindow(!Graphics::Instance().GetScreenMode());
+	}
 }
 
 // 描画処理
@@ -73,7 +84,7 @@ void Framework::Render(float elapsedTime)
 	ID3D11DeviceContext* dc = Graphics::Instance().GetDeviceContext();
 
 	// 画面クリア
-	Graphics::Instance().Clear(0, 0, 1, 1);
+	Graphics::Instance().Clear(0, 0, 0, 1);
 
 	// レンダーターゲット設定
 	Graphics::Instance().SetRenderTargets();
@@ -185,6 +196,12 @@ LRESULT CALLBACK Framework::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LP
 		// Here we reset everything based on the new window dimensions.
 		timer.Start();
 		break;
+	case WM_SIZE :
+	{
+		RECT clientRect = {};
+		GetClientRect(hWnd, &clientRect);
+		Graphics::Instance().OnResize(static_cast<UINT64>(clientRect.right - clientRect.left), clientRect.bottom - clientRect.top);
+	}
 	default:
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}

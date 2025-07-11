@@ -35,13 +35,14 @@ cbuffer TimeCBuffer : register(b10)
      * シェーダー内でアニメーションや時間制御に利用されます。
      */
     float iTime;
+    float signalTime; // サイン波の時間変化
 
     /**
      * @brief 予備のパディング用変数
      *
      * メモリアライメントや将来の拡張のために確保されています。
      */
-    float3 pud0;
+    float2 pud0;
 }
 
 cbuffer ScreenSizeCBuffer : register(b11)

@@ -2,6 +2,7 @@
 #include "System/Input.h"
 #include "Camera/Camera.h"
 #include "imgui.h"
+#include <algorithm>
 
 Player::Player()
 {
@@ -15,19 +16,33 @@ Player::Player()
 
 #else
     // 実際に使うモデル
-    model = std::make_unique<Model>("./Data/Model/")
+    //model = std::make_unique<Model>("./Data/Model/Player/player.mdl");
+    model = std::make_unique<Model>("./Data/Model/Player/player_mesh.mdl");
 #endif
 
     // プレイヤーのパラメータ初期設定
     {
+        position = { 0,0,10 };
+        scale = { 0.015, 0.015, 0.015 };    // スケール
         viewPoint = 1.5;                    // カメラの目線を設定するため
-        radius = 2;                         // デバッグ用
+        radius = 0.6;                         // デバッグ用
         enableHijackTime = maxHijackTime;   // ハイジャックできる時間の設定
+        acceleration = 1.1f;
     }
-    animationController.SetModel(model);
 
-    animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
-    animationController.SetAnimationSecondScale(5.0f);
+    /// アニメーション関係設定
+    {
+        animationController.SetModel(model);
+        animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
+        animationController.SetAnimationSecondScale(1.0f);
+    }
+
+    /// テクスチャの読み込み
+    textures = std::make_unique<LoadTextures>();
+    textures->LoadNormal("Data/Model/Player/Texture/player_mtl_Normal_DirectX.png");
+    textures->LoadMetalness("Data/Model/Player/Texture/player_mtl_Metallic.png");
+    textures->LoadEmisive("Data/Model/Player/Texture/player_mtl_Emissive.png");
+    textures->LoadOcclusion("Data/Model/Player/Texture/player_mtl_Opacity.png");
 }
 
 Player::~Player()
@@ -69,8 +84,18 @@ void Player::Update(float dt)
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
 #ifndef TEST
-    if(model)
-        renderer->Render(rc, world, model.get(), ShaderId::Lambert);
+
+    /// テクスチャのセット
+    textures->Set(rc);
+
+    /// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
+    /// プレイヤーを描画するとどうしても、モデルとカメラが被ってしまうので、
+    /// 敵視点の時のみの描画にする
+    if(model && useCam)
+        renderer->Render(rc, world, model.get(), ShaderId::Custom);
+
+    // テクスチャのクリア
+    textures->Clear(rc);
 #else
     DirectX::XMMATRIX T_T = DirectX::XMLoadFloat4x4(&t_transform);
     DirectX::XMMATRIX PT = DirectX::XMLoadFloat4x4(&world);
@@ -98,6 +123,8 @@ void Player::DrawDebug()
         char text[256];
         sprintf_s(text, "HijackTimer %f", enableHijackTime);
         ImGui::Text(text);
+
+        ImGui::Checkbox("isHit", &isHit);
     }
     ImGui::End();
 }
@@ -105,6 +132,16 @@ void Player::DrawDebug()
 // 移動処理
 void Player::Move(float dt)
 {
+    /// 敵と接触した場合はだんだん速度を落として演出に入る
+    if (isHit)
+    {
+        acceleration = 0;
+        if (speed > 0)
+            accel -= 1.5f * dt;
+        else
+            isEvent = true;
+    }
+
     Camera& cam = Camera::Instance();
 
     DirectX::XMFLOAT3 forward;
@@ -126,6 +163,11 @@ void Player::Move(float dt)
     }
     saveDirection = forward;
 
+    /// 加速処理
+    accel += acceleration * dt;
+
+    speed += accel * dt;
+    speed = DirectX::XMMin(speed, maxSpeed);
     position.x += speed * forward.x * dt;
     position.z += speed * forward.z * dt;
 
@@ -156,6 +198,8 @@ void Player::Move(float dt)
 // カメラ切り替え処理、実際のカメラ切り替えは外部でする
 void Player::ChangeCamera()
 {
+    if (isHit)return;
+
     Mouse& mouse = Input::Instance().GetMouse();
 
     if (isChange)isChange = false; // 一回だけ通したい
@@ -183,6 +227,8 @@ void Player::ChangeCamera()
 // ハイジャックゲージの更新処理
 void Player::UpdateHijack(float dt)
 {
+    /// 敵と接触した場合はプレイヤー視点に戻す
+    if (isHit)useCam = false;
 
     enableHijack = true;
     if (enableHijackTime < 8.0f && !useCam)
@@ -220,5 +266,6 @@ void Player::UpdateHijack(float dt)
 // アニメーション更新処理
 void Player::UpdateAnimation(float dt)
 {
-    animationController.UpdateAnimation(dt);
+    if(!model->GetResource()->GetAnimations().empty())
+        animationController.UpdateAnimation(dt);
 }

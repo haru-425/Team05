@@ -9,6 +9,7 @@
 #include <memory>
 #include "Player/Player.h"
 #include "System/ShadowCaster.h"
+#include "3DAudio/3dAudio.h"
 // ゲームシーン
 class SceneGraphics :public Scene
 {
@@ -72,7 +73,7 @@ private:
 	DirectX::XMFLOAT4 fogColor = { .0f,.0f,.0f, 1.0f };
 
 	// フォグの範囲（開始20.0、終了100.0）
-	DirectX::XMFLOAT4 fogRange = { 10.0f, 50.0f, 0, 0 };
+	DirectX::XMFLOAT4 fogRange = { 10.0f, 30.0f, 0, 0 };
 
 
 	// ==============================
@@ -84,4 +85,9 @@ private:
 
 	// カメラのワールド座標
 	DirectX::XMFLOAT3 cameraPosition = { 0.0f, 0.0f, 0.0f };
+
+
+	float GraphicsScenetime = 0; //gameタイマー
+
+	float time = 0; // デバッグ用タイマー
 };

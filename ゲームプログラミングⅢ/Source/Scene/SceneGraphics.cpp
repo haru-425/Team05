@@ -3,14 +3,15 @@
 #include "Camera/Camera.h"
 #include "System/GamePad.h"
 #include "System/Input.h"
-#include "../LightManager.h"
+#include "./LightModels/LightManager.h"
+#include "Aircon/AirconManager.h"
 
 #include <imgui.h>
 
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 
-static float time = 0; // デバッグ用タイマー
+
 
 /**
  * @file SceneGraphics.cpp
@@ -62,8 +63,19 @@ void SceneGraphics::Initialize()
 	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
 	LightManager::Instance().Initialize();
+	AirconManager::Instance().Initialize();
+
 	/// デバッグ用タイマー初期化
 	time = 0;
+	// 3Dオーディオシステムにエミッターを追加
+	//BGM
+
+
+	// リスナーの初期位置と向きを設定
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	// 3Dオーディオシステムの再生開始
+	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
+	Audio3DSystem::Instance().PlayByTag("aircon");
 }
 
 /**
@@ -84,6 +96,8 @@ void SceneGraphics::Finalize()
 		delete stage;
 		stage = nullptr;
 	}
+	Audio3DSystem::Instance().StopByTag("atmosphere_noise"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("aircon"); // 音声停止
 }
 
 /**
@@ -113,6 +127,8 @@ void SceneGraphics::Update(float elapsedTime)
 	// 一人称カメラコントローラーの場合
 	if (typeid(*i_CameraController) == typeid(FPCameraController))
 	{
+		//i_CameraController = std::make_unique<LightDebugCameraController>();
+#if 1
 		/// 画面中央の座標を取得し、マウスカーソルを中央に移動
 		POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
 		ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
@@ -134,6 +150,7 @@ void SceneGraphics::Update(float elapsedTime)
 			//i_CameraController = std::make_unique<FreeCameraController>();
 			i_CameraController = std::make_unique<LightDebugCameraController>();
 		}
+#endif
 	}
 	// フリーカメラコントローラーの場合
 	else
@@ -155,6 +172,10 @@ void SceneGraphics::Update(float elapsedTime)
 	Graphics::Instance().UpdateConstantBuffer(time);
 
 	LightManager::Instance().Update();
+
+	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().UpdateEmitters();
 }
 
 /**
@@ -196,7 +217,7 @@ void SceneGraphics::Render()
 	Camera& camera = Camera::Instance();
 	rc.view = camera.GetView(); ///< ビュー行列
 	rc.projection = camera.GetProjection(); ///< 射影行列
-#if 1
+#if 0
 	// shadow
 	{
 		Camera& camera = Camera::Instance();
@@ -241,6 +262,11 @@ void SceneGraphics::Render()
 
 		/// プレイヤーの描画
 		player->Render(rc, modelRenderer);
+
+		/// ライトモデルの描画
+		LightManager::Instance().Render(rc);
+
+		AirconManager::Instance().Render(rc);
 	}
 
 	/// 3Dデバッグ描画処理
@@ -248,7 +274,11 @@ void SceneGraphics::Render()
 		/// プレイヤーのデバッグ描画（ボックス・カプセル表示）
 		player->RenderDebug(rc, shapeRenderer, { 1,2,1 }, { 1,1,1,1 }, DEBUG_MODE::BOX | DEBUG_MODE::CAPSULE);
 
-		LightManager::Instance().RenderDebug(rc);
+		/// ライトモデルのデバッグ描画
+		//LightManager::Instance().RenderDebugPrimitive(rc);
+
+		/// エアコンのデバッグ描画
+		//AirconManager::Instance().RenderDebugPrimitive(rc);
 	}
 
 	/// 2Dスプライト描画処理（未実装）
@@ -256,7 +286,7 @@ void SceneGraphics::Render()
 		// ここに2Dスプライト描画処理を追加可能
 	}
 
-	shadow->Release(dc);
+	//shadow->Release(dc);
 
 	/// フレームバッファのディアクティベート
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
@@ -343,9 +373,6 @@ void SceneGraphics::Render()
 	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
 	Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get());
 
-	//immediate_context->OMSetDepthStencilState(depth_stencil_states[static_cast<size_t>(DEPTH_STATE::ZT_OFF_ZW_OFF)].Get(), 0);
-	//immediate_context->RSSetState(rasterizer_states[static_cast<size_t>(RASTER_STATE::CULL_NONE)].Get());
-	//immediate_context->OMSetBlendState(blend_states[static_cast<size_t>(BLEND_STATE::ALPHA)].Get(), nullptr, 0xFFFFFFFF);
 	ID3D11ShaderResourceView* shader_resource_views[] =
 	{
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get(),
@@ -353,19 +380,75 @@ void SceneGraphics::Render()
 	};
 	Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
 	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
+	////TemporalNoise
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
+	//Graphics::Instance().bit_block_transfer->blit(dc,
+	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
+	////FilmGrainDustPS
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->clear(dc);
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->activate(dc);
+	//Graphics::Instance().bit_block_transfer->blit(dc,
+	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::FilmGrainDust)].Get());
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->deactivate(dc);
+
+	////crt
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
+
+	//Graphics::Instance().bit_block_transfer->blit(dc,
+	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
+
+	////VisionBootDown
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->clear(dc);
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->activate(dc);
+	//Graphics::Instance().bit_block_transfer->blit(dc,
+	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->deactivate(dc);
+	//TVNoiseFade
+	/*Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TVNoiseFade)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->deactivate(dc);*/
+
+	//// GameOver
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->clear(dc);
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->activate(dc);
+	//Graphics::Instance().bit_block_transfer->blit(dc,
+	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::GameOver)].Get());
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->deactivate(dc);
+
+
+	//LightFlicker
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::LightFlicker)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::LightFlicker)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::LightFlicker)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::LightFlicker)]->deactivate(dc);
 
 	//crt
+
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
-
 	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::LightFlicker)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
-
+	////NoiseChanse
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->clear(dc);
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->activate(dc);
+	//Graphics::Instance().bit_block_transfer->blit(dc,
+	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoiseChange)].Get());
+	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->deactivate(dc);
 	Graphics::Instance().bit_block_transfer->blit(
 		dc,
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
+
+
 	);
+
 }
 
 /**
@@ -411,11 +494,12 @@ void SceneGraphics::DrawGUI()
 	}
 	Graphics::Instance().DebugGUI();
 	LightManager::Instance().DebugGUI();
+	AirconManager::Instance().DebugGUI();
 }
 
 void SceneGraphics::UpdateConstants(RenderContext& rc)
 {
-	rc.lightDirection = lightDirection;	// (ToT)
+	rc.lightDirection = lightDirection;	// (ToT)+
 	// シャドウの設定
 	rc.shadowColor = shadowColor;
 	rc.shadowBias = shadowBias;

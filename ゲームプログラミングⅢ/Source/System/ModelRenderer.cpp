@@ -93,6 +93,7 @@ void ModelRenderer::Render(const RenderContext& rc, const DirectX::XMFLOAT4X4& w
 	{
 		LightConstants data = {};
 		memcpy_s(data.pointLights, sizeof(data.pointLights), rc.pointLights, sizeof(rc.pointLights));
+		memcpy_s(data.torusLights, sizeof(data.torusLights), rc.torusLights, sizeof(rc.torusLights));
 		memcpy_s(data.lineLights, sizeof(data.lineLights), rc.lineLights, sizeof(rc.lineLights));
 		data.power = rc.lightPower;
 		data.dummy = { 0,0,0 };
@@ -132,7 +133,7 @@ void ModelRenderer::Render(const RenderContext& rc, const DirectX::XMFLOAT4X4& w
 
 	// レンダーステート設定
 	dc->OMSetDepthStencilState(rc.renderState->GetDepthStencilState(DepthState::TestAndWrite), 0);
-	dc->RSSetState(rc.renderState->GetRasterizerState(RasterizerState::SolidCullBack));
+	dc->RSSetState(rc.renderState->GetRasterizerState(RasterizerState::SolidCullNone));
 
 	// ブレンドステート設定
 	dc->OMSetBlendState(rc.renderState->GetBlendState(BlendState::Transparency), nullptr, 0xFFFFFFFF);

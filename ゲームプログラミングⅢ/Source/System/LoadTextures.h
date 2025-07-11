@@ -15,13 +15,14 @@ public:
 	void LoadRoughness(const char* filename);
 	void LoadMetalness(const char* filename);
 	void LoadEmisive(const char* filename);
+	void LoadOcclusion(const char* filename);
 
 	void Clear(const RenderContext& rc);
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> normalSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> roughnessSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> metalnessSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emisiveSRV;
+	HRESULT CreateDummyTexture(ID3D11ShaderResourceView** shaderResourceView, DWORD value);
+
+private:
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView[5];
 };
 
