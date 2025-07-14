@@ -4,6 +4,7 @@
 #include "System/GamePad.h"
 #include "System/Input.h"
 #include"Scene/SceneGameOver.h"
+#include"Scene/SceneClear.h"
 #include"Scene/SceneManager.h"
 #include "Collision.h"
 #include "./LightModels/LightManager.h"
@@ -94,6 +95,7 @@ void SceneGame::Update(float elapsedTime)
 
 	bool buttonPressed = (anyButton & gamePad.GetButton()) != 0;
 	bool zKey = GetAsyncKeyState('Z') & 0x8000;
+	bool cKey = GetAsyncKeyState('C') & 0x8000;
 
 	// フラグがまだ立っていない場合に入力検出
 	if (!sceneTrans)
@@ -104,6 +106,13 @@ void SceneGame::Update(float elapsedTime)
 			sceneTrans = true;
 			transTimer = 0.0f;
 			selectTrans = SelectTrans::GameOver; // ゲームオーバーシーンに遷移
+		}
+		if (cKey)
+		{
+			nextScene = new Game_Clear;
+			sceneTrans = true;
+			transTimer = 0.0f;
+			selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
 		}
 
 	}
@@ -321,12 +330,12 @@ void SceneGame::Render()
 
 
 		//FadeToBlack
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->clear(dc);
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->activate(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::FadeToBlack)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoSignalFinale)].Get());
 
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->deactivate(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->deactivate(dc);
 		//TVNoiseFade
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->activate(dc);
@@ -345,7 +354,7 @@ void SceneGame::Render()
 		{
 		case SceneGame::SelectTrans::Clear:
 			Graphics::Instance().bit_block_transfer->blit(dc,
-				Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+				Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
 
 			break;
 		case SceneGame::SelectTrans::GameOver:

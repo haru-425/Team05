@@ -151,6 +151,7 @@
     <ClInclude Include="Source\Pursuer\WayPoint.h" />
     <ClInclude Include="Source\Scene\fujimoto.h" />
     <ClInclude Include="Source\Scene\Scene.h" />
+    <ClInclude Include="Source\Scene\SceneClear.h" />
     <ClInclude Include="Source\Scene\SceneGame.h" />
     <ClInclude Include="Source\Scene\SceneGameOver.h" />
     <ClInclude Include="Source\Scene\SceneGraphics.h" />
@@ -229,6 +230,7 @@
     <ClCompile Include="Source\Pursuer\Object.cpp" />
     <ClCompile Include="Source\Pursuer\SearchAI.cpp" />
     <ClCompile Include="Source\Scene\fujimoto.cpp" />
+    <ClCompile Include="Source\Scene\SceneClear.cpp" />
     <ClCompile Include="Source\Scene\SceneGame.cpp" />
     <ClCompile Include="Source\Scene\SceneGameOver.cpp" />
     <ClCompile Include="Source\Scene\SceneGraphics.cpp" />

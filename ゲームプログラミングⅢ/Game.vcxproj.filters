@@ -114,6 +114,7 @@
     <ClCompile Include="Source\System\UiManager.cpp" />
     <ClCompile Include="Source\3DAudio\3dAudio.cpp" />
     <ClCompile Include="Source\GameObjects\TV\TV.cpp" />
+    <ClCompile Include="Source\Scene\SceneClear.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="Source\System\UiManager.h" />
     <ClInclude Include="Source\3DAudio\3dAudio.h" />
     <ClInclude Include="Source\GameObjects\TV\TV.h" />
+    <ClInclude Include="Source\Scene\SceneClear.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
