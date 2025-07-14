@@ -253,7 +253,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     totalDiffuse = lerp(totalDiffuse, totalDiffuse * occlusion, occlusionStrength);
     totalSpecular = lerp(totalSpecular, totalSpecular * occlusion, occlusionStrength);
     
-    color.rgb *= totalDiffuse;
+    color.rgb = color.rgb * totalDiffuse;
     color.rgb += totalSpecular;
     
     color.rgb += emisive;
