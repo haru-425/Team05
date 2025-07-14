@@ -6,14 +6,14 @@
 
 #include "RenderContext.h"
 
-// ƒXƒvƒ‰ƒCƒg
+// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 class Sprite
 {
 public:
 	Sprite();
 	Sprite(const char* filename);
 
-	// ’¸“_ƒf[ƒ^
+	// é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿
 	struct Vertex
 	{
 		DirectX::XMFLOAT3	position;
@@ -29,28 +29,35 @@ public:
 		float dummy;
 	};
 
-	// •`‰æŽÀs
-	void Render(const RenderContext& rc,
-		float dx, float dy,					// ¶ãˆÊ’u
-		float dz,							// ‰œs
-		float dw, float dh,					// •A‚‚³
-		float sx, float sy,					// ‰æ‘œØ‚è”²‚«ˆÊ’u
-		float sw, float sh,					// ‰æ‘œØ‚è”²‚«ƒTƒCƒY
-		float angle,						// Šp“x
-		float r, float g, float b, float a	// F
-		, bool minimapFlg = false,
-		float radius = 0.0f,//”¼Œa
-		float parameter = 360.0f
-	) const;
+	struct Noise
+	{
+		float time;
+		float strength;
+		DirectX::XMFLOAT2 dummy;
+	};
 
-	// •`‰æŽÀsiƒeƒNƒXƒ`ƒƒØ‚è”²‚«Žw’è‚È‚µj
+	// æç”»å®Ÿè¡Œ
 	void Render(const RenderContext& rc,
-		float dx, float dy,					// ¶ãˆÊ’u
-		float dz,							// ‰œs
-		float dw, float dh,					// •A‚‚³
-		float angle,						// Šp“x
-		float r, float g, float b, float a	// F
-	) const;
+		float dx, float dy,					// å·¦ä¸Šä½ç½®
+		float dz,							// å¥¥è¡Œ
+		float dw, float dh,					// å¹…ã€é«˜ã•
+		float sx, float sy,					// ç”»åƒåˆ‡ã‚ŠæŠœãä½ç½®
+		float sw, float sh,					// ç”»åƒåˆ‡ã‚ŠæŠœãã‚µã‚¤ã‚º
+		float angle,						// è§’åº¦
+		float r, float g, float b, float a	// è‰²
+		, bool minimapFlg = false,
+		float radius = 0.0f,//åŠå¾„
+		float parameter = 360.0f
+	);
+
+	// æç”»å®Ÿè¡Œï¼ˆãƒ†ã‚¯ã‚¹ãƒãƒ£åˆ‡ã‚ŠæŠœãæŒ‡å®šãªã—ï¼‰
+	void Render(const RenderContext& rc,
+		float dx, float dy,					// å·¦ä¸Šä½ç½®
+		float dz,							// å¥¥è¡Œ
+		float dw, float dh,					// å¹…ã€é«˜ã•
+		float angle,						// è§’åº¦
+		float r, float g, float b, float a	// è‰²
+	);
 
 	//void DrawGui()const;
 
@@ -58,13 +65,18 @@ public:
 
 	ID3D11ShaderResourceView* GetSRV() const { return shaderResourceView.Get(); }
 
+	void SetNoise(int noise) {this->noise_flag = noise;}
+	void SetStrength(int strength) { this->strength = strength; }
+
 private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader>			vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>			pixelShader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader>			NoiseShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>			inputLayout;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer>				vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>				minimap_constant_Buffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>				noise_constant_Buffer;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	shaderResourceView;
 
 	float textureWidth = 0;
@@ -75,4 +87,9 @@ private:
 	float parametar = 360.0f;
 
 	DirectX::XMFLOAT2 textureSize;
+
+	int noise_flag = 0;
+
+	float time;
+	float strength;
 };

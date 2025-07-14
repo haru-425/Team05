@@ -8,27 +8,27 @@ void AirconManager::Initialize()
 	aircons.clear();
 
 	/* ç≈âúïîâÆ */
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{ -8,CEILNG_HEIGHT,22 }));
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  8,CEILNG_HEIGHT,22 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{ -8,LIGHT_HEIGHT,22 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  8,LIGHT_HEIGHT,22 }));
 
 	/* ñkòLâ∫ */
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{ -21,CEILNG_HEIGHT,13 }));
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{   0,CEILNG_HEIGHT,13 }));
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  21,CEILNG_HEIGHT,13 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{ -21,LIGHT_HEIGHT,13 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{   0,LIGHT_HEIGHT,13 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  21,LIGHT_HEIGHT,13 }));
 
 	/* ëÂòLâ∫ */
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{ -21,CEILNG_HEIGHT,5 }));
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{   0,CEILNG_HEIGHT,5 }));
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  21,CEILNG_HEIGHT,5 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{ -21,LIGHT_HEIGHT,5 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{   0,LIGHT_HEIGHT,5 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  21,LIGHT_HEIGHT,5 }));
 
 	/* ëÂÉâÉCÉgí òH */
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{ -21,CEILNG_HEIGHT,-13 }));
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  21,CEILNG_HEIGHT,-13 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{ -21,LIGHT_HEIGHT,-13 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  21,LIGHT_HEIGHT,-13 }));
 
 	/* ì¸å˚ */
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{ -21,CEILNG_HEIGHT,-23 }));
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  -5,CEILNG_HEIGHT,-23 }));
-	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  21,CEILNG_HEIGHT,-23 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{ -21,LIGHT_HEIGHT,-23 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  -5,LIGHT_HEIGHT,-23 }));
+	aircons.push_back(std::make_unique<Aircon>(DirectX::XMFLOAT3{  21,LIGHT_HEIGHT,-23 }));
 }
 
 void AirconManager::Update()

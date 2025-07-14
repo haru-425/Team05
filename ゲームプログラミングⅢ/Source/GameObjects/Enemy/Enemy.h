@@ -8,7 +8,7 @@
 #include <memory>
 
 /// 通常移動速度
-#define USUAL_SPEED 2.0f
+#define USUAL_SPEED 1.05f
 /// プレイヤー追跡時の移動速度
 #define TRACKING_SPEED 4.0f
 /// 気配を感じたときの移動速度
@@ -71,6 +71,9 @@ public:
     /// デバッグ用の可視化処理
     void DrawDebug() override;
 
+    /// 現在の座標を取得する
+    DirectX::XMFLOAT3 GetPosition() const { return position; }
+
     /// 現在のピッチ角を取得する
     float GetPitch() const { return pitch; }
 
@@ -103,7 +106,8 @@ private:
         detection,  ///< プレイヤー発見
         feeling,    ///< 気配感知
         miss,       ///< 見失い
-        turn,       ///>< 回転
+        turn,       ///< 回転
+        Attack,     ///< 攻撃
     };
 
 private:

@@ -34,7 +34,7 @@ private:
 
 #define AIRCON_MAX          13
 
-#define CEILNG_HEIGHT       2.999f
+#define LIGHT_HEIGHT       2.999f
 
 };
 

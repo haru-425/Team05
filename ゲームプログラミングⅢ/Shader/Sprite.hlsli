@@ -13,3 +13,4 @@ cbuffer minimap_constant : register(b0)
     float parametar;
     float dummy;
 }
+

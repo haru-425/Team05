@@ -3,6 +3,7 @@
 #include"System/Sprite.h"
 #include"Scene.h"
 #include<thread>
+#include"3DAudio/3dAudio.h"
 
 //ローディングシーン
 class SceneLogo : public Scene

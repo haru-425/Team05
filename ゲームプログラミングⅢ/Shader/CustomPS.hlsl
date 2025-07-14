@@ -111,7 +111,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     metalness = max(0, metalness);
    
     // occlusion ---------------------------------------------------------
-    float3 occlusion = Textures[OCCLUSION_TEXTURE].Sample(LinearSampler, pin.texcoord).rgb;
+    float3 occlusion = Textures[OCCLUSION_TEXTURE].Sample(LinearSampler, pin.texcoord).rrr;
     const float occlusionStrength = 1.0f;
     
     // フレネル反射率の初期値（非金属は最低4%）
@@ -221,9 +221,9 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 lineDiffuse = 0, lineSpecular = 0;
     for (i = 0; i < 45; ++i)
     {
-        for (int s = 0; s < 4; ++s)
+        for (int s = 0; s < 6; ++s)
         {
-            float t = s / 3.0f;
+            float t = s / 5.0f;
             float3 pointOnLine = lerp(lineLights[i].start.xyz, lineLights[i].end.xyz, t);
              
             float3 LP = normalize(pointOnLine - pin.position.xyz);
@@ -257,6 +257,8 @@ float4 main(VS_OUT pin) : SV_TARGET
     color.rgb += totalSpecular;
     
     color.rgb += emisive;
+    
+    //color.a = lerp(color.a, color.a * occlusion.r, occlusionStrength);
 
 #if 1
     // フォグ処理

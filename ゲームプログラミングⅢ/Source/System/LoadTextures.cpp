@@ -33,6 +33,7 @@ void LoadTextures::Set(const RenderContext& rc)
     }
 
     dc->PSSetShaderResources(1, 5, srvs);
+    dc->PSSetShaderResources(5, 1, shaderResourceView[4].GetAddressOf());
 
 }
 

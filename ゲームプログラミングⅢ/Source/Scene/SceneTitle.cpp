@@ -12,21 +12,21 @@
 #include <algorithm>
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
-//‰Šú‰»
+//åˆæœŸåŒ–
 void SceneTitle::Initialize()
 {
-    //ƒXƒvƒ‰ƒCƒg‰Šú‰»
+    //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆåˆæœŸåŒ–
     sprite = new Sprite("Data/Sprite/GameTitleStrings.png");
-    TitleTimer = 0.25f; // ƒ^ƒCƒgƒ‹‰æ–Ê‚Ìƒ^ƒCƒ}[‰Šú‰»
-    TitleSignalTimer = 0.0f; // ƒ^ƒCƒgƒ‹‰æ–Ê‚ÌM†ƒ^ƒCƒ}[‰Šú‰»
-    sceneTrans = false; // ƒV[ƒ“‘JˆÚƒtƒ‰ƒO‰Šú‰»
+    TitleTimer = 0.25f; // ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã®ã‚¿ã‚¤ãƒãƒ¼åˆæœŸåŒ–
+    TitleSignalTimer = 0.0f; // ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã®ä¿¡å·ã‚¿ã‚¤ãƒãƒ¼åˆæœŸåŒ–
+    sceneTrans = false; // ã‚·ãƒ¼ãƒ³é·ç§»ãƒ•ãƒ©ã‚°åˆæœŸåŒ–
 
-    /// ƒXƒe[ƒW‰Šú‰»
+    /// ã‚¹ãƒ†ãƒ¼ã‚¸åˆæœŸåŒ–
     {
-        /// ƒ‚ƒfƒ‹¶¬
+        /// ãƒ¢ãƒ‡ãƒ«ç”Ÿæˆ
         model = std::make_unique<Stage>();
 
-        /// s—ñì¬
+        /// è¡Œåˆ—ä½œæˆ
         DirectX::XMMATRIX M = DirectX::XMMatrixIdentity();
         scale = { 0.01f, 0.01f, 0.01f };
         DirectX::XMStoreFloat4x4(&world, M);
@@ -58,27 +58,39 @@ void SceneTitle::Initialize()
     um.CreateUI("./Data/Sprite/image.png", "OptionBar");
     um.CreateUI("./Data/Sprite/image.png" ,"Sensitivity");
     um.CreateUI("./Data/Sprite/image.png");
+
+	// ãƒªã‚¹ãƒŠãƒ¼ã®åˆæœŸä½ç½®ã¨å‘ãã‚’è¨­å®š
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+
+	Audio3DSystem::Instance().SetVolumeByTag("atmosphere_noise", 0.4f);
+	Audio3DSystem::Instance().SetVolumeByTag("aircon", 1.f);
+	// 3Dã‚ªãƒ¼ãƒ‡ã‚£ã‚ªã‚·ã‚¹ãƒ†ãƒ ã®å†ç”Ÿé–‹å§‹
+	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
+	Audio3DSystem::Instance().PlayByTag("aircon");
 }
 
-//I—¹‰»
+//çµ‚äº†åŒ–
 void SceneTitle::Finalize()
 {
-    //ƒXƒvƒ‰ƒCƒgI—¹‰»
+    //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆçµ‚äº†åŒ–
     if (sprite != nullptr)
     {
         delete sprite;
         sprite = nullptr;
     }
     um.Clear();
+
+	Audio3DSystem::Instance().StopByTag("atmosphere_noise"); // éŸ³å£°åœæ­¢
+	Audio3DSystem::Instance().StopByTag("aircon"); // éŸ³å£°åœæ­¢
 }
 
-//XVˆ—
+//æ›´æ–°å‡¦ç†
 void SceneTitle::Update(float elapsedTime)
 {
     Mouse& mouse = Input::Instance().GetMouse();
 
     bool isChangeScene = false;
-    /// ƒ}ƒEƒX¶ƒNƒŠƒbƒN‚ÅƒƒCƒ“ƒV[ƒ“‚É‘JˆÚ
+    /// ãƒã‚¦ã‚¹å·¦ã‚¯ãƒªãƒƒã‚¯ã§ãƒ¡ã‚¤ãƒ³ã‚·ãƒ¼ãƒ³ã«é·ç§»
     if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
     {
         isChangeScene = true;
@@ -87,7 +99,7 @@ void SceneTitle::Update(float elapsedTime)
 #if 1
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-    // ”CˆÓ‚ÌƒQ[ƒ€ƒpƒbƒhƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚©
+    // ä»»æ„ã®ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ã‹
     const GamePadButton anyButton =
         GamePad::BTN_A
         | GamePad::BTN_B
@@ -99,14 +111,14 @@ void SceneTitle::Update(float elapsedTime)
     bool mKey = GetAsyncKeyState('M') & 0x8000;
     bool gKey = GetAsyncKeyState('G') & 0x8000;
     bool pKey = GetAsyncKeyState('P') & 0x8000;
-    // ƒtƒ‰ƒO‚ª‚Ü‚¾—§‚Á‚Ä‚¢‚È‚¢ê‡‚É“ü—ÍŒŸo
+    // ãƒ•ãƒ©ã‚°ãŒã¾ã ç«‹ã£ã¦ã„ãªã„å ´åˆã«å…¥åŠ›æ¤œå‡º
     if (!sceneTrans)
     {
         if (isStartGame)
         {
             nextScene = new SceneGame;
             sceneTrans = true;
-            TitleSignalTimer = 0.0f; // ƒ^ƒCƒ}[ÄƒXƒ^[ƒg
+            TitleSignalTimer = 0.0f; // ã‚¿ã‚¤ãƒãƒ¼å†ã‚¹ã‚¿ãƒ¼ãƒˆ
         }
         else if (fKey)
         {
@@ -134,13 +146,13 @@ void SceneTitle::Update(float elapsedTime)
     }
     else
     {
-        // ƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚éŠÔƒ^ƒCƒ}[‚ğ‰ÁZ‚µA1•bˆÈãŒo‚Á‚½‚çƒV[ƒ“Ø‚è‘Ö‚¦
+        // ãƒ•ãƒ©ã‚°ãŒç«‹ã£ã¦ã„ã‚‹é–“ã‚¿ã‚¤ãƒãƒ¼ã‚’åŠ ç®—ã—ã€1ç§’ä»¥ä¸ŠçµŒã£ãŸã‚‰ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆ
         TitleSignalTimer += elapsedTime;
         if (TitleSignalTimer >= 1.0f && nextScene != nullptr)
         {
             SceneManager::instance().ChangeScene(new SceneLoading(nextScene));
-            nextScene = nullptr; // ‘½d‘JˆÚ–h~
-            sceneTrans = false; // ƒV[ƒ“‘JˆÚƒtƒ‰ƒO‚ğƒŠƒZƒbƒg
+            nextScene = nullptr; // å¤šé‡é·ç§»é˜²æ­¢
+            sceneTrans = false; // ã‚·ãƒ¼ãƒ³é·ç§»ãƒ•ãƒ©ã‚°ã‚’ãƒªã‚»ãƒƒãƒˆ
         }
     }
 #endif
@@ -148,17 +160,22 @@ void SceneTitle::Update(float elapsedTime)
     TitleTimer += elapsedTime;
     Graphics::Instance().UpdateConstantBuffer(TitleTimer, TitleSignalTimer);
 
-    /// ƒJƒƒ‰XVˆ—
+    /// ã‚«ãƒ¡ãƒ©æ›´æ–°å‡¦ç†
     i_cameraController->Update(elapsedTime);
 
-    /// ƒ‰ƒCƒgXVˆ—
+    /// ãƒ©ã‚¤ãƒˆæ›´æ–°å‡¦ç†
     LightManager::Instance().Update();
 
     UpdateUI();
+	i_cameraController->Update(elapsedTime);
+
+	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().UpdateEmitters();
 }
 
 
-//•`‰æˆ—
+//æç”»å‡¦ç†
 void SceneTitle::Render()
 {
     Graphics& graphics = Graphics::Instance();
@@ -167,10 +184,10 @@ void SceneTitle::Render()
     Camera& camera = Camera::Instance();
     ModelRenderer* renderer = graphics.GetModelRenderer();
 
-    /// ƒJƒƒ‰‚Ìİ’è
+    /// ã‚«ãƒ¡ãƒ©ã®è¨­å®š
     camera.SetPerspectiveFov(45, graphics.GetScreenWidth() / graphics.GetScreenHeight(), 0.1f, 1000.0f);
 
-    //•`‰æŠî€
+    //æç”»åŸºæº–
     RenderContext rc;
     rc.deviceContext = dc;
     rc.lightDirection = lightDirection;
@@ -181,12 +198,12 @@ void SceneTitle::Render()
     UpdateConstants(rc);
     LightManager::Instance().UpdateConstants(rc);
 
-    /// ƒtƒŒ[ƒ€ƒoƒbƒtƒ@‚ÌƒNƒŠƒA‚ÆƒAƒNƒeƒBƒx[ƒgiƒ|ƒXƒgƒvƒƒZƒX—pj
+    /// ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒƒãƒ•ã‚¡ã®ã‚¯ãƒªã‚¢ã¨ã‚¢ã‚¯ãƒ†ã‚£ãƒ™ãƒ¼ãƒˆï¼ˆãƒã‚¹ãƒˆãƒ—ãƒ­ã‚»ã‚¹ç”¨ï¼‰
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 1, 1, 1, 1);
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
 
-    //‘S‚Ä‚ÌŒø‰Ê‚ğŠ|‚¯‚é‚È‚ç‚±‚±
-        // ƒ‚ƒfƒ‹‚Ì•`‰æ
+    //å…¨ã¦ã®åŠ¹æœã‚’æ›ã‘ã‚‹ãªã‚‰ã“ã“
+        // ãƒ¢ãƒ‡ãƒ«ã®æç”»
     {
         //renderer->Render(rc, world, model.get(), ShaderId::Custom);
         model->Render(rc, renderer);
@@ -199,28 +216,40 @@ void SceneTitle::Render()
     }
 
 #if 1
-    // 2DƒXƒvƒ‰ƒCƒg•`‰æ
+    // 2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
 
 #endif
 
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
+  	// BLOOM
+	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->clear(dc);
+	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
+	Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get());
+
+	ID3D11ShaderResourceView* shader_resource_views[] =
+	{
+		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get(),
+		Graphics::Instance().bloomer->shader_resource_view(),
+	};
+	Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
+	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
     //NoiseChange
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->clear(dc);
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->activate(dc);
     Graphics::Instance().bit_block_transfer->blit(dc,
-        Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoiseChange)].Get());
+        Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoiseChange)].Get());
     {
-        // ƒ^ƒCƒgƒ‹•`‰æ
+        // ã‚¿ã‚¤ãƒˆãƒ«æç”»
         float screenWidth = static_cast<float>(graphics.GetScreenWidth());
         float screenHeight = static_cast<float>(graphics.GetScreenHeight());
 
-        // ƒXƒvƒ‰ƒCƒgƒTƒCƒYiÀÛ‚Ì•`‰æƒTƒCƒYj
+        // ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚µã‚¤ã‚ºï¼ˆå®Ÿéš›ã®æç”»ã‚µã‚¤ã‚ºï¼‰
         float spriteWidth = 2260.0f / 4.0f;
         float spriteHeight = 1077.0f / 4.0f;
 
         float spritePos[2];
-        spritePos[0] = screenWidth / 2.0f - spriteWidth / 2.0f;  // ’†‰›Šñ‚¹iXj
-        spritePos[1] = 10.0f;  // ã‘¤‚ÉŒÅ’èiYj
+        spritePos[0] = screenWidth / 2.0f - spriteWidth / 2.0f;  // ä¸­å¤®å¯„ã›ï¼ˆXï¼‰
+        spritePos[1] = 10.0f;  // ä¸Šå´ã«å›ºå®šï¼ˆYï¼‰
         spritePos[0] -= 350;
 
         sprite->Render(
@@ -235,13 +264,13 @@ void SceneTitle::Render()
     RenderUI(rc);
 
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->deactivate(dc);
-    //ƒ|ƒXƒgƒvƒƒZƒX“K—p
+    //ãƒã‚¹ãƒˆãƒ—ãƒ­ã‚»ã‚¹é©ç”¨
     //Grtch
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->clear(dc);
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->activate(dc);
     Graphics::Instance().bit_block_transfer->blit(dc,
         Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Glitch)].Get());
-    //ƒOƒŠƒbƒW‚ğŠ|‚¯‚È‚¢ê‡‚Í‚±‚±
+    //ã‚°ãƒªãƒƒã‚¸ã‚’æ›ã‘ãªã„å ´åˆã¯ã“ã“
 
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->deactivate(dc);
 
@@ -280,16 +309,17 @@ void SceneTitle::Render()
         Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->deactivate(dc);
 
-    /// ƒ|ƒXƒgƒvƒƒZƒXŒ‹‰Ê‚Ì•`‰æ
+    /// ãƒã‚¹ãƒˆãƒ—ãƒ­ã‚»ã‚¹çµæœã®æç”»
     Graphics::Instance().bit_block_transfer->blit(
         dc,
         Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1
     );
 
 
+
 }
 
-//GUI•`‰æ
+//GUIæç”»
 void SceneTitle::DrawGUI()
 {
     LightManager::Instance().DebugGUI();
@@ -332,38 +362,38 @@ void SceneTitle::DrawGUI()
 
     LightManager::Instance().DebugGUI();
 
-    /// UIXVˆ—
+    /// UIæ›´æ–°å‡¦ç†
     um.DrawDebug();
 }
 
 void SceneTitle::UpdateTransform()
 {
-    //ƒXƒP[ƒ‹s—ñ‚ğì¬
+    //ã‚¹ã‚±ãƒ¼ãƒ«è¡Œåˆ—ã‚’ä½œæˆ
     DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.x);
-    //‰ñ“]s—ñ
+    //å›è»¢è¡Œåˆ—
     DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
-    //ˆÊ’us—ñ‚ğì¬
+    //ä½ç½®è¡Œåˆ—ã‚’ä½œæˆ
     DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
-    //‚R‚Â‚Ìs—ñ‚ğ‘g‚İ‡‚í‚¹Aƒ[ƒ‹ƒhs—ñ‚ğì¬
+    //ï¼“ã¤ã®è¡Œåˆ—ã‚’çµ„ã¿åˆã‚ã›ã€ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã‚’ä½œæˆ
     DirectX::XMMATRIX W = S * R * T;
-    //ŒvZ‚µ‚½ƒ[ƒ‹ƒhs—ñ‚ğæ‚èo‚·
+    //è¨ˆç®—ã—ãŸãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã‚’å–ã‚Šå‡ºã™
     DirectX::XMStoreFloat4x4(&world, W);
 }
 
-/// ƒ‰ƒCƒg‚Ìƒoƒbƒtƒ@XV
+/// ãƒ©ã‚¤ãƒˆã®ãƒãƒƒãƒ•ã‚¡æ›´æ–°
 void SceneTitle::UpdateConstants(RenderContext& rc)
 {
     rc.lightDirection = lightDirection;	// (ToT)+
-    // ƒVƒƒƒhƒE‚Ìİ’è
+    // ã‚·ãƒ£ãƒ‰ã‚¦ã®è¨­å®š
     rc.shadowColor = shadowColor;
     rc.shadowBias = shadowBias;
 
-    // ƒtƒHƒO‚Ìİ’è
+    // ãƒ•ã‚©ã‚°ã®è¨­å®š
     rc.ambientColor = ambientColor;
     rc.fogColor = fogColor;
     rc.fogRange = fogRange;
 
-    //ƒJƒƒ‰ƒpƒ‰ƒ[ƒ^İ’è
+    //ã‚«ãƒ¡ãƒ©ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿è¨­å®š
     Camera& camera = Camera::Instance();
     cameraPosition = camera.GetEye();
     rc.cameraPosition.x = cameraPosition.x;
@@ -393,20 +423,20 @@ void SceneTitle::RenderUI(const RenderContext& rc)
     um.Render(rc);
 }
 
-static constexpr float BAR_WIDTH    = 1173; ///< ƒo[‚Ì’·‚³
-static constexpr float BAR_MIN      = 804;  ///< ƒo[‚Ìn“_
-static constexpr float BAR_MAX      = 1173; ///< ƒo[‚ÌI“_
-static constexpr float SLIDER_WIDTH = 16;   ///< ƒXƒ‰ƒCƒ_[‚Ì•
+static constexpr float BAR_WIDTH    = 1173; ///< ãƒãƒ¼ã®é•·ã•
+static constexpr float BAR_MIN      = 804;  ///< ãƒãƒ¼ã®å§‹ç‚¹
+static constexpr float BAR_MAX      = 1173; ///< ãƒãƒ¼ã®çµ‚ç‚¹
+static constexpr float SLIDER_WIDTH = 16;   ///< ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã®å¹…
 static int num = 0;
 void SceneTitle::UpdateUI()
 {
     Mouse& mouse = Input::Instance().GetMouse();
 
-    /// ƒ}ƒEƒXÀ•Wæ“¾
+    /// ãƒã‚¦ã‚¹åº§æ¨™å–å¾—
     DirectX::XMFLOAT2 mousePos = { (float)Input::Instance().GetMouse().GetPositionX(), (float)Input::Instance().GetMouse().GetPositionY() };
     um.Update(mousePos);
 
-    /// ƒƒjƒ…[‚Ì‘I‘ğˆ
+    /// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®é¸æŠè‚¢
     for (auto& ui : um.GetUIs())
     {
         if (ui->GetID() > 2)break;
@@ -434,15 +464,15 @@ void SceneTitle::UpdateUI()
 
         switch (id)
         {
-        case 0: ///< id 1‚ÍƒQ[ƒ€ŠJn
+        case 0: ///< id 1ã¯ã‚²ãƒ¼ãƒ é–‹å§‹
             if (mouse.GetButtonDown() & mouse.BTN_LEFT)
                 isStartGame = true;
             break;
-        case 1: ///< id 2‚Íİ’è
+        case 1: ///< id 2ã¯è¨­å®š
             if (mouse.GetButtonDown() & mouse.BTN_LEFT)
                 selectOptions = !selectOptions;
 
-            /// ƒIƒvƒVƒ‡ƒ“€–Ú‚Ì•\¦
+            /// ã‚ªãƒ—ã‚·ãƒ§ãƒ³é …ç›®ã®è¡¨ç¤º
             if (selectOptions)
             {
                 for (int i = 3; i < um.GetUIs().size(); ++i)
@@ -452,7 +482,7 @@ void SceneTitle::UpdateUI()
             }
 
             break;
-        case 2: ///< id 2‚ÍI—¹
+        case 2: ///< id 2ã¯çµ‚äº†
             if (mouse.GetButtonDown() & mouse.BTN_LEFT)
                 exit(0);
             break;
@@ -469,19 +499,19 @@ void SceneTitle::UpdateUI()
         }
     }
 
-    /// Š´“x‚Æ‚©‚Ìƒo[‚Ì“®ì
+    /// æ„Ÿåº¦ã¨ã‹ã®ãƒãƒ¼ã®å‹•ä½œ
     if (previousDow)
     {
         ///                                       
-        ///                             «UI‚Ì•`‰æn“_
-        ///                             /--/ <-ƒXƒ‰ƒCƒ_[
-        ///                              ªƒ}ƒEƒX‚ÌÀ•W = BAR_MIN + SLIDER_WIDTH / 2
+        ///                             â†“UIã®æç”»å§‹ç‚¹
+        ///                             /--/ <-ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼
+        ///                              â†‘ãƒã‚¦ã‚¹ã®åº§æ¨™ = BAR_MIN + SLIDER_WIDTH / 2
         ///                             /---------------------------------------------------------------/
         /// 
         /// 
         mousePos.x = std::clamp((float)mousePos.x, (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
         num = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x - SLIDER_WIDTH /2;
-        num -= 804.0f; ///< ƒQ[ƒW‚ÌUI‚ÌXÀ•W
+        num -= 804.0f; ///< ã‚²ãƒ¼ã‚¸ã®UIã®Xåº§æ¨™
         float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
         num /= barWidth/100;
     }

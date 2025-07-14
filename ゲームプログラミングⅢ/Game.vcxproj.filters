@@ -34,6 +34,7 @@
     <FxCompile Include="Shader\VisionBootDownPS.hlsl" />
     <FxCompile Include="Shader\TVNoiseFadePS.hlsl" />
     <FxCompile Include="Shader\GameOverPS.hlsl" />
+    <FxCompile Include="Shader\Noise_ps.hlsl" />
     <FxCompile Include="Shader\FadeToBlackPS.hlsl" />
     <FxCompile Include="Shader\FilmGrainDustPS.hlsl" />
     <FxCompile Include="Shader\NoiseChangePS.hlsl" />
@@ -111,6 +112,8 @@
     <ClCompile Include="Source\GameObjects\LightModels\LightManager.cpp" />
     <ClCompile Include="Source\System\UI.cpp" />
     <ClCompile Include="Source\System\UiManager.cpp" />
+    <ClCompile Include="Source\3DAudio\3dAudio.cpp" />
+    <ClCompile Include="Source\GameObjects\TV\TV.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -193,6 +196,8 @@
     <ClInclude Include="Source\GameObjects\LightModels\LightManager.h" />
     <ClInclude Include="Source\System\UI.h" />
     <ClInclude Include="Source\System\UiManager.h" />
+    <ClInclude Include="Source\3DAudio\3dAudio.h" />
+    <ClInclude Include="Source\GameObjects\TV\TV.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />

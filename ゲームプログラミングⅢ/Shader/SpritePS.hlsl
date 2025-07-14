@@ -6,6 +6,11 @@ SamplerState spriteSampler : register(s0);
 #define TEXTURE_WIDTH 240
 #define TEXTURE_HEIGHT 200
 //#define PARAMETER_MAX 360;
+float rand(float2 co)
+{
+    // 疑似ランダム（パターンノイズ用）
+    return frac(sin(dot(co, float2(12.9898, 78.233))) * 43758.5453);
+}
 
 // ピクセルシェーダーエントリポイント
 float4 main(VS_OUT pin) : SV_TARGET
@@ -46,6 +51,7 @@ float4 main(VS_OUT pin) : SV_TARGET
            float4 color = { 0, 0, 0, 0 };
            return color;
        }
-   }
+    }
     return spriteTexture.Sample(spriteSampler, pin.texcoord) * pin.color;
+    
 }
