@@ -2,7 +2,6 @@
 
 #define POINT 0
 #define LINEAR 1
-#define ANISOTROPIC 2
 #define SHARPEN_FACTOR 2
 
 SamplerState sampler_states[3] : register(s0);
@@ -30,7 +29,7 @@ float4 main(VS_OUT pin) : SV_Target
     delta.x *= (1.0 - collapse * 0.1); // 縦方向はわずかに収束
 
     float2 displacedUV = center + delta;
-    float4 color = texture_map.Sample(sampler_states[0], displacedUV);
+    float4 color = texture_map.Sample(sampler_states[POINT], displacedUV);
 
     // --- スキャンライン効果 ---
     float scanline = 0.85 + 0.15 * sin(uv.y * 1080.0 * 3.14159); // 1080は解像度に応じて調整

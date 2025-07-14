@@ -14,7 +14,7 @@
 class LightManager
 {
 public:
-	// ƒCƒ“ƒXƒ^ƒ“ƒXæ“¾
+	// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å–å¾—
 	static LightManager& Instance()
 	{
 		static LightManager instance;
@@ -22,38 +22,38 @@ public:
 	}
 
 private:
-	// “_ŒõŒ¹\‘¢‘ÌiˆÊ’uEFE”ÍˆÍj
+	// ç‚¹å…‰æºæ§‹é€ ä½“ï¼ˆä½ç½®ãƒ»è‰²ãƒ»ç¯„å›²ï¼‰
 	struct PointLightConstants
 	{
-		DirectX::XMFLOAT4 position;  // ƒ[ƒ‹ƒhÀ•Wiw–¢g—pj
-		DirectX::XMFLOAT4 color;     // Œõ‚ÌF
-		float range;                 // —LŒø‹——£iŒ¸ŠI—¹‹——£j
+		DirectX::XMFLOAT4 position;  // ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ï¼ˆwæœªä½¿ç”¨ï¼‰
+		DirectX::XMFLOAT4 color;     // å…‰ã®è‰²
+		float range;                 // æœ‰åŠ¹è·é›¢ï¼ˆæ¸›è¡°çµ‚äº†è·é›¢ï¼‰
 	};
 	struct TorusLightConstants
 	{
 		DirectX::XMFLOAT4 position;
 		DirectX::XMFLOAT4 direction;
 		DirectX::XMFLOAT4 color;
-		float majorRadius;   // ƒh[ƒiƒc‚Ì’†S‰~‚Ì”¼Œa
-		float minorRadius;   // ƒh[ƒiƒc‚Ì‘¾‚³i’f–Ê‰~‚Ì”¼Œaj
+		float majorRadius;   // ãƒ‰ãƒ¼ãƒŠãƒ„ã®ä¸­å¿ƒå††ã®åŠå¾„
+		float minorRadius;   // ãƒ‰ãƒ¼ãƒŠãƒ„ã®å¤ªã•ï¼ˆæ–­é¢å††ã®åŠå¾„ï¼‰
 		float range;
 	};
 
-	// üŒõŒ¹\‘¢‘Ìin“_EI“_EFE”ÍˆÍj
+	// ç·šå…‰æºæ§‹é€ ä½“ï¼ˆå§‹ç‚¹ãƒ»çµ‚ç‚¹ãƒ»è‰²ãƒ»ç¯„å›²ï¼‰
 	struct LineLightConstants
 	{
-		DirectX::XMFLOAT4 start;     // ƒ[ƒ‹ƒh‹óŠÔ‚Å‚Ìn“_
-		DirectX::XMFLOAT4 end;       // ƒ[ƒ‹ƒh‹óŠÔ‚Å‚ÌI“_
-		DirectX::XMFLOAT4 color;     // Œõ‚ÌF
-		float range;                 // —LŒø‹——£iü‚Æ‚Ì‹——£‚ÅŒ¸Šj
+		DirectX::XMFLOAT4 start;     // ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã§ã®å§‹ç‚¹
+		DirectX::XMFLOAT4 end;       // ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã§ã®çµ‚ç‚¹
+		DirectX::XMFLOAT4 color;     // å…‰ã®è‰²
+		float range;                 // æœ‰åŠ¹è·é›¢ï¼ˆç·šã¨ã®è·é›¢ã§æ¸›è¡°ï¼‰
 	};
 
-	// ŒõŒ¹ˆÊ’uEŒü‚«‚ğŠi”[‚·‚é”Ä—pƒf[ƒ^iƒJƒXƒ^ƒ€—p“r‚È‚Çj
+	// å…‰æºä½ç½®ãƒ»å‘ãã‚’æ ¼ç´ã™ã‚‹æ±ç”¨ãƒ‡ãƒ¼ã‚¿ï¼ˆã‚«ã‚¹ã‚¿ãƒ ç”¨é€”ãªã©ï¼‰
 	struct LightData
 	{
-		DirectX::XMFLOAT3 position;  // ƒ‰ƒCƒg‚ÌˆÊ’u
-		float             angle;     // Œü‚«‚â‰ñ“]i–¢g—p‚È‚çƒ[ƒj
-		float             length;    // ŒõŒ¹‚Ì’·‚³
+		DirectX::XMFLOAT3 position;  // ãƒ©ã‚¤ãƒˆã®ä½ç½®
+		float             angle;     // å‘ãã‚„å›è»¢ï¼ˆæœªä½¿ç”¨ãªã‚‰ã‚¼ãƒ­ï¼‰
+		float             length;    // å…‰æºã®é•·ã•
 	};
 
 public:
@@ -79,18 +79,18 @@ public:
 
 
 private:
-	// ŒõŒ¹î•ñ
+	// å…‰æºæƒ…å ±
 	std::vector<PointLightConstants> pointLights;
 	std::vector<TorusLightConstants> torusLights;
 	std::vector<LineLightConstants>  lineLights;
 	std::vector<LightData>           lightData;
 
-	// ƒ‚ƒfƒ‹
+	// ãƒ¢ãƒ‡ãƒ«
 	std::vector<std::unique_ptr<LightPoint>>  pointLightsModel;
 	std::vector<std::unique_ptr<LightTorus>>  torusLightsModel;
 	std::vector<std::unique_ptr<LightBar>>    lineLightsModel;
 
-	// ‘S‘Ì‚Ìƒ‰ƒCƒg‹­“xiæZŒW”j
+	// å…¨ä½“ã®ãƒ©ã‚¤ãƒˆå¼·åº¦ï¼ˆä¹—ç®—ä¿‚æ•°ï¼‰
 	float lightPower = 5.0f;
 
 	struct LightColors
@@ -115,6 +115,8 @@ private:
 
 #define LINELIGHT_RANGE     5.5f
 
+	std::unique_ptr<Model> models[3];
+	std::unique_ptr<LoadTextures> textures[3];
 #define LIGHT_HEIGHT       2.7f
 #define CHEILING_HEIGHT    2.999f
 };

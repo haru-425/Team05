@@ -25,5 +25,5 @@ std::shared_ptr<ModelResource> ResourceManager::LoadModelResource(const char* fi
 
 void ResourceManager::Clear()
 {
-    //models_.clear();
+    models_.clear();
 }

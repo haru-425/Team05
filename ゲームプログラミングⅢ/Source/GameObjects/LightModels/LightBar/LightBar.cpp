@@ -1,12 +1,20 @@
 #include "LightBar.h"
+#include "System/Misc.h"
 
 LightBar::LightBar(DirectX::XMFLOAT3 position, float angle)
 {
-	model = std::make_unique<Model>("Data/Model/LightModels/light_bar_low_assets/light_bar_low.mdl");
-	
-	textures = std::make_unique<LoadTextures>();
+	//model = std::make_unique<Model>("Data/Model/LightModels/light_bar_low_assets/light_bar_low.mdl");
+	Benchmark bench;
+	bench.begin();
+
+	/*textures = std::make_unique<LoadTextures>();
 	textures->LoadRoughness("Data/Model/LightModels/light_bar_low_assets/textures/light_bar_low_Roughness.png");
-	textures->LoadEmisive("Data/Model/LightModels/light_bar_low_assets/textures/light_bar_low_Emissive.png");
+	textures->LoadEmisive("Data/Model/LightModels/light_bar_low_assets/textures/light_bar_low_Emissive.png");*/
+
+	float timer = bench.end();
+	char buffer[256];
+	sprintf_s(buffer, "Time taken to load textures in Bar : % f\n", timer);
+	OutputDebugStringA(buffer);
 
 	this->position = position;
 	this->angle.y = angle;
@@ -33,12 +41,12 @@ void LightBar::Update(float elapsedTime)
 {
 }
 
-void LightBar::Render(const RenderContext& rc, ModelRenderer* renderer)
+void LightBar::Render(const RenderContext& rc, ModelRenderer* renderer, Model* model, LoadTextures* texture)
 {
-	textures->Set(rc);
+	texture->Set(rc);
 
 	//ƒŒƒ“ƒ_ƒ‰‚Éƒ‚ƒfƒ‹‚ð•`‰æ‚µ‚Ä‚à‚ç‚¤
-	renderer->Render(rc, world, model.get(), ShaderId::Custom);
+	renderer->Render(rc, world, model, ShaderId::Custom);
 
-	textures->Clear(rc);
+	texture->Clear(rc);
 }

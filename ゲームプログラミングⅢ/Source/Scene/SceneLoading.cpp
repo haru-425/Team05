@@ -2,6 +2,7 @@
 #include"System/Input.h"
 #include"SceneLoading.h"
 #include"SceneManager.h"
+#include "Scene/SceneGame.h"
 
 //初期化
 void SceneLoading::Initialize()
@@ -56,6 +57,13 @@ void SceneLoading::Update(float elapsedTime)
 		// 準備完了から2秒経過したらシーン遷移
 		if ((timer - nextSceneReadyTime) >= 2.0f)
 		{
+			if (typeid(*nextScene) == typeid(SceneGame))
+			{
+				POINT screenPoint = { Graphics::Instance().GetScreenWidth() / 2, Graphics::Instance().GetScreenHeight() / 2 };
+				ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
+				SetCursorPos(screenPoint.x, screenPoint.y);
+			}
+
 			SceneManager::instance().ChangeScene(nextScene);
 		}
 		transtimer += elapsedTime;
@@ -150,6 +158,7 @@ void SceneLoading::DrawGUI()
 //ローディングスレッド
 void SceneLoading::LoadingThread(SceneLoading* scene)
 {
+
 	//COM関連の初期化でスレッド毎に呼ぶ必要がある
 	CoInitialize(nullptr);
 

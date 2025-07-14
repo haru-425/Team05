@@ -4,6 +4,8 @@
 #include "Misc.h"
 #include "GpuResourceUtils.h"
 #include"imgui.h"
+#include "Graphics.h"
+
 // コンストラクタ
 Sprite::Sprite()
 	: Sprite(nullptr)
@@ -116,6 +118,9 @@ Sprite::Sprite(const char* filename)
 		textureWidth = static_cast<float>(desc.Width);
 		textureHeight = static_cast<float>(desc.Height);
 	}
+
+	textureSize.x = textureWidth;
+	textureSize.y = textureHeight;
 }
 
 // 描画実行
@@ -134,13 +139,14 @@ void Sprite::Render(const RenderContext& rc,
 {
 
 	ID3D11DeviceContext* dc = rc.deviceContext;
+	DirectX::XMFLOAT2 scaleFactor = Graphics::Instance().GetWindowScaleFactor();
 
 	// 頂点座標
 	DirectX::XMFLOAT2 positions[] = {
-		DirectX::XMFLOAT2(dx,      dy),			// 左上
-		DirectX::XMFLOAT2(dx + dw, dy),			// 右上
-		DirectX::XMFLOAT2(dx,      dy + dh),	// 左下
-		DirectX::XMFLOAT2(dx + dw, dy + dh),	// 右下
+		DirectX::XMFLOAT2(dx * scaleFactor.x,      dy * scaleFactor.x),			// 左上
+		DirectX::XMFLOAT2(dx * scaleFactor.x + dw * scaleFactor.x, dy * scaleFactor.x),			// 右上
+		DirectX::XMFLOAT2(dx * scaleFactor.x,      dy * scaleFactor.x + dh * scaleFactor.y),	// 左下
+		DirectX::XMFLOAT2(dx * scaleFactor.x + dw * scaleFactor.x, dy * scaleFactor.x + dh * scaleFactor.y),	// 右下
 	};
 
 	// テクスチャ座標
@@ -153,8 +159,8 @@ void Sprite::Render(const RenderContext& rc,
 
 	// スプライトの中心で回転させるために４頂点の中心位置が
 	// 原点(0, 0)になるように一旦頂点を移動させる。
-	float mx = dx + dw * 0.5f;
-	float my = dy + dh * 0.5f;
+	float mx = dx * scaleFactor.x + dw * scaleFactor.x * 0.5f;
+	float my = dy * scaleFactor.y + dh * scaleFactor.y * 0.5f;
 	for (auto& p : positions)
 	{
 		p.x -= mx;

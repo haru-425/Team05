@@ -2,7 +2,6 @@
 #define CA_AMT 1.01
 #define POINT 0
 #define LINEAR 1
-#define ANISOTROPIC 2
 #define PI 3.14159265358979323846
 SamplerState sampler_states[3] : register(s0);
 Texture2D texture_map : register(t10);
@@ -69,7 +68,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     uv += float2(0.0, offsetY) + pulseOffset;
 
     // テクスチャから色をサンプリング
-    float4 color = texture_map.Sample(sampler_states[0], uv);
+    float4 color = texture_map.Sample(sampler_states[POINT], uv);
 
     // アルファ値を1.0に設定（常に不透明）
     color.a = 1.0;

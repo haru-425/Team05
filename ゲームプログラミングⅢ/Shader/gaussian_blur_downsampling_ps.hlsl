@@ -1,9 +1,6 @@
 // BLOOM
 #define POINT 0
 #define LINEAR 1
-#define ANISOTROPIC 2
-#define LINEAR_BORDER_BLACK 3
-#define LINEAR_BORDER_WHITE 4
 SamplerState sampler_states[5] : register(s0);
 
 Texture2D hdr_color_buffer_texture : register(t0);

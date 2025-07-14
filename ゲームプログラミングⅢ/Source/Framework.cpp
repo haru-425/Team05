@@ -14,6 +14,8 @@
 #include "SceneManager.h"
 #include "System/Audio.h"
 #include "System/SettingsManager.h"
+#include "stdio.h"
+#include "System/ResourceManager.h"
 
 // ‚’¼“¯ŠúŠÔŠuİ’è
 static const int syncInterval = 1;
@@ -57,6 +59,8 @@ Framework::~Framework()
 	ReleaseDC(hWnd, hDC);
 
 	Audio::Instance().Finalize();
+
+	ResourceManager::Instance().Clear();
 }
 
 // XVˆ—
@@ -77,7 +81,7 @@ void Framework::Update(float elapsedTime)
 		Graphics::Instance().StylizeWindow(!Graphics::Instance().GetScreenMode());
 	}
 }
-
+float elapsed = 0;
 // •`‰æˆ—
 void Framework::Render(float elapsedTime)
 {
@@ -95,6 +99,21 @@ void Framework::Render(float elapsedTime)
 	// ƒV[ƒ“GUI•`‰æˆ—
 #if defined _DEBUG
 	SceneManager::instance().DrawGUI();
+	if (Graphics::Instance().GetScreenMode())
+	{
+		if (ImGui::Begin("FPS"))
+		{
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		}
+		ImGui::End();
+	}
+	if (ImGui::Begin("elapsedTime"))
+	{
+		char buffer[256];
+		//sprintf_s(&buffer, "elapsedTime :%f", elapsed);
+		ImGui::Text("elapsedTime : %f", elapsed);
+	}
+	ImGui::End();
 #endif
 
 #if 0
@@ -152,12 +171,15 @@ int Framework::Run()
 			timer.Tick();
 			CalculateFrameStats();
 
-			float elapsedTime = syncInterval == 0
-				? timer.TimeInterval()
-				: syncInterval / static_cast<float>(GetDeviceCaps(hDC, VREFRESH))
-				;
+			//float elapsedTime = syncInterval == 0
+			//	? timer.TimeInterval()
+			//	: syncInterval / static_cast<float>(GetDeviceCaps(hDC, VREFRESH))
+			//	;
+			float elapsedTime = timer.TimeInterval();
+
 			Update(elapsedTime);
 			Render(elapsedTime);
+			elapsed = elapsedTime;
 		}
 	}
 	return static_cast<int>(msg.wParam);

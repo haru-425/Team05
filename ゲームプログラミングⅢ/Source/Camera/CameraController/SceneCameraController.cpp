@@ -83,7 +83,6 @@ void SceneCameraController::DebugGUI()
     if (ImGui::Begin("SceneCameraInfo"))
     {
         ImGui::DragFloat3("target", &viewPointInfo[viewPoint].target.x);
-        ImGui::DragFloat3("viewPosition", &viewPointInfo[viewPoint].viewPosition.x);
         ImGui::DragFloat3("angle", &viewPointInfo[viewPoint].angle.x, 0.001745/10);
         ImGui::DragFloat("distance", &viewPointInfo[viewPoint].distance, 0.01f, 0.0001f);
 
@@ -112,30 +111,25 @@ void SceneCameraController::SettingViewPointInfo()
         viewPointInfo[0].angle = {0.185, -0.111, 0};
         viewPointInfo[0].distance = 0.1;
         viewPointInfo[0].target = {1.8,2.8,-21};
-        viewPointInfo[0].viewPosition;
     }
     {
         viewPointInfo[1].angle = {0.264, -0.945, 0};
         viewPointInfo[1].distance = 0.1f;
         viewPointInfo[1].target = {-6.2, 2.8f, -15.9};
-        viewPointInfo[1].viewPosition;
     }
     {
         viewPointInfo[2].angle = {0.196,4.71,0};
         viewPointInfo[2].distance = 0.1f;
-        viewPointInfo[2].target = {28.8,2.8,-23};
-        viewPointInfo[2].viewPosition;
+        viewPointInfo[2].target = {28.8,2.6,-23};
     }
     {
         viewPointInfo[3].angle = {0.367, 3.141, 0};
         viewPointInfo[3].distance = 0.1f;
         viewPointInfo[3].target = {0, 2.8f, 24.9};
-        viewPointInfo[3].viewPosition;
     }
     {
         viewPointInfo[4].angle = {0.324, 3.14, 0};
         viewPointInfo[4].distance = 0.1f;
         viewPointInfo[4].target = {0, 2.8, 13.9};
-        viewPointInfo[4].viewPosition;
     }
 }

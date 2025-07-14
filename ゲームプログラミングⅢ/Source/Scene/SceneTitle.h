@@ -5,31 +5,35 @@
 #include "System/Model.h"
 #include "System/ModelRenderer.h"
 #include <memory>
+#include <vector>
 #include "System/ShadowCaster.h"
 #include "Camera/CameraController/ICameraController.h"
 #include "Camera/CameraController/FreeCameraController.h"
 #include "Stage.h"
+#include "System/UI.h"
+#include "System/UiManager.h"
 #include "3DAudio/3DAudio.h"
-//ƒ^ƒCƒgƒ‹ƒV[ƒ“
+
+//ã‚¿ã‚¤ãƒˆãƒ«ã‚·ãƒ¼ãƒ³
 class SceneTitle :public Scene
 {
 public:
 	SceneTitle() {}
 	~SceneTitle()override {}
 
-	//‰Šú‰»
+	//åˆæœŸåŒ–
 	void Initialize()override;
 
-	//I—¹‰»
+	//çµ‚äº†åŒ–
 	void Finalize()override;
 
-	//XVˆ—
+	//æ›´æ–°å‡¦ç†
 	void Update(float elapsedTime)override;
 
-	//•`‰æˆ—
+	//æç”»å‡¦ç†
 	void Render()override;
 
-	//GUI•`‰æ
+	//GUIæç”»
 	void DrawGUI()override;
 
 private:
@@ -37,12 +41,30 @@ private:
 
 	void UpdateConstants(RenderContext& rc);
 
+	void RenderUI(const RenderContext& rc); ///< ã‚¿ã‚¤ãƒˆãƒ«ã®UIã‚’ã¾ã¨ã‚ã¦æç”»
+
+	void UpdateUI();
+
+private:
+	struct UIParameter
+	{
+		DirectX::XMFLOAT3 position;
+		float dw;
+		float dh;
+		float angle;
+		float sx;
+		float sy;
+		float sw;
+		float sh;
+		DirectX::XMFLOAT4 color = { 1,1,1,1 };
+	};
+
 private:
 	Sprite* sprite = nullptr;
-	float TitleTimer = 0.0f; // ƒ^ƒCƒgƒ‹‰æ–Ê‚Ìƒ^ƒCƒ}[
-	float TitleSignalTimer = 0.0f; // ƒ^ƒCƒgƒ‹‰æ–Ê‚ÌM†ƒ^ƒCƒ}[
+	float TitleTimer = 0.0f; // ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã®ã‚¿ã‚¤ãƒãƒ¼
+	float TitleSignalTimer = 0.0f; // ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã®ä¿¡å·ã‚¿ã‚¤ãƒãƒ¼
 	bool sceneTrans = false;
-	Scene* nextScene = nullptr; ///< 1•bŒã‚É‘JˆÚ‚·‚éƒV[ƒ“
+	Scene* nextScene = nullptr; ///< 1ç§’å¾Œã«é·ç§»ã™ã‚‹ã‚·ãƒ¼ãƒ³
 
 	std::unique_ptr<Stage> model;
 
@@ -53,52 +75,59 @@ private:
 
 	std::unique_ptr<ICameraController> i_cameraController;
 
-	/// ƒVƒF[ƒ_ŠÖ˜A
+	/// UIã‚¹ãƒ—ãƒ©ã‚¤ãƒˆé–¢é€£
+	UIParameter uiParam[7] = {};
+	std::vector<std::unique_ptr<Sprite>> uiSprits;
+	std::vector<std::unique_ptr<UI>> ui;
+	UIManager um;
+
+	/// ã‚·ã‚§ãƒ¼ãƒ€é–¢é€£
 	// ==============================
-	// ƒVƒƒƒhƒEŠÖ˜A’è”
+	// ã‚·ãƒ£ãƒ‰ã‚¦é–¢é€£å®šæ•°
 	// ==============================
 
-	// ƒ‰ƒCƒg‹“_‚©‚ç‚Ìƒrƒ…[Ë‰es—ñiƒVƒƒƒhƒEƒ}ƒbƒvì¬—pj
+	// ãƒ©ã‚¤ãƒˆè¦–ç‚¹ã‹ã‚‰ã®ãƒ“ãƒ¥ãƒ¼å°„å½±è¡Œåˆ—ï¼ˆã‚·ãƒ£ãƒ‰ã‚¦ãƒãƒƒãƒ—ä½œæˆç”¨ï¼‰
 	DirectX::XMFLOAT4X4 lightViewProjection;
 
-	// ƒVƒƒƒhƒE‚Ì[“xƒoƒCƒAƒXiƒAƒNƒl–h~j
+	// ã‚·ãƒ£ãƒ‰ã‚¦ã®æ·±åº¦ãƒã‚¤ã‚¢ã‚¹ï¼ˆã‚¢ã‚¯ãƒé˜²æ­¢ï¼‰
 	float shadowBias = 0.001f;
 
-	// ‰e‚ÌFi‚â‚â–¾‚é‚ß‚ÌƒOƒŒ[j
+	// å½±ã®è‰²ï¼ˆã‚„ã‚„æ˜ã‚‹ã‚ã®ã‚°ãƒ¬ãƒ¼ï¼‰
 	DirectX::XMFLOAT3 shadowColor = { 0.89f, 0.89f, 0.89f };
 
-	// ƒVƒƒƒhƒEƒ}ƒbƒv•`‰æ”ÍˆÍiƒfƒoƒbƒO•`‰æ—pHj
+	// ã‚·ãƒ£ãƒ‰ã‚¦ãƒãƒƒãƒ—æç”»ç¯„å›²ï¼ˆãƒ‡ãƒãƒƒã‚°æç”»ç”¨ï¼Ÿï¼‰
 	float SHADOWMAP_DRAWRECT = 30.0f;
 
-	// ƒVƒƒƒhƒEƒ}ƒbƒv•`‰æE¶¬‚ğ’S“–‚·‚éƒNƒ‰ƒX
+	// ã‚·ãƒ£ãƒ‰ã‚¦ãƒãƒƒãƒ—æç”»ãƒ»ç”Ÿæˆã‚’æ‹…å½“ã™ã‚‹ã‚¯ãƒ©ã‚¹
 	std::unique_ptr<ShadowCaster> shadow;
 
 
 	// ==============================
-	// ƒtƒHƒOEŠÂ‹«ŒõŠÖ˜A’è”
+	// ãƒ•ã‚©ã‚°ãƒ»ç’°å¢ƒå…‰é–¢é€£å®šæ•°
 	// ==============================
 
-	// ƒAƒ“ƒrƒGƒ“ƒgƒ‰ƒCƒg‚ÌFiˆÃ‚ß‚ÌƒOƒŒ[j
+	// ã‚¢ãƒ³ãƒ“ã‚¨ãƒ³ãƒˆãƒ©ã‚¤ãƒˆã®è‰²ï¼ˆæš—ã‚ã®ã‚°ãƒ¬ãƒ¼ï¼‰
 	DirectX::XMFLOAT4 ambientColor = { 0.25f, 0.273f, 0.335f, 1.0f };
 
-	// ƒtƒHƒO‚ÌFi”’‚É‹ß‚¢ƒOƒŒ[j
+	// ãƒ•ã‚©ã‚°ã®è‰²ï¼ˆç™½ã«è¿‘ã„ã‚°ãƒ¬ãƒ¼ï¼‰
 	DirectX::XMFLOAT4 fogColor = { .0f,.0f,.0f, 1.0f };
 
-	// ƒtƒHƒO‚Ì”ÍˆÍiŠJn20.0AI—¹100.0j
+	// ãƒ•ã‚©ã‚°ã®ç¯„å›²ï¼ˆé–‹å§‹20.0ã€çµ‚äº†100.0ï¼‰
 	DirectX::XMFLOAT4 fogRange = { 10.0f, 30.0f, 0, 0 };
 
 
 	// ==============================
-	// ƒJƒƒ‰Eƒ‰ƒCƒg•ûŒü
+	// ã‚«ãƒ¡ãƒ©ãƒ»ãƒ©ã‚¤ãƒˆæ–¹å‘
 	// ==============================
 
-	// •½sŒõŒ¹‚Ì•ûŒüƒxƒNƒgƒ‹iÎ‚ßã‚©‚çÆËj
+	// å¹³è¡Œå…‰æºã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ï¼ˆæ–œã‚ä¸Šã‹ã‚‰ç…§å°„ï¼‰
 	DirectX::XMFLOAT3 lightDirection = { 0.0f, -1.0f, 1.0f };
 
-	// ƒJƒƒ‰‚Ìƒ[ƒ‹ƒhÀ•W
+	// ã‚«ãƒ¡ãƒ©ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™
 	DirectX::XMFLOAT3 cameraPosition = { 0.0f, 0.0f, 0.0f };
 
 
-	float GraphicsScenetime = 0; //gameƒ^ƒCƒ}[
+	float GraphicsScenetime = 0; //gameã‚¿ã‚¤ãƒãƒ¼
 
+	bool isStartGame = false;
 };

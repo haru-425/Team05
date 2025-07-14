@@ -22,7 +22,6 @@ private:
     struct ViewPointInfo
     {
         DirectX::XMFLOAT3 target = {};
-        DirectX::XMFLOAT3 viewPosition = {};
         DirectX::XMFLOAT3 angle = {};
         float distance = 20;
     };

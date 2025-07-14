@@ -16,8 +16,6 @@
 #define POINT 0
 /// @brief サンプラーの種類: Linearサンプリング
 #define LINEAR 1
-/// @brief サンプラーの種類: Anisotropicサンプリング
-#define ANISOTROPIC 2
 
 //----------------------------------------
 // サンプラーステート・テクスチャ

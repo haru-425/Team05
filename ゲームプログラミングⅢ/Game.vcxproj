@@ -190,6 +190,8 @@
     <ClInclude Include="Source\System\ShadowCaster.h" />
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\System\Sprite.h" />
+    <ClInclude Include="Source\System\UI.h" />
+    <ClInclude Include="Source\System\UiManager.h" />
     <ClInclude Include="Source\GameObjects\TV\TV.h" />
   </ItemGroup>
   <ItemGroup>
@@ -262,6 +264,8 @@
     <ClCompile Include="Source\System\ShadowCaster.cpp" />
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
     <ClCompile Include="Source\System\Sprite.cpp" />
+    <ClCompile Include="Source\System\UI.cpp" />
+    <ClCompile Include="Source\System\UiManager.cpp" />
     <ClCompile Include="Source\GameObjects\TV\TV.cpp" />
   </ItemGroup>
   <ItemGroup>

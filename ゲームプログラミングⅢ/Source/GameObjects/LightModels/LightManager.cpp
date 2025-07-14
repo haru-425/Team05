@@ -3,9 +3,13 @@
 #include <imgui.h>
 #include "System/Graphics.h"
 #include <iostream>
+#include "System/Misc.h"
+#include "System/LoadTextures.h"
 
 void LightManager::Initialize()
 {
+	Benchmark bench;
+	bench.begin();
 	// ライトの強さ
 	lightPower = 1;
 
@@ -236,6 +240,32 @@ void LightManager::Initialize()
 			lineLightsModel.push_back(std::make_unique<LightBar>(DirectX::XMFLOAT3{ lightData.at(i).position.x,CHEILING_HEIGHT,lightData.at(i).position.z }, DirectX::XMConvertToRadians(lightData.at(i).angle)));
 		}
 	}
+
+	/// モデルの読み込み
+	models[0] = std::make_unique<Model>("Data/Model/LightModels/light_circle_assets/light_circle.mdl");
+	models[1] = std::make_unique<Model>("Data/Model/LightModels/light_point_assets/light_point.mdl");
+	models[2] = std::make_unique<Model>("Data/Model/LightModels/light_bar_low_assets/light_bar_low.mdl");
+
+	/// テクスチャ情報の読み込み
+	textures[0] = std::make_unique<LoadTextures>();
+	textures[0]->LoadNormal("Data/Model/LightModels/light_circle_assets/textures/light_circle_Normal_DirectX.png");
+	textures[0]->LoadRoughness("Data/Model/LightModels/light_circle_assets/textures/light_circle_Roughness.png");
+	textures[0]->LoadEmisive("Data/Model/LightModels/light_circle_assets/textures/light_circle_Emissive.png");
+
+	textures[1] = std::make_unique<LoadTextures>();
+	textures[1]->LoadNormal("Data/Model/LightModels/light_point_assets/textures/light_point_mtl_Normal_DirectX.png");
+	textures[1]->LoadRoughness("Data/Model/LightModels/light_point_assets/textures/light_point_mtl_Roughness.png");
+	textures[1]->LoadMetalness("Data/Model/LightModels/light_point_assets/textures/light_point_mtl_Metallic.png");
+	textures[1]->LoadEmisive("Data/Model/LightModels/light_point_assets/textures/light_point_mtl_Emissive.png");
+
+	textures[2] = std::make_unique<LoadTextures>();
+	textures[2]->LoadRoughness("Data/Model/LightModels/light_bar_low_assets/textures/light_bar_low_Roughness.png");
+	textures[2]->LoadEmisive("Data/Model/LightModels/light_bar_low_assets/textures/light_bar_low_Emissive.png");
+
+	float timer = bench.end();
+	char buffer[256];
+	sprintf_s(buffer, "Time taken to initialize LightManager  : % f\n", timer);
+	OutputDebugStringA(buffer);
 }
 
 void LightManager::Update()
@@ -308,15 +338,15 @@ void LightManager::Render(RenderContext& rc)
 
 	/// 点光源のモデル描画
 	for (auto& p : pointLightsModel) {
-		p->Render(rc, modelRenderer);
+		p->Render(rc, modelRenderer, models[1].get(), textures[1].get());
 	}
 	/// 円光源のモデル描画
 	for (auto& p : torusLightsModel) {
-		p->Render(rc, modelRenderer);
+		p->Render(rc, modelRenderer, models[0].get(), textures[0].get());
 	}
 	/// 線光源のモデル描画
 	for (auto& p : lineLightsModel) {
-		p->Render(rc, modelRenderer);
+		p->Render(rc, modelRenderer, models[2].get(), textures[2].get());
 	}
 }
 

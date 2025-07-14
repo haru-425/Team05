@@ -6,14 +6,14 @@
 
 #include "RenderContext.h"
 
-// ƒXƒvƒ‰ƒCƒg
+// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 class Sprite
 {
 public:
 	Sprite();
 	Sprite(const char* filename);
 
-	// ’¸“_ƒf[ƒ^
+	// é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿
 	struct Vertex
 	{
 		DirectX::XMFLOAT3	position;
@@ -36,30 +36,34 @@ public:
 		DirectX::XMFLOAT2 dummy;
 	};
 
-	// •`‰æŽÀs
+	// æç”»å®Ÿè¡Œ
 	void Render(const RenderContext& rc,
-		float dx, float dy,					// ¶ãˆÊ’u
-		float dz,							// ‰œs
-		float dw, float dh,					// •A‚‚³
-		float sx, float sy,					// ‰æ‘œØ‚è”²‚«ˆÊ’u
-		float sw, float sh,					// ‰æ‘œØ‚è”²‚«ƒTƒCƒY
-		float angle,						// Šp“x
-		float r, float g, float b, float a	// F
+		float dx, float dy,					// å·¦ä¸Šä½ç½®
+		float dz,							// å¥¥è¡Œ
+		float dw, float dh,					// å¹…ã€é«˜ã•
+		float sx, float sy,					// ç”»åƒåˆ‡ã‚ŠæŠœãä½ç½®
+		float sw, float sh,					// ç”»åƒåˆ‡ã‚ŠæŠœãã‚µã‚¤ã‚º
+		float angle,						// è§’åº¦
+		float r, float g, float b, float a	// è‰²
 		, bool minimapFlg = false,
-		float radius = 0.0f,//”¼Œa
+		float radius = 0.0f,//åŠå¾„
 		float parameter = 360.0f
 	);
 
-	// •`‰æŽÀsiƒeƒNƒXƒ`ƒƒØ‚è”²‚«Žw’è‚È‚µj
+	// æç”»å®Ÿè¡Œï¼ˆãƒ†ã‚¯ã‚¹ãƒãƒ£åˆ‡ã‚ŠæŠœãæŒ‡å®šãªã—ï¼‰
 	void Render(const RenderContext& rc,
-		float dx, float dy,					// ¶ãˆÊ’u
-		float dz,							// ‰œs
-		float dw, float dh,					// •A‚‚³
-		float angle,						// Šp“x
-		float r, float g, float b, float a	// F
+		float dx, float dy,					// å·¦ä¸Šä½ç½®
+		float dz,							// å¥¥è¡Œ
+		float dw, float dh,					// å¹…ã€é«˜ã•
+		float angle,						// è§’åº¦
+		float r, float g, float b, float a	// è‰²
 	);
 
 	//void DrawGui()const;
+
+	DirectX::XMFLOAT2 GetTextureSize() const { return textureSize; }
+
+	ID3D11ShaderResourceView* GetSRV() const { return shaderResourceView.Get(); }
 
 	void SetNoise(int noise) {this->noise_flag = noise;}
 	void SetStrength(int strength) { this->strength = strength; }
@@ -81,6 +85,8 @@ private:
 	float radius = 200.0f;
 
 	float parametar = 360.0f;
+
+	DirectX::XMFLOAT2 textureSize;
 
 	int noise_flag = 0;
 
