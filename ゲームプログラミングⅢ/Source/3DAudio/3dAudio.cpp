@@ -435,7 +435,7 @@ void Audio3DSystem::SetVolumeByTag(const std::string& tag, float volume)
 					break;
 				case SoundType::BGM:
 					e.sourceVoice->SetVolume(volume * masterVolume * bgmVolume);
-
+					break;
 				}
 			}
 		}
