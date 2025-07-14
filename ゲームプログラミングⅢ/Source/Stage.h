@@ -55,4 +55,7 @@ private:
     std::unique_ptr<Model> model[4] = {};
 
     std::unique_ptr<LoadTextures> textures[4] = {};
+
+    std::unique_ptr<Model> collisionMesh;
+    DirectX::XMFLOAT4X4 collisionMeshMatrix;
 };
