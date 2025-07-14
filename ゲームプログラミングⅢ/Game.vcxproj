@@ -190,6 +190,7 @@
     <ClInclude Include="Source\System\ShadowCaster.h" />
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\System\Sprite.h" />
+    <ClInclude Include="Source\GameObjects\TV\TV.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\3DAudio\3dAudio.cpp" />
@@ -261,6 +262,7 @@
     <ClCompile Include="Source\System\ShadowCaster.cpp" />
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
     <ClCompile Include="Source\System\Sprite.cpp" />
+    <ClCompile Include="Source\GameObjects\TV\TV.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
@@ -371,7 +373,7 @@
     <FxCompile Include="Shader\Noise_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-     </FxCompile>
+    </FxCompile>
     <FxCompile Include="Shader\LightFlickerPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>

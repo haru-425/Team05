@@ -111,6 +111,7 @@
     <ClCompile Include="Source\GameObjects\Aircon\Aircon.cpp" />
     <ClCompile Include="Source\GameObjects\LightModels\LightManager.cpp" />
     <ClCompile Include="Source\3DAudio\3dAudio.cpp" />
+    <ClCompile Include="Source\GameObjects\TV\TV.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="Source\GameObjects\Aircon\Aircon.h" />
     <ClInclude Include="Source\GameObjects\LightModels\LightManager.h" />
     <ClInclude Include="Source\3DAudio\3dAudio.h" />
+    <ClInclude Include="Source\GameObjects\TV\TV.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />

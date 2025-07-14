@@ -5,6 +5,7 @@
 #include "System/Input.h"
 #include "./LightModels/LightManager.h"
 #include "Aircon/AirconManager.h"
+#include "TV/TV.h"
 
 #include <imgui.h>
 
@@ -62,8 +63,10 @@ void SceneGraphics::Initialize()
 	ID3D11Device* device = Graphics::Instance().GetDevice();
 	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
+	// ゲームオブジェクトの初期化
 	LightManager::Instance().Initialize();
 	AirconManager::Instance().Initialize();
+	TV::Instance().Initialize();
 
 	/// デバッグ用タイマー初期化
 	time = 0;
@@ -172,6 +175,7 @@ void SceneGraphics::Update(float elapsedTime)
 	Graphics::Instance().UpdateConstantBuffer(time);
 
 	LightManager::Instance().Update();
+	TV::Instance().Update(elapsedTime);
 
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
@@ -267,6 +271,8 @@ void SceneGraphics::Render()
 		LightManager::Instance().Render(rc);
 
 		AirconManager::Instance().Render(rc);
+
+		TV::Instance().Render(rc, modelRenderer);
 	}
 
 	/// 3Dデバッグ描画処理
