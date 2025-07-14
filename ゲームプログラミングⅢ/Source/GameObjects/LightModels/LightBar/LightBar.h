@@ -28,7 +28,7 @@ public:
     void Update(float elapsedTime);
 
     //•`‰æˆ—
-    void Render(const RenderContext& rc, ModelRenderer* renderer);
+    void Render(const RenderContext& rc, ModelRenderer* renderer, Model* model, LoadTextures* texture);
 
     void SetPosition(DirectX::XMFLOAT3 position) { this->position = position; }
     void SetAngle(DirectX::XMFLOAT3 angle) { this->angle = angle; }

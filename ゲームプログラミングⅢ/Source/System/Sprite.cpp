@@ -98,6 +98,9 @@ Sprite::Sprite(const char* filename)
 		textureWidth = static_cast<float>(desc.Width);
 		textureHeight = static_cast<float>(desc.Height);
 	}
+
+	textureSize.x = textureWidth;
+	textureSize.y = textureHeight;
 }
 
 // ï`âÊé¿çs

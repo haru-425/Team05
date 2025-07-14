@@ -15,6 +15,7 @@
 #include "System/Audio.h"
 #include "System/SettingsManager.h"
 #include "stdio.h"
+#include "System/ResourceManager.h"
 
 // ‚’¼“¯ŠúŠÔŠuİ’è
 static const int syncInterval = 1;
@@ -58,6 +59,8 @@ Framework::~Framework()
 	ReleaseDC(hWnd, hDC);
 
 	Audio::Instance().Finalize();
+
+	ResourceManager::Instance().Clear();
 }
 
 // XVˆ—

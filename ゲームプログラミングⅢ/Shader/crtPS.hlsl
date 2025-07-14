@@ -5,7 +5,6 @@
 #define CA_AMT 1.01
 #define POINT 0
 #define LINEAR 1
-#define ANISOTROPIC 2
 
 SamplerState sampler_states[3] : register(s0);
 Texture2D texture_map : register(t10);
@@ -42,11 +41,11 @@ float4 main(VS_OUT pin) : SV_Target
     // R,G,B各成分をわずかにずらしてサンプリングし、色ズレを表現
     float3 col;
     // 赤成分は左方向にずらしてサンプリング
-    col.r = texture_map.Sample(sampler_states[2], (crtUV - 0.5) * CA_AMT + 0.5).r;
+    col.r = texture_map.Sample(sampler_states[LINEAR], (crtUV - 0.5) * CA_AMT + 0.5).r;
     // 緑成分はそのままサンプリング
-    col.g = texture_map.Sample(sampler_states[2], crtUV).g;
+    col.g = texture_map.Sample(sampler_states[LINEAR], crtUV).g;
     // 青成分は右方向にずらしてサンプリング
-    col.b = texture_map.Sample(sampler_states[2], (crtUV - 0.5) / CA_AMT + 0.5).b;
+    col.b = texture_map.Sample(sampler_states[LINEAR], (crtUV - 0.5) / CA_AMT + 0.5).b;
 
     // エッジフェードをRGB全体に適用
     col *= edge.x * edge.y;

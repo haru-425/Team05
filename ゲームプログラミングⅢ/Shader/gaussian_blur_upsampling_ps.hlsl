@@ -4,9 +4,6 @@
 
 #define POINT 0
 #define LINEAR 1
-#define ANISOTROPIC 2
-#define LINEAR_BORDER_BLACK 3
-#define LINEAR_BORDER_WHITE 4
 SamplerState sampler_states[5] : register(s0);
 
 static const uint downsampled_count = 6;

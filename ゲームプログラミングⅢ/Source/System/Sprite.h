@@ -54,6 +54,10 @@ public:
 
 	//void DrawGui()const;
 
+	DirectX::XMFLOAT2 GetTextureSize() const { return textureSize; }
+
+	ID3D11ShaderResourceView* GetSRV() const { return shaderResourceView.Get(); }
+
 private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader>			vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>			pixelShader;
@@ -69,4 +73,6 @@ private:
 	float radius = 200.0f;
 
 	float parametar = 360.0f;
+
+	DirectX::XMFLOAT2 textureSize;
 };

@@ -2,7 +2,6 @@
 
 #define POINT 0
 #define LINEAR 1
-#define ANISOTROPIC 2
 #define SHARPEN_FACTOR 2
 
 SamplerState sampler_states[3] : register(s0);
@@ -89,7 +88,7 @@ float4 main(VS_OUT pin) : SV_Target
         }
     }
 
-    return texture_map.Sample(sampler_states[0], distortedUV); // 歪んだUVで色をサンプリング
+    return texture_map.Sample(sampler_states[LINEAR], distortedUV); // 歪んだUVで色をサンプリング
 
 }
 

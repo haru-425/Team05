@@ -55,7 +55,6 @@
     <ClCompile Include="Source\GameObjects\Enemy\Enemy.cpp" />
     <ClCompile Include="Source\GameObjects\Player\Player.cpp" />
     <ClCompile Include="Source\LightDebugCameraController.cpp" />
-    <ClCompile Include="Source\LightManager.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Math\Collision.cpp" />
     <ClCompile Include="Source\MiniMap.cpp" />
@@ -107,6 +106,11 @@
     <ClCompile Include="Source\GameObjects\LightModels\LightPoint\LightPoint.cpp" />
     <ClCompile Include="Source\GameObjects\LightModels\LightBar\LightBar.cpp" />
     <ClCompile Include="Source\Scene\SceneLogo.cpp" />
+    <ClCompile Include="Source\GameObjects\Aircon\AirconManager.cpp" />
+    <ClCompile Include="Source\GameObjects\Aircon\Aircon.cpp" />
+    <ClCompile Include="Source\GameObjects\LightModels\LightManager.cpp" />
+    <ClCompile Include="Source\System\UI.cpp" />
+    <ClCompile Include="Source\System\UiManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -127,7 +131,6 @@
     <ClInclude Include="Source\GameObjects\GameObject.h" />
     <ClInclude Include="Source\GameObjects\Player\Player.h" />
     <ClInclude Include="Source\LightDebugCameraController.h" />
-    <ClInclude Include="Source\LightManager.h" />
     <ClInclude Include="Source\Math\Collision.h" />
     <ClInclude Include="Source\MiniMap.h" />
     <ClInclude Include="Source\Projectile.h" />
@@ -185,6 +188,11 @@
     <ClInclude Include="Source\GameObjects\LightModels\LightPoint\LightPoint.h" />
     <ClInclude Include="Source\GameObjects\LightModels\LightBar\LightBar.h" />
     <ClInclude Include="Source\Scene\SceneLogo.h" />
+    <ClInclude Include="Source\GameObjects\Aircon\AirconManager.h" />
+    <ClInclude Include="Source\GameObjects\Aircon\Aircon.h" />
+    <ClInclude Include="Source\GameObjects\LightModels\LightManager.h" />
+    <ClInclude Include="Source\System\UI.h" />
+    <ClInclude Include="Source\System\UiManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />

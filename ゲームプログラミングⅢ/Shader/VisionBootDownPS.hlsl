@@ -2,7 +2,6 @@
 
 #define POINT 0
 #define LINEAR 1
-#define ANISOTROPIC 2
 #define SHARPEN_FACTOR 2
 
 SamplerState sampler_states[3] : register(s0);
@@ -27,7 +26,7 @@ float4 main(VS_OUT pin) : SV_Target
     // クロマティックアバレーション
     float offset = 0.003 * effectStrength;
     float3 color;
-    color = texture_map.Sample(sampler_states[0], pin.texcoord).rgb;
+    color = texture_map.Sample(sampler_states[LINEAR], pin.texcoord).rgb;
    // color.r = texture_map.Sample(sampler_states[0], pin.texcoord - float2(offset, 0)).r;
    // color.g = texture_map.Sample(sampler_states[0], pin.texcoord).g;
    // color.b = texture_map.Sample(sampler_states[0], pin.texcoord + float2(offset, 0)).b;
@@ -42,10 +41,10 @@ float4 main(VS_OUT pin) : SV_Target
     float blurOffset = 0.002 * effectStrength;
     float3 blur =
     (
-        texture_map.Sample(sampler_states[0], pin.texcoord + float2(blurOffset, 0)).rgb +
-        texture_map.Sample(sampler_states[0], pin.texcoord - float2(blurOffset, 0)).rgb +
-        texture_map.Sample(sampler_states[0], pin.texcoord + float2(0, blurOffset)).rgb +
-        texture_map.Sample(sampler_states[0], pin.texcoord - float2(0, blurOffset)).rgb
+        texture_map.Sample(sampler_states[LINEAR], pin.texcoord + float2(blurOffset, 0)).rgb +
+        texture_map.Sample(sampler_states[LINEAR], pin.texcoord - float2(blurOffset, 0)).rgb +
+        texture_map.Sample(sampler_states[LINEAR], pin.texcoord + float2(0, blurOffset)).rgb +
+        texture_map.Sample(sampler_states[LINEAR], pin.texcoord - float2(0, blurOffset)).rgb
     ) * 0.25;
     color = lerp(blur, color, focus);
 
@@ -59,7 +58,7 @@ float4 main(VS_OUT pin) : SV_Target
     color *= fade;
 
     // --- 効果終了時のなめらかな遷移 ---
-    float3 baseColor = texture_map.Sample(sampler_states[0], pin.texcoord).rgb;
+    float3 baseColor = texture_map.Sample(sampler_states[LINEAR], pin.texcoord).rgb;
     if (progress >= 1.0)
     {
         if (mode == 0.0)

@@ -1,18 +1,27 @@
 #include "LightPoint.h"
+#include "System/Misc.h"
 
 LightPoint::LightPoint(DirectX::XMFLOAT3 position)
 {
-	model = std::make_unique<Model>("Data/Model/LightModels/light_point_assets/light_point.mdl");
+	//model = std::make_unique<Model>("Data/Model/LightModels/light_point_assets/light_point.mdl");
 
-	textures = std::make_unique<LoadTextures>();
+	Benchmark bench;
+	bench.begin();
+
+	/*textures = std::make_unique<LoadTextures>();
 	textures->LoadNormal("Data/Model/LightModels/light_point_assets/textures/light_point_mtl_Normal_DirectX.png");
 	textures->LoadRoughness("Data/Model/LightModels/light_point_assets/textures/light_point_mtl_Roughness.png");
 	textures->LoadMetalness("Data/Model/LightModels/light_point_assets/textures/light_point_mtl_Metallic.png");
-	textures->LoadEmisive("Data/Model/LightModels/light_point_assets/textures/light_point_mtl_Emissive.png");
+	textures->LoadEmisive("Data/Model/LightModels/light_point_assets/textures/light_point_mtl_Emissive.png");*/
+
+	float timer = bench.end();
+	char buffer[256];
+	sprintf_s(buffer, "Time taken to load textures in Point : % f\n", timer);
+	OutputDebugStringA(buffer);
 
 	this->position = position;
 
-	scale = { 0.01f,0.01f,0.01f };
+	scale = { 0.005f,0.005f,0.005f };
 
 	//スケール行列を作成
 	DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.x);
@@ -30,12 +39,12 @@ void LightPoint::Update(float elapsedTime)
 {
 }
 
-void LightPoint::Render(const RenderContext& rc, ModelRenderer* renderer)
+void LightPoint::Render(const RenderContext& rc, ModelRenderer* renderer, Model* model, LoadTextures* texture)
 {
-	textures->Set(rc);
+	texture->Set(rc);
 
 	//レンダラにモデルを描画してもらう
-	renderer->Render(rc, world, model.get(), ShaderId::Custom);
+	renderer->Render(rc, world, model, ShaderId::Custom);
 
-	textures->Clear(rc);
+	texture->Clear(rc);
 }

@@ -2,7 +2,6 @@
 
 #define POINT 0
 #define LINEAR 1
-#define ANISOTROPIC 2
 SamplerState sampler_states[3] : register(s0);
 Texture2D texture_maps : register(t10);
 // テレビの砂嵐風ノイズ生成（UVベース）

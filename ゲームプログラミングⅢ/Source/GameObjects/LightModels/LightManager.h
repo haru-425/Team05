@@ -117,5 +117,7 @@ private:
 
 #define CEILNG_HEIGHT       2.999f
 
+	std::unique_ptr<Model> models[3];
+	std::unique_ptr<LoadTextures> textures[3];
 };
 

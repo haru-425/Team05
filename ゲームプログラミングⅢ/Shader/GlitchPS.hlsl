@@ -3,7 +3,6 @@
 #define CA_AMT 1.01
 #define POINT 0
 #define LINEAR 1
-#define ANISOTROPIC 2
 
 SamplerState sampler_states[3] : register(s0);
 Texture2D texture_map : register(t10);
@@ -135,15 +134,15 @@ float4 main(VS_OUT pin) : SV_Target
     float noise = baseNoise * NoiseStrength;
 
     float xpos = uv.x - noise * noise * 0.01;
-    float4 color = texture_map.Sample(sampler_states[2], float2(xpos, uv.y));
+    float4 color = texture_map.Sample(sampler_states[LINEAR], float2(xpos, uv.y));
     color.a = 1;
 
     float r = rand(uv.y * time);
     float3 redTint = float3(r, r, r);
     color.rgb = lerp(color.rgb, redTint, noise * 0.3);
 
-    float g = lerp(color.r, texture_map.Sample(sampler_states[2], float2(xpos + noise * 0.05, uv.y)).g, 1);
-    float b = lerp(color.r, texture_map.Sample(sampler_states[2], float2(xpos - noise * 0.05, uv.y)).b, 1);
+    float g = lerp(color.r, texture_map.Sample(sampler_states[LINEAR], float2(xpos + noise * 0.05, uv.y)).g, 1);
+    float b = lerp(color.r, texture_map.Sample(sampler_states[LINEAR], float2(xpos - noise * 0.05, uv.y)).b, 1);
     color.g = g;
     color.b = b;
 

@@ -5,10 +5,13 @@
 #include "System/Model.h"
 #include "System/ModelRenderer.h"
 #include <memory>
+#include <vector>
 #include "System/ShadowCaster.h"
 #include "Camera/CameraController/ICameraController.h"
 #include "Camera/CameraController/FreeCameraController.h"
 #include "Stage.h"
+#include "System/UI.h"
+#include "System/UiManager.h"
 
 //タイトルシーン
 class SceneTitle :public Scene
@@ -37,6 +40,24 @@ private:
 
 	void UpdateConstants(RenderContext& rc);
 
+	void RenderUI(const RenderContext& rc); ///< タイトルのUIをまとめて描画
+
+	void UpdateUI();
+
+private:
+	struct UIParameter
+	{
+		DirectX::XMFLOAT3 position;
+		float dw;
+		float dh;
+		float angle;
+		float sx;
+		float sy;
+		float sw;
+		float sh;
+		DirectX::XMFLOAT4 color = { 1,1,1,1 };
+	};
+
 private:
 	Sprite* sprite = nullptr;
 	float TitleTimer = 0.0f; // タイトル画面のタイマー
@@ -52,6 +73,12 @@ private:
 	DirectX::XMFLOAT4X4 world;
 
 	std::unique_ptr<ICameraController> i_cameraController;
+
+	/// UIスプライト関連
+	UIParameter uiParam[7] = {};
+	std::vector<std::unique_ptr<Sprite>> uiSprits;
+	std::vector<std::unique_ptr<UI>> ui;
+	UIManager um;
 
 	/// シェーダ関連
 	// ==============================
@@ -100,4 +127,6 @@ private:
 
 
 	float GraphicsScenetime = 0; //gameタイマー
+
+	bool isStartGame = false;
 };

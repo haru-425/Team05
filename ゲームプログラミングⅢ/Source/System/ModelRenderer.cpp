@@ -195,6 +195,6 @@ void ModelRenderer::Render(const RenderContext& rc, const DirectX::XMFLOAT4X4& w
 	dc->PSSetConstantBuffers(0, _countof(psConstantBuffers), psConstantBuffers);
 
 	// サンプラステート設定解除
-	for (ID3D11SamplerState*& samplerState : samplerStates) { samplerState = nullptr; }
-	dc->PSSetSamplers(0, _countof(samplerStates), samplerStates);
+	/*for (ID3D11SamplerState*& samplerState : samplerStates) { samplerState = nullptr; }
+	dc->PSSetSamplers(0, _countof(samplerStates), samplerStates);*/
 }

@@ -189,6 +189,8 @@
     <ClInclude Include="Source\System\ShadowCaster.h" />
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\System\Sprite.h" />
+    <ClInclude Include="Source\System\UI.h" />
+    <ClInclude Include="Source\System\UiManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GameObjects\Aircon\AirconManager.cpp" />
@@ -259,6 +261,8 @@
     <ClCompile Include="Source\System\ShadowCaster.cpp" />
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
     <ClCompile Include="Source\System\Sprite.cpp" />
+    <ClCompile Include="Source\System\UI.cpp" />
+    <ClCompile Include="Source\System\UiManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
