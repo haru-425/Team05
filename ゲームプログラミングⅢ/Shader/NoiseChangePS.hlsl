@@ -12,7 +12,7 @@ float LineNoise(float y)
 
 float4 main(VS_OUT pin) : SV_Target
 {
-    float TriggerInterval = 10.0;
+    float TriggerInterval = 5.0;
     float TransitionDuration = 0.5;
 
     float2 uv = pin.texcoord;
