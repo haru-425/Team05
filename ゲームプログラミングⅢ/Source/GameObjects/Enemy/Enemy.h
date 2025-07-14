@@ -5,6 +5,7 @@
 #include "System/Model.h"
 #include "Stage.h"
 #include "./System/AnimationController.h"
+#include "System/LoadTextures.h"
 #include <memory>
 
 /// 通常移動速度
@@ -111,7 +112,8 @@ private:
     };
 
 private:
-    std::shared_ptr<Model> model = nullptr;                                ///< モデルデータ
+    std::shared_ptr<Model> model = nullptr;                ///< モデルデータ
+    std::shared_ptr<LoadTextures> textures;                /// テクスチャデータ
     std::weak_ptr<Player> playerRef;                       ///< プレイヤーへの弱参照
     Stage* stage;                                          ///< ステージへの参照
 
