@@ -54,5 +54,5 @@ private:
 
     std::unique_ptr<Model> model[4] = {};
 
-    std::unique_ptr<LoadTextures> textures;
+    std::unique_ptr<LoadTextures> textures[4] = {};
 };
