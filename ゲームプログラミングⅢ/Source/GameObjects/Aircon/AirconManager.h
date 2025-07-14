@@ -10,6 +10,12 @@
 
 class AirconManager
 {
+private:
+	std::vector<std::unique_ptr<Aircon>> aircons;
+
+#define AIRCON_MAX          13
+
+#define LIGHT_HEIGHT       2.999f
 public:
 	// インスタンス取得
 	static AirconManager& Instance()
@@ -28,13 +34,15 @@ public:
 	void RenderDebugPrimitive(RenderContext& rc);
 
 	void DebugGUI();
+	DirectX::XMFLOAT3 AirconManager::GetAirconPosition(size_t index) const
+	{
+		if (index >= aircons.size() || !aircons[index]) {
+			return { 0.0f, 0.0f, 0.0f }; // 不正なインデックス時のデフォルト値
+		}
 
-private:
-	std::vector<std::unique_ptr<Aircon>> aircons;
+		return aircons[index]->GetPosition();
+	}
 
-#define AIRCON_MAX          13
-
-#define LIGHT_HEIGHT       2.999f
 
 };
 
