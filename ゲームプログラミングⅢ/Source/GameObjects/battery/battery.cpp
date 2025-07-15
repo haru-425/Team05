@@ -5,7 +5,7 @@ void battery::Update(float elapsedTime)
 
 }
 
-void battery::(const RenderContext& rc, ModelRenderer* renderer)
+void battery::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
 
 }
