@@ -50,9 +50,10 @@ public:
 			rank.Result = static_cast<RankCode>(finalValue);
 
 		}
-		Rank GetRank() { return rank };
+
 
 	}
+	Rank GetRank() { return rank };
 };
 
 RankSystem::RankSystem()
