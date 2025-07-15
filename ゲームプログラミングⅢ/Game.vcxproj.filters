@@ -114,6 +114,7 @@
     <ClCompile Include="Source\System\UiManager.cpp" />
     <ClCompile Include="Source\3DAudio\3dAudio.cpp" />
     <ClCompile Include="Source\GameObjects\TV\TV.cpp" />
+    <ClCompile Include="Source\GameObjects\battery\battery.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -198,6 +199,8 @@
     <ClInclude Include="Source\System\UiManager.h" />
     <ClInclude Include="Source\3DAudio\3dAudio.h" />
     <ClInclude Include="Source\GameObjects\TV\TV.h" />
+    <ClInclude Include="Source\GameObjects\battery\battery.h" />
+    <ClInclude Include="Source\GameObjects\battery\batteryManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
