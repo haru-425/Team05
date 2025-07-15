@@ -369,7 +369,7 @@ int Stage::NearWayPointIndex(DirectX::XMFLOAT3 target)
 	// VECTOR‚É•ÏŠ·
 	DirectX::XMVECTOR targetPos = DirectX::XMLoadFloat3(&target);
 
-	for (int i = 0; i < MAX_WAY_POINT; ++i)
+	for (int i = 1; i < MAX_WAY_POINT; ++i)
 	{
 		DirectX::XMVECTOR point = DirectX::XMLoadFloat3(&(wayPoint[i]->position));
 		// ‹——£‚ğ‹‚ß‚é
@@ -385,5 +385,13 @@ int Stage::NearWayPointIndex(DirectX::XMFLOAT3 target)
 			index = i;
 		}
 	}
+
+
+	//TODO
+	if (index < 0)
+	{
+		int x = 10;
+	}
+
 	return index;
 }

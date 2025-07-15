@@ -122,6 +122,8 @@
     <ClInclude Include="External\imgui-docking\imstb_rectpack.h" />
     <ClInclude Include="External\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="External\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="Source\GameObjects\battery\battery.h" />
+    <ClInclude Include="Source\GameObjects\battery\batteryManager.h" />
     <ClInclude Include="Source\GameObjects\LightModels\LightTorus\LightTorus.h" />
     <ClInclude Include="Source\GameObjects\LightModels\LightPoint\LightPoint.h" />
     <ClInclude Include="Source\GameObjects\LightModels\LightBar\LightBar.h" />
@@ -205,6 +207,7 @@
     <ClCompile Include="External\imgui-docking\imgui_impl_dx11.cpp" />
     <ClCompile Include="External\imgui-docking\imgui_impl_win32.cpp" />
     <ClCompile Include="External\imgui-docking\imgui_widgets.cpp" />
+    <ClCompile Include="Source\GameObjects\battery\battery.cpp" />
     <ClCompile Include="Source\GameObjects\LightModels\LightTorus\LightTorus.cpp" />
     <ClCompile Include="Source\GameObjects\LightModels\LightPoint\LightPoint.cpp" />
     <ClCompile Include="Source\GameObjects\LightModels\LightBar\LightBar.cpp" />

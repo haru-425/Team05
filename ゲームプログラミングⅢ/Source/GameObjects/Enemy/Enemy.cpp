@@ -33,25 +33,8 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 
     viewPoint = 1.5f;                     // 目線の高さ
 
-
-    // ハードウェア由来のランダムシードを取得
-    std::random_device rd;
-
-    // メルセンヌツイスタ（高性能な乱数生成器）にシードを与える
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(0, 100);
-    int value = dist(gen);
-
-    if (value < 50)
-    {
-        position = stage->GetIndexWayPoint(48);      // 初期位置
-        Goal::Instance().SetPosition(stage->GetIndexWayPoint(71));
-    }
-    else
-    {
-        position = stage->GetIndexWayPoint(33);      // 初期位置
-        Goal::Instance().SetPosition(stage->GetIndexWayPoint(61));
-    }
+    position = stage->GetIndexWayPoint(33);      // 初期位置
+    Goal::Instance().SetPosition(stage->GetIndexWayPoint(61));
 
     Start::Instance().SetPosition(this->position);
     SearchAI::Instance().DijkstraSearch(stage);
@@ -59,9 +42,11 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
     int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
     int start = stage->NearWayPointIndex(this->position);
 
+
     refinePath(start, current); // 経路を作成
 
     // ステート遷移
+    targetPosition = route[0];
     state = State::Roaming;
     Animationplay();
 
