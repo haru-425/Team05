@@ -3,11 +3,11 @@
 #include"System/Sprite.h"
 #include"Life.h"
 
-class Game_Over :public Scene
+class Game_Clear :public Scene
 {
 public:
-	Game_Over() {}
-	~Game_Over() {}
+	Game_Clear() {}
+	~Game_Clear() {}
 
 	//初期化
 	void Initialize();
@@ -25,23 +25,10 @@ public:
 	void DrawGUI() {}
 private:
 	Sprite* GameOver;
-	Life* life[3];
-	float GameOvertime = 0.0f; ///< デバッグ用タイマー
-
-	int life_rest = 2;
-
-	static int life_number;
+	float GameCleartime = 0.0f; ///< デバッグ用タイマー 
 
 	float timer = 0.0f; // タイマー
 	float transTimer = 0.0f; // シーン遷移タイマー
 	bool sceneTrans = false;
 	Scene* nextScene = nullptr; ///< 1秒後に遷移するシーン
-
-	enum class SelectTrans {
-		Title, // シーンクリア
-		Game, // ゲームオーバー
-		cnt,
-	};
-
-	SelectTrans selectTrans;
 };

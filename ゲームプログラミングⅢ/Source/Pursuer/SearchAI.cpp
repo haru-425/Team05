@@ -61,11 +61,9 @@ bool SearchAI::DijkstraSearch(Stage* stage, bool heuristicFlg)
 				//進み先のノード
 				WayPoint* nextPoint = stage->wayPoint[nextEdge->destinationPoint].get();
 
-				//TODO 07_01
 				// 進み先のノードまでのコストを計算
 				float newCost = stage->wayPoint[nowEdge->destinationPoint]->costFromStart + nextEdge->cost;
 
-				// TODO 07_02
 				// 進み先のコストがまだ計算されていないか、新しいコストの方が低ければ
 				// フロンティアツリーに登録
 				// (計算されていないときコストには-1.0が入っている)
@@ -106,13 +104,11 @@ Edge* SearchAI::searchMinCostEdge(std::vector<Edge*>& frontier, Stage* stage, bo
 
 		Edge* edge = frontier.at(fnrNo);
 
-		// TODO 07_03
 		// コスト計算
 		// totalCostに接続元の「スタート位置からのコスト」（costFromStart）＋ エッジ自体が持つコスト（cost）を入れる
 		float totalCost = 0;
 		totalCost = stage->wayPoint[edge->originPoint]->costFromStart + edge->cost;
 
-		// TODO 07_04
 		// コスト取り出し
 		//接続先の「スタート位置からのコスト」をfrontCostに取り出す(まだ登録されていないなら０となる)
 		float frontCost = 0;
@@ -125,7 +121,6 @@ Edge* SearchAI::searchMinCostEdge(std::vector<Edge*>& frontier, Stage* stage, bo
 			frontCost = stage->wayPoint[edge->destinationPoint]->costFromStart;
 		}
 
-		// TODO 07_05
 		// コストの比較
 		// frontCostが0(まだ登録されていない)か、frontCostより少ないコストルート(>=totalCost)が
 		// 発見されたなら、接続先の「スタート位置からのコスト」（costFromStart）をtotalCostに書き換え。
@@ -138,13 +133,11 @@ Edge* SearchAI::searchMinCostEdge(std::vector<Edge*>& frontier, Stage* stage, bo
 
 		if (heuristicFlg)
 		{
-			// TODO 08_01
 			// frontCostに見積コストの加算
 			// 見積コストの計算にはheuristicCulc関数を使用しても良い
 			frontCost += heuristicCulc(stage->wayPoint[edge->destinationPoint].get(), stage->wayPoint[stage->NearWayPointIndex(Goal::Instance().GetPosition())].get());
 		}
 
-		// TODO 07_06
 		// エッジの記憶
 		// minCostとfrontCostを比較し、frontCostが小さければminCostを更新。
 		// 一番小さい接続先の「スタート位置からのコスト」を持つエッジを答え（answer）として記憶。
@@ -173,7 +166,6 @@ Edge* SearchAI::searchMinCostEdge(std::vector<Edge*>& frontier, Stage* stage, bo
 
 float SearchAI::heuristicCulc(WayPoint* w1, WayPoint* w2)
 {
-	// TODO 08_02
 	// heuristicCulc関数を使用して見積コストの計算する場合は
 	// 関数の内容を完成させること。
 	// &w1->positionと&w2->positionの距離を計算

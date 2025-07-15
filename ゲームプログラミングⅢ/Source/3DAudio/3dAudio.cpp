@@ -177,13 +177,13 @@ void Audio3DSystem::Initialize()
 	outputChannelCount = channelCount;
 
 	// 3Dオーディオシステムにエミッターを追加
-	AddEmitter("Data/Sound/electrical_noise.wav", { 0.0f, 0.0f, 0.0f }, "electrical_noise", SoundType::BGM, true, true, true, 0.0f);
+	AddEmitter("Data/Sound/electrical_noise.wav", { 0.0f, 0.0f, 0.0f }, "electrical_noise", SoundType::BGM, 0.1f, true, true, true, 0.0f);
 
 
-	AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", SoundType::BGM, true);
+	AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", SoundType::BGM, 0.1f, true);
 	for (int i = 0; i < AIRCON_MAX; i++)
 	{
-		AddEmitter("Data/Sound/air_conditioner.wav", AirconManager::Instance().GetAirconPosition(i), "aircon", SoundType::SE, true, true, false, 0.1f);
+		AddEmitter("Data/Sound/air_conditioner.wav", AirconManager::Instance().GetAirconPosition(i), "aircon", SoundType::SE, 0.1f, true, true, false, 0.1f);
 
 	}
 
@@ -202,13 +202,13 @@ void Audio3DSystem::Initialize()
 	//AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f,-23.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
 
 
-	AddEmitter("Data/Sound/enemy_run.wav", { 21.0f, 3.0f,-23.0f }, "enemy_run", SoundType::SE, true, true, false, 0.1f);
-	AddEmitter("Data/Sound/enemy_walk.wav", { 21.0f, 3.0f,-23.0f }, "enemy_walk", SoundType::SE, true, true, false, 0.1f);
+	AddEmitter("Data/Sound/enemy_run.wav", { 21.0f, 3.0f,-23.0f }, "enemy_run", SoundType::SE, 0.1f, true, true, false, 0.1f);
+	AddEmitter("Data/Sound/enemy_walk.wav", { 21.0f, 3.0f,-23.0f }, "enemy_walk", SoundType::SE, 0.1f, true, true, false, 0.1f);
 
-	AddEmitter("Data/Sound/change_camera.wav", { 21.0f, 3.0f,-23.0f }, "change_camera", SoundType::SE, true, true, false, 1.f);
-	AddEmitter("Data/Sound/lightoff.wav", { 21.0f, 3.0f,-23.0f }, "lightoff", SoundType::SE, true, true, false, 1.f);
-	AddEmitter("Data/Sound/Lighton.wav", { 21.0f, 3.0f,-23.0f }, "Lighton", SoundType::SE, true, true, false, 1.f);
-	AddEmitter("Data/Sound/selectButton.wav", { 21.0f, 3.0f,-23.0f }, "selectButton", SoundType::SE, true, true, false, 1.f);
+	AddEmitter("Data/Sound/change_camera.wav", { 21.0f, 3.0f,-23.0f }, "change_camera", SoundType::SE, 0.1f, true, true, false, 1.f);
+	AddEmitter("Data/Sound/lightoff.wav", { 21.0f, 3.0f,-23.0f }, "lightoff", SoundType::SE, 0.1f, true, true, false, 1.f);
+	AddEmitter("Data/Sound/Lighton.wav", { 21.0f, 3.0f,-23.0f }, "Lighton", SoundType::SE, 0.1f, true, true, false, 1.f);
+	AddEmitter("Data/Sound/selectButton.wav", { 21.0f, 3.0f,-23.0f }, "selectButton", SoundType::SE, 0.1f, true, true, false, 1.f);
 
 
 
@@ -229,7 +229,7 @@ void Audio3DSystem::Initialize()
  * @param constantVolume 距離減衰無効フラグ（trueなら常に一定音量）
  */
 void Audio3DSystem::AddEmitter(const char* wavPath, const XMFLOAT3& pos, const std::string& tag, SoundType soundType,
-	bool loop, bool isOmnidirectional, bool constantVolume, float distanceScaler)
+	float volume, bool loop, bool isOmnidirectional, bool constantVolume, float distanceScaler)
 {
 
 	Emitter e{};
@@ -261,6 +261,7 @@ void Audio3DSystem::AddEmitter(const char* wavPath, const XMFLOAT3& pos, const s
 	e.emitterDesc.InnerRadius = 1.0f;
 	e.emitterDesc.InnerRadiusAngle = X3DAUDIO_PI / 4.0f;
 
+	e.Volume = volume;
 	emitters.push_back(std::move(e));
 }
 
@@ -319,6 +320,8 @@ void Audio3DSystem::UpdateEmitters()
 
 		e.sourceVoice->SetOutputMatrix(nullptr, dspSettings.SrcChannelCount, dspSettings.DstChannelCount, matrix);
 		e.sourceVoice->SetFrequencyRatio(dspSettings.DopplerFactor);
+
+		SetVolumeByAll();
 	}
 }
 
@@ -427,16 +430,35 @@ void Audio3DSystem::SetVolumeByTag(const std::string& tag, float volume)
 
 	for (auto& e : emitters) {
 		if (e.tag == tag) {
-			if (e.sourceVoice) {
-				switch (e.soundType)
-				{
-				case SoundType::SE:
-					e.sourceVoice->SetVolume(volume * masterVolume * seVolume);
-					break;
-				case SoundType::BGM:
-					e.sourceVoice->SetVolume(volume * masterVolume * bgmVolume);
+			//if (e.sourceVoice) {
+			//	//switch (e.soundType)
+			//	//{
+			//	//case SoundType::SE:
+			//	//	//e.sourceVoice->SetVolume(volume * masterVolume * seVolume);
+			//	//	break;
+			//	//case SoundType::BGM:
+			//	//	//e.sourceVoice->SetVolume(volume * masterVolume * bgmVolume);
+			//	//	break;
+			//	//}
+			//}
+			e.Volume = volume;
+		}
+	}
+}
+void Audio3DSystem::SetVolumeByAll()
+{
+	std::lock_guard<std::mutex> lock(dataMutex); ///< 排他制御
 
-				}
+	for (auto& e : emitters) {
+		if (e.sourceVoice) {
+			switch (e.soundType)
+			{
+			case SoundType::SE:
+				e.sourceVoice->SetVolume(e.Volume * masterVolume * seVolume);
+				break;
+			case SoundType::BGM:
+				e.sourceVoice->SetVolume(e.Volume * masterVolume * bgmVolume);
+				break;
 			}
 		}
 	}
