@@ -105,15 +105,15 @@ private:
 
 #define POINTLIGHT_MAX     34
 #define TORUSLIGHT_MAX     13
-#define LINELIGHT_MAX      45
+#define LINELIGHT_MAX      47
 
 #define POINTLIGHT_RANGE    5.5f
 
-#define TORUSLIGHT_RANGE    6
-#define TORUSLIGHT_MAJOR    5.5
+#define TORUSLIGHT_RANGE    5
+#define TORUSLIGHT_MAJOR    4.5
 #define TORUSLIGHT_MINOR    0.6
 
-#define LINELIGHT_RANGE     5.5f
+#define LINELIGHT_RANGE     5
 
 	std::unique_ptr<Model> models[3];
 	std::unique_ptr<LoadTextures> textures[3];

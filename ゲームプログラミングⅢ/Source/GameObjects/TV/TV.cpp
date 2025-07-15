@@ -16,7 +16,7 @@ void TV::Initialize()
 	textures[1]->LoadRoughness("Data/Model/tv_assets/tv_B/textures/tv_B_Roughness.png");
 
 	// ê›íË
-	position = { -10.0f,1.5f,3.5f };
+	position = { -10.5f,1.5f,2.5f };
 	angle = { 0,DirectX::XMConvertToRadians(180),0 };
 	scale = { 0.01f,0.01f,0.01f };
 }

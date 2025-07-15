@@ -128,6 +128,10 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 ka = { 0.2f, 0.2f, 0.2f, 1.0f }; // 環境光に対する反射係数
     float4 kd = { 0.8f, 0.8f, 0.8f, 1.0f }; // 拡散光に対する反射係数
     float4 ks = { 1.0f, 1.0f, 1.0f, 1.0f }; // 鏡面光に対する反射係数    
+       
+    float attenuationConst = 1.0f;
+    float attenuationLinear = 0.1f;
+    float attenuationQuad = 0.01f;   
 
     // シャドウ適用
     //color.rgb = ApplyShadowToObject(pin, color.rgb);
@@ -144,11 +148,18 @@ float4 main(VS_OUT pin) : SV_TARGET
     {
         float3 LP = pointLights[i].position.xyz - pin.position.xyz;
         float len = length(LP);
-        if (len >= pointLights[i].range)
-            continue;
+        //if (len >= pointLights[i].range)
+        //    continue;
+               
         // 距離減衰の計算
         float attenuateLength = saturate(1.0f - len / pointLights[i].range);
-        float attenuation = attenuateLength * attenuateLength;
+        float attenuation = 1.0f / (attenuationConst + attenuationLinear * len + attenuationQuad * len * len);
+        
+        float fadeRange = pointLights[i].range - 5.0f;
+        fadeRange = max(0, fadeRange);
+        float fade = saturate(1.0f - (len - fadeRange) / pointLights[i].range);
+        attenuation *= fade;        
+        
         LP /= len;
         
         // ハーフベクトルの計算
@@ -195,8 +206,16 @@ float4 main(VS_OUT pin) : SV_TARGET
         
         // 距離減衰（仮に最大距離10.0fとする）
         float len = length(centerOnTorus - pin.position.xyz);
-        float attenuateLength = saturate(1.0f - len / torusLights[i].range);
-        float attenuation = attenuateLength * attenuateLength;
+        
+        //float attenuateLength = saturate(1.0f - len / torusLights[i].range);
+        //float attenuation = attenuateLength * attenuateLength;
+        
+        // 物理ベース減衰 + フェードアウト
+        float fadeRange = torusLights[i].range - 5.0f;
+        fadeRange = max(0, fadeRange);
+        float attenuation = 1.0f / (attenuationConst + attenuationLinear * len + attenuationQuad * len * len);
+        float fade = saturate(1.0f - (len - fadeRange) / torusLights[i].range);
+        attenuation *= fade;
         
         //return float4(attenuation.xxx, 1);
         
@@ -219,7 +238,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     }
     // 線光源の実装
     float3 lineDiffuse = 0, lineSpecular = 0;
-    for (i = 0; i < 45; ++i)
+    for (i = 0; i < 47; ++i)
     {
         for (int s = 0; s < 6; ++s)
         {
@@ -228,10 +247,20 @@ float4 main(VS_OUT pin) : SV_TARGET
              
             float3 LP = normalize(pointOnLine - pin.position.xyz);
             float len = length(pointOnLine - pin.position.xyz);
-            if (len >= lineLights[i].range)
-                continue;
+            //if (len >= lineLights[i].range)
+            //    continue;
              
-            float attenuation = pow(saturate(1.0f - len / lineLights[i].range), 2.0f);
+            //float attenuation = pow(saturate(1.0f - len / lineLights[i].range), 2.0f);
+                        
+            // 物理ベース減衰
+            float attenuation = 1.0f / (attenuationConst + attenuationLinear * len + attenuationQuad * len * len);
+            
+            // フェードアウト（範囲外でも滑らかに減衰）
+            float fadeRange = lineLights[i].range - 5.0f;
+            fadeRange = max(0, fadeRange);
+            float fade = saturate(1.0f - (len - fadeRange) / lineLights[i].range);
+            attenuation *= fade;
+
              
             float3 H = normalize(V + LP);
             float NdotL = saturate(dot(N, LP));

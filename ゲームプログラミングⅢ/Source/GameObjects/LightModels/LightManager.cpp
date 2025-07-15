@@ -11,7 +11,7 @@ void LightManager::Initialize()
 	Benchmark bench;
 	bench.begin();
 	// ライトの強さ
-	lightPower = 1;
+	lightPower = 0.6f;
 
 	// 点光源の初期化
 	{
@@ -168,13 +168,15 @@ void LightManager::Initialize()
 		lightData.emplace_back(LightData{ {-23.0f, LIGHT_HEIGHT, -13.0f}, 90, 1 });
 		lightData.emplace_back(LightData{ {-21.0f, LIGHT_HEIGHT, -16.0f},  0, 1 });
 		lightData.emplace_back(LightData{ {-23.0f, LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-28.0f, LIGHT_HEIGHT, -17.0f},  0, 1 });
 
 		/* OBJなし */
 		lightData.emplace_back(LightData{ { 24.0f,LIGHT_HEIGHT, -13.0f}, 90, 1 });
 		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT, -16.0f},0, 1 });
 		lightData.emplace_back(LightData{ { 24.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 28.0f,LIGHT_HEIGHT, -17.0f},  0, 1 });
 
-		for (int i = 0; i < 16; ++i) {
+		for (int i = 0; i < 18; ++i) {
 			lineLights.emplace_back(LineLightConstants{ {0,0,0,0},{0,0,0,0},{lightColor.red},LINELIGHT_RANGE });
 		}
 
@@ -206,8 +208,8 @@ void LightManager::Initialize()
 		lightData.emplace_back(LightData{ { 17.0f,LIGHT_HEIGHT,  5.0f}, 90, 1 });
 
 		/* 西廊下 */
-		lightData.emplace_back(LightData{ {-21.0f,LIGHT_HEIGHT,   1.5f}, 0, 1 });
-		lightData.emplace_back(LightData{ {-21.0f,LIGHT_HEIGHT, -10.0f}, 0, 1 });
+		lightData.emplace_back(LightData{ {-21.0f,LIGHT_HEIGHT,   0.0f}, 0, 1 });
+		lightData.emplace_back(LightData{ {-21.0f,LIGHT_HEIGHT,  -8.5f}, 0, 1 });
 
 		/* OBJ緑 */
 		lightData.emplace_back(LightData{ {-11.0f,LIGHT_HEIGHT,  -9.0f},  0, 1 });
@@ -219,12 +221,12 @@ void LightManager::Initialize()
 
 		// 紫ライト -------------------------------------------------------------------------------------------------------
 		/* テレビ部屋 */
-		lightData.emplace_back(LightData{ { 16.0f,LIGHT_HEIGHT, -5.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { -4.0f,LIGHT_HEIGHT,  5.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { -16.0f,LIGHT_HEIGHT,  5.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {  -4.0f,LIGHT_HEIGHT,  5.0f}, 90, 1 });
 
 		/* 東廊下 */
-		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT,  1.0f}, 0, 1 });
-		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT, -9.5f}, 0, 1 });
+		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT,  0.0f}, 0, 1 });
+		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT, -8.5f}, 0, 1 });
 
 		/* OBJ紫 */
 		lightData.emplace_back(LightData{ { 11.0f, LIGHT_HEIGHT,  -8.0f},  0, 1 });
@@ -322,9 +324,9 @@ void LightManager::Update()
 		// 線光源
 		for (int i = 0; i < LINELIGHT_MAX; ++i) {
 			if (i < 4) { lineLights.at(i).color       = { lightColor.blue }; }
-			else if (i < 20) { lineLights.at(i).color = { lightColor.red }; }
-			else if (i < 33) { lineLights.at(i).color = { lightColor.yellow }; }
-			else if (i < 39) { lineLights.at(i).color = { lightColor.green }; }
+			else if (i < 22) { lineLights.at(i).color = { lightColor.red }; }
+			else if (i < 35) { lineLights.at(i).color = { lightColor.yellow }; }
+			else if (i < 41) { lineLights.at(i).color = { lightColor.green }; }
 			else if (i < LINELIGHT_MAX) { lineLights.at(i).color = { lightColor.purple }; }
 		}
 	}
@@ -432,19 +434,19 @@ void LightManager::DebugGUI()
 			LineLightDebug("three seats room(red)",      4,  6);
 			LineLightDebug("one seats room(red)",        7,  9);
 			LineLightDebug("large corridor(red)",       10, 13);
-			LineLightDebug("OBJ corner(red)",           14, 16);
-			LineLightDebug("No OBJ(red)",               17, 19);
+			LineLightDebug("OBJ corner(red)",           14, 17);
+			LineLightDebug("No OBJ(red)",               18, 21);
 
-			LineLightDebug("north corridor(yellow)",    20, 25);
-			LineLightDebug("entrance(yellow)",          26, 32);
+			LineLightDebug("north corridor(yellow)",    22, 27);
+			LineLightDebug("entrance(yellow)",          28, 34);
 
-			LineLightDebug("Laboratory(green)",         33, 34);
-			LineLightDebug("west corridor(green)",      35, 36);
-			LineLightDebug("OBJ green(green)",          37, 38);
+			LineLightDebug("Laboratory(green)",         35, 36);
+			LineLightDebug("west corridor(green)",      37, 38);
+			LineLightDebug("OBJ green(green)",          39, 40);
 
-			LineLightDebug("TV room(purple)",           39, 40);
-			LineLightDebug("east corridor(purple)",     41, 42);
-			LineLightDebug("OBJ purple(purple)",        43, LINELIGHT_MAX - 1);			
+			LineLightDebug("TV room(purple)",           41, 42);
+			LineLightDebug("east corridor(purple)",     43, 44);
+			LineLightDebug("OBJ purple(purple)",        45, LINELIGHT_MAX - 1);			
 
 			ImGui::TreePop();
 		}
