@@ -38,7 +38,7 @@ void Game_Clear::Update(float elapsedTime)
 {
 
 
-	if (GameCleartime >= 5.0f) {
+	if (GameCleartime >= 7.0f) {
 		if (!sceneTrans)
 		{
 
@@ -52,7 +52,7 @@ void Game_Clear::Update(float elapsedTime)
 		{
 			// フラグが立っている間タイマーを加算し、1秒以上経ったらシーン切り替え
 			transTimer += elapsedTime;
-			if (transTimer >= 10.0f && nextScene != nullptr)
+			if (transTimer >= 3.0f && nextScene != nullptr)
 			{
 				SceneManager::instance().ChangeScene(new SceneLoading(nextScene));
 				nextScene = nullptr; // 多重遷移防止
