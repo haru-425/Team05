@@ -2,7 +2,7 @@
 #include"Scene.h"
 #include"System/Sprite.h"
 #include"Life.h"
-
+#include "RankSystem/Ranksystem.h"
 class Game_Clear :public Scene
 {
 public:
@@ -24,8 +24,10 @@ public:
 	//GUI描画
 	void DrawGUI() {}
 private:
-	Sprite* GameOver;
-	float GameCleartime = 0.0f; ///< デバッグ用タイマー 
+	Sprite* s_rank;
+	Sprite* s_result;
+	float GameCleartime = 0.0f; ///< デバッグ用タイマー
+	RankSystem::Rank result;
 
 	float timer = 0.0f; // タイマー
 	float transTimer = 0.0f; // シーン遷移タイマー

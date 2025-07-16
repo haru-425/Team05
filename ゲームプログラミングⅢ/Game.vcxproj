@@ -46,6 +46,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>Rubot</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -173,6 +174,7 @@
     <ClInclude Include="Source\System\BasicShader.h" />
     <ClInclude Include="Source\System\bloom.h" />
     <ClInclude Include="Source\System\CustomShader.h" />
+    <ClInclude Include="Source\System\difficulty.h" />
     <ClInclude Include="Source\System\FrameBuffer.h" />
     <ClInclude Include="Source\System\FullScreenQuad.h" />
     <ClInclude Include="Source\System\GamePad.h" />
@@ -450,6 +452,9 @@
     <ProjectReference Include="External\DirectXTex\DirectXTex_Desktop_2022.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Source\Game.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

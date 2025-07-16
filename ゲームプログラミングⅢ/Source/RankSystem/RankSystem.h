@@ -13,20 +13,21 @@ private:
 		B,
 		C,
 	};
+public:
 	struct Rank {
 		RankCode Task;
 		RankCode Death;
 		RankCode Result;
 	};
 	Rank rank;
-public:
+
 	static RankSystem& Instance()
 	{
 		static RankSystem instance;
 		return instance;
 	}
-	RankSystem();
-	~RankSystem();
+	RankSystem() {};
+	~RankSystem() {};
 	void SetRank(float task, float alltask, float life) {
 		float score = task / alltask;
 		if (score >= 80.f / 100.f) rank.Task = RankCode::S;
@@ -53,13 +54,5 @@ public:
 
 
 	}
-	Rank GetRank() { return rank };
+	Rank GetRank() { return rank; };
 };
-
-RankSystem::RankSystem()
-{
-}
-
-RankSystem::~RankSystem()
-{
-}
