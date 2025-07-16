@@ -105,7 +105,8 @@ void UI::GetSelectedUI(const DirectX::XMFLOAT2& mousePos)
         (sprData.spritePos.y <= mousePos.y && sprData.spritePos.y + sprData.spriteSize.y >= mousePos.y))
     {
         isHit = true;
-#if 1
+#if 0
+        /// “–‚½‚è”»’èŠm”F—p
         OutputDebugStringA("hit!\n");
 #endif
     }

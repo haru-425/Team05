@@ -16,6 +16,7 @@
 #include "System/SettingsManager.h"
 #include "stdio.h"
 #include "System/ResourceManager.h"
+#include "System/Input.h"
 
 // êÇíºìØä˙ä‘äuê›íË
 static const int syncInterval = 1;
@@ -76,7 +77,8 @@ void Framework::Update(float elapsedTime)
 	//sceneGame.Update(elapsedTime);
 	SceneManager::instance().Update(elapsedTime);
 
-	if (GetAsyncKeyState(VK_LMENU) & 0x8000 && GetAsyncKeyState(VK_RETURN) & 0x0001)
+	GamePad& input = Input::Instance().GetGamePad();
+	if ((input.GetButtonDown() & GamePad::F2))
 	{
 		Graphics::Instance().StylizeWindow(!Graphics::Instance().GetScreenMode());
 	}
@@ -178,8 +180,13 @@ int Framework::Run()
 			float elapsedTime = timer.TimeInterval();
 
 			Update(elapsedTime);
+
 			Render(elapsedTime);
 			elapsed = elapsedTime;
+
+			/// èIóπèàóù
+			if (SceneManager::instance().GetIsExit())
+				break;
 		}
 	}
 	return static_cast<int>(msg.wParam);
@@ -207,7 +214,9 @@ LRESULT CALLBACK Framework::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LP
 	case WM_CREATE:
 		break;
 	case WM_KEYDOWN:
+#ifdef _DEBUG
 		if (wParam == VK_ESCAPE) PostMessage(hWnd, WM_CLOSE, 0, 0);
+#endif
 		break;
 	case WM_ENTERSIZEMOVE:
 		// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
@@ -218,6 +227,7 @@ LRESULT CALLBACK Framework::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LP
 		// Here we reset everything based on the new window dimensions.
 		timer.Start();
 		break;
+
 	case WM_SIZE :
 	{
 		RECT clientRect = {};
