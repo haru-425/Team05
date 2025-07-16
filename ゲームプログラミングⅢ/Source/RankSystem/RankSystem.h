@@ -53,7 +53,7 @@ public:
 
 
 	}
-	Rank GetRank() { return rank };
+	Rank GetRank() { return rank; };
 };
 
 RankSystem::RankSystem()
