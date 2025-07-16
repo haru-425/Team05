@@ -222,4 +222,7 @@
     <None Include="Shader\Skinning.hlsli" />
     <None Include="Shader\Sprite.hlsli" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Source\Game.rc" />
+  </ItemGroup>
 </Project>
