@@ -44,5 +44,26 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 
 	Framework f(hWnd);
 	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&f));
+
+	// アイコンをリソースから読み込む
+	HICON hIcon = (HICON)LoadImage(
+		GetModuleHandle(NULL),
+		MAKEINTRESOURCE(3333),  // .rcで定義したID
+		IMAGE_ICON,
+		32, 32,                      // サイズ（タスクバー向け）
+		LR_DEFAULTCOLOR
+	);
+
+	HICON hIconSmall = (HICON)LoadImage(
+		GetModuleHandle(NULL),
+		MAKEINTRESOURCE(333),
+		IMAGE_ICON,
+		16, 16,                      // 小アイコン（ウィンドウ左上）
+		LR_DEFAULTCOLOR
+	);
+
+	// ウィンドウにアイコンを設定
+	SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);       // タスクバー用
+	SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall);
 	return f.Run();
 }
