@@ -283,7 +283,7 @@ void Enemy::Updatemovement(float elapsedTime)
     if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition()), posVec))) < 3.0f)
     {
         targetVec = DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition());
-        jageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
+        JageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
         Animationplay();
         nearTarget = true;
     }
@@ -323,7 +323,7 @@ void Enemy::Updatemovement(float elapsedTime)
             return;
         }
         targetPosition = route[currentTargetIndex];
-        jageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
+        JageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
         state = State::turn;
         Animationplay();
        /* if (stage->NearWayPointIndex(targetPosition) == 12 || stage->NearWayPointIndex(targetPosition) == 21)
@@ -354,7 +354,7 @@ void Enemy::refinePath(int start, int current)
     }
 }
 
-void Enemy::jageDirection(DirectX::XMVECTOR dir)
+void Enemy::JageDirection(DirectX::XMVECTOR dir)
 {
     olddirection = direction;
     DirectX::XMFLOAT3 dirf;
@@ -583,6 +583,24 @@ void Enemy::Animationplay()
         default:
             break;
         }
+        break;
+    default:
+        break;
+    }
+}
+
+void Enemy::SetDifficulty()
+{
+    switch (Difficulty::Instance().GetDifficulty())
+    {
+    case Difficulty::easy:
+        searchRange = EASY_SR;
+        lockonRange = EASY_LR;
+        break;
+    case Difficulty::normal:
+    case Difficulty::hard:
+        searchRange = NORMAL_AND_HARD_SR;
+        lockonRange = NORMAL_AND_HARD_LR;
         break;
     default:
         break;

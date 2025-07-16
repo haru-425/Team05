@@ -170,6 +170,7 @@
     <ClInclude Include="Source\System\BasicShader.h" />
     <ClInclude Include="Source\System\bloom.h" />
     <ClInclude Include="Source\System\CustomShader.h" />
+    <ClInclude Include="Source\System\difficulty.h" />
     <ClInclude Include="Source\System\FrameBuffer.h" />
     <ClInclude Include="Source\System\FullScreenQuad.h" />
     <ClInclude Include="Source\System\GamePad.h" />

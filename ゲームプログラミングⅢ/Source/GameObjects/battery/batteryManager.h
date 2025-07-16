@@ -14,11 +14,11 @@ public:
         return instance;
     }
 
-    void update() 
+    void Update(float elapsedTime)
     {
         for (auto battery : hasBattery)
         {
-            battery.update();
+            battery.Update(elapsedTime);
         }
         if (hasBattery.size() >= BATTERY_MAX && !hasBattery.empty())
         {
@@ -26,17 +26,18 @@ public:
         }
     }
 
-    void render()
+    void Render(const RenderContext& rc, ModelRenderer* renderer)
     {
         for (auto battery : hasBattery)
         {
-            battery.render();
+            battery.Render(rc, renderer);
         }
     }
 
     void addBattery(DirectX::XMFLOAT3 pos)
     {
-		hasBattery.push_back(battery(pos));
+		hasBattery.push_back(battery());
+		hasBattery.back().setPos(pos);
     }
 
     void deleteBattery(DirectX::XMFLOAT3 pos)
