@@ -4,19 +4,28 @@
 #include "SceneTitle.h"
 void Game_Clear::Initialize()
 {
-	GameOver = new Sprite("Data/Sprite/GameOver.png");
+	s_rank = new Sprite("Data/Sprite/rank.png");
+	s_result = new Sprite("Data/Sprite/result.png");
 	timer = 0.0f; // タイマー初期化
 	transTimer = 0.0f; // シーン遷移タイマー初期化
 	sceneTrans = false; // シーン遷移フラグ初期化
+	RankSystem::Instance().SetRank(1, 1, 3);
+	result = RankSystem::Instance().GetRank();
+
 }
 
 void Game_Clear::Finalize()
 {
 
-	if (GameOver != nullptr)
+	if (s_rank != nullptr)
 	{
-		delete GameOver;
-		GameOver = nullptr;
+		delete s_rank;
+		s_rank = nullptr;
+	}
+	if (s_result != nullptr)
+	{
+		delete s_result;
+		s_result = nullptr;
 	}
 	GameCleartime = 0.0f; ///< デバッグ用タイマー初期化
 
@@ -43,7 +52,7 @@ void Game_Clear::Update(float elapsedTime)
 		{
 			// フラグが立っている間タイマーを加算し、1秒以上経ったらシーン切り替え
 			transTimer += elapsedTime;
-			if (transTimer >= 3.0f && nextScene != nullptr)
+			if (transTimer >= 10.0f && nextScene != nullptr)
 			{
 				SceneManager::instance().ChangeScene(new SceneLoading(nextScene));
 				nextScene = nullptr; // 多重遷移防止
@@ -67,7 +76,6 @@ void Game_Clear::Render()
 	RenderContext rc;
 	rc.deviceContext = dc;
 	rc.renderState = graphics.GetRenderState();
-	GameOver->Render(rc, 100, 100, 0, 1095, 316, 0, 1, 1, 1, 1);
 
 
 	/// フレームバッファのクリアとアクティベート（ポストプロセス用）
@@ -88,8 +96,45 @@ void Game_Clear::Render()
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::GameOver)].Get());
 
 	{
-		GameOver->Render(rc, 100, 100, 0, 1095, 316, 0, 1, 1, 1, 1);
 
+		// 画面サイズ取得（仮の関数名。必要に応じて変更してください）
+		int screenWidth = Graphics::Instance().GetScreenWidth();
+		int screenHeight = Graphics::Instance().GetScreenHeight();
+		// 基準解像度（固定値）
+		constexpr float BASE_WIDTH = 1280.0f;
+		constexpr float BASE_HEIGHT = 720.0f;
+		// スケーリング係数（横幅を基準）
+		float scaleX = screenWidth / BASE_WIDTH;
+		float scaleY = screenHeight / BASE_HEIGHT;
+		// 大きなスプライトのサイズ
+		int bigSize = 512;
+
+		// 小さなスプライトのサイズ
+		int smallSize = 64;
+		int resultsize = smallSize * 8;
+
+		// --- 1. 画面中央右（中央Y, 右端に寄せる） ---
+		int resultX = screenWidth / 4 * 3 - bigSize / 2;
+		int resultY = screenHeight / 2 - bigSize / 2;
+		s_rank->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, 0, 1, 1, 1, 1);
+
+		// --- 2. 画面左上中央（左端に寄せる, 上から1/4の位置） ---
+		int taskX = screenWidth / 10 * 5 - smallSize / 2;
+		int taskY = screenHeight / 4 - smallSize / 2;
+		s_rank->Render(rc, taskX, taskY, 0, smallSize * scaleX, smallSize * scaleY, 512 * float(result.Task), 0, 512, 512, 0, 1, 1, 1, 1);
+
+		taskX = screenWidth / 10 * 5 - resultsize - smallSize / 2;
+		taskY = screenHeight / 4 - smallSize / 2;
+		s_result->Render(rc, taskX, taskY, 0, resultsize * scaleX, smallSize * scaleY, 0, 512, 4096, 512, 0, 1, 1, 1, 1);
+
+		// --- 3. 画面左下中央（左端に寄せる, 下から1/4の位置） ---
+		int deathX = screenWidth / 10 * 5 - smallSize / 2;
+		int deathY = screenHeight * 3 / 4 - smallSize / 2;
+		s_rank->Render(rc, deathX, deathY, 0, smallSize * scaleX, smallSize * scaleY, 512 * float(result.Death), 0, 512, 512, 0, 1, 1, 1, 1);
+		deathX = screenWidth / 10 * 5 - resultsize - smallSize / 2;
+		deathY = screenHeight * 3 / 4 - smallSize / 2;
+
+		s_result->Render(rc, deathX, deathY, 0, resultsize * scaleX, smallSize * scaleY, 0, 0, 4096, 512, 0, 1, 1, 1, 1);
 
 	}
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->deactivate(dc);
@@ -101,11 +146,17 @@ void Game_Clear::Render()
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
 
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Glitch)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->deactivate(dc);
+
 	//crt
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->deactivate(dc);
 
 	//crt
@@ -121,5 +172,5 @@ void Game_Clear::Render()
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->shader_resource_views[0].GetAddressOf(), 10, 1
 	);
 
-	//シーン切り替えはタイトルからグラフィックシーンを参考に
+
 }
