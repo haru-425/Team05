@@ -32,7 +32,12 @@ public:
     //ƒV[ƒ“Ø‚è‘Ö‚¦
     void ChangeScene(Scene* scene);
 
+    void SetIsExit(bool isExit) { this->isExit = isExit; }
+    bool GetIsExit() const { return isExit; }
+
 private:
     Scene* currentScene = nullptr;
     Scene* nextScene = nullptr;
+
+    bool isExit = false;
 };
