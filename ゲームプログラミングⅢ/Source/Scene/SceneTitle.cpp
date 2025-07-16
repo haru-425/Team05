@@ -9,9 +9,14 @@
 #include "Scene/SceneMattsu.h"
 #include "./LightModels/LightManager.h"
 #include "Camera/CameraController/SceneCameraController.h"
+#include "System/SettingsManager.h"
 #include <algorithm>
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
+
+/// データをロードしてUIの表示を合わせるため
+static bool isStart = false;
+
 //初期化
 void SceneTitle::Initialize()
 {
@@ -20,6 +25,8 @@ void SceneTitle::Initialize()
     TitleTimer = 0.25f; // タイトル画面のタイマー初期化
     TitleSignalTimer = 0.0f; // タイトル画面の信号タイマー初期化
     sceneTrans = false; // シーン遷移フラグ初期化
+
+    isStart = true;
 
     /// ステージ初期化
     {
@@ -50,14 +57,40 @@ void SceneTitle::Initialize()
     //    ui.emplace_back(std::make_unique<UI>("./Data/Sprite/image.png"));
     //}
 
+    /// ゲーム選択
     um.CreateUI("./Data/Sprite/image.png", "Game");
     um.CreateUI("./Data/Sprite/image.png", "Option");
     um.CreateUI("./Data/Sprite/image.png", "Exit");
+    /// オプション項目
     um.CreateUI("./Data/Sprite/back.png", "OptionBack");
-    um.CreateUI("./Data/Sprite/image.png", "OptionBarBack");
-    um.CreateUI("./Data/Sprite/image.png", "OptionBar");
     um.CreateUI("./Data/Sprite/image.png" ,"Sensitivity");
-    um.CreateUI("./Data/Sprite/image.png");
+    um.CreateUI("./Data/Sprite/volume.png", "Main");
+    um.CreateUI("./Data/Sprite/volume.png", "BGM");
+    um.CreateUI("./Data/Sprite/volume.png", "SE");
+    /// 感度
+    um.CreateUI("./Data/Sprite/image.png", "OptionBarBack");
+    um.CreateUI("./Data/Sprite/image.png", "OptionBar"); ///< 9
+    um.CreateUI("./Data/Sprite/numbers.png", "100");
+    um.CreateUI("./Data/Sprite/numbers.png", "10");
+    um.CreateUI("./Data/Sprite/numbers.png", "1");
+    /// マスター用バー
+    um.CreateUI("./Data/Sprite/image.png", "MainBarBack");
+    um.CreateUI("./Data/Sprite/image.png", "MainBar"); ///< 14
+    um.CreateUI("./Data/Sprite/numbers.png", "Main100");
+    um.CreateUI("./Data/Sprite/numbers.png", "Main10");
+    um.CreateUI("./Data/Sprite/numbers.png", "Main1");
+    /// BGM用バー
+    um.CreateUI("./Data/Sprite/image.png", "BGMBarBack");
+    um.CreateUI("./Data/Sprite/image.png", "BGMBar"); ///< 19
+    um.CreateUI("./Data/Sprite/numbers.png", "BGM100");
+    um.CreateUI("./Data/Sprite/numbers.png", "BGM10");
+    um.CreateUI("./Data/Sprite/numbers.png", "BGM1");
+    /// SE用バー
+    um.CreateUI("./Data/Sprite/image.png", "SEBarBack");
+    um.CreateUI("./Data/Sprite/image.png", "SEBar"); ///< 24
+    um.CreateUI("./Data/Sprite/numbers.png", "SE100");
+    um.CreateUI("./Data/Sprite/numbers.png", "SE10");
+    um.CreateUI("./Data/Sprite/numbers.png", "SE1");
 
 	// リスナーの初期位置と向きを設定
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
@@ -167,7 +200,6 @@ void SceneTitle::Update(float elapsedTime)
     LightManager::Instance().Update();
 
     UpdateUI();
-	i_cameraController->Update(elapsedTime);
 
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
@@ -261,7 +293,8 @@ void SceneTitle::Render()
             1, 1, 1, 1
         );
     }
-    RenderUI(rc);
+    /// UI描画
+    um.Render(rc);
 
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoiseChange)]->deactivate(dc);
     //ポストプロセス適用
@@ -404,44 +437,73 @@ void SceneTitle::UpdateConstants(RenderContext& rc)
     rc.projection = camera.GetProjection();
 }
 
-void SceneTitle::RenderUI(const RenderContext& rc)
-{
-    //for (int i = 0; i < 7; ++i)
-    //{
-    //    float color[4] = { uiParam[i].color.x, uiParam[i].color.y, uiParam[i].color.z, uiParam[i].color.w };
-    //    uiSprits[i]->Render(rc, uiParam[i].position.x, uiParam[i].position.y, uiParam[i].position.z,
-    //        uiParam[i].dw, uiParam[i].dh,
-    //        uiParam[i].sx, uiParam[i].sy,
-    //        uiParam[i].sw, uiParam[i].sh,
-    //        uiParam[i].angle,
-    //        color[0], color[1], color[2], color[3]);
-    //}
-    //for (auto& uis : ui)
-    //{
-    //    uis->Render(rc);
-    //}
-    um.Render(rc);
-}
-
-static constexpr float BAR_WIDTH    = 1173; ///< バーの長さ
 static constexpr float BAR_MIN      = 804;  ///< バーの始点
 static constexpr float BAR_MAX      = 1173; ///< バーの終点
+static constexpr float BAR_WIDTH    = BAR_MAX - BAR_MIN; ///< バーの長さ
 static constexpr float SLIDER_WIDTH = 16;   ///< スライダーの幅
-static int num = 0;
+static int sensitivity  = 0; ///< 感度
+static int mVolume      = 0; ///< マスター
+static int bgmVolume    = 0; ///< bgm
+static int seVolume     = 0; ///< se
+static bool isChangeSettings = false;
 void SceneTitle::UpdateUI()
 {
+    static bool selectOptions = false;
+    static bool selectStart = false;
+    static bool previousDow = false;
+    static int lastSelectID = -1;
+    /// 最初シーンを読み込んだときだけ処理が通り
+    /// UIを設定に合わせるために設定の値を表示に使う変数に代入
+    if (isStart)
+    {
+        selectOptions = false;
+        selectStart = false;
+        previousDow = false;
+        lastSelectID = -1;
+
+        GameSettings setting = SettingsManager::Instance().GetGameSettings();
+        sensitivity = setting.sensitivity  * 100; ///< 感度
+        mVolume     = setting.masterVolume * 100; ///< マスター
+        bgmVolume   = setting.bgmVolume    * 100; ///< BGM
+        seVolume    = setting.seVolume     * 100; ///< SE
+
+        /// スライダーの位置を合わせる                     バーの端からバーの長さを設定値で割ったところがスライダーの位置
+        um.GetUIs().at(9)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.sensitivity) - SLIDER_WIDTH;
+        um.GetUIs().at(14)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.masterVolume) - SLIDER_WIDTH;
+        um.GetUIs().at(19)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.bgmVolume) - SLIDER_WIDTH;
+        um.GetUIs().at(24)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.seVolume) - SLIDER_WIDTH;
+    }
+
     Mouse& mouse = Input::Instance().GetMouse();
 
     /// マウス座標取得
     DirectX::XMFLOAT2 mousePos = { (float)Input::Instance().GetMouse().GetPositionX(), (float)Input::Instance().GetMouse().GetPositionY() };
     um.Update(mousePos);
 
+
+#if 1
+    /// ゲーム、設定、終了の三項目の選択を快適にするため
+    if (!um.GetUIs().at(0)->GetIsHit() && !um.GetUIs().at(1)->GetIsHit() && !um.GetUIs().at(3)->GetIsHit())
+    {
+        if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+        {
+            if (selectOptions)
+                selectOptions = false;
+            else if (selectStart)
+                selectStart = false;
+        }
+    }
+#endif
+
     /// メニューの選択肢
     for (auto& ui : um.GetUIs())
     {
-        if (ui->GetID() > 2)break;
+        int id = ui->GetID();
+        if (!(id == 0 || id == 1 || id == 2 || id == 9 ||
+            id == 14 || id == 19 || id == 24))continue;
 
-        if (ui->GetIsHit())
+
+        if (ui->GetIsHit() || (id == 1 && selectOptions) || (id == 0 && selectStart))
         {
             ui->GetSpriteData().color = { 1,1,1,1 };
         }
@@ -449,9 +511,6 @@ void SceneTitle::UpdateUI()
             ui->GetSpriteData().color = { 0.660,0.660,0.660,1 };
     }
 
-    static bool selectOptions = false;
-    static bool previousDow = false;
-    static int lastSelectID = -1;
     if (!(mouse.GetButton() & mouse.BTN_LEFT))
     {
         previousDow = false;
@@ -460,43 +519,109 @@ void SceneTitle::UpdateUI()
     for (auto& ui : um.GetHitAllUI())
     {
         int id = ui->GetID();
-        if (id > 3 && id < 5)continue;
 
         switch (id)
         {
         case 0: ///< id 1はゲーム開始
             if (mouse.GetButtonDown() & mouse.BTN_LEFT)
-                isStartGame = true;
-            break;
-        case 1: ///< id 2は設定
-            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
-                selectOptions = !selectOptions;
-
-            /// オプション項目の表示
-            if (selectOptions)
             {
-                for (int i = 3; i < um.GetUIs().size(); ++i)
-                {
-                    um.GetUIs().at(i)->GetSpriteData().isVisible = true;
-                }
+                selectStart = !selectStart;
+                if (selectOptions)
+                    selectOptions = !selectOptions;
+
+                isStartGame = true;
             }
 
             break;
+        case 1: ///< id 2は設定
+            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+            {
+                selectOptions = !selectOptions;
+                if (selectStart)
+                    selectStart = !selectStart;
+            }
+            break;
         case 2: ///< id 2は終了
             if (mouse.GetButtonDown() & mouse.BTN_LEFT)
-                exit(0);
+            {
+                /// シーンマネージャーに終了することを伝えて、
+                /// Run 関数内で抜けるようにする
+                /// exit関数はメモリリークが大量発生する可能性があるのでこの方法にする
+                SceneManager::instance().SetIsExit(true);
+            }
+
             break;
-        case 5:
+        case 9:
+            um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
             if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
             {
-                //um.GetUIs().at(id)->GetSpriteData().spritePos.x = mousePos.x - 10;
+                
+                previousDow = true;
+                lastSelectID = id;
+            }
+            break;
+        case 14:
+            um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+            if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+            {
+
+                previousDow = true;
+                lastSelectID = id;
+            }
+            break;
+        case 19:
+            um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+            if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+            {
+
+                previousDow = true;
+                lastSelectID = id;
+            }
+            break;
+        case 24:
+            um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+            if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+            {
+
                 previousDow = true;
                 lastSelectID = id;
             }
             break;
         default:
+            if (!previousDow)
+            {
+                um.GetUIs().at(9)->GetSpriteData().spriteSize = { 16,54 };
+                um.GetUIs().at(14)->GetSpriteData().spriteSize = { 16,54 };
+                um.GetUIs().at(19)->GetSpriteData().spriteSize = { 16,54 };
+                um.GetUIs().at(24)->GetSpriteData().spriteSize = { 16,54 };
+            }
             break;
         }
+    }
+
+    /// オプション項目の表示
+    if (selectOptions)
+    {
+        for (int i = 3; i < um.GetUIs().size(); ++i)
+        {
+            um.GetUIs().at(i)->GetSpriteData().isVisible = true;
+        }
+    }
+    else
+    {
+        for (int i = 3; i < um.GetUIs().size(); ++i)
+        {
+            um.GetUIs().at(i)->GetSpriteData().isVisible = false;
+        }
+    }
+    /// ゲームモードの表示
+    if (selectStart)
+    {
+        um.GetUIs().at(3)->GetSpriteData().isVisible = true;
+    }
+    else if(!selectStart && !selectOptions)
+    {
+        um.GetUIs().at(3)->GetSpriteData().isVisible = false;
     }
 
     /// 感度とかのバーの動作
@@ -508,17 +633,177 @@ void SceneTitle::UpdateUI()
         ///                              ↑マウスの座標 = BAR_MIN + SLIDER_WIDTH / 2
         ///                             /---------------------------------------------------------------/
         /// 
-        /// 
-        mousePos.x = std::clamp((float)mousePos.x, (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
-        num = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x - SLIDER_WIDTH /2;
-        num -= 804.0f; ///< ゲージのUIのX座標
-        float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
-        num /= barWidth/100;
+        if (lastSelectID == 9)
+        {
+            mousePos.x = std::clamp((float)mousePos.x, (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
+            sensitivity = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x - SLIDER_WIDTH / 2;
+            sensitivity -= 804.0f; ///< ゲージのUIのX座標
+            float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
+            sensitivity /= barWidth / 100;
+        }
+        else if (lastSelectID == 14)
+        {
+            mousePos.x = std::clamp((float)mousePos.x, (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
+            mVolume = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x - SLIDER_WIDTH / 2;
+            mVolume -= 804.0f; ///< ゲージのUIのX座標
+            float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
+            mVolume /= barWidth / 100;
+            //OutputDebugStringA("ID 14 is selected\n");
+        }
+        else if (lastSelectID == 19)
+        {
+            mousePos.x = std::clamp((float)mousePos.x, (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
+            bgmVolume = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x - SLIDER_WIDTH / 2;
+            bgmVolume -= 804.0f; ///< ゲージのUIのX座標
+            float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
+            bgmVolume /= barWidth / 100;
+            //OutputDebugStringA("ID 19 is selected\n");
+        }
+        else if (lastSelectID == 24)
+        {
+            mousePos.x = std::clamp((float)mousePos.x, (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
+            seVolume = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x - SLIDER_WIDTH / 2;
+            seVolume -= 804.0f; ///< ゲージのUIのX座標
+            float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
+            seVolume /= barWidth / 100;
+            //OutputDebugStringA("ID 24 is selected\n");
+        }
+    }
+
+    /// 100の位
+    float hundred[4] = { sensitivity / 100, mVolume / 100, bgmVolume / 100, seVolume / 100 };
+    /// 10の位
+    float ten[4] = { (sensitivity / 10) % 10, (mVolume / 10) % 10, (bgmVolume / 10) % 10, (seVolume / 10) % 10 };
+    /// 1の位
+    float one[4] = { sensitivity % 10 , mVolume % 10, bgmVolume % 10, seVolume % 10 };
+    /// 数字 UI の表示処理
+    if (selectOptions || isStart)
+    {
+        if (lastSelectID == 9 || !isStart)
+        {
+            if (hundred[0] == 1)
+            {
+                um.GetUIs().at(10)->GetSpriteData().isVisible = true;
+            }
+            else
+                um.GetUIs().at(10)->GetSpriteData().isVisible = false;
+
+            if (ten[0] >= 0)
+            {
+                um.GetUIs().at(11)->GetSpriteData().isVisible = true;
+                um.GetUIs().at(11)->GetSpriteData().texturePos.x = 30 + 25 * ((int)ten[0] - 1);
+                if (ten[0] == 0 && sensitivity >= 10)
+                    um.GetUIs().at(11)->GetSpriteData().texturePos.x = 30 + 25 * 9;
+            }
+            else
+                um.GetUIs().at(12)->GetSpriteData().isVisible = false;
+
+            um.GetUIs().at(12)->GetSpriteData().texturePos.x = 30 + 25 * ((int)one[0] - 1);
+            if (one[0] == 0 )
+                um.GetUIs().at(12)->GetSpriteData().texturePos.x = 30 + 25 * 9;
+        }
+
+        if (lastSelectID == 14 || !isStart)
+        {
+            if (hundred[1] == 1)
+            {
+                um.GetUIs().at(15)->GetSpriteData().isVisible = true;
+            }
+            else
+                um.GetUIs().at(15)->GetSpriteData().isVisible = false;
+
+            if (ten[1] >= 0)
+            {
+                um.GetUIs().at(16)->GetSpriteData().isVisible = true;
+                um.GetUIs().at(16)->GetSpriteData().texturePos.x = 30 + 25 * ((int)ten[1] - 1);
+                if (ten[1] == 0 && mVolume >= 10)
+                    um.GetUIs().at(16)->GetSpriteData().texturePos.x = 30 + 25 * 9;
+            }
+            else
+                um.GetUIs().at(17)->GetSpriteData().isVisible = false;
+
+            um.GetUIs().at(17)->GetSpriteData().texturePos.x = 30 + 25 * ((int)one[1] - 1);
+            if (one[1] == 0)
+                um.GetUIs().at(17)->GetSpriteData().texturePos.x = 30 + 25 * 9;
+        }
+
+        if (lastSelectID == 19 || !isStart)
+        {
+            if (hundred[2] == 1)
+            {
+                um.GetUIs().at(20)->GetSpriteData().isVisible = true;
+            }
+            else
+                um.GetUIs().at(20)->GetSpriteData().isVisible = false;
+
+            if (ten[2] >= 0)
+            {
+                um.GetUIs().at(21)->GetSpriteData().isVisible = true;
+                um.GetUIs().at(21)->GetSpriteData().texturePos.x = 30 + 25 * ((int)ten[2] - 1);
+                if (ten[2] == 0 && bgmVolume >= 10)
+                    um.GetUIs().at(21)->GetSpriteData().texturePos.x = 30 + 25 * 9;
+            }
+            else
+                um.GetUIs().at(22)->GetSpriteData().isVisible = false;
+
+            um.GetUIs().at(22)->GetSpriteData().texturePos.x = 30 + 25 * ((int)one[2] - 1);
+            if (one[2] == 0)
+                um.GetUIs().at(22)->GetSpriteData().texturePos.x = 30 + 25 * 9;
+        }
+
+        if (lastSelectID == 24 || !isStart)
+        {
+            if (hundred[3] == 1)
+            {
+                um.GetUIs().at(25)->GetSpriteData().isVisible = true;
+            }
+            else
+                um.GetUIs().at(25)->GetSpriteData().isVisible = false;
+
+            if (ten[3] >= 0)
+            {
+                um.GetUIs().at(26)->GetSpriteData().isVisible = true;
+                um.GetUIs().at(26)->GetSpriteData().texturePos.x = 30 + 25 * ((int)ten[3] - 1);
+                if (ten[3] == 0 && seVolume >= 10)
+                    um.GetUIs().at(26)->GetSpriteData().texturePos.x = 30 + 25 * 9;
+            }
+            else
+                um.GetUIs().at(26)->GetSpriteData().isVisible = false;
+
+            um.GetUIs().at(27)->GetSpriteData().texturePos.x = 30 + 25 * ((int)one[3] - 1);
+            if (one[3] == 0)
+                um.GetUIs().at(27)->GetSpriteData().texturePos.x = 30 + 25 * 9;
+        }
     }
 
     ImGui::Begin("test");
     char buffer[256];
-    sprintf_s(buffer, "testValue %d", num);
+    sprintf_s(buffer, "testValue %d", sensitivity);
     ImGui::Text(buffer);
     ImGui::End();
+
+    if (isStart)isStart = false;
+
+#if 1
+    /// 設定を変更した場合保存
+    GameSettings setting;
+    if (!selectOptions)
+    {
+        if (sensitivity * 0.01 != setting.sensitivity)isChangeSettings = true;
+        else if (mVolume * 0.01 != setting.masterVolume)isChangeSettings = true;
+        else if (bgmVolume * 0.01 != setting.bgmVolume)isChangeSettings = true;
+        else if (seVolume * 0.01 != setting.seVolume)isChangeSettings = true;
+    }
+
+    if (isChangeSettings)
+    {
+        setting.sensitivity = sensitivity * 0.01;
+        setting.masterVolume = mVolume * 0.01;
+        setting.bgmVolume = bgmVolume * 0.01;
+        setting.seVolume = seVolume * 0.01;
+        SettingsManager::Instance().SetGameSettings(setting);
+        SettingsManager::Instance().Save();
+        isChangeSettings = false;
+    }
+#endif
 }

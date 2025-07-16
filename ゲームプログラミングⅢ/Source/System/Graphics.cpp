@@ -33,7 +33,7 @@ void Graphics::Initialize(HWND hWnd)
 
 		UINT createDeviceFlags = 0;
 #if defined(DEBUG) || defined(_DEBUG)
-		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+		//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 		
 #if 0
@@ -80,13 +80,13 @@ void Graphics::Initialize(HWND hWnd)
 
 
 
-	// DirectXのバージョン
-	D3D_FEATURE_LEVEL featureLevels = D3D_FEATURE_LEVEL_11_1;
-	hr = D3D11CreateDevice(adapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, 0, createDeviceFlags,
-		&featureLevels, 1, D3D11_SDK_VERSION, &device, NULL, &immediateContext);
-	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+		/// DirectXのバージョン
+		D3D_FEATURE_LEVEL featureLevels = D3D_FEATURE_LEVEL_11_1;
+		hr = D3D11CreateDevice(adapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, 0, createDeviceFlags,
+			&featureLevels, 1, D3D11_SDK_VERSION, &device, NULL, &immediateContext);
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-	CreateSwapChain(dxgiFactory6.Get());
+		CreateSwapChain(dxgiFactory6.Get());
 	}
 
 	// レンダーターゲットビューの生成
