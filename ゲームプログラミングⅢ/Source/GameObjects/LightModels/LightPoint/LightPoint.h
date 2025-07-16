@@ -1,9 +1,6 @@
 #pragma once
 
 #include"System/ModelRenderer.h"
-#include "Pursuer/WayPoint.h"
-#include "Pursuer/Edge.h"
-#include "Pursuer/Object.h"
 #include "System/LoadTextures.h"
 
 #include <memory>
@@ -12,9 +9,9 @@
 class LightPoint
 {
 public:
-    LightPoint() {};
+    LightPoint() {}
     LightPoint(DirectX::XMFLOAT3 position);
-    ~LightPoint() {};
+    ~LightPoint() {}
 
     // ÉRÉsÅ[ã÷é~
     LightPoint(const LightPoint&) = delete;

@@ -46,6 +46,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>Rubot</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -122,6 +123,8 @@
     <ClInclude Include="External\imgui-docking\imstb_rectpack.h" />
     <ClInclude Include="External\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="External\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="Source\GameObjects\battery\battery.h" />
+    <ClInclude Include="Source\GameObjects\battery\batteryManager.h" />
     <ClInclude Include="Source\GameObjects\LightModels\LightTorus\LightTorus.h" />
     <ClInclude Include="Source\GameObjects\LightModels\LightPoint\LightPoint.h" />
     <ClInclude Include="Source\GameObjects\LightModels\LightBar\LightBar.h" />
@@ -134,6 +137,8 @@
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\GameObjects\Enemy\Enemy.h" />
     <ClInclude Include="Source\GameObjects\GameObject.h" />
+    <ClInclude Include="Source\GameObjects\Object\Object.h" />
+    <ClInclude Include="Source\GameObjects\Object\ObjectManager.h" />
     <ClInclude Include="Source\GameObjects\Player\Player.h" />
     <ClInclude Include="Source\Life.h" />
     <ClInclude Include="Source\LightDebugCameraController.h" />
@@ -146,11 +151,13 @@
     <ClInclude Include="Source\ProjectileStraigth.h" />
     <ClInclude Include="Source\GameObjects\Character.h" />
     <ClInclude Include="Source\Pursuer\Edge.h" />
-    <ClInclude Include="Source\Pursuer\Object.h" />
+    <ClInclude Include="Source\Pursuer\ObjectBase.h" />
     <ClInclude Include="Source\Pursuer\SearchAI.h" />
     <ClInclude Include="Source\Pursuer\WayPoint.h" />
+    <ClInclude Include="Source\RankSystem\RankSystem.h" />
     <ClInclude Include="Source\Scene\fujimoto.h" />
     <ClInclude Include="Source\Scene\Scene.h" />
+    <ClInclude Include="Source\Scene\SceneClear.h" />
     <ClInclude Include="Source\Scene\SceneGame.h" />
     <ClInclude Include="Source\Scene\SceneGameOver.h" />
     <ClInclude Include="Source\Scene\SceneGraphics.h" />
@@ -167,6 +174,7 @@
     <ClInclude Include="Source\System\BasicShader.h" />
     <ClInclude Include="Source\System\bloom.h" />
     <ClInclude Include="Source\System\CustomShader.h" />
+    <ClInclude Include="Source\System\difficulty.h" />
     <ClInclude Include="Source\System\FrameBuffer.h" />
     <ClInclude Include="Source\System\FullScreenQuad.h" />
     <ClInclude Include="Source\System\GamePad.h" />
@@ -204,6 +212,7 @@
     <ClCompile Include="External\imgui-docking\imgui_impl_dx11.cpp" />
     <ClCompile Include="External\imgui-docking\imgui_impl_win32.cpp" />
     <ClCompile Include="External\imgui-docking\imgui_widgets.cpp" />
+    <ClCompile Include="Source\GameObjects\battery\battery.cpp" />
     <ClCompile Include="Source\GameObjects\LightModels\LightTorus\LightTorus.cpp" />
     <ClCompile Include="Source\GameObjects\LightModels\LightPoint\LightPoint.cpp" />
     <ClCompile Include="Source\GameObjects\LightModels\LightBar\LightBar.cpp" />
@@ -214,6 +223,8 @@
     <ClCompile Include="Source\Camera\CameraController\SceneCameraController.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\GameObjects\Enemy\Enemy.cpp" />
+    <ClCompile Include="Source\GameObjects\Object\Object.cpp" />
+    <ClCompile Include="Source\GameObjects\Object\ObjectManager.cpp" />
     <ClCompile Include="Source\GameObjects\Player\Player.cpp" />
     <ClCompile Include="Source\Life.cpp" />
     <ClCompile Include="Source\LightDebugCameraController.cpp" />
@@ -226,9 +237,11 @@
     <ClCompile Include="Source\ProjectileManager.cpp" />
     <ClCompile Include="Source\ProjectileStraigth.cpp" />
     <ClCompile Include="Source\GameObjects\Character.cpp" />
-    <ClCompile Include="Source\Pursuer\Object.cpp" />
+    <ClCompile Include="Source\Pursuer\ObjectBase.cpp" />
     <ClCompile Include="Source\Pursuer\SearchAI.cpp" />
+    <ClCompile Include="Source\RankSystem\RankSystem.cpp" />
     <ClCompile Include="Source\Scene\fujimoto.cpp" />
+    <ClCompile Include="Source\Scene\SceneClear.cpp" />
     <ClCompile Include="Source\Scene\SceneGame.cpp" />
     <ClCompile Include="Source\Scene\SceneGameOver.cpp" />
     <ClCompile Include="Source\Scene\SceneGraphics.cpp" />
@@ -439,6 +452,9 @@
     <ProjectReference Include="External\DirectXTex\DirectXTex_Desktop_2022.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Source\Game.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

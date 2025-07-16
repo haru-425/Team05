@@ -6,6 +6,7 @@
 #include "./LightModels/LightManager.h"
 #include "Aircon/AirconManager.h"
 #include "TV/TV.h"
+#include "Object/ObjectManager.h"
 
 #include <imgui.h>
 
@@ -66,7 +67,8 @@ void SceneGraphics::Initialize()
 	// ゲームオブジェクトの初期化
 	LightManager::Instance().Initialize();
 	AirconManager::Instance().Initialize();
-	TV::Instance().Initialize();
+	//TV::Instance().Initialize();
+	ObjectManager::Instance().Initialize();
 
 	/// デバッグ用タイマー初期化
 	time = 0;
@@ -178,7 +180,8 @@ void SceneGraphics::Update(float elapsedTime)
 	Graphics::Instance().UpdateConstantBuffer(time);
 
 	LightManager::Instance().Update();
-	TV::Instance().Update(elapsedTime);
+	//TV::Instance().Update(elapsedTime);
+	ObjectManager::Instance().Update(elapsedTime);
 
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
@@ -275,7 +278,9 @@ void SceneGraphics::Render()
 
 		AirconManager::Instance().Render(rc);
 
-		TV::Instance().Render(rc, modelRenderer);
+		//TV::Instance().Render(rc, modelRenderer);
+
+		ObjectManager::Instance().Render(rc, modelRenderer);
 	}
 
 	/// 3Dデバッグ描画処理
@@ -288,6 +293,8 @@ void SceneGraphics::Render()
 
 		/// エアコンのデバッグ描画
 		//AirconManager::Instance().RenderDebugPrimitive(rc);
+
+		ObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 	}
 
 	/// 2Dスプライト描画処理（未実装）
@@ -504,6 +511,7 @@ void SceneGraphics::DrawGUI()
 	Graphics::Instance().DebugGUI();
 	LightManager::Instance().DebugGUI();
 	AirconManager::Instance().DebugGUI();
+	ObjectManager::Instance().DebugGUI();
 }
 
 void SceneGraphics::UpdateConstants(RenderContext& rc)

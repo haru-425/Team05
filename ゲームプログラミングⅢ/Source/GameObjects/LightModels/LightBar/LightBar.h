@@ -1,9 +1,6 @@
 #pragma once
 
 #include"System/ModelRenderer.h"
-#include "Pursuer/WayPoint.h"
-#include "Pursuer/Edge.h"
-#include "Pursuer/Object.h"
 #include "System/LoadTextures.h"
 
 #include <memory>
@@ -12,7 +9,7 @@
 class LightBar
 {
 public:
-    LightBar() {};
+    LightBar() {}
     LightBar(DirectX::XMFLOAT3 position, float angle);
     ~LightBar();
 

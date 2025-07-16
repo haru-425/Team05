@@ -9,6 +9,7 @@
 #include <objbase.h>             // CoInitializeEx（呼び出し元用）
 
 #include <wrl/client.h>          // Microsoft::WRL::ComPtr を使う場合
+#include "GameObjects/Aircon/AirconManager.h"
 using Microsoft::WRL::ComPtr;
 /// @brief デフォルトのレンダーデバイス（出力）のチャンネルマスクを取得する
 ///
@@ -176,28 +177,38 @@ void Audio3DSystem::Initialize()
 	outputChannelCount = channelCount;
 
 	// 3Dオーディオシステムにエミッターを追加
-	AddEmitter("Data/Sound/electrical_noise.wav", { 0.0f, 0.0f, 0.0f }, "electrical_noise", true, true, true, 0.0f);
+	AddEmitter("Data/Sound/electrical_noise.wav", { 0.0f, 0.0f, 0.0f }, "electrical_noise", SoundType::BGM, 0.1f, true, true, true, 0.0f);
 
 
-	AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", true);
+	AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", SoundType::BGM, 0.1f, true);
+	for (int i = 0; i < AIRCON_MAX; i++)
+	{
+		AddEmitter("Data/Sound/air_conditioner.wav", AirconManager::Instance().GetAirconPosition(i), "aircon", SoundType::SE, 0.1f, true, true, false, 0.1f);
 
-	AddEmitter("Data/Sound/air_conditioner.wav", { -8.0f, 3.0f, 22.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { 8.0f, 3.0f, 22.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 13.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f, 3.0f, 13.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 13.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 5.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f , 3.0f, 5.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 5.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, -13.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, -13.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f,-23.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { 5.0f, 3.0f,-23.0f }, "aircon", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f,-23.0f }, "aircon", true, true, false, 0.1f);
+	}
+
+	//AddEmitter("Data/Sound/air_conditioner.wav", { -8.0f, 3.0f, 22.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { 8.0f, 3.0f, 22.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 13.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f, 3.0f, 13.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 13.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, 5.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { 0.0f , 3.0f, 5.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, 5.0f }, "aircon",  SoundType::BGM,true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f, -13.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f, -13.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { -21.0f, 3.0f,-23.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { 5.0f, 3.0f,-23.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
+	//AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f,-23.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
 
 
-	AddEmitter("Data/Sound/enemy_run.wav", { 21.0f, 3.0f,-23.0f }, "enemy_run", true, true, false, 0.1f);
-	AddEmitter("Data/Sound/enemy_walk.wav", { 21.0f, 3.0f,-23.0f }, "enemy_walk", true, true, false, 0.1f);
+	AddEmitter("Data/Sound/enemy_run.wav", { 21.0f, 3.0f,-23.0f }, "enemy_run", SoundType::SE, 0.1f, true, true, false, 0.1f);
+	AddEmitter("Data/Sound/enemy_walk.wav", { 21.0f, 3.0f,-23.0f }, "enemy_walk", SoundType::SE, 0.1f, true, true, false, 0.1f);
+
+	AddEmitter("Data/Sound/change_camera.wav", { 21.0f, 3.0f,-23.0f }, "change_camera", SoundType::SE, 0.1f, true, true, false, 1.f);
+	AddEmitter("Data/Sound/lightoff.wav", { 21.0f, 3.0f,-23.0f }, "lightoff", SoundType::SE, 0.1f, true, true, false, 1.f);
+	AddEmitter("Data/Sound/Lighton.wav", { 21.0f, 3.0f,-23.0f }, "Lighton", SoundType::SE, 0.1f, true, true, false, 1.f);
+	AddEmitter("Data/Sound/selectButton.wav", { 21.0f, 3.0f,-23.0f }, "selectButton", SoundType::SE, 0.1f, true, true, false, 1.f);
 
 
 
@@ -217,9 +228,10 @@ void Audio3DSystem::Initialize()
  * @param isOmnidirectional 無指向性音源フラグ（trueなら方向に依存しない音響）
  * @param constantVolume 距離減衰無効フラグ（trueなら常に一定音量）
  */
-void Audio3DSystem::AddEmitter(const char* wavPath, const XMFLOAT3& pos, const std::string& tag,
-	bool loop, bool isOmnidirectional, bool constantVolume, float distanceScaler)
+void Audio3DSystem::AddEmitter(const char* wavPath, const XMFLOAT3& pos, const std::string& tag, SoundType soundType,
+	float volume, bool loop, bool isOmnidirectional, bool constantVolume, float distanceScaler)
 {
+
 	Emitter e{};
 	if (!LoadWavFile(wavPath, &e.waveFormat, &e.buffer, e.waveData)) {
 		std::cerr << "WAV読み込み失敗: " << wavPath << std::endl;
@@ -231,6 +243,7 @@ void Audio3DSystem::AddEmitter(const char* wavPath, const XMFLOAT3& pos, const s
 
 	e.position = pos;
 	e.tag = tag;
+	e.soundType = soundType;
 	e.loop = loop;
 	e.isOmnidirectional = isOmnidirectional;
 	e.constantVolume = constantVolume;
@@ -248,6 +261,7 @@ void Audio3DSystem::AddEmitter(const char* wavPath, const XMFLOAT3& pos, const s
 	e.emitterDesc.InnerRadius = 1.0f;
 	e.emitterDesc.InnerRadiusAngle = X3DAUDIO_PI / 4.0f;
 
+	e.Volume = volume;
 	emitters.push_back(std::move(e));
 }
 
@@ -306,6 +320,8 @@ void Audio3DSystem::UpdateEmitters()
 
 		e.sourceVoice->SetOutputMatrix(nullptr, dspSettings.SrcChannelCount, dspSettings.DstChannelCount, matrix);
 		e.sourceVoice->SetFrequencyRatio(dspSettings.DopplerFactor);
+
+		SetVolumeByAll();
 	}
 }
 
@@ -414,8 +430,35 @@ void Audio3DSystem::SetVolumeByTag(const std::string& tag, float volume)
 
 	for (auto& e : emitters) {
 		if (e.tag == tag) {
-			if (e.sourceVoice) {
-				e.sourceVoice->SetVolume(volume);
+			//if (e.sourceVoice) {
+			//	//switch (e.soundType)
+			//	//{
+			//	//case SoundType::SE:
+			//	//	//e.sourceVoice->SetVolume(volume * masterVolume * seVolume);
+			//	//	break;
+			//	//case SoundType::BGM:
+			//	//	//e.sourceVoice->SetVolume(volume * masterVolume * bgmVolume);
+			//	//	break;
+			//	//}
+			//}
+			e.Volume = volume;
+		}
+	}
+}
+void Audio3DSystem::SetVolumeByAll()
+{
+	std::lock_guard<std::mutex> lock(dataMutex); ///< 排他制御
+
+	for (auto& e : emitters) {
+		if (e.sourceVoice) {
+			switch (e.soundType)
+			{
+			case SoundType::SE:
+				e.sourceVoice->SetVolume(e.Volume * masterVolume * seVolume);
+				break;
+			case SoundType::BGM:
+				e.sourceVoice->SetVolume(e.Volume * masterVolume * bgmVolume);
+				break;
 			}
 		}
 	}

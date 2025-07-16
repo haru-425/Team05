@@ -2,9 +2,6 @@
 
 #include"System/ModelRenderer.h"
 #include"System/ShapeRenderer.h"
-#include "Pursuer/WayPoint.h"
-#include "Pursuer/Edge.h"
-#include "Pursuer/Object.h"
 #include "System/LoadTextures.h"
 
 #include <memory>
@@ -13,9 +10,9 @@
 class Aircon
 {
 public:
-    Aircon() {};
+    Aircon() {}
     Aircon(DirectX::XMFLOAT3 position);
-    ~Aircon() {};
+    ~Aircon() {}
 
     // ÉRÉsÅ[ã÷é~
     Aircon(const Aircon&) = delete;

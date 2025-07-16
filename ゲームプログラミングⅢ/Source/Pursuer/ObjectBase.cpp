@@ -1,4 +1,4 @@
-#include "Object.h"
+#include "ObjectBase.h"
 
 void ObjectBase::UpdateTransform()
 {

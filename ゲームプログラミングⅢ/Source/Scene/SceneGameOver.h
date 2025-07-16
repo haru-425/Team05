@@ -31,4 +31,17 @@ private:
 	int life_rest = 2;
 
 	static int life_number;
+
+	float timer = 0.0f; // タイマー
+	float transTimer = 0.0f; // シーン遷移タイマー
+	bool sceneTrans = false;
+	Scene* nextScene = nullptr; ///< 1秒後に遷移するシーン
+
+	enum class SelectTrans {
+		Title, // シーンクリア
+		Game, // ゲームオーバー
+		cnt,
+	};
+
+	SelectTrans selectTrans;
 };

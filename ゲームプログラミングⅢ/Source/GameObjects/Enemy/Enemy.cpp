@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <random>
-#include "Pursuer/Object.h"
+#include "Pursuer/ObjectBase.h"
 #include "Pursuer/SearchAI.h"
 #include "Player/player.h"
 #include "./Collision.h"
@@ -15,34 +15,26 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 {
     this->stage = stage;
     this->playerRef = playerRef;
+    // モデルの読み込み
     //model = std::make_shared<Model>("Data/Model/Slime/Slime.mdl");
-    model = std::make_shared<Model>("Data/Model/test/enemy_motion.mdl");
+    //model = std::make_shared<Model>("Data/Model/test/enemy_motion.mdl");
+    model = std::make_shared<Model>("Data/Model/enemy_assets/enemy_motion.mdl");
+
+    textures = std::make_shared<LoadTextures>();
+    textures->LoadNormal("Data/Model/enemy_assets/textures/normal.png");
+    textures->LoadRoughness("Data/Model/enemy_assets/textures/roughness.png");
+    textures->LoadMetalness("Data/Model/enemy_assets/textures/metalic.png");
+    textures->LoadEmisive("Data/Model/enemy_assets/textures/emissive.png");
+
     this->animationcontroller.SetModel(model);
     this->animationcontroller.SetAnimationPlaying(true);
-    scale.x = scale.y = scale.z = 0.01f; // スケール設定（非常に小さい）
+    scale.x = scale.y = scale.z = 0.013f; // スケール設定（非常に小さい）
     radius = 0.5f;                        // 衝突用の半径
 
     viewPoint = 1.5f;                     // 目線の高さ
 
-
-    // ハードウェア由来のランダムシードを取得
-    std::random_device rd;
-
-    // メルセンヌツイスタ（高性能な乱数生成器）にシードを与える
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(0, 100);
-    int value = dist(gen);
-
-    if (value < 50)
-    {
-        position = stage->GetIndexWayPoint(48);      // 初期位置
-        Goal::Instance().SetPosition(stage->GetIndexWayPoint(71));
-    }
-    else
-    {
-        position = stage->GetIndexWayPoint(33);      // 初期位置
-        Goal::Instance().SetPosition(stage->GetIndexWayPoint(61));
-    }
+    position = stage->GetIndexWayPoint(33);      // 初期位置
+    Goal::Instance().SetPosition(stage->GetIndexWayPoint(61));
 
     Start::Instance().SetPosition(this->position);
     SearchAI::Instance().DijkstraSearch(stage);
@@ -50,9 +42,11 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
     int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
     int start = stage->NearWayPointIndex(this->position);
 
+
     refinePath(start, current); // 経路を作成
 
     // ステート遷移
+    targetPosition = route[0];
     state = State::Roaming;
     Animationplay();
 
@@ -289,7 +283,7 @@ void Enemy::Updatemovement(float elapsedTime)
     if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition()), posVec))) < 3.0f)
     {
         targetVec = DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition());
-        jageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
+        JageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
         Animationplay();
         nearTarget = true;
     }
@@ -329,7 +323,7 @@ void Enemy::Updatemovement(float elapsedTime)
             return;
         }
         targetPosition = route[currentTargetIndex];
-        jageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
+        JageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
         state = State::turn;
         Animationplay();
        /* if (stage->NearWayPointIndex(targetPosition) == 12 || stage->NearWayPointIndex(targetPosition) == 21)
@@ -360,7 +354,7 @@ void Enemy::refinePath(int start, int current)
     }
 }
 
-void Enemy::jageDirection(DirectX::XMVECTOR dir)
+void Enemy::JageDirection(DirectX::XMVECTOR dir)
 {
     olddirection = direction;
     DirectX::XMFLOAT3 dirf;
@@ -595,6 +589,24 @@ void Enemy::Animationplay()
     }
 }
 
+void Enemy::SetDifficulty()
+{
+    switch (Difficulty::Instance().GetDifficulty())
+    {
+    case Difficulty::easy:
+        searchRange = EASY_SR;
+        lockonRange = EASY_LR;
+        break;
+    case Difficulty::normal:
+    case Difficulty::hard:
+        searchRange = NORMAL_AND_HARD_SR;
+        lockonRange = NORMAL_AND_HARD_LR;
+        break;
+    default:
+        break;
+    }
+}
+
 // デバッグ描画（未実装）
 void Enemy::DrawDebug()
 {
@@ -608,5 +620,7 @@ void Enemy::DrawDebug()
 // モデル描画処理
 void Enemy::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-    renderer->Render(rc, world, model.get(), ShaderId::Lambert);
+    textures->Set(rc);
+    renderer->Render(rc, world, model.get(), ShaderId::Custom);
+    textures->Clear(rc);
 }

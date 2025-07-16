@@ -1,9 +1,6 @@
 #pragma once
 
 #include"System/ModelRenderer.h"
-#include "Pursuer/WayPoint.h"
-#include "Pursuer/Edge.h"
-#include "Pursuer/Object.h"
 #include "System/LoadTextures.h"
 
 #include <memory>
@@ -12,9 +9,9 @@
 class LightTorus
 {
 public:
-    LightTorus() {};
+    LightTorus() {}
     LightTorus(DirectX::XMFLOAT3 position);
-    ~LightTorus() {};
+    ~LightTorus() {}
 
     // ÉRÉsÅ[ã÷é~
     LightTorus(const LightTorus&) = delete;

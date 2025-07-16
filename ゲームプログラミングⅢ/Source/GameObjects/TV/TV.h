@@ -18,8 +18,8 @@ public:
         return instance;
     }
 
-    TV() {};
-    ~TV() {};
+    TV() {}
+    ~TV() {}
 
     void Initialize();
     //ステージ

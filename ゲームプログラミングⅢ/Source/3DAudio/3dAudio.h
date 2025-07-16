@@ -36,6 +36,15 @@ public:
 	 */
 	void Initialize();
 
+
+	float bgmVolume = 1;
+	float seVolume = 1;
+	float masterVolume = 1;
+	enum class SoundType {
+		BGM,
+		SE,
+		cnt,
+	};
 	/**
 	 * @brief エミッター（音源）を追加する
 	 *
@@ -50,8 +59,8 @@ public:
 	 * @param constantVolume 距離減衰を無効にするか（BGM等に使用）
 	 * @param distanceScaler 距離減衰のスケーリング値（デフォルトは1.0f）
 	 */
-	void AddEmitter(const char* wavPath, const XMFLOAT3& pos, const std::string& tag,
-		bool loop, bool isOmnidirectional = false, bool constantVolume = false, float distanceScaler = 1.0f);
+	void AddEmitter(const char* wavPath, const XMFLOAT3& pos, const std::string& tag, SoundType soundType,
+		float volume, bool loop, bool isOmnidirectional = false, bool constantVolume = false, float distanceScaler = 1.0f);
 
 	/**
 	 * @brief リスナーの位置と向きを更新する
@@ -125,6 +134,7 @@ public:
 	* @param volume 音量(0~1)
 	*/
 	void SetVolumeByTag(const std::string& tag, float volume);
+	void SetVolumeByAll();
 
 	/**
 	 * @brief エミッター更新用スレッドの開始
@@ -160,11 +170,16 @@ private:
 		std::vector<BYTE> waveData; ///< WAVファイルの実データ（バイト列）
 		XMFLOAT3 position; ///< 3D空間上の音源の位置
 		std::string tag; ///< エミッター識別用の文字列タグ
+		SoundType soundType = SoundType::SE;
 		bool loop = false; ///< ループ再生フラグ
 		bool isOmnidirectional = false; ///< 無指向性音源フラグ（trueなら方向に関係なく音が聞こえる）
 		bool constantVolume = false; ///< 距離減衰を無効にするフラグ（BGMなどに使用）
 		float distanceScaler = 1.0f; ///< 距離減衰スケーラー（距離減衰なしなら0.0f）
+		float Volume;
 	};
 
 	std::vector<Emitter> emitters; ///< 登録済みのすべてのエミッターのリスト
+
+
+
 };

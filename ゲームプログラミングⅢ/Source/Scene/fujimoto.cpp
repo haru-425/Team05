@@ -35,7 +35,8 @@ void fujimoto::Initialize()
 	);
 
 	//カメラコントローラー初期化
-	i_CameraController = std::make_unique<FPCameraController>();
+	//i_CameraController = std::make_unique<FPCameraController>();
+	i_CameraController = std::make_unique<LightDebugCameraController>();
 
 	player = std::make_shared<Player>();
 
@@ -375,6 +376,7 @@ void fujimoto::Render()
 void fujimoto::DrawGUI()
 {
 	minimap->DrawImGui();
+	LightManager::Instance().DebugGUI();
 	RenderContext rc;
 
 	ImGui::Separator();

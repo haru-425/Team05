@@ -1,5 +1,7 @@
 #include "SceneGameOver.h"
-
+#include "SceneManager.h"
+#include "SceneLoading.h"
+#include "SceneGame.h"
 int Game_Over::life_number = 2;
 void Game_Over::Initialize()
 {
@@ -8,6 +10,12 @@ void Game_Over::Initialize()
 	{
 		life[i] = new Life();
 	}
+
+	timer = 0.0f; // タイマー初期化
+	transTimer = 0.0f; // シーン遷移タイマー初期化
+
+	selectTrans = SelectTrans::Game; // シーン遷移選択初期化
+	sceneTrans = false; // シーン遷移フラグ初期化
 }
 
 void Game_Over::Finalize()
@@ -28,17 +36,46 @@ void Game_Over::Finalize()
 	GameOvertime = 0.0f; ///< デバッグ用タイマー初期化
 
 	life_number--;
+	timer = 0;
+
 }
 
 void Game_Over::Update(float elapsedTime)
 {
 	life[life_rest]->SetFlag(true);
 
-	Graphics::Instance().UpdateConstantBuffer(GameOvertime);
 	for (int i = 0; i < 3; i++)
 	{
 		life[i]->Update(elapsedTime);
 	}
+
+	if (GameOvertime >= 5.0f) {
+		if (!sceneTrans)
+		{
+
+			nextScene = new SceneGame;
+			sceneTrans = true;
+			transTimer = 0.0f;
+			selectTrans = SelectTrans::Game; // ゲームオーバーシーンに遷移
+
+
+		}
+		else
+		{
+			// フラグが立っている間タイマーを加算し、1秒以上経ったらシーン切り替え
+			transTimer += elapsedTime;
+			if (transTimer >= 3.0f && nextScene != nullptr)
+			{
+				SceneManager::instance().ChangeScene(new SceneLoading(nextScene));
+				nextScene = nullptr; // 多重遷移防止
+				sceneTrans = false; // シーン遷移フラグをリセット
+			}
+		}
+
+	}
+		timer += elapsedTime;
+	Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
+	GameOvertime += elapsedTime;
 }
 
 void Game_Over::Render()
@@ -75,7 +112,7 @@ void Game_Over::Render()
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::GameOver)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::GameOver)].Get());
 
 	{
 		GameOver->Render(rc, 100, 100, 0, 1095, 316, 0, 1, 1, 1, 1);
@@ -93,7 +130,6 @@ void Game_Over::Render()
 	}
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->deactivate(dc);
 
-
 	//crt
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
@@ -101,10 +137,24 @@ void Game_Over::Render()
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
 
+	//crt
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TVNoiseFade)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->deactivate(dc);
+
+	//crt
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoSignalFinale)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->deactivate(dc);
+
 
 	Graphics::Instance().bit_block_transfer->blit(
 		dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->shader_resource_views[0].GetAddressOf(), 10, 1
 	);
 
 	//シーン切り替えはタイトルからグラフィックシーンを参考に

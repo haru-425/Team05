@@ -64,7 +64,7 @@
     <ClCompile Include="Source\ProjectileManager.cpp" />
     <ClCompile Include="Source\ProjectileStraigth.cpp" />
     <ClCompile Include="Source\GameObjects\Character.cpp" />
-    <ClCompile Include="Source\Pursuer\Object.cpp" />
+    <ClCompile Include="Source\Pursuer\ObjectBase.cpp" />
     <ClCompile Include="Source\Pursuer\SearchAI.cpp" />
     <ClCompile Include="Source\Scene\fujimoto.cpp" />
     <ClCompile Include="Source\Scene\SceneGame.cpp" />
@@ -114,6 +114,11 @@
     <ClCompile Include="Source\System\UiManager.cpp" />
     <ClCompile Include="Source\3DAudio\3dAudio.cpp" />
     <ClCompile Include="Source\GameObjects\TV\TV.cpp" />
+    <ClCompile Include="Source\Scene\SceneClear.cpp" />
+    <ClCompile Include="Source\GameObjects\battery\battery.cpp" />
+    <ClCompile Include="Source\RankSystem\RankSystem.cpp" />
+    <ClCompile Include="Source\GameObjects\Object\Object.cpp" />
+    <ClCompile Include="Source\GameObjects\Object\ObjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -142,7 +147,7 @@
     <ClInclude Include="Source\ProjectileStraigth.h" />
     <ClInclude Include="Source\GameObjects\Character.h" />
     <ClInclude Include="Source\Pursuer\Edge.h" />
-    <ClInclude Include="Source\Pursuer\Object.h" />
+    <ClInclude Include="Source\Pursuer\ObjectBase.h" />
     <ClInclude Include="Source\Pursuer\SearchAI.h" />
     <ClInclude Include="Source\Pursuer\WayPoint.h" />
     <ClInclude Include="Source\Scene\fujimoto.h" />
@@ -198,6 +203,12 @@
     <ClInclude Include="Source\System\UiManager.h" />
     <ClInclude Include="Source\3DAudio\3dAudio.h" />
     <ClInclude Include="Source\GameObjects\TV\TV.h" />
+    <ClInclude Include="Source\Scene\SceneClear.h" />
+    <ClInclude Include="Source\GameObjects\battery\battery.h" />
+    <ClInclude Include="Source\GameObjects\battery\batteryManager.h" />
+    <ClInclude Include="Source\RankSystem\RankSystem.h" />
+    <ClInclude Include="Source\GameObjects\Object\Object.h" />
+    <ClInclude Include="Source\GameObjects\Object\ObjectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
@@ -214,5 +225,8 @@
     <None Include="Shader\PrimitiveRenderer.hlsli" />
     <None Include="Shader\Skinning.hlsli" />
     <None Include="Shader\Sprite.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Source\Game.rc" />
   </ItemGroup>
 </Project>
