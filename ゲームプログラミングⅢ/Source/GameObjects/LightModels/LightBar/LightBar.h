@@ -12,7 +12,7 @@
 class LightBar
 {
 public:
-    LightBar() {};
+    LightBar() {}
     LightBar(DirectX::XMFLOAT3 position, float angle);
     ~LightBar();
 

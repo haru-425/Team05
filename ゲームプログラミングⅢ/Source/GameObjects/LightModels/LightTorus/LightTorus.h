@@ -12,9 +12,9 @@
 class LightTorus
 {
 public:
-    LightTorus() {};
+    LightTorus() {}
     LightTorus(DirectX::XMFLOAT3 position);
-    ~LightTorus() {};
+    ~LightTorus() {}
 
     // ÉRÉsÅ[ã÷é~
     LightTorus(const LightTorus&) = delete;

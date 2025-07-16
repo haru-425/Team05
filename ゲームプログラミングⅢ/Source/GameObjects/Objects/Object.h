@@ -9,9 +9,9 @@
 class Object
 {
 public:
-    Object() {};
-    Object(DirectX::XMFLOAT3 position);
-    ~Object() {};
+    Object() {}
+    Object(DirectX::XMFLOAT3 position,Model* model,LoadTextures* textures);
+    ~Object() {}
 
     // ÉRÉsÅ[ã÷é~
     Object(const Object&) = delete;
@@ -25,7 +25,7 @@ public:
     void Update(float elapsedTime);
 
     //ï`âÊèàóù
-    void Render(const RenderContext& rc, ModelRenderer* renderer, Model* model, LoadTextures* texture);
+    void Render(const RenderContext& rc, ModelRenderer* renderer);
     void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer);
 
     void DebugGUI();
@@ -42,5 +42,9 @@ private:
         0,0,1,0,
         0,0,0,1
     };
+
+    std::unique_ptr<Model> model = nullptr;
+
+    std::unique_ptr<LoadTextures> textures;
 };
 

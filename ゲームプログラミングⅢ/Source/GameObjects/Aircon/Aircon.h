@@ -13,9 +13,9 @@
 class Aircon
 {
 public:
-    Aircon() {};
+    Aircon() {}
     Aircon(DirectX::XMFLOAT3 position);
-    ~Aircon() {};
+    ~Aircon() {}
 
     // ÉRÉsÅ[ã÷é~
     Aircon(const Aircon&) = delete;

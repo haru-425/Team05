@@ -12,9 +12,9 @@
 class LightPoint
 {
 public:
-    LightPoint() {};
+    LightPoint() {}
     LightPoint(DirectX::XMFLOAT3 position);
-    ~LightPoint() {};
+    ~LightPoint() {}
 
     // ÉRÉsÅ[ã÷é~
     LightPoint(const LightPoint&) = delete;

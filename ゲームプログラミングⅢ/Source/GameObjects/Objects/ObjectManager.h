@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object.h"
+#include "Objects/Object.h"
 #include "System/RenderContext.h"
 #include "System/Model.h"
 #include "System/ModelRenderer.h"
@@ -8,7 +8,7 @@
 #include "System/LoadTextures.h"
 
 #include <vector>
-#include <memory>
+
 
 class ObjectManager
 {
@@ -30,12 +30,12 @@ public:
 	void RenderDebugPrimitive(RenderContext& rc, ShapeRenderer* renderer);
 
 private:
-	//std::vector<std::unique_ptr<Object>> smallChair = {};
-	//std::vector<std::unique_ptr<Object>> largeChair = {};
-	//std::vector<std::unique_ptr<Object>> counter = {};
-	//std::vector<std::unique_ptr<Object>> table = {};
+	std::vector<Object> smallChair;
+	std::vector<Object> largeChair;
+	std::vector<Object> counter;
+	std::vector<Object> table;
 
-	//std::unique_ptr<Model> models[4];
-	//std::unique_ptr<LoadTextures> textures[3];
+	std::unique_ptr<Model> models[4];
+	std::unique_ptr<LoadTextures> textures[3];
 };
 

@@ -1,7 +1,7 @@
 #include "ObjectManager.h"
 
 void ObjectManager::Initialize()
-{/*
+{
 	/// モデルの読み込み
 	models[0] = std::make_unique<Model>("Data/Model/Chair/Chair_A.mdl");
 	models[1] = std::make_unique<Model>("Data/Model/Chair/Chair_B.mdl");
@@ -23,32 +23,32 @@ void ObjectManager::Initialize()
 	textures[2]->LoadRoughness("Data/Model/Table/Table_mtl/Table_mtl_Roughness.1001.png");
 
 	/// オブジェクトの登録
-	smallChair.clear();
-	smallChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//smallChair.clear();
+	smallChair.emplace_back(Object(DirectX::XMFLOAT3{ 0, 0, 0 }, { models[0].get() }, { textures[0].get()}));
 
-	smallChair.clear();
-	smallChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	smallChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	smallChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	smallChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//smallChair.clear();
+	//smallChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//smallChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//smallChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//smallChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
 
-	largeChair.clear();
-	largeChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	largeChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	largeChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	largeChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//largeChair.clear();
+	//largeChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//largeChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//largeChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//largeChair.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
 
-	counter.clear();
-	counter.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	counter.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//counter.clear();
+	//counter.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//counter.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
 
-	table.clear();
-	table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
-	table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));*/
+	//table.clear();
+	//table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
+	//table.push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 0, 0, 0 }));
 }
 
 void ObjectManager::update()
