@@ -6,6 +6,7 @@
 #include "Stage.h"
 #include "./System/AnimationController.h"
 #include "System/LoadTextures.h"
+#include "System/difficulty.h"
 #include <memory>
 
 /// 通常移動速度
@@ -14,6 +15,12 @@
 #define TRACKING_SPEED 4.0f
 /// 気配を感じたときの移動速度
 #define FEELING_SPEED 3.0f
+
+#define EASY_SR 5.0f
+#define NORMAL_AND_HARD_SR 10.0f
+
+#define EASY_LR 15.0f
+#define NORMAL_AND_HARD_LR 30.0f
 
 class Player;
 
@@ -58,6 +65,11 @@ public:
     void SetPlayer(std::shared_ptr<Player> player) { playerRef = player; }
 
     /**
+    * @brief 敵の難易度を設定する
+    */
+    void SetDifficulty();
+
+    /**
      * @brief 経路に新しいポイントを追加する
      * @param pos 追加するワールド座標
      */
@@ -81,7 +93,7 @@ public:
     /// 現在のヨー角を取得する
     float GetYaw() const { return yaw; }
 
-    void jageDirection(DirectX::XMVECTOR dir);
+    void JageDirection(DirectX::XMVECTOR dir);
 
     void Animationplay();
 
@@ -121,8 +133,6 @@ private:
     std::vector<DirectX::XMFLOAT3> route;                  ///< 移動ルート
     size_t currentTargetIndex = 0;                         ///< 現在向かっているポイントのインデックス
     DirectX::XMFLOAT3 targetPosition = { 0, 0, 0 };        ///< 現在のターゲット座標
-    DirectX::XMFLOAT3 territoryOrigin = { 0, 0, 0 };       ///< 巡回範囲の中心点（未使用）
-    float territoryRange = 10.0f;                          ///< 巡回可能な範囲の半径（未使用）
     float moveSpeed = USUAL_SPEED;                         ///< 現在の移動速度
     float turnSpeed = DirectX::XMConvertToRadians(360);    ///< 回転速度（ラジアン）
 
