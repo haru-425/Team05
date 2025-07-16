@@ -1,9 +1,6 @@
 #pragma once
 
 #include"System/ModelRenderer.h"
-#include "Pursuer/WayPoint.h"
-#include "Pursuer/Edge.h"
-#include "Pursuer/Object.h"
 #include "System/LoadTextures.h"
 
 #include <memory>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Objects/Object.h"
+#include "Object/Object.h"
 #include "System/RenderContext.h"
 #include "System/Model.h"
 #include "System/ModelRenderer.h"
@@ -8,7 +8,7 @@
 #include "System/LoadTextures.h"
 
 #include <vector>
-
+#include <memory>
 
 class ObjectManager
 {
@@ -24,18 +24,28 @@ public:
 	~ObjectManager() = default;
 
 	void Initialize();
-	void update();
+	void Update(float elapsedTime);
 
 	void Render(RenderContext& rc, ModelRenderer* renderer);
 	void RenderDebugPrimitive(RenderContext& rc, ShapeRenderer* renderer);
 
-private:
-	std::vector<Object> smallChair;
-	std::vector<Object> largeChair;
-	std::vector<Object> counter;
-	std::vector<Object> table;
+	void DebugGUI();
 
-	std::unique_ptr<Model> models[4];
-	std::unique_ptr<LoadTextures> textures[3];
+	enum class ObjectLavel {
+		SmallChair = 0,
+		LargeChair,
+		Counter,
+		Table,
+		TV_A,
+		TV_B,
+	};
+
+private:
+	static const int OBJ_MAX = 6;
+
+	std::vector<std::unique_ptr<Object>> objects[OBJ_MAX];
+
+	std::unique_ptr<Model> models[OBJ_MAX];
+	std::unique_ptr<LoadTextures> textures[OBJ_MAX];
 };
 

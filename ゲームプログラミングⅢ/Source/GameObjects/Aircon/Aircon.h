@@ -2,9 +2,6 @@
 
 #include"System/ModelRenderer.h"
 #include"System/ShapeRenderer.h"
-#include "Pursuer/WayPoint.h"
-#include "Pursuer/Edge.h"
-#include "Pursuer/Object.h"
 #include "System/LoadTextures.h"
 
 #include <memory>

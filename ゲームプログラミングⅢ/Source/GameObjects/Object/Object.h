@@ -10,7 +10,7 @@ class Object
 {
 public:
     Object() {}
-    Object(DirectX::XMFLOAT3 position,Model* model,LoadTextures* textures);
+    Object(DirectX::XMFLOAT3 position,DirectX::XMFLOAT3 angle);
     ~Object() {}
 
     // コピー禁止
@@ -24,13 +24,16 @@ public:
     //ステージ
     void Update(float elapsedTime);
 
-    //描画処理
-    void Render(const RenderContext& rc, ModelRenderer* renderer);
-    void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer);
+    void Render(const RenderContext& rc, ModelRenderer* renderer, Model* model, LoadTextures* textures);
 
+    //描画処理
+    void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer);
     void DebugGUI();
 
     DirectX::XMFLOAT3 GetPosition() { return position; }
+    DirectX::XMFLOAT3 GetAngle() { return angle; }
+    void SetPosition(DirectX::XMFLOAT3 position) { this->position = position; }
+    void SetAngle(DirectX::XMFLOAT3 angle) { this->angle = angle; }
 
 private:
     DirectX::XMFLOAT3 position = { 0,0,0 };

@@ -7,7 +7,7 @@
 #include "Edge.h"
 #include "WayPoint.h"
 #include "Stage.h"
-#include "Object.h"
+#include "ObjectBase.h"
 
 #define debug_new new(_NORMAL_BLOCK,__FILE__,__LINE__)
 

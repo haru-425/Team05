@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <random>
-#include "Pursuer/Object.h"
+#include "Pursuer/ObjectBase.h"
 #include "Pursuer/SearchAI.h"
 #include "Player/player.h"
 #include "./Collision.h"
