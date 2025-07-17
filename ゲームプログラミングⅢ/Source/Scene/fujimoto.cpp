@@ -9,6 +9,7 @@
 #include "./Aircon/AirconManager.h"
 #include "fujimoto.h"
 #include "Pursuer/SearchAI.h"
+#include "GameObjects/battery/batteryManager.h"
 #include "imgui.h"                    // ImGuiの基本機能
 #include "imgui_impl_win32.h"        // Win32用バックエンド
 #include "imgui_impl_dx11.h"         // DirectX11用バックエンド
@@ -59,6 +60,8 @@ void fujimoto::Initialize()
 
 	// エアコンの初期化
 	AirconManager::Instance().Initialize();
+
+	batteryManager::Instance().addBattery({ 0,0,0 });
 }
 
 // 終了化
@@ -163,6 +166,8 @@ void fujimoto::Update(float elapsedTime)
 
 
 	LightManager::Instance().Update();
+
+	batteryManager::Instance().Update(elapsedTime);
 }
 
 // 描画処理
@@ -207,6 +212,8 @@ void fujimoto::Render()
 		LightManager::Instance().Render(rc);
 
 		//AirconManager::Instance().Render(rc);
+
+		batteryManager::Instance().Render(rc, modelRenderer);
 	}
 
 	// 3Dデバッグ描画
@@ -226,150 +233,7 @@ void fujimoto::Render()
 	{
 		//minimap->Render(player->GetPosition());
 	}
-	///// フレームバッファのディアクティベート
-	//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
-	//if (player->GetUseCam())
-	//{
-	//	//enemy
-
-	//// BLOOM
-	//	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->clear(dc);
-	//	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
-	//	Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get());
-
-	//	ID3D11ShaderResourceView* shader_resource_views[] =
-	//	{
-	//		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get(),
-	//		Graphics::Instance().bloomer->shader_resource_view(),
-	//	};
-	//	Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
-	//	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
-
-	//	//WardenGaze
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->clear(dc);
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->activate(dc);
-	//	Graphics::Instance().bit_block_transfer->blit(dc,
-	//		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::WardenGaze)].Get());
-
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->deactivate(dc);
-	//	//TemporalNoise
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
-	//	Graphics::Instance().bit_block_transfer->blit(dc,
-	//		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
-	//	//FilmGrainDustPS
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->clear(dc);
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->activate(dc);
-	//	Graphics::Instance().bit_block_transfer->blit(dc,
-	//		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::FilmGrainDust)].Get());
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->deactivate(dc);
-
-
-	//	//crt
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
-
-	//	Graphics::Instance().bit_block_transfer->blit(dc,
-	//		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
-
-
-
-	//	Graphics::Instance().bit_block_transfer->blit(
-	//		dc,
-	//		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
-
-
-	//	);
-
-
-
-	//}
-	//else//player
-	//{
-	//	// BLOOM
-	//	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->clear(dc);
-	//	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
-	//	Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get());
-
-	//	ID3D11ShaderResourceView* shader_resource_views[] =
-	//	{
-	//		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get(),
-	//		Graphics::Instance().bloomer->shader_resource_view(),
-	//	};
-	//	Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
-
-	//	minimap->Render(player->GetPosition());
-	//	Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
-
-
-	//	//BreathShake
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->clear(dc);
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->activate(dc);
-	//	Graphics::Instance().bit_block_transfer->blit(dc,
-	//		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::BreathShake)].Get());
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->deactivate(dc);
-
-	//	//VisionBootDown
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->clear(dc);
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->activate(dc);
-	//	Graphics::Instance().bit_block_transfer->blit(dc,
-	//		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->deactivate(dc);
-
-
-	//	//FadeToBlack
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->clear(dc);
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->activate(dc);
-	//	Graphics::Instance().bit_block_transfer->blit(dc,
-	//		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::FadeToBlack)].Get());
-
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->deactivate(dc);
-	//	//TVNoiseFade
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->clear(dc);
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->activate(dc);
-	//	Graphics::Instance().bit_block_transfer->blit(dc,
-	//		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TVNoiseFade)].Get());
-	//	//minimap->Render(player->GetPosition());
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->deactivate(dc);
-
-
-
-	//	//crt
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
-
-	//	switch (selectTrans)
-	//	{
-	//	case fujimoto::SelectTrans::Clear:
-	//		Graphics::Instance().bit_block_transfer->blit(dc,
-	//			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FadeToBlack)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
-
-	//		break;
-	//	case fujimoto::SelectTrans::GameOver:
-	//		Graphics::Instance().bit_block_transfer->blit(dc,
-	//			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
-
-	//		break;
-	//	case fujimoto::SelectTrans::cnt:
-	//		break;
-	//	default:
-	//		break;
-	//	}
-
-	//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
-
-
-
-	//	Graphics::Instance().bit_block_transfer->blit(
-	//		dc,
-	//		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
-
-
-	//	);
-
-	//}
+	
 }
 
 // GUI描画

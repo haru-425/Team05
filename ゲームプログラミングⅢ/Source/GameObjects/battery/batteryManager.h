@@ -16,7 +16,7 @@ public:
 
     void Update(float elapsedTime)
     {
-        for (auto battery : hasBattery)
+        for (auto& battery : hasBattery)
         {
             battery.Update(elapsedTime);
         }
@@ -38,6 +38,7 @@ public:
     {
 		hasBattery.push_back(battery());
 		hasBattery.back().setPos(pos);
+        hasBattery.back().setModel(batterymodel);
     }
 
     void deleteBattery(DirectX::XMFLOAT3 pos)
@@ -60,6 +61,8 @@ private:
     ~batteryManager() {}
 
     std::vector<battery> hasBattery;
+
+    std::shared_ptr<Model> batterymodel = std::make_shared<Model>("Data/Model/battery_assets/battery_geo.mdl");
 
 
 };
