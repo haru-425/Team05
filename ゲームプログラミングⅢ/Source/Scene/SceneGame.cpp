@@ -60,10 +60,9 @@ void SceneGame::Initialize()
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
 
-	Audio3DSystem::Instance().UpdateEmitters();
-	Audio3DSystem::Instance().SetVolumeByTag("atmosphere_noise", 0.2f);
-	Audio3DSystem::Instance().SetVolumeByTag("aircon", 1.f);
+
 	// 3Dオーディオシステムの再生開始
+	Audio3DSystem::Instance().UpdateEmitters();
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
 }
