@@ -91,6 +91,12 @@ void SceneTitle::Initialize()
     um.CreateUI("./Data/Sprite/numbers.png", "SE100");
     um.CreateUI("./Data/Sprite/numbers.png", "SE10");
     um.CreateUI("./Data/Sprite/numbers.png", "SE1");
+    /// ゲームモード選択
+    um.CreateUI("./Data/Sprite/gameMode.png", "GameMode");
+    um.CreateUI("./Data/Sprite/gameMode.png", "Tutorial");
+    um.CreateUI("./Data/Sprite/gameMode.png", "Normal");
+    um.CreateUI("./Data/Sprite/gameMode.png", "Hard");
+    um.CreateUI("./Data/Sprite/gameMode.png", "Info");
 
 	// リスナーの初期位置と向きを設定
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
@@ -475,6 +481,7 @@ void SceneTitle::UpdateUI()
     }
 
     Mouse& mouse = Input::Instance().GetMouse();
+    SceneManager& sm = SceneManager::instance();
 
     /// マウス座標取得
     DirectX::XMFLOAT2 mousePos = { (float)Input::Instance().GetMouse().GetPositionX(), (float)Input::Instance().GetMouse().GetPositionY() };
@@ -500,7 +507,8 @@ void SceneTitle::UpdateUI()
     {
         int id = ui->GetID();
         if (!(id == 0 || id == 1 || id == 2 || id == 9 ||
-            id == 14 || id == 19 || id == 24))continue;
+            id == 14 || id == 19 || id == 24 || id == 29 ||
+            id == 30 || id == 31))continue;
 
 
         if (ui->GetIsHit() || (id == 1 && selectOptions) || (id == 0 && selectStart))
@@ -528,8 +536,6 @@ void SceneTitle::UpdateUI()
                 selectStart = !selectStart;
                 if (selectOptions)
                     selectOptions = !selectOptions;
-
-                isStartGame = true;
             }
 
             break;
@@ -587,6 +593,39 @@ void SceneTitle::UpdateUI()
                 lastSelectID = id;
             }
             break;
+        case 29:
+            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+            {
+                sm.SetGameMode(GameMode::Tutorial);
+                isStartGame = true;
+            }
+
+            um.GetUIs().at(32)->GetSpriteData().texturePos.y = 441;
+            um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 86;
+            um.GetUIs().at(32)->GetSpriteData().textureSize.y = 92;
+            break;
+        case 30:
+            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+            {
+                sm.SetGameMode(GameMode::Noraml);
+                isStartGame = true;
+            }
+
+            um.GetUIs().at(32)->GetSpriteData().texturePos.y = 539;
+            um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 86;
+            um.GetUIs().at(32)->GetSpriteData().textureSize.y = 92;
+            break;
+        case 31:
+            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+            {
+                sm.SetGameMode(GameMode::Hard);
+                isStartGame = true;
+            }
+
+            um.GetUIs().at(32)->GetSpriteData().texturePos.y = 610;
+            um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 60;
+            um.GetUIs().at(32)->GetSpriteData().textureSize.y = 64;
+            break;
         default:
             if (!previousDow)
             {
@@ -595,10 +634,13 @@ void SceneTitle::UpdateUI()
                 um.GetUIs().at(19)->GetSpriteData().spriteSize = { 16,54 };
                 um.GetUIs().at(24)->GetSpriteData().spriteSize = { 16,54 };
             }
+
+            um.GetUIs().at(32)->GetSpriteData().texturePos.y = -100;
             break;
         }
     }
 
+#if 1
     /// オプション項目の表示
     if (selectOptions)
     {
@@ -617,12 +659,31 @@ void SceneTitle::UpdateUI()
     /// ゲームモードの表示
     if (selectStart)
     {
+
+
+        for (int i = 28; i < um.GetUIs().size(); i++)
+        {
+            um.GetUIs().at(i)->GetSpriteData().isVisible = true;
+        }
+    }
+    else if(!selectStart)
+    {
+
+
+        for (int i = 28; i < um.GetUIs().size(); i++)
+        {
+            um.GetUIs().at(i)->GetSpriteData().isVisible = false;
+        }
+    }
+    if (selectStart || selectOptions)
+    {
         um.GetUIs().at(3)->GetSpriteData().isVisible = true;
     }
-    else if(!selectStart && !selectOptions)
+    else if (!selectStart && !selectOptions)
     {
         um.GetUIs().at(3)->GetSpriteData().isVisible = false;
     }
+#endif
 
     /// 感度とかのバーの動作
     if (previousDow)
@@ -786,7 +847,7 @@ void SceneTitle::UpdateUI()
 
 #if 1
     /// 設定を変更した場合保存
-    GameSettings setting;
+    GameSettings setting = SettingsManager::Instance().GetGameSettings();
     if (!selectOptions)
     {
         if (sensitivity * 0.01 != setting.sensitivity)isChangeSettings = true;
