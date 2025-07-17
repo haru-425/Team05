@@ -10,7 +10,7 @@ class Object
 {
 public:
     Object() {}
-    Object(DirectX::XMFLOAT3 position,DirectX::XMFLOAT3 angle);
+    Object(DirectX::XMFLOAT3 position,DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 scale);
     ~Object() {}
 
     // ÉRÉsÅ[ã÷é~

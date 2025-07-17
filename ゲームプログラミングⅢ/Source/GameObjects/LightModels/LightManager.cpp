@@ -11,7 +11,7 @@ void LightManager::Initialize()
 	Benchmark bench;
 	bench.begin();
 	// ƒ‰ƒCƒg‚Ì‹­‚³
-	lightPower = 0.6f;
+	lightPower = 4.5f;
 
 	// “_ŒõŒ¹‚Ì‰Šú‰»
 	{

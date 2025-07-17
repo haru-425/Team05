@@ -85,6 +85,7 @@ void ModelRenderer::Render(const RenderContext& rc, const DirectX::XMFLOAT4X4& w
 		data.lightViewProjection = rc.lightViewProjection;
 		data.shadowColor = rc.shadowColor;
 		data.shadowBias = rc.shadowBias;
+		data.edgeColor = rc.edgeColor;
 
 		dc->UpdateSubresource(shadowConstantBuffer.Get(), 0, 0, &data, 0, 0);
 	};

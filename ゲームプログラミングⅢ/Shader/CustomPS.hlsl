@@ -72,14 +72,14 @@ float3 ApplyShadowToObject(VS_OUT pin, float3 color)
     // 境界のぼかし処理
     // 境目の色（例：青っぽい）
     float3 shadowed = color.rgb * shadowColor.rgb;
-    float3 edgeColor = float3(0.57f, 0.3f, 0.031f);
+    //float3 edgeColor = float3(0.57f, 0.3f, 0.031f);
     
     // シャドウの強さに応じてブレンド
-    float3 edgeBlend = lerp(edgeColor, color.rgb, shadowFactor);
+    float3 edgeBlend = lerp(edgeColor.rgb, color.rgb, shadowFactor);
     
     float edgeFactor = smoothstep(0.15, 1.8f, shadowFactor);
 
-    float3 gradientColor = lerp(shadowed, edgeColor, edgeFactor);
+    float3 gradientColor = lerp(shadowed, edgeColor.rgb, edgeFactor);
     color.rgb = lerp(gradientColor, color.rgb, shadowFactor);
     
     return float3(color.rgb);
@@ -91,7 +91,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     static const float GammaFactor = 2.2f;
 
     // BaseColor ---------------------------------------------------------    
-    float4 color = Textures[BASECOLOR_TEXTURE].Sample(LinearSampler, pin.texcoord) * materialColor;
+    float4 color = Textures[BASECOLOR_TEXTURE].Sample(LinearSampler, pin.texcoord) * (materialColor * float4(0.2f, 0.2f, 0.2f, 1.0f));
     color.rgb = pow(color.rgb, GammaFactor);
     
     // Normal ------------------------------------------------------------
@@ -134,7 +134,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float attenuationQuad = 0.01f;   
 
     // シャドウ適用
-    //color.rgb = ApplyShadowToObject(pin, color.rgb);
+    color.rgb = ApplyShadowToObject(pin, color.rgb);
    
     // 環境光の計算
     float3 ambient = ambientColor.rgb * ka.rgb;
@@ -148,9 +148,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     {
         float3 LP = pointLights[i].position.xyz - pin.position.xyz;
         float len = length(LP);
-        //if (len >= pointLights[i].range)
-        //    continue;
-               
+
         // 距離減衰の計算
         float attenuateLength = saturate(1.0f - len / pointLights[i].range);
         float attenuation = 1.0f / (attenuationConst + attenuationLinear * len + attenuationQuad * len * len);
@@ -172,8 +170,6 @@ float4 main(VS_OUT pin) : SV_TARGET
         float NdotH = saturate(dot(N, H));
         float VdotH = saturate(dot(V, H));
         
-        //return float4(NdotL.xxx, 1);
-
         // 拡散反射と鏡面反射の加算
         pointDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * attenuation * pointLights[i].color.rgb;
         pointSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * attenuation * pointLights[i].color.rgb;
@@ -206,10 +202,7 @@ float4 main(VS_OUT pin) : SV_TARGET
         
         // 距離減衰（仮に最大距離10.0fとする）
         float len = length(centerOnTorus - pin.position.xyz);
-        
-        //float attenuateLength = saturate(1.0f - len / torusLights[i].range);
-        //float attenuation = attenuateLength * attenuateLength;
-        
+
         // 物理ベース減衰 + フェードアウト
         float fadeRange = torusLights[i].range - 5.0f;
         fadeRange = max(0, fadeRange);
@@ -247,11 +240,7 @@ float4 main(VS_OUT pin) : SV_TARGET
              
             float3 LP = normalize(pointOnLine - pin.position.xyz);
             float len = length(pointOnLine - pin.position.xyz);
-            //if (len >= lineLights[i].range)
-            //    continue;
-             
-            //float attenuation = pow(saturate(1.0f - len / lineLights[i].range), 2.0f);
-                        
+           
             // 物理ベース減衰
             float attenuation = 1.0f / (attenuationConst + attenuationLinear * len + attenuationQuad * len * len);
             
@@ -267,6 +256,7 @@ float4 main(VS_OUT pin) : SV_TARGET
             float NdotV = saturate(dot(N, V));
             float NdotH = saturate(dot(N, H));
             float VdotH = saturate(dot(V, H));
+            
              
             lineDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * attenuation * lineLights[i].color.rgb;
             lineSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * attenuation * lineLights[i].color.rgb;
@@ -274,20 +264,20 @@ float4 main(VS_OUT pin) : SV_TARGET
         lineDiffuse = max(0, lineDiffuse);
         lineSpecular = max(0, lineSpecular);
     }
+    
+    float lightInfluenceBoost = 1.0f; // ← 全体ブースト係数
 
-    float3 totalDiffuse = (pointDiffuse + lineDiffuse + torusDiffuse) * power;
+    float3 totalDiffuse = (pointDiffuse + lineDiffuse + torusDiffuse) * power * lightInfluenceBoost;
     float3 totalSpecular = (pointSpecular + lineSpecular + torusSpecular);
     
     //	遮蔽処理
     totalDiffuse = lerp(totalDiffuse, totalDiffuse * occlusion, occlusionStrength);
     totalSpecular = lerp(totalSpecular, totalSpecular * occlusion, occlusionStrength);
     
-    color.rgb = color.rgb * totalDiffuse;
+    color.rgb += color.rgb * totalDiffuse;
     color.rgb += totalSpecular;
     
-    color.rgb += emisive;
-    
-    //color.a = lerp(color.a, color.a * occlusion.r, occlusionStrength);
+    color.rgb += emisive;    
 
 #if 1
     // フォグ処理
