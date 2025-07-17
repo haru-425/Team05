@@ -54,8 +54,13 @@ void SceneGame::Initialize()
 	// エアコンの初期化
 	AirconManager::Instance().Initialize();
 
+	LightManager::Instance().Update();
+	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
 
+	Audio3DSystem::Instance().UpdateEmitters();
 	Audio3DSystem::Instance().SetVolumeByTag("atmosphere_noise", 0.2f);
 	Audio3DSystem::Instance().SetVolumeByTag("aircon", 1.f);
 	// 3Dオーディオシステムの再生開始
@@ -156,6 +161,9 @@ void SceneGame::Update(float elapsedTime)
 	LightManager::Instance().Update();
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
+
 	Audio3DSystem::Instance().UpdateEmitters();
 }
 
@@ -196,7 +204,7 @@ void SceneGame::Render()
 
 		player->Render(rc, modelRenderer);
 
-		if(!player->GetUseCam())
+		if (!player->GetUseCam())
 			enemy->Render(rc, modelRenderer);
 
 		LightManager::Instance().Render(rc);
@@ -237,7 +245,7 @@ void SceneGame::Render()
 		};
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
-//TemporalNoise
+		//TemporalNoise
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
@@ -467,7 +475,7 @@ void SceneGame::PlayerVsStage()
 
 /**
 * @brief プレイヤーと敵との当たり判定関数
-* 
+*
 * プレイヤーと敵の当たり判定を球vs球で取り、
 * 互いの hitFlag を true にする
 * 押し出しはなし
@@ -494,14 +502,14 @@ void SceneGame::PlayerVsEnemy()
 
 /**
 * @brief カメラの更新処理
-* 
+*
 * プレイヤー視点カメラから敵視点カメラに切り換えるやつ
 */
 void SceneGame::UpdateCamera(float elapsedTime)
 {
 	GamePad& gamepad = Input::Instance().GetGamePad();
 
-	/// 一人称 (プレイヤー視点)	
+	/// 一人称 (プレイヤー視点)
 	if (typeid(*i_CameraController) == typeid(FPCameraController))
 	{
 		/// カメラ切り替え　プレイヤー視点 → 敵視点
@@ -530,7 +538,7 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		i_CameraController->SetUseEnemyCam(useCamera);
 		/// カメラを切り換えた瞬間に元のカメラの角度に戻す処理用
 		/// UseEnemyCam とは使用用途が違うので注意
-		i_CameraController->SetIsChange(player->GetIsChange()); 
+		i_CameraController->SetIsChange(player->GetIsChange());
 		i_CameraController->Update(elapsedTime);
 		SetCursorPos(screenPoint.x, screenPoint.y);
 
