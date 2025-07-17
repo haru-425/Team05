@@ -62,6 +62,8 @@ void fujimoto::Initialize()
 	AirconManager::Instance().Initialize();
 
 	batteryManager::Instance().addBattery({ 0,0,0 });
+	batteryManager::Instance().SetPlaye_and_enemy(player, enemy);
+	batteryManager::Instance().ResetPlayer_get_Batterry();
 }
 
 // I—¹‰»

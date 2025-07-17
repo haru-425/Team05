@@ -40,5 +40,5 @@ private:
 	std::shared_ptr<LoadTextures> textures;                /// テクスチャデータ
 
 	float offsets[3] = {0.0f, 0.0f, 0.0f};
-	DirectX::XMFLOAT3 offset = { 0.0f, 10.0f, 0.0f };
+	DirectX::XMFLOAT3 offset = { 0.0f, 0.18f, 0.0f };
 };
