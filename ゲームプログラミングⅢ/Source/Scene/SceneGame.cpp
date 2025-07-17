@@ -175,7 +175,7 @@ void SceneGame::Update(float elapsedTime)
 	{
 		i_CameraController->Update(elapsedTime);
 
-		if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButtonDown() & GamePad::BTN_X)
+		if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
 		{
 			i_CameraController = std::make_unique<FPCameraController>();
 		}
