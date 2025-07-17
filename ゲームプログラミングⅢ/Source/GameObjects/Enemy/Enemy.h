@@ -160,4 +160,6 @@ private:
     };
     Direction direction = Direction::N;
     Direction olddirection = direction;
+
+    DirectX::XMFLOAT2 cameraShakeScale = { 0.01f, 0.01f };
 };
