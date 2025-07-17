@@ -91,7 +91,7 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
     /// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
     /// プレイヤーを描画するとどうしても、モデルとカメラが被ってしまうので、
     /// 敵視点の時のみの描画にする
-    if(model && useCam)
+    //if(model && useCam)
         renderer->Render(rc, world, model.get(), ShaderId::Custom);
 
     // テクスチャのクリア

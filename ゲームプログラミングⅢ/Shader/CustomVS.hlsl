@@ -28,7 +28,7 @@ VS_OUT main(float4 position : POSITION,
 
     // シャドウマップ用パラメータ計算
     {
-        float4 wvpPos = mul(position, lightViewProjection);
+        float4 wvpPos = mul(float4(vout.position, 1.0f), lightViewProjection);
         
         //NDC系からUV座標を算出
         wvpPos /= wvpPos.w;

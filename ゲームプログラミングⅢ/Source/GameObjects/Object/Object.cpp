@@ -2,9 +2,9 @@
 
 #include <imgui.h>
 
-Object::Object(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 angle) :position(position), angle(angle)
+Object::Object(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 angle, DirectX::XMFLOAT3 scale) :position(position), angle(angle), scale(scale)
 {
-	scale = { 0.01f,0.01f,0.01f };
+	//scale = { 0.01f,0.01f,0.01f };
 
 	//スケール行列を作成
 	DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);

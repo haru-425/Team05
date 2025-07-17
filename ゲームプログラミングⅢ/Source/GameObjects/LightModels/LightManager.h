@@ -95,11 +95,11 @@ private:
 
 	struct LightColors
 	{
-		DirectX::XMFLOAT4 red    = { 0.5f,    0.0f   , 0.0f    ,1 };
-		DirectX::XMFLOAT4 blue   = { 0.0f,    0.0664f, 0.3242f ,1 };
-		DirectX::XMFLOAT4 yellow = { 1.0f,    0.9453f, 0.0f    ,1 };
-		DirectX::XMFLOAT4 green  = { 0.0f    ,0.2812f, 0.0f    ,1 };
-		DirectX::XMFLOAT4 purple = { 0.3242f ,0.0f   , 0.1953f ,1 };
+		DirectX::XMFLOAT4 red    = { 0.8007f, 0.0f   , 0.0f   , 1 };
+		DirectX::XMFLOAT4 blue   = { 0.0f   , 0.0664f, 1.0f   , 1 };
+		DirectX::XMFLOAT4 yellow = { 1.0f   , 0.9453f, 0.0f   , 1 };
+		DirectX::XMFLOAT4 green  = { 0.0f   , 0.8125f, 0.0f   , 1 };
+		DirectX::XMFLOAT4 purple = { 1.0f   , 0.0f   , 0.6015f, 1 };
 	};
 	LightColors lightColor;
 
@@ -109,11 +109,11 @@ private:
 
 #define POINTLIGHT_RANGE    5.5f
 
-#define TORUSLIGHT_RANGE    5
-#define TORUSLIGHT_MAJOR    4.5
+#define TORUSLIGHT_RANGE    4.5f
+#define TORUSLIGHT_MAJOR    4
 #define TORUSLIGHT_MINOR    0.6
 
-#define LINELIGHT_RANGE     5
+#define LINELIGHT_RANGE     4.8f
 
 	std::unique_ptr<Model> models[3];
 	std::unique_ptr<LoadTextures> textures[3];

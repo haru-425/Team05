@@ -88,6 +88,7 @@ private:
 		DirectX::XMFLOAT4X4     lightViewProjection; // ライト視点からのビュー射影行列
 		DirectX::XMFLOAT3	    shadowColor;         // 影の色
 		float				    shadowBias;          // シャドウバイアス（アーティファクト回避）
+		DirectX::XMFLOAT4       edgeColor;
 	};
 
 	// スケルタルアニメーション用のボーン変換行列配列

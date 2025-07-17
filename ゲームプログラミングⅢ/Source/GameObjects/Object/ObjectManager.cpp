@@ -12,6 +12,7 @@ void ObjectManager::Initialize()
 	models[static_cast<int>(ObjectLavel::Table)] = std::make_unique<Model>("Data/Model/Table/Table.mdl");
 	models[static_cast<int>(ObjectLavel::TV_A)] = std::make_unique<Model>("Data/Model/tv_assets/tv_A/tv_A.mdl");
 	models[static_cast<int>(ObjectLavel::TV_B)] = std::make_unique<Model>("Data/Model/tv_assets/tv_B/tv_B.mdl");
+	models[static_cast<int>(ObjectLavel::Robot_Arm)] = std::make_unique<Model>("Data/Model/robotArm_assets/robotArm_geo.mdl");
 
 	/// テクスチャの読み込み
 	textures[static_cast<int>(ObjectLavel::SmallChair)] = std::make_unique<LoadTextures>();
@@ -38,36 +39,46 @@ void ObjectManager::Initialize()
 	textures[static_cast<int>(ObjectLavel::TV_B)]->LoadNormal("Data/Model/tv_assets/tv_B/textures/tv_B_Normal_DirectX.png");
 	textures[static_cast<int>(ObjectLavel::TV_B)]->LoadRoughness("Data/Model/tv_assets/tv_B/textures/tv_B_Roughness.png");
 
+	textures[static_cast<int>(ObjectLavel::Robot_Arm)] = std::make_unique<LoadTextures>();
+	textures[static_cast<int>(ObjectLavel::Robot_Arm)]->LoadNormal("Data/Model/robotArm_assets/textures/robotArm_mtl_Normal_DirectX.png");
+	textures[static_cast<int>(ObjectLavel::Robot_Arm)]->LoadRoughness("Data/Model/robotArm_assets/textures/robotArm_mtl_Roughness.png");
+
+
 	/// オブジェクトの登録
 	objects[static_cast<int>(ObjectLavel::SmallChair)].clear();
-	objects[static_cast<int>(ObjectLavel::SmallChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{  9.5f, 0, 15.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(-90), 0 }));
-	objects[static_cast<int>(ObjectLavel::SmallChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{  9.5f, 0, 14.7f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(-90), 0 }));
-	objects[static_cast<int>(ObjectLavel::SmallChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 13.5f, 0,-10.0f }, DirectX::XMFLOAT3{ 0, 0, 0 }));
-	objects[static_cast<int>(ObjectLavel::SmallChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 13.5f, 0,-10.8f }, DirectX::XMFLOAT3{ 0, 0, 0 }));
+	objects[static_cast<int>(ObjectLavel::SmallChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{  9.5f, 0, 15.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(-90), 0 }, DirectX::XMFLOAT3{defaultScale, defaultScale, defaultScale}));
+	objects[static_cast<int>(ObjectLavel::SmallChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{  9.5f, 0, 14.7f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(-90), 0 }, DirectX::XMFLOAT3{ defaultScale, defaultScale, defaultScale }));
+	objects[static_cast<int>(ObjectLavel::SmallChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 22.5f, 0, -2.5f }, DirectX::XMFLOAT3{ 0, 0, 0 }, DirectX::XMFLOAT3{defaultScale, defaultScale, defaultScale}));
+	objects[static_cast<int>(ObjectLavel::SmallChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 22.5f, 0,  3.2f }, DirectX::XMFLOAT3{ 0, 0, 0 }, DirectX::XMFLOAT3{defaultScale, defaultScale, defaultScale}));
 
 	objects[static_cast<int>(ObjectLavel::LargeChair)].clear();
-	objects[static_cast<int>(ObjectLavel::LargeChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -9.5f, 0,  15.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(-90), 0 }));
-	objects[static_cast<int>(ObjectLavel::LargeChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -22.5f, 0, -3.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(-90), 0 }));
-	objects[static_cast<int>(ObjectLavel::LargeChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -22.5f, 0, -5.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(-90), 0 }));
-	objects[static_cast<int>(ObjectLavel::LargeChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -14.5f, 0,-10.5f }, DirectX::XMFLOAT3{ 0, 0, 0 }));
+	objects[static_cast<int>(ObjectLavel::LargeChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -9.5f, 0,  15.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(-90), 0 }, DirectX::XMFLOAT3{defaultScale, defaultScale, defaultScale}));
+	objects[static_cast<int>(ObjectLavel::LargeChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -22.5f, 0, -3.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(-90), 0 }, DirectX::XMFLOAT3{defaultScale, defaultScale, defaultScale}));
+	objects[static_cast<int>(ObjectLavel::LargeChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -22.5f, 0, -5.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(-90), 0 }, DirectX::XMFLOAT3{defaultScale, defaultScale, defaultScale}));
+	objects[static_cast<int>(ObjectLavel::LargeChair)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -14.5f, 0,-10.5f }, DirectX::XMFLOAT3{ 0, 0, 0 }, DirectX::XMFLOAT3{ defaultScale, defaultScale, defaultScale }));
 
 	objects[static_cast<int>(ObjectLavel::Counter)].clear();
-	objects[static_cast<int>(ObjectLavel::Counter)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{  0.0f, 0, -5.3f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }));
-	objects[static_cast<int>(ObjectLavel::Counter)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 1.0f, 0, -24.3f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }));
+	objects[static_cast<int>(ObjectLavel::Counter)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{  0.0f, 0, -5.3f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }, DirectX::XMFLOAT3{defaultScale, defaultScale, defaultScale}));
+	objects[static_cast<int>(ObjectLavel::Counter)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 1.0f, 0, -24.3f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }, DirectX::XMFLOAT3{defaultScale, defaultScale, defaultScale}));
 
 	objects[static_cast<int>(ObjectLavel::Table)].clear();
-	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -1.0f, 0, 24.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }));
-	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 2.0f, 0, 24.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }));
-	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -1.0f, 0, 20.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }));
-	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 2.0f, 0, 20.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }));
-	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 5.0f, 0, 2.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }));
-	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 8.0f, 0, 2.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }));
+	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -1.0f, 0, 24.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }, DirectX::XMFLOAT3{ defaultScale, defaultScale, defaultScale }));
+	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 2.0f, 0, 24.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }, DirectX::XMFLOAT3{ defaultScale, defaultScale, defaultScale }));
+	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -1.0f, 0, 20.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }, DirectX::XMFLOAT3{ defaultScale, defaultScale, defaultScale }));
+	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 2.0f, 0, 20.0f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }, DirectX::XMFLOAT3{ defaultScale, defaultScale, defaultScale }));
+	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 5.0f, 0, 2.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }, DirectX::XMFLOAT3{defaultScale, defaultScale, defaultScale}));
+	objects[static_cast<int>(ObjectLavel::Table)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 8.0f, 0, 2.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(90), 0 }, DirectX::XMFLOAT3{defaultScale, defaultScale, defaultScale}));
 
 	objects[static_cast<int>(ObjectLavel::TV_A)].clear();
-	objects[static_cast<int>(ObjectLavel::TV_A)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -10.5f,1.5f,2.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }));
+	objects[static_cast<int>(ObjectLavel::TV_A)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -10.5f,1.5f,2.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }, DirectX::XMFLOAT3{ defaultScale, defaultScale, defaultScale }));
 
 	objects[static_cast<int>(ObjectLavel::TV_B)].clear();
-	objects[static_cast<int>(ObjectLavel::TV_B)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -10.5f,1.5f,2.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }));
+	objects[static_cast<int>(ObjectLavel::TV_B)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -10.5f,1.5f,2.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }, DirectX::XMFLOAT3{ defaultScale, defaultScale, defaultScale }));
+
+	objects[static_cast<int>(ObjectLavel::Robot_Arm)].clear();
+	objects[static_cast<int>(ObjectLavel::Robot_Arm)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 13.0f,0,-10.0f }, DirectX::XMFLOAT3{ 0, 0, 0 }, DirectX::XMFLOAT3{ 0.013f, 0.013f, 0.013f }));
+	objects[static_cast<int>(ObjectLavel::Robot_Arm)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -8.0f,0,-14.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }, DirectX::XMFLOAT3{ 0.017f, 0.017f, 0.017f }));
+
 }
 
 void ObjectManager::Update(float elapsedTime)
@@ -132,11 +143,16 @@ void ObjectManager::DebugGUI()
 	};
 
 	// 各オブジェクトに対してGUIを描画
-	drawObjectGUI("smallChair", objects[static_cast<int>(ObjectLavel::SmallChair)]);
-	drawObjectGUI("largeChair", objects[static_cast<int>(ObjectLavel::LargeChair)]);
-	drawObjectGUI("counter", objects[static_cast<int>(ObjectLavel::Counter)]);
-	drawObjectGUI("table", objects[static_cast<int>(ObjectLavel::Table)]);
-	drawObjectGUI("tv_A", objects[static_cast<int>(ObjectLavel::TV_A)]);
-	drawObjectGUI("tv_B", objects[static_cast<int>(ObjectLavel::TV_B)]);
+	if (ImGui::TreeNode("objects")) {
+		drawObjectGUI("smallChair", objects[static_cast<int>(ObjectLavel::SmallChair)]);
+		drawObjectGUI("largeChair", objects[static_cast<int>(ObjectLavel::LargeChair)]);
+		drawObjectGUI("counter", objects[static_cast<int>(ObjectLavel::Counter)]);
+		drawObjectGUI("table", objects[static_cast<int>(ObjectLavel::Table)]);
+		drawObjectGUI("tv_A", objects[static_cast<int>(ObjectLavel::TV_A)]);
+		drawObjectGUI("tv_B", objects[static_cast<int>(ObjectLavel::TV_B)]);
+		drawObjectGUI("robotArm", objects[static_cast<int>(ObjectLavel::Robot_Arm)]);
+
+		ImGui::TreePop();
+	}
 }
 
