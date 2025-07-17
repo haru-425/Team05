@@ -26,6 +26,8 @@ public:
 private:
 	Sprite* s_rank;
 	Sprite* s_result;
+	Sprite* s_bg1;
+	Sprite* s_bg2;
 	float GameCleartime = 0.0f; ///< デバッグ用タイマー
 	RankSystem::Rank result;
 
@@ -33,4 +35,5 @@ private:
 	float transTimer = 0.0f; // シーン遷移タイマー
 	bool sceneTrans = false;
 	Scene* nextScene = nullptr; ///< 1秒後に遷移するシーン
+	float angle;
 };

@@ -6,11 +6,14 @@ void Game_Clear::Initialize()
 {
 	s_rank = new Sprite("Data/Sprite/rank.png");
 	s_result = new Sprite("Data/Sprite/result.png");
+	s_bg1 = new Sprite("Data/Sprite/rankbg1.png");
+	s_bg2 = new Sprite("Data/Sprite/rankbg2.png");
 	timer = 0.0f; // タイマー初期化
 	transTimer = 0.0f; // シーン遷移タイマー初期化
 	sceneTrans = false; // シーン遷移フラグ初期化
 	RankSystem::Instance().SetRank(1, 1, 3);
 	result = RankSystem::Instance().GetRank();
+	angle = 0;
 
 }
 
@@ -22,6 +25,17 @@ void Game_Clear::Finalize()
 		delete s_rank;
 		s_rank = nullptr;
 	}
+	if (s_bg2 != nullptr)
+	{
+		delete s_bg2;
+		s_bg2 = nullptr;
+	}
+	if (s_bg1 != nullptr)
+	{
+		delete s_bg1;
+		s_bg1 = nullptr;
+	}
+
 	if (s_result != nullptr)
 	{
 		delete s_result;
@@ -64,6 +78,7 @@ void Game_Clear::Update(float elapsedTime)
 	timer += elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
 	GameCleartime += elapsedTime;
+	angle += 0.1f;
 }
 
 void Game_Clear::Render()
@@ -104,8 +119,8 @@ void Game_Clear::Render()
 		constexpr float BASE_WIDTH = 1280.0f;
 		constexpr float BASE_HEIGHT = 720.0f;
 		// スケーリング係数（横幅を基準）
-		float scaleX = screenWidth / BASE_WIDTH;
-		float scaleY = screenHeight / BASE_HEIGHT;
+		float scaleX = Graphics::Instance().GetWindowScaleFactor().x;
+		float scaleY = Graphics::Instance().GetWindowScaleFactor().y;
 		// 大きなスプライトのサイズ
 		int bigSize = 512;
 
@@ -116,6 +131,20 @@ void Game_Clear::Render()
 		// --- 1. 画面中央右（中央Y, 右端に寄せる） ---
 		int resultX = screenWidth / 4 * 3 - bigSize / 2;
 		int resultY = screenHeight / 2 - bigSize / 2;
+		float loop = 8 * 2;
+		for (int i = 0; i < loop; i++)
+		{
+			if (i % 2 == 0)
+			{
+				s_bg1->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, 360 / loop * i + angle, 1, 1, 1, 1);
+
+			}
+			else {
+
+				s_bg1->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, -(360 / loop * i + angle), 1, 1, 1, 1);
+			}
+		}
+		s_bg2->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, 0, 1, 1, 1, 1);
 		s_rank->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, 0, 1, 1, 1, 1);
 
 		// --- 2. 画面左上中央（左端に寄せる, 上から1/4の位置） ---
