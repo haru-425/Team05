@@ -51,8 +51,11 @@ void Game_Clear::Finalize()
 void Game_Clear::Update(float elapsedTime)
 {
 
-
-	if (GameCleartime >= 7.0f) {
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	{
+		GameCleartime = 120.0f;
+	}
+	if (GameCleartime >= 120.0f) {
 		if (!sceneTrans)
 		{
 
