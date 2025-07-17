@@ -1,9 +1,12 @@
 #pragma once
 #include "battery.h"
+#include "Player/Player.h"
+#include "Enemy/Enemy.h"
 #include <DirectXMath.h>
 #include <vector>
 
 #define BATTERY_MAX 10
+#define BATTERY_DROP_INTERVAL 20.0f
 
 class batteryManager
 {
@@ -16,6 +19,7 @@ public:
 
     void Update(float elapsedTime)
     {
+        droptime+=elapsedTime;
         for (auto& battery : hasBattery)
         {
             battery.Update(elapsedTime);
@@ -23,6 +27,12 @@ public:
         if (hasBattery.size() >= BATTERY_MAX && !hasBattery.empty())
         {
             hasBattery.erase(hasBattery.begin());
+        }
+        deleteBattery(player->GetPosition());
+        if (droptime >= BATTERY_DROP_INTERVAL)
+        {
+            addBattery(enemy->GetPosition());
+			droptime = 0;
         }
     }
 
@@ -48,6 +58,9 @@ public:
 			if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&it->getPos()), DirectX::XMLoadFloat3(&pos)))) < 0.5f)
 			{
 				it = hasBattery.erase(it);
+                player_get_Batterry++;
+                //ここにゲージを回復させるコードを書く
+
                 break;
 			}
 			else
@@ -56,6 +69,10 @@ public:
 			}
 		}
     }
+
+    void SetPlaye_and_enemy(std::shared_ptr<Player> players, std::shared_ptr<Enemy> enemys){player = players; enemy = enemys;};
+
+    void ResetPlayer_get_Batterry(){player_get_Batterry = 0;};
 private:
     batteryManager() {}
     ~batteryManager() {}
@@ -64,5 +81,11 @@ private:
 
     std::shared_ptr<Model> batterymodel = std::make_shared<Model>("Data/Model/battery_assets/battery_geo.mdl");
 
+    std::shared_ptr<Player> player;
 
+    std::shared_ptr<Enemy> enemy;
+
+    int player_get_Batterry = 0;
+
+    float droptime = 0;
 };
