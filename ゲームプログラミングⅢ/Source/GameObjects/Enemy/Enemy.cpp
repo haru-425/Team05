@@ -5,6 +5,7 @@
 #include "Pursuer/ObjectBase.h"
 #include "Pursuer/SearchAI.h"
 #include "Player/player.h"
+#include "3DAudio/3dAudio.h"
 #include "./Collision.h"
 #include "imgui.h"                    // ImGuiの基本機能
 #include "imgui_impl_win32.h"        // Win32用バックエンド
@@ -147,6 +148,14 @@ void Enemy::Update(float elapsedTime)
     switch (state)
     {
     case State::Roaming:
+        if (isTrackingPlayer)
+        {
+            Audio3DSystem::Instance().PlayByTag("enemy_run");
+        }
+        else
+        {
+            Audio3DSystem::Instance().PlayByTag("enemy_walk");
+        }
         Updatemovement(elapsedTime); // 経路に沿って移動
         break;
 

@@ -17,6 +17,8 @@ public:
 	DirectX::XMFLOAT3 getPos() { return position; }
 
 	void setPos(DirectX::XMFLOAT3 pos) { position = pos; }
+
+	void setModel(std::shared_ptr<Model> model) { this->model = model; }
 private:
 	std::shared_ptr<Model> model = nullptr;                ///< モデルデータ
 	std::shared_ptr<LoadTextures> textures;                /// テクスチャデータ
