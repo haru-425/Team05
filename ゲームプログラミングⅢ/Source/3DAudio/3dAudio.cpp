@@ -180,7 +180,7 @@ void Audio3DSystem::Initialize()
 	AddEmitter("Data/Sound/electrical_noise.wav", { 0.0f, 0.0f, 0.0f }, "electrical_noise", SoundType::BGM, 0.1f, true, true, true, 0.0f);
 
 
-	AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", SoundType::BGM, 1.f, true);
+	AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", SoundType::BGM, 0.5f, true);
 	for (int i = 0; i < AIRCON_MAX; i++)
 	{
 		AddEmitter("Data/Sound/air_conditioner.wav", AirconManager::Instance().GetAirconPosition(i), "aircon", SoundType::SE, 0.2f, true, true, false, 0.1f);
@@ -263,6 +263,8 @@ void Audio3DSystem::AddEmitter(const char* wavPath, const XMFLOAT3& pos, const s
 
 	e.Volume = volume;
 	emitters.push_back(std::move(e));
+
+	SetVolumeByAll();
 }
 
 /**
@@ -308,7 +310,7 @@ void Audio3DSystem::UpdateEmitters()
 		}
 
 		// 距離減衰スケーラー（0にすると距離による変化なし）
-		e.emitterDesc.CurveDistanceScaler = e.constantVolume ? 0.0f : e.distanceScaler;
+		e.emitterDesc.CurveDistanceScaler = e.constantVolume ? 0 : e.distanceScaler;
 
 		X3DAudioCalculate(
 			x3dAudioHandle,
