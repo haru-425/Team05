@@ -61,6 +61,7 @@ Enemy::~Enemy()
 // 毎フレーム呼び出される更新処理
 void Enemy::Update(float elapsedTime)
 {
+#if 0
     // 敵の向きをプレイヤーに合わせるために、ビュー行列からZ軸方向を取得
     DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&world);
     DirectX::XMVECTOR Forward = M.r[2];
@@ -68,6 +69,24 @@ void Enemy::Update(float elapsedTime)
     float x = DirectX::XMVectorGetX(Forward);
     float y = DirectX::XMVectorGetY(Forward);
     float z = DirectX::XMVectorGetZ(Forward);
+
+#else
+    float x, y, z;
+    for (int i = 0; i < model->GetNodes().size(); ++i)
+    {
+        if (std::strcmp(model->GetNodes().at(i).name, "head_end_FK") == 0)
+        {
+            DirectX::XMFLOAT4X4 transform = model->GetNodes().at(i).globalTransform;
+            DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&transform);
+            DirectX::XMVECTOR Forward = M.r[2];
+
+            x = DirectX::XMVectorGetX(Forward) * cameraShakeScale.x; ///< 揺れの度合(左右)
+            z = DirectX::XMVectorGetZ(Forward) * cameraShakeScale.x; ///< 揺れの度合(左右)
+
+            y = DirectX::XMVectorGetY(Forward) * cameraShakeScale.y; ///< 揺れの度合(上下)
+        }
+    }
+#endif
 
     pitch = asinf(y);             // 上下の向き
     yaw = atan2f(x, z);           // 左右の向き
@@ -623,6 +642,7 @@ void Enemy::DrawDebug()
 
     // positionを表示
     ImGui::Text("Position: X=%d",this->state);
+    ImGui::DragFloat2("cameraShakeScale", &cameraShakeScale.x);
     ImGui::End();
 }
 
