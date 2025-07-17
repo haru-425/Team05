@@ -166,7 +166,14 @@ void Player::Move(float dt)
     /// 加速処理
     accel += acceleration * dt;
 
+#if 0
     speed += accel * dt;
+#else
+    if (Input::Instance().GetMouse().GetButton() & Mouse::BTN_RIGHT)
+        speed = 3;
+    else
+        speed = 0;
+#endif
     speed = DirectX::XMMin(speed, maxSpeed);
     position.x += speed * forward.x * dt;
     position.z += speed * forward.z * dt;
@@ -245,7 +252,7 @@ void Player::UpdateHijack(float dt)
     if (useCam)
     {
         // ゲージの消費
-        enableHijackTime -= hijackCostPerSec * dt;
+        //enableHijackTime -= hijackCostPerSec * dt;
     }
     // 視界がプレイヤーの場合
     else

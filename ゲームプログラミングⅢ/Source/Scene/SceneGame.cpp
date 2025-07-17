@@ -35,6 +35,7 @@ void SceneGame::Initialize()
 	i_CameraController = std::make_unique<FPCameraController>();
 
 	player = std::make_shared<Player>();
+	enemy = std::make_shared<Enemy>(player, stage);
 
 	//ミニマップスプライト初期化
 	minimap = new MiniMap();
@@ -56,11 +57,16 @@ void SceneGame::Initialize()
 
 	ObjectManager::Instance().Initialize();
 
-	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	LightManager::Instance().Update();
+	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 
-	Audio3DSystem::Instance().SetVolumeByTag("atmosphere_noise", 0.2f);
-	Audio3DSystem::Instance().SetVolumeByTag("aircon", 1.f);
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
+
+
 	// 3Dオーディオシステムの再生開始
+	Audio3DSystem::Instance().UpdateEmitters();
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
 }
@@ -98,7 +104,7 @@ void SceneGame::Update(float elapsedTime)
 
 	bool buttonPressed = (anyButton & gamePad.GetButton()) != 0;
 	bool zKey = GetAsyncKeyState('Z') & 0x8000;
-	bool cKey = GetAsyncKeyState('R') & 0x8000;
+	bool rKey = GetAsyncKeyState('R') & 0x8000;
 
 	// フラグがまだ立っていない場合に入力検出
 	if (!sceneTrans)
@@ -110,7 +116,7 @@ void SceneGame::Update(float elapsedTime)
 			transTimer = 0.0f;
 			selectTrans = SelectTrans::GameOver; // ゲームオーバーシーンに遷移
 		}
-		if (cKey)
+		if (rKey)
 		{
 			nextScene = new Game_Clear;
 			sceneTrans = true;
@@ -144,7 +150,8 @@ void SceneGame::Update(float elapsedTime)
 
 	//ステージ更新処理
 	stage->Update(elapsedTime);
-	//player->Update(elapsedTime);
+	player->Update(elapsedTime);
+	enemy->Update(elapsedTime);
 	minimap->Update(player->GetPosition());
 
 	// 一人称用カメラ
@@ -158,7 +165,7 @@ void SceneGame::Update(float elapsedTime)
 		i_CameraController->Update(elapsedTime);
 		SetCursorPos(screenPoint.x, screenPoint.y);
 
-		if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButtonDown() & GamePad::BTN_X)
+		if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
 		{
 			i_CameraController = std::make_unique<LightDebugCameraController>();
 		}
@@ -173,13 +180,22 @@ void SceneGame::Update(float elapsedTime)
 			i_CameraController = std::make_unique<FPCameraController>();
 		}
 	}
+
+	UpdateCamera(elapsedTime);
+
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
 
+	Collision();
+
+	player->UpdateTransform();
 
 	LightManager::Instance().Update();
 	ObjectManager::Instance().Update(elapsedTime);
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
+
 	Audio3DSystem::Instance().UpdateEmitters();
 }
 
@@ -249,6 +265,9 @@ void SceneGame::Render()
 
 		player->Render(rc, modelRenderer);
 
+		if (!player->GetUseCam())
+			enemy->Render(rc, modelRenderer);
+
 		LightManager::Instance().Render(rc);
 
 		AirconManager::Instance().Render(rc);
@@ -293,19 +312,11 @@ void SceneGame::Render()
 		};
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
-
-		//WardenGaze
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->clear(dc);
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->activate(dc);
-		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::WardenGaze)].Get());
-
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->deactivate(dc);
 		//TemporalNoise
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::WardenGaze)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
 		//FilmGrainDustPS
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->clear(dc);
@@ -469,6 +480,9 @@ void SceneGame::Collision()
 {
 	/// プレイヤーとステージとの当たり判定
 	PlayerVsStage();
+
+	/// プレイヤーと敵との当たり判定
+	PlayerVsEnemy();
 }
 
 void SceneGame::PlayerVsStage()
@@ -517,7 +531,7 @@ void SceneGame::PlayerVsStage()
 		XMStoreFloat3(&q, Q);
 
 		XMFLOAT3 playerPos = player->GetPosition();
-#if 0
+#if 1
 		playerPos.x = q.x - playerDir.x;
 		playerPos.z = q.z - playerDir.z;
 #else
@@ -528,8 +542,92 @@ void SceneGame::PlayerVsStage()
 	}
 }
 
+/**
+* @brief プレイヤーと敵との当たり判定関数
+*
+* プレイヤーと敵の当たり判定を球vs球で取り、
+* 互いの hitFlag を true にする
+* 押し出しはなし
+*/
+void SceneGame::PlayerVsEnemy()
+{
+	float pRadius = player->GetRadius();
+	float eRadius = enemy->GetRadius();
+	DirectX::XMFLOAT3 pPos = player->GetPosition();
+	DirectX::XMFLOAT3 ePos = enemy->GetPosition();
+
+	DirectX::XMFLOAT3 outPos = {};
+	if (Collision::IntersectSphereVsSphere(pPos, pRadius, ePos, eRadius, outPos))
+	{
+		player->SetIsHit(true);
+		enemy->SetIsHit(true);
+	}
+	else
+	{
+		player->SetIsHit(false);
+		enemy->SetIsHit(false);
+	}
+}
+
+/**
+* @brief カメラの更新処理
+*
+* プレイヤー視点カメラから敵視点カメラに切り換えるやつ
+*/
 void SceneGame::UpdateCamera(float elapsedTime)
 {
+	GamePad& gamepad = Input::Instance().GetGamePad();
+
+	/// 一人称 (プレイヤー視点)
+	if (typeid(*i_CameraController) == typeid(FPCameraController))
+	{
+		/// カメラ切り替え　プレイヤー視点 → 敵視点
+		bool useCamera = player->GetUseCam();
+		POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
+		ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
+
+		DirectX::XMFLOAT3 cameraPos = {};
+		/// プレイヤー視点
+		if (!useCamera)
+		{
+			cameraPos = player->GetPosition();
+			cameraPos.y = player->GetViewPoint();
+		}
+		/// 敵視点
+		else
+		{
+			/// 敵の視点に固定するために
+			cameraPos = enemy->GetPosition();
+			cameraPos.y = enemy->GetViewPoint();
+			i_CameraController->SetPitch(enemy->GetPitch());
+			i_CameraController->SetYaw(enemy->GetYaw());
+		}
+
+		i_CameraController->SetCameraPos(cameraPos);
+		i_CameraController->SetUseEnemyCam(useCamera);
+		/// カメラを切り換えた瞬間に元のカメラの角度に戻す処理用
+		/// UseEnemyCam とは使用用途が違うので注意
+		i_CameraController->SetIsChange(player->GetIsChange());
+		i_CameraController->Update(elapsedTime);
+		SetCursorPos(screenPoint.x, screenPoint.y);
+
+#ifdef _DEBUG
+		/// カメラモードの変更 (DEBUG モードのみ)
+		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
+		{
+			i_CameraController = std::make_unique<FreeCameraController>();
+		}
+#endif
+	}
+	else ///< フリーカメラ用
+	{
+		i_CameraController->Update(elapsedTime);
+
+		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
+		{
+			i_CameraController = std::make_unique<FPCameraController>();
+		}
+	}
 }
 
 void SceneGame::UpdateConstants(RenderContext& rc)

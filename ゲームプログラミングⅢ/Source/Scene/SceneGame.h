@@ -40,6 +40,8 @@ private:
 
 	void PlayerVsStage();
 
+	void PlayerVsEnemy();
+
 	void UpdateCamera(float elapsedTime);
 
 private:
@@ -47,6 +49,7 @@ private:
 
 	std::unique_ptr<ICameraController> i_CameraController = nullptr;
 	std::shared_ptr<Player> player;
+	std::shared_ptr<Enemy> enemy;
 	MiniMap* minimap = nullptr;
 	float timer = 0.0f; // タイマー
 	float transTimer = 0.0f; // シーン遷移タイマー

@@ -8,9 +8,9 @@ UIManager::~UIManager()
         Clear();
 }
 
+static int id = 0;
 void UIManager::CreateUI(const char* filename, const char* saveFilename)
 {
-    static int id = 0;
 
     uis.emplace_back(std::make_unique<UI>(filename, id, saveFilename));
     ++id;
@@ -35,6 +35,7 @@ void UIManager::Render(const RenderContext& rc)
 void UIManager::Clear()
 {
     uis.clear();
+    id = 0;
 }
 
 void UIManager::DrawDebug()
