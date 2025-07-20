@@ -110,6 +110,15 @@ void Enemy::Update(float elapsedTime)
 		DirectX::XMVector3Length(
 			DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
 
+	if (playerdist<attackRange)
+	{
+		state = State::Attack;
+		Animationplay();
+		//ここにゲームオーバー演出へ遷移するコードを書く
+
+		return;
+	}
+
 	// プレイヤーが見えているか近づいているなら
 	if (((loocking && playerdist < lockonRange) || playerdist < searchRange) && state != State::miss)
 	{
