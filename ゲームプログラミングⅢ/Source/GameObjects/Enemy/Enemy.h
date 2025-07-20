@@ -133,6 +133,7 @@ private:
     std::vector<DirectX::XMFLOAT3> route;                  ///< 移動ルート
     size_t currentTargetIndex = 0;                         ///< 現在向かっているポイントのインデックス
     DirectX::XMFLOAT3 targetPosition = { 0, 0, 0 };        ///< 現在のターゲット座標
+    float attackRange = 1.0f;                              ///< 攻撃範囲
     float moveSpeed = USUAL_SPEED;                         ///< 現在の移動速度
     float turnSpeed = DirectX::XMConvertToRadians(360);    ///< 回転速度（ラジアン）
 
