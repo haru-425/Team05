@@ -14,6 +14,16 @@
 //ステージ
 class Stage
 {
+private:
+    enum class ModelLavel {
+        Aisle = 0,
+        CornerCross,
+        Floor,
+        Room,
+        AislePartition,
+        Door,
+    };
+
 public:
     Stage();
     ~Stage();
@@ -52,9 +62,11 @@ private:
         0,0,0,1
     };
 
-    std::unique_ptr<Model> model[4] = {};
+    static const int MODEL_MAX = 6;
 
-    std::unique_ptr<LoadTextures> textures[4] = {};
+    std::unique_ptr<Model> model[MODEL_MAX] = {};
+
+    std::unique_ptr<LoadTextures> textures[MODEL_MAX] = {};
 
     std::unique_ptr<Model> collisionMesh;
     DirectX::XMFLOAT4X4 collisionMeshMatrix;
