@@ -92,14 +92,13 @@ void SceneTitle::Initialize()
 	um.CreateUI("./Data/Sprite/numbers.png", "SE10");
 	um.CreateUI("./Data/Sprite/numbers.png", "SE1");
 
-	// リスナーの初期位置と向きを設定
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
-	Audio3DSystem::Instance().UpdateEmitters();
 
-	//Audio3DSystem::Instance().SetVolumeByTag("atmosphere_noise", 0.4f);
-	//Audio3DSystem::Instance().SetVolumeByTag("aircon", 1.f);
+
 	// 3Dオーディオシステムの再生開始
+	Audio3DSystem::Instance().SetVolumeByAll();
+	Audio3DSystem::Instance().UpdateEmitters();
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
 }
@@ -789,7 +788,7 @@ void SceneTitle::UpdateUI()
 
 #if 1
 	/// 設定を変更した場合保存
-	GameSettings setting;
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();;
 	if (!selectOptions)
 	{
 		if (sensitivity * 0.01 != setting.sensitivity)isChangeSettings = true;
@@ -798,15 +797,20 @@ void SceneTitle::UpdateUI()
 		else if (seVolume * 0.01 != setting.seVolume)isChangeSettings = true;
 	}
 
-	if (isChangeSettings)
+	//if (isChangeSettings)
 	{
 		setting.sensitivity = sensitivity * 0.01;
 		setting.masterVolume = mVolume * 0.01;
 		setting.bgmVolume = bgmVolume * 0.01;
 		setting.seVolume = seVolume * 0.01;
+
 		SettingsManager::Instance().SetGameSettings(setting);
 		SettingsManager::Instance().Save();
 		isChangeSettings = false;
 	}
+	Audio3DSystem::Instance().masterVolume = setting.masterVolume;
+	Audio3DSystem::Instance().seVolume = setting.seVolume;
+	Audio3DSystem::Instance().bgmVolume = setting.bgmVolume;
+	Audio3DSystem::Instance().SetVolumeByAll();
 #endif
 }

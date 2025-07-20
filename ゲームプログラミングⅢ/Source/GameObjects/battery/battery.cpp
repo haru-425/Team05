@@ -2,10 +2,9 @@
 
 battery::battery()
 {
+    scale.x = scale.y = scale.z = 0.0169f; // スケール設定（非常に小さい）
     angle.z = DirectX::XMConvertToRadians(20.0f); 
     angle.y = DirectX::XMConvertToRadians(10.0f);  
-    scale.x = scale.y = scale.z = 0.0169f; // スケール設定（非常に小さい）
-
 }
 
 battery::~battery()
@@ -36,7 +35,7 @@ void battery::Update(float elapsedTime)
     DirectX::XMMATRIX PivotInvT = DirectX::XMMatrixTranslation(pivot.x, pivot.y, pivot.z);  // 回転後、元に戻す
 
     // ピボット考慮したワールド行列の計算
-    DirectX::XMMATRIX W = PivotT * R * PivotInvT * T * S;
+    DirectX::XMMATRIX W = S * PivotT * R * PivotInvT * T;
     //計算したワールド行列を取り出す
     DirectX::XMStoreFloat4x4(&world, W);
 
