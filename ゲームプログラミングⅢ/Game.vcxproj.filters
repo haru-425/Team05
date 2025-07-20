@@ -40,6 +40,7 @@
     <FxCompile Include="Shader\NoiseChangePS.hlsl" />
     <FxCompile Include="Shader\WardenGazePS.hlsl" />
     <FxCompile Include="Shader\LightFlickerPS.hlsl" />
+    <FxCompile Include="Shader\TimerPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="Source\RankSystem\RankSystem.h" />
     <ClInclude Include="Source\GameObjects\Object\Object.h" />
     <ClInclude Include="Source\GameObjects\Object\ObjectManager.h" />
+    <ClInclude Include="Source\System\difficulty.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
