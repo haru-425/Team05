@@ -41,6 +41,7 @@ void SceneGame::Initialize()
 	minimap = new MiniMap();
 	timer = 0.0f; // タイマー初期化
 	transTimer = 0.0f; // シーン遷移タイマー初期化
+	reminingTime = 180.0f;
 
 	selectTrans = SelectTrans::GameOver; // シーン遷移選択初期化
 	sceneTrans = false; // シーン遷移フラグ初期化
@@ -123,7 +124,14 @@ void SceneGame::Update(float elapsedTime)
 			transTimer = 0.0f;
 			selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
 		}
-
+		if (reminingTime <= 0.0f)
+		{
+			nextScene = new Game_Clear;
+			sceneTrans = true;
+			transTimer = 0.0f;
+			selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
+			reminingTime = 0.0f;
+		}
 	}
 	else
 	{
@@ -138,7 +146,8 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	timer += elapsedTime;
-	Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
+	reminingTime -= elapsedTime;
+	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	////ゲームオーバーに強制遷移
 	//if (GetAsyncKeyState('Z') & 0x8000)
@@ -312,11 +321,18 @@ void SceneGame::Render()
 		};
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
+
+		//Timer
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->activate(dc);
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Timer)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->deactivate(dc);
 		//TemporalNoise
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
 		//FilmGrainDustPS
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->clear(dc);
@@ -360,15 +376,24 @@ void SceneGame::Render()
 		};
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
 
+
+
 		minimap->Render(player->GetPosition());
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
 
+
+		//Timer
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->activate(dc);
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Timer)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->deactivate(dc);
 
 		//BreathShake
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::BreathShake)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::BreathShake)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->deactivate(dc);
 
 		//VisionBootDown
@@ -449,9 +474,9 @@ void SceneGame::DrawGUI()
 
 	if (ImGui::TreeNode("shadow"))
 	{
-	//	ImGui::Text("shadow_map");
-        shadow->DrawGUI();
-	//	//ImGui::Image(shadowShaderResourceView.Get(), { 256, 256 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+		//	ImGui::Text("shadow_map");
+		shadow->DrawGUI();
+		//	//ImGui::Image(shadowShaderResourceView.Get(), { 256, 256 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
 		ImGui::DragFloat("shadowBias", &shadowBias, 0.0001f, 0, 1, "%.6f");
 		ImGui::ColorEdit3("shadowColor", reinterpret_cast<float*>(&shadowColor));
 		ImGui::ColorEdit3("edgeColor", &edgeColor.x);
