@@ -93,7 +93,8 @@ private:
 	float shadowBias = 0.001f;
 
 	// 影の色（やや明るめのグレー）
-	DirectX::XMFLOAT3 shadowColor = { 0.89f, 0.89f, 0.89f };
+	DirectX::XMFLOAT3 shadowColor = { 0.7812f,0.7812f,0.7812f };
+	DirectX::XMFLOAT4 edgeColor = { .0f,.0f,.0f,1.0f };
 
 	// シャドウマップ描画範囲（デバッグ描画用？）
 	float SHADOWMAP_DRAWRECT = 30.0f;
@@ -107,7 +108,7 @@ private:
 	// ==============================
 
 	// アンビエントライトの色（暗めのグレー）
-	DirectX::XMFLOAT4 ambientColor = { 0.25f, 0.273f, 0.335f, 1.0f };
+	DirectX::XMFLOAT4 ambientColor = { 0.1093f, 0.1093f, 0.1093f, 1.0f };
 
 	// フォグの色（白に近いグレー）
 	DirectX::XMFLOAT4 fogColor = { .0f,.0f,.0f, 1.0f };
@@ -115,17 +116,15 @@ private:
 	// フォグの範囲（開始20.0、終了100.0）
 	DirectX::XMFLOAT4 fogRange = { 10.0f, 30.0f, 0, 0 };
 
-
 	// ==============================
 	// カメラ・ライト方向
 	// ==============================
 
 	// 平行光源の方向ベクトル（斜め上から照射）
-	DirectX::XMFLOAT3 lightDirection = { 0.0f, -1.0f, 1.0f };
+	DirectX::XMFLOAT3 lightDirection = { 0.0f, -3.0f, 0.0f };
 
 	// カメラのワールド座標
 	DirectX::XMFLOAT3 cameraPosition = { 0.0f, 0.0f, 0.0f };
-
 
 	float GraphicsScenetime = 0; //gameタイマー
 

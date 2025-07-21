@@ -45,6 +45,19 @@ public:
 		SE,
 		cnt,
 	};
+	enum class FadeState {
+		None,
+		FadeIn,
+		FadeOut
+	};
+
+	struct FadeInfo {
+		FadeState state = FadeState::None;
+		float timer = 0.0f;
+		float duration = 1.0f;
+		float startVolume = 0.0f;
+		float targetVolume = 1.0f;
+	};
 	/**
 	 * @brief エミッター（音源）を追加する
 	 *
@@ -80,7 +93,7 @@ public:
 	 * 各エミッターの位置に基づき、リスナーからの距離や方向を計算し、
 	 * ボリュームやパン、音源の3D音響パラメータをXAudio2のSourceVoiceに反映させる。
 	 */
-	void UpdateEmitters();
+	void UpdateEmitters(float elapsedTime);
 
 	/**
 	 * @brief 指定したタグを持つエミッターの位置を変更する
@@ -136,15 +149,19 @@ public:
 	void SetVolumeByTag(const std::string& tag, float volume);
 	void SetVolumeByAll();
 
-	/**
-	 * @brief エミッター更新用スレッドの開始
-	 */
-	void StartUpdateThread();
+	///**
+	// * @brief エミッター更新用スレッドの開始
+	// */
+	//void StartUpdateThread(float elapsedTime);
+	//
+	///**
+	// * @brief エミッター更新用スレッドの停止
+	// */
+	//void StopUpdateThread();
+	void StartFadeIn(const std::string& tag, float duration);
 
-	/**
-	 * @brief エミッター更新用スレッドの停止
-	 */
-	void StopUpdateThread();
+	void StartFadeOut(const std::string& tag, float duration);
+	void UpdateFadeVolumes(float elapsedTime);
 
 private:
 	IXAudio2* xAudio2 = nullptr; ///< XAudio2インスタンスへのポインタ
@@ -176,10 +193,15 @@ private:
 		bool constantVolume = false; ///< 距離減衰を無効にするフラグ（BGMなどに使用）
 		float distanceScaler = 1.0f; ///< 距離減衰スケーラー（距離減衰なしなら0.0f）
 		float Volume;
+		FadeInfo fadeInfo;
 	};
 
 	std::vector<Emitter> emitters; ///< 登録済みのすべてのエミッターのリスト
 
 
-
+	template<typename T>
+	T Lerp(T a, T b, T t)
+	{
+		return a + (b - a) * t;
+	}
 };

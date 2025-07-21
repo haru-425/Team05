@@ -87,8 +87,8 @@ void ShadowCaster::DrawGUI()
 	{
 		ImGui::Text("shadow_map");
 		ImGui::Image(shadowShaderResourceView.Get(), { 256, 256 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
-		ImGui::DragFloat("shadowBias", &bias, 0.0001f, 0, 1, "%.6f");
-		ImGui::ColorEdit3("shadowColor", reinterpret_cast<float*>(&color));
+		//ImGui::DragFloat("shadowBias", &bias, 0.0001f, 0, 1, "%.6f");
+		//ImGui::ColorEdit3("shadowColor", reinterpret_cast<float*>(&color));
 
 		ImGui::TreePop();
 	}

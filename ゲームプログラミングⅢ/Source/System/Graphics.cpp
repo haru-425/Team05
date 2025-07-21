@@ -35,7 +35,7 @@ void Graphics::Initialize(HWND hWnd)
 #if defined(DEBUG) || defined(_DEBUG)
 		//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-		
+
 #if 0
 		// スワップチェーンを作成するための設定オプション
 		DXGI_SWAP_CHAIN_DESC swapchainDesc;
@@ -80,136 +80,138 @@ void Graphics::Initialize(HWND hWnd)
 
 
 
-		/// DirectXのバージョン
-		D3D_FEATURE_LEVEL featureLevels = D3D_FEATURE_LEVEL_11_1;
-		hr = D3D11CreateDevice(adapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, 0, createDeviceFlags,
-			&featureLevels, 1, D3D11_SDK_VERSION, &device, NULL, &immediateContext);
-		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-
-		CreateSwapChain(dxgiFactory6.Get());
-	}
-
-	// レンダーターゲットビューの生成
-	{
-		// スワップチェーンからバックバッファテクスチャを取得する。
-		// ※スワップチェーンに内包されているバックバッファテクスチャは'色'を書き込むテクスチャ。
-		//Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2d;
-		//hr = swapchain->GetBuffer(
-		//	0,
-		//	__uuidof(ID3D11Texture2D),
-		//	reinterpret_cast<void**>(texture2d.GetAddressOf()));
-		//_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-
-		//// バックバッファテクスチャへの書き込みの窓口となるレンダーターゲットビューを生成する。
-		//hr = device->CreateRenderTargetView(texture2d.Get(), nullptr, renderTargetView.GetAddressOf());
-		//_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-	}
-
-	// 深度ステンシルビューの生成
-	{
-		// 深度ステンシル情報を書き込むためのテクスチャを作成する。
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2d;
-		D3D11_TEXTURE2D_DESC texture2dDesc;
-		texture2dDesc.Width = screenWidth;
-		texture2dDesc.Height = screenHeight;
-		texture2dDesc.MipLevels = 1;
-		texture2dDesc.ArraySize = 1;
-		texture2dDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		texture2dDesc.SampleDesc.Count = 1;
-		texture2dDesc.SampleDesc.Quality = 0;
-		texture2dDesc.Usage = D3D11_USAGE_DEFAULT;
-		texture2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		texture2dDesc.CPUAccessFlags = 0;
-		texture2dDesc.MiscFlags = 0;
-		hr = device->CreateTexture2D(&texture2dDesc, nullptr, texture2d.GetAddressOf());
-		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-
-		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
-		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		depthStencilViewDesc.Texture2D.MipSlice = 0;
-		depthStencilViewDesc.Flags = 0;
-
-		// 深度ステンシルテクスチャへの書き込みに窓口になる深度ステンシルビューを作成する。
-		//hr = device->CreateDepthStencilView(texture2d.Get(), nullptr, depthStencilView.GetAddressOf());
-		hr = device->CreateDepthStencilView(texture2d.Get(), &depthStencilViewDesc, depthStencilView.GetAddressOf());
-		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-	}
-
-	// ビューポート
-	{
-		//viewport.Width = static_cast<float>(framebufferDimensions.cx);
-		//viewport.Height = static_cast<float>(framebufferDimensions.cy);
-		//viewport.MinDepth = 0.0f;
-		//viewport.MaxDepth = 1.0f;
-		//viewport.TopLeftX = 0.0f;
-		//viewport.TopLeftY = 0.0f;
-		//immediateContext->RSSetViewports(1, &viewport);
-	}
-
-	// レンダーステート生成
-	renderState = std::make_unique<RenderState>(device.Get());
-
-	// レンダラ生成
-	shapeRenderer = std::make_unique<ShapeRenderer>(device.Get());
-	modelRenderer = std::make_unique<ModelRenderer>(device.Get());
-
-	// 定数バッファ生成
-	// 時間を格納する定数バッファ
-	D3D11_BUFFER_DESC bufferDesc{};
-	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(TimeCBuffer));
-	bufferDesc.StructureByteStride = sizeof(TimeCBuffer);
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.MiscFlags = 0;
-	hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::TimeCBuffer)].ReleaseAndGetAddressOf());
-	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-	// 画面サイズを格納する定数バッファ
-	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(ScreenSizeCBuffer));
-	bufferDesc.StructureByteStride = sizeof(ScreenSizeCBuffer);
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.MiscFlags = 0;
-	hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].ReleaseAndGetAddressOf());
-
-	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-	// フリッカー効果の定数バッファ
-	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(LightFlickerCBuffer));
-	bufferDesc.StructureByteStride = sizeof(LightFlickerCBuffer);
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.MiscFlags = 0;
-	hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::LightFlickerCBuffer)].ReleaseAndGetAddressOf());
+	/// DirectXのバージョン
+	D3D_FEATURE_LEVEL featureLevels = D3D_FEATURE_LEVEL_11_1;
+	hr = D3D11CreateDevice(adapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, 0, createDeviceFlags,
+		&featureLevels, 1, D3D11_SDK_VERSION, &device, NULL, &immediateContext);
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
-
-	//framebufferの生成
-	for (int i = 0; i <int(PPShaderType::Count); i++)
-	{
-
-		framebuffers[i] = std::make_unique<framebuffer>(device.Get(), screenWidth, screenHeight, true);
+	CreateSwapChain(dxgiFactory6.Get());
 	}
 
-	bloomer = std::make_unique<bloom>(device.Get(), 1280, 720);
-	bit_block_transfer = std::make_unique<fullscreen_quad>(device.Get());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/crtPS.cso", pixel_shaders[int(PPShaderType::crt)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/GlitchPS.cso", pixel_shaders[int(PPShaderType::Glitch)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/SharpenPS.cso", pixel_shaders[int(PPShaderType::Sharpen)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BreathShakePS.cso", pixel_shaders[int(PPShaderType::BreathShake)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TemporalNoisePS.cso", pixel_shaders[int(PPShaderType::TemporalNoise)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/NoSignalFinalePS.cso", pixel_shaders[int(PPShaderType::NoSignalFinale)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/VisionBootDownPS.cso", pixel_shaders[int(PPShaderType::VisionBootDown)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/CrackshaftPS.cso", pixel_shaders[int(PPShaderType::Crackshaft)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/HighLightPassPS.cso", pixel_shaders[int(PPShaderType::HighLightPass)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BlurPS.cso", pixel_shaders[int(PPShaderType::Blur)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BloomFinal.cso", pixel_shaders[int(PPShaderType::BloomFinal)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TVNoiseFadePS.cso", pixel_shaders[int(PPShaderType::TVNoiseFade)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/GameOverPS.cso", pixel_shaders[int(PPShaderType::GameOver)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/FilmGrainDustPS.cso", pixel_shaders[int(PPShaderType::FilmGrainDust)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/FadeToBlackPS.cso", pixel_shaders[int(PPShaderType::FadeToBlack)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/WardenGazePS.cso", pixel_shaders[int(PPShaderType::WardenGaze)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/NoiseChangePS.cso", pixel_shaders[int(PPShaderType::NoiseChange)].ReleaseAndGetAddressOf());
-	GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/LightFlickerPS.cso", pixel_shaders[int(PPShaderType::LightFlicker)].ReleaseAndGetAddressOf());
+// レンダーターゲットビューの生成
+{
+	// スワップチェーンからバックバッファテクスチャを取得する。
+	// ※スワップチェーンに内包されているバックバッファテクスチャは'色'を書き込むテクスチャ。
+	//Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2d;
+	//hr = swapchain->GetBuffer(
+	//	0,
+	//	__uuidof(ID3D11Texture2D),
+	//	reinterpret_cast<void**>(texture2d.GetAddressOf()));
+	//_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	//// バックバッファテクスチャへの書き込みの窓口となるレンダーターゲットビューを生成する。
+	//hr = device->CreateRenderTargetView(texture2d.Get(), nullptr, renderTargetView.GetAddressOf());
+	//_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+}
+
+// 深度ステンシルビューの生成
+{
+	// 深度ステンシル情報を書き込むためのテクスチャを作成する。
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2d;
+	D3D11_TEXTURE2D_DESC texture2dDesc;
+	texture2dDesc.Width = screenWidth;
+	texture2dDesc.Height = screenHeight;
+	texture2dDesc.MipLevels = 1;
+	texture2dDesc.ArraySize = 1;
+	texture2dDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	texture2dDesc.SampleDesc.Count = 1;
+	texture2dDesc.SampleDesc.Quality = 0;
+	texture2dDesc.Usage = D3D11_USAGE_DEFAULT;
+	texture2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	texture2dDesc.CPUAccessFlags = 0;
+	texture2dDesc.MiscFlags = 0;
+	hr = device->CreateTexture2D(&texture2dDesc, nullptr, texture2d.GetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Texture2D.MipSlice = 0;
+	depthStencilViewDesc.Flags = 0;
+
+	// 深度ステンシルテクスチャへの書き込みに窓口になる深度ステンシルビューを作成する。
+	//hr = device->CreateDepthStencilView(texture2d.Get(), nullptr, depthStencilView.GetAddressOf());
+	hr = device->CreateDepthStencilView(texture2d.Get(), &depthStencilViewDesc, depthStencilView.GetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+}
+
+// ビューポート
+{
+	//viewport.Width = static_cast<float>(framebufferDimensions.cx);
+	//viewport.Height = static_cast<float>(framebufferDimensions.cy);
+	//viewport.MinDepth = 0.0f;
+	//viewport.MaxDepth = 1.0f;
+	//viewport.TopLeftX = 0.0f;
+	//viewport.TopLeftY = 0.0f;
+	//immediateContext->RSSetViewports(1, &viewport);
+}
+
+// レンダーステート生成
+renderState = std::make_unique<RenderState>(device.Get());
+
+// レンダラ生成
+shapeRenderer = std::make_unique<ShapeRenderer>(device.Get());
+modelRenderer = std::make_unique<ModelRenderer>(device.Get());
+
+// 定数バッファ生成
+// 時間を格納する定数バッファ
+D3D11_BUFFER_DESC bufferDesc{};
+bufferDesc.ByteWidth = static_cast<UINT>(sizeof(TimeCBuffer));
+bufferDesc.StructureByteStride = sizeof(TimeCBuffer);
+bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+bufferDesc.MiscFlags = 0;
+hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::TimeCBuffer)].ReleaseAndGetAddressOf());
+_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+// 画面サイズを格納する定数バッファ
+bufferDesc.ByteWidth = static_cast<UINT>(sizeof(ScreenSizeCBuffer));
+bufferDesc.StructureByteStride = sizeof(ScreenSizeCBuffer);
+bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+bufferDesc.MiscFlags = 0;
+hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::ScreenSizeCBuffer)].ReleaseAndGetAddressOf());
+
+_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+// フリッカー効果の定数バッファ
+bufferDesc.ByteWidth = static_cast<UINT>(sizeof(LightFlickerCBuffer));
+bufferDesc.StructureByteStride = sizeof(LightFlickerCBuffer);
+bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+bufferDesc.MiscFlags = 0;
+hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::LightFlickerCBuffer)].ReleaseAndGetAddressOf());
+_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+
+//framebufferの生成
+for (int i = 0; i <int(PPShaderType::Count); i++)
+{
+
+	framebuffers[i] = std::make_unique<framebuffer>(device.Get(), screenWidth, screenHeight, true);
+}
+
+bloomer = std::make_unique<bloom>(device.Get(), 1280, 720);
+bit_block_transfer = std::make_unique<fullscreen_quad>(device.Get());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/crtPS.cso", pixel_shaders[int(PPShaderType::crt)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/GlitchPS.cso", pixel_shaders[int(PPShaderType::Glitch)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/SharpenPS.cso", pixel_shaders[int(PPShaderType::Sharpen)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BreathShakePS.cso", pixel_shaders[int(PPShaderType::BreathShake)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TemporalNoisePS.cso", pixel_shaders[int(PPShaderType::TemporalNoise)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/NoSignalFinalePS.cso", pixel_shaders[int(PPShaderType::NoSignalFinale)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/VisionBootDownPS.cso", pixel_shaders[int(PPShaderType::VisionBootDown)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/CrackshaftPS.cso", pixel_shaders[int(PPShaderType::Crackshaft)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/HighLightPassPS.cso", pixel_shaders[int(PPShaderType::HighLightPass)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BlurPS.cso", pixel_shaders[int(PPShaderType::Blur)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/BloomFinal.cso", pixel_shaders[int(PPShaderType::BloomFinal)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TVNoiseFadePS.cso", pixel_shaders[int(PPShaderType::TVNoiseFade)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/GameOverPS.cso", pixel_shaders[int(PPShaderType::GameOver)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/FilmGrainDustPS.cso", pixel_shaders[int(PPShaderType::FilmGrainDust)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/FadeToBlackPS.cso", pixel_shaders[int(PPShaderType::FadeToBlack)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/WardenGazePS.cso", pixel_shaders[int(PPShaderType::WardenGaze)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/NoiseChangePS.cso", pixel_shaders[int(PPShaderType::NoiseChange)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/LightFlickerPS.cso", pixel_shaders[int(PPShaderType::LightFlicker)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TimerPS.cso", pixel_shaders[int(PPShaderType::Timer)].ReleaseAndGetAddressOf());
+
 
 
 }

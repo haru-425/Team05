@@ -36,13 +36,14 @@ cbuffer TimeCBuffer : register(b10)
      */
     float iTime;
     float signalTime; // サイン波の時間変化
+    float remTime; // 残り時間
 
     /**
      * @brief 予備のパディング用変数
      *
      * メモリアライメントや将来の拡張のために確保されています。
      */
-    float2 pud0;
+    float pud0;
 }
 
 cbuffer ScreenSizeCBuffer : register(b11)

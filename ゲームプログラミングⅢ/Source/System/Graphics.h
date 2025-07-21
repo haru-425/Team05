@@ -111,7 +111,8 @@ private:
 
 		float time;
 		float SignalTime;
-		float pad[2];
+		float remaininngTime;
+		float pad;
 	};
 	struct ScreenSizeCBuffer
 	{
@@ -158,6 +159,7 @@ public:
 		WardenGaze,
 		NoiseChange,
 		LightFlicker,
+		Timer,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
@@ -168,10 +170,11 @@ public:
 	std::unique_ptr<bloom> bloomer;
 
 
-	void UpdateConstantBuffer(float Time, float signalTime = 0) {
+	void UpdateConstantBuffer(float Time, float signalTime = 0, float remaininngTime = 0) {
 		TimeCBuffer timeCBuffer;
 		timeCBuffer.time = Time;
 		timeCBuffer.SignalTime = signalTime; //SignalTimeを更新するとテレビのような画面切り替え(0.3ｓ)
+		timeCBuffer.remaininngTime = remaininngTime;
 		immediateContext->UpdateSubresource(cbuffer[int(ConstantBufferType::TimeCBuffer)].Get(), 0, 0, &timeCBuffer, 0, 0);
 		immediateContext->PSSetConstantBuffers(10, 1, cbuffer[int(ConstantBufferType::TimeCBuffer)].GetAddressOf());
 		immediateContext->VSSetConstantBuffers(10, 1, cbuffer[int(ConstantBufferType::TimeCBuffer)].GetAddressOf());

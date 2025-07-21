@@ -2,6 +2,7 @@
 #include"System/Input.h"
 #include"SceneLogo.h"
 #include"SceneManager.h"
+#include "System/SettingsManager.h"
 
 //初期化
 void SceneLogo::Initialize()
@@ -21,9 +22,14 @@ void SceneLogo::Initialize()
 
 	// リスナーの初期位置と向きを設定
 	Audio3DSystem::Instance().UpdateListener({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
 	// 3Dオーディオシステムの再生開始
 	Audio3DSystem::Instance().PlayByTag("electrical_noise");
 	Audio3DSystem::Instance().SetVolumeByTag("electrical_noise", 0.1f);
+	Audio3DSystem::Instance().masterVolume = setting.masterVolume;
+	Audio3DSystem::Instance().bgmVolume = setting.seVolume;
+	Audio3DSystem::Instance().bgmVolume = setting.bgmVolume;
+	Audio3DSystem::Instance().SetVolumeByAll();
 }
 
 //終了化
@@ -75,7 +81,7 @@ void SceneLogo::Update(float elapsedTime)
 	Graphics::Instance().UpdateConstantBuffer(timer, transtimer);
 
 	// 3Dオーディオシステムのエミッター更新
-	Audio3DSystem::Instance().UpdateEmitters();
+	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 
 
 }

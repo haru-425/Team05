@@ -5,10 +5,12 @@
 Stage::Stage()
 {
 	//ステージモデルを読み込み
-	model[0] = std::make_unique<Model>("Data/Model/Stage/Map/Aisle/Map_aisle_01.mdl");
-	model[1] = std::make_unique<Model>("Data/Model/Stage/Map/Corner_Cross/Map_corner_cross_01.mdl");
-	model[2] = std::make_unique<Model>("Data/Model/Stage/Map/Floor/Map_floor_01.mdl");
-	model[3] = std::make_unique<Model>("Data/Model/Stage/Map/Room/Map_room_01.mdl");
+	model[static_cast<int>(ModelLavel::Aisle)] = std::make_unique<Model>("Data/Model/Stage/Map/Aisle/Map_aisle_01.mdl");
+	model[static_cast<int>(ModelLavel::CornerCross)] = std::make_unique<Model>("Data/Model/Stage/Map/Corner_Cross/Map_corner_cross_01.mdl");
+	model[static_cast<int>(ModelLavel::Floor)] = std::make_unique<Model>("Data/Model/Stage/Map/Floor/Map_floor_01.mdl");
+	model[static_cast<int>(ModelLavel::Room)] = std::make_unique<Model>("Data/Model/Stage/Map/Room/Map_room_01.mdl");
+	model[static_cast<int>(ModelLavel::AislePartition)] = std::make_unique<Model>("Data/Model/Stage/Map/Aisle_partition/Aisle_partition.mdl");
+	model[static_cast<int>(ModelLavel::Door)] = std::make_unique<Model>("Data/Model/Stage/Map/Door/Door.mdl");
 
 	scale = { 0.01f,0.01f,0.01f };
 
@@ -35,20 +37,34 @@ Stage::Stage()
 		}
 
 		// Aisle
-		textures[0]->LoadNormal("Data/Model/Stage/Map/Aisle/Aisle_mtl/Aisle_mtl_Normal.1001.png");
-		textures[0]->LoadRoughness("Data/Model/Stage/Map/Aisle/Aisle_mtl/Aisle_mtl_Roughness.1001.png");
+		textures[static_cast<int>(ModelLavel::Aisle)]->LoadNormal("Data/Model/Stage/Map/Aisle/Aisle_mtl/Aisle_mtl_Normal.1001.png");
+		textures[static_cast<int>(ModelLavel::Aisle)]->LoadRoughness("Data/Model/Stage/Map/Aisle/Aisle_mtl/Aisle_mtl_Roughness.1001.png");
 
 		// CornerCross
-		textures[1]->LoadNormal("Data/Model/Stage/Map/Corner_Cross/Corner_Cross_mtl/Corner_Cross_mtl_Normal.1001.png");
-		textures[1]->LoadRoughness("Data/Model/Stage/Map/Corner_Cross/Corner_Cross_mtl/Corner_Cross_mtl_Roughness.1001.png");
+		textures[static_cast<int>(ModelLavel::CornerCross)]->LoadNormal("Data/Model/Stage/Map/Corner_Cross/Corner_Cross_mtl/Corner_Cross_mtl_Normal.1001.png");
+		textures[static_cast<int>(ModelLavel::CornerCross)]->LoadRoughness("Data/Model/Stage/Map/Corner_Cross/Corner_Cross_mtl/Corner_Cross_mtl_Roughness.1001.png");
 
 		// Floor
-		textures[2]->LoadNormal("Data/Model/Stage/Map/Floor/Floor_mtl/Floor_mtl_Normal.1001.png");
-		textures[2]->LoadRoughness("Data/Model/Stage/Map/Floor/Floor_mtl/Floor_mtl_Roughness.1001.png");
+		textures[static_cast<int>(ModelLavel::Floor)]->LoadNormal("Data/Model/Stage/Map/Floor/Floor_mtl/Floor_mtl_Normal.1001.png");
+		textures[static_cast<int>(ModelLavel::Floor)]->LoadRoughness("Data/Model/Stage/Map/Floor/Floor_mtl/Floor_mtl_Roughness.1001.png");
 
 		// Room
-		textures[2]->LoadNormal("Data/Model/Stage/Map/Room/Room_mtl/Room_mtl_Normal.1001.png");
-		textures[2]->LoadRoughness("Data/Model/Stage/Map/Room/Room_mtl/Room_mtl_Roughness.1001.png");
+		textures[static_cast<int>(ModelLavel::Room)]->LoadNormal("Data/Model/Stage/Map/Room/Room_mtl/Room_mtl_Normal.1001.png");
+		textures[static_cast<int>(ModelLavel::Room)]->LoadRoughness("Data/Model/Stage/Map/Room/Room_mtl/Room_mtl_Roughness.1001.png");
+
+		// AislePartition
+		textures[static_cast<int>(ModelLavel::AislePartition)]->LoadNormal("Data/Model/Stage/Map/Aisle_partition/Aisle_partition_mtl/Aisle_partition_mtl_Normal.1001.png");
+		textures[static_cast<int>(ModelLavel::AislePartition)]->LoadRoughness("Data/Model/Stage/Map/Aisle_partition/Aisle_partition_mtl/Aisle_partition_mtl_Roughness.1001.png");
+		textures[static_cast<int>(ModelLavel::AislePartition)]->LoadEmisive("Data/Model/Stage/Map/Aisle_partition/Aisle_partition_mtl/Aisle_partition_mtl_Emissive.1001.png");
+
+		// Door
+		textures[static_cast<int>(ModelLavel::Door)]->LoadNormal("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Normal.1001.png");
+		textures[static_cast<int>(ModelLavel::Door)]->LoadRoughness("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Roughness.1001.png");
+		textures[static_cast<int>(ModelLavel::Door)]->LoadMetalness("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Metalness.1001.png");
+		textures[static_cast<int>(ModelLavel::Door)]->LoadEmisive("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Emissive.1001.png");
+		textures[static_cast<int>(ModelLavel::Door)]->LoadOcclusion("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Opacity.1001.png");
+
+		
 	}
 
 
@@ -70,7 +86,7 @@ void Stage::Update(float elapsedTime)
 //描画
 void Stage::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-	for (int i = 0; i < _countof(model); ++i) {
+	for (int i = 0; i < MODEL_MAX; ++i) {
 		textures[i]->Set(rc);
 		renderer->Render(rc, world, model[i].get(), ShaderId::Custom);
 		textures[i]->Clear(rc);
@@ -107,7 +123,7 @@ void Stage::DestinationPointSet()
 	wayPoint[18] = std::make_shared<WayPoint>(18, DirectX::XMFLOAT3{ 7.5,0,5 });
 	wayPoint[19] = std::make_shared<WayPoint>(19, DirectX::XMFLOAT3{ 5.5,0,0.5 });
 	wayPoint[20] = std::make_shared<WayPoint>(20, DirectX::XMFLOAT3{ 6,0,-4 });
-	wayPoint[21] = std::make_shared<WayPoint>(21, DirectX::XMFLOAT3{ -11,0,-4.5 });
+	wayPoint[21] = std::make_shared<WayPoint>(21, DirectX::XMFLOAT3{ -11,0,-4 });
 	wayPoint[22] = std::make_shared<WayPoint>(22, DirectX::XMFLOAT3{ -13,0,2.5 });
 	wayPoint[23] = std::make_shared<WayPoint>(23, DirectX::XMFLOAT3{ -21,0,5 });
 	wayPoint[24] = std::make_shared<WayPoint>(24, DirectX::XMFLOAT3{ 3.5,0,22 });
@@ -128,7 +144,7 @@ void Stage::DestinationPointSet()
 	wayPoint[39] = std::make_shared<WayPoint>(39, DirectX::XMFLOAT3{ -0.5,0,22 });
 	wayPoint[40] = std::make_shared<WayPoint>(40, DirectX::XMFLOAT3{ 15,0,5 });
 	wayPoint[41] = std::make_shared<WayPoint>(41, DirectX::XMFLOAT3{ 9.5,0,0.5 });
-	wayPoint[42] = std::make_shared<WayPoint>(42, DirectX::XMFLOAT3{ 11,0,-4.5 });
+	wayPoint[42] = std::make_shared<WayPoint>(42, DirectX::XMFLOAT3{ 11,0,-4 });
 	wayPoint[43] = std::make_shared<WayPoint>(43, DirectX::XMFLOAT3{ -11,0,-13 });
 	wayPoint[44] = std::make_shared<WayPoint>(44, DirectX::XMFLOAT3{ -21,0,-13 });
 	wayPoint[45] = std::make_shared<WayPoint>(45, DirectX::XMFLOAT3{ -29,0,9 });

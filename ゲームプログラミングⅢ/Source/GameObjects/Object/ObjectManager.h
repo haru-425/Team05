@@ -38,10 +38,12 @@ public:
 		Table,
 		TV_A,
 		TV_B,
+		Robot_Arm,
 	};
 
 private:
-	static const int OBJ_MAX = 6;
+	static const int OBJ_MAX = 7;
+	inline static const float defaultScale = 0.01f;
 
 	std::vector<std::unique_ptr<Object>> objects[OBJ_MAX];
 

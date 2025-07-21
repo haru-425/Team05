@@ -17,8 +17,9 @@ struct RenderContext
 
 	// シャドウマップ関連
 	DirectX::XMFLOAT4X4 lightViewProjection;          // ライト視点からのビュー射影行列（シャドウマッピング用）
-	DirectX::XMFLOAT3 shadowColor;                    // 影の色（乗算的に使用）
-	float shadowBias;                                 // 深度バイアス（シャドウアクネを防ぐための微調整値）
+	DirectX::XMFLOAT3   shadowColor;                  // 影の色（乗算的に使用）
+	float               shadowBias;                   // 深度バイアス（シャドウアクネを防ぐための微調整値）
+	DirectX::XMFLOAT4   edgeColor;
 
 	// フォグおよび環境光
 	DirectX::XMFLOAT4 ambientColor;                   // アンビエントライト（環境光）の色

@@ -17,6 +17,7 @@ cbuffer CbShadowmap : register(b3)
     row_major float4x4 lightViewProjection;    // ライトの位置から見た射影行列
     float3             shadowColor;            // 影色
     float              shadowBias;             // 深度バイアス
+    float4             edgeColor;
 };
 
 struct PointLight

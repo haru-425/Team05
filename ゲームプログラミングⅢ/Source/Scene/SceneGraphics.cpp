@@ -185,7 +185,7 @@ void SceneGraphics::Update(float elapsedTime)
 
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
-	Audio3DSystem::Instance().UpdateEmitters();
+	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 }
 
 /**
