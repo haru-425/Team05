@@ -2,6 +2,13 @@
 
 #include "Scene.h"
 
+enum class GameMode
+{
+    Tutorial,
+    Noraml,
+    Hard
+};
+
 //シーンマネージャー
 class SceneManager
 {
@@ -35,9 +42,13 @@ public:
     void SetIsExit(bool isExit) { this->isExit = isExit; }
     bool GetIsExit() const { return isExit; }
 
+    void SetGameMode(GameMode gameMode) { this->gameMode = gameMode; }
+    GameMode GetGameMode() const { return gameMode; }
+
 private:
     Scene* currentScene = nullptr;
     Scene* nextScene = nullptr;
 
     bool isExit = false;
+    GameMode gameMode;
 };
