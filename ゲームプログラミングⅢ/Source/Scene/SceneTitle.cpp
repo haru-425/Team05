@@ -539,7 +539,7 @@ void SceneTitle::UpdateUI()
 				if (selectOptions)
 					selectOptions = !selectOptions;
 
-				isStartGame = true;
+				//isStartGame = true;
 			}
 
 			break;
