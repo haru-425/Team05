@@ -181,9 +181,13 @@ void Audio3DSystem::Initialize()
 
 
 	AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", SoundType::BGM, 0.5f, true);
+
+	AirconManager::Instance().Initialize(); // エアコンマネージャーの初期化
 	for (int i = 0; i < AIRCON_MAX; i++)
 	{
-		AddEmitter("Data/Sound/air_conditioner.wav", AirconManager::Instance().GetAirconPosition(i), "aircon", SoundType::SE, 0.2f, true, true, false, 0.1f);
+		DirectX::XMFLOAT3 pos = AirconManager::Instance().GetAirconPosition(i);
+		pos.y - 2.0f;
+		AddEmitter("Data/Sound/air_conditioner.wav", pos, "aircon", SoundType::SE, 1.f, true, true, false, 0.07f);
 
 	}
 
@@ -408,7 +412,7 @@ void Audio3DSystem::StartUpdateThread()
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(16)); // 約60FPS更新
 		}
-		});
+	});
 }
 
 /**

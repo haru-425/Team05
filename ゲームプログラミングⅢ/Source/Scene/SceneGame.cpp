@@ -59,16 +59,20 @@ void SceneGame::Initialize()
 	ObjectManager::Instance().Initialize();
 
 	LightManager::Instance().Update();
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 
-	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
+	//Audio3DSystem::Instance().SetEmitterPositionByTag("aircon", enemy->GetPosition());
+
 
 
 	// 3Dオーディオシステムの再生開始
 	Audio3DSystem::Instance().UpdateEmitters();
-	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
+	//Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
 }
 
