@@ -98,7 +98,7 @@ void SceneTitle::Initialize()
 
 	// 3Dオーディオシステムの再生開始
 	Audio3DSystem::Instance().SetVolumeByAll();
-	Audio3DSystem::Instance().UpdateEmitters();
+	//Audio3DSystem::Instance().UpdateEmitters();
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
 }
@@ -204,7 +204,7 @@ void SceneTitle::Update(float elapsedTime)
 
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
-	Audio3DSystem::Instance().UpdateEmitters();
+	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 }
 
 
@@ -363,19 +363,19 @@ void SceneTitle::DrawGUI()
 	ImGui::Separator();
 
 
-    // (ToT)
-    ImGui::SliderFloat3("lightDirection", reinterpret_cast<float*>(&lightDirection), -10.0f, +1.0f);
-    ImGui::DragFloat("shadowMapDrawRect", &SHADOWMAP_DRAWRECT, 0.1f);
+	// (ToT)
+	ImGui::SliderFloat3("lightDirection", reinterpret_cast<float*>(&lightDirection), -10.0f, +1.0f);
+	ImGui::DragFloat("shadowMapDrawRect", &SHADOWMAP_DRAWRECT, 0.1f);
 
 	ImGui::Separator();
 
-    if (ImGui::TreeNode("shadow"))
-    {
-        //ImGui::Text("shadow_map");
-        shadow->DrawGUI();
-        ImGui::DragFloat("shadowBias", &shadowBias, 0.0001f, 0, 1, "%.6f");
-        ImGui::ColorEdit3("shadowColor", reinterpret_cast<float*>(&shadowColor));
-        ImGui::ColorEdit3("edgeColor", &edgeColor.x);
+	if (ImGui::TreeNode("shadow"))
+	{
+		//ImGui::Text("shadow_map");
+		shadow->DrawGUI();
+		ImGui::DragFloat("shadowBias", &shadowBias, 0.0001f, 0, 1, "%.6f");
+		ImGui::ColorEdit3("shadowColor", reinterpret_cast<float*>(&shadowColor));
+		ImGui::ColorEdit3("edgeColor", &edgeColor.x);
 
 		ImGui::TreePop();
 	}
@@ -417,11 +417,11 @@ void SceneTitle::UpdateTransform()
 /// ライトのバッファ更新
 void SceneTitle::UpdateConstants(RenderContext& rc)
 {
-    rc.lightDirection = lightDirection;	// (ToT)+
-    // シャドウの設定
-    rc.shadowColor = shadowColor;
-    rc.shadowBias = shadowBias;
-    rc.edgeColor = edgeColor;
+	rc.lightDirection = lightDirection;	// (ToT)+
+	// シャドウの設定
+	rc.shadowColor = shadowColor;
+	rc.shadowBias = shadowBias;
+	rc.edgeColor = edgeColor;
 
 	// フォグの設定
 	rc.ambientColor = ambientColor;

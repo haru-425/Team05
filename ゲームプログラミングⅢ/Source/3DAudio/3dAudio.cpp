@@ -10,6 +10,8 @@
 
 #include <wrl/client.h>          // Microsoft::WRL::ComPtr を使う場合
 #include "GameObjects/Aircon/AirconManager.h"
+#include <algorithm>
+#include <cmath>
 using Microsoft::WRL::ComPtr;
 /// @brief デフォルトのレンダーデバイス（出力）のチャンネルマスクを取得する
 ///
@@ -292,7 +294,7 @@ void Audio3DSystem::UpdateListener(const XMFLOAT3& pos, const XMFLOAT3& front, c
  * X3DAudioCalculateを用いて距離減衰やドップラー効果を計算し、
  * SourceVoiceの出力マトリクスや周波数比を設定して3D音響を実現する。
  */
-void Audio3DSystem::UpdateEmitters()
+void Audio3DSystem::UpdateEmitters(float elapsedTime)
 {
 	for (auto& e : emitters) {
 		FLOAT32 matrix[XAUDIO2_MAX_AUDIO_CHANNELS * XAUDIO2_MAX_AUDIO_CHANNELS] = {};
@@ -329,6 +331,7 @@ void Audio3DSystem::UpdateEmitters()
 
 		SetVolumeByAll();
 	}
+	UpdateFadeVolumes(elapsedTime);
 }
 
 /**
@@ -370,66 +373,75 @@ void Audio3DSystem::PlayAll()
  *
  * @param tag 再生対象のタグ文字列
  */
+ //void Audio3DSystem::PlayByTag(const std::string& tag)
+ //{
+ //	for (auto& e : emitters) {
+ //		if (e.tag == tag) {
+ //			e.sourceVoice->FlushSourceBuffers(); // バッファリセット
+ //			e.sourceVoice->SubmitSourceBuffer(&e.buffer);
+ //			e.sourceVoice->Start();
+ //		}
+ //	}
+ //}
+ //
+ ///**
+ // * @brief 指定タグのエミッターの音声を停止する
+ // *
+ // * @param tag 停止対象のタグ文字列
+ // */
+ //void Audio3DSystem::StopByTag(const std::string& tag)
+ //{
+ //	for (auto& e : emitters) {
+ //		if (e.tag == tag) {
+ //			e.sourceVoice->Stop();
+ //		}
+ //	}
+ //}
+ //
 void Audio3DSystem::PlayByTag(const std::string& tag)
 {
-	for (auto& e : emitters) {
-		if (e.tag == tag) {
-			e.sourceVoice->FlushSourceBuffers(); // バッファリセット
-			e.sourceVoice->SubmitSourceBuffer(&e.buffer);
-			e.sourceVoice->Start();
-		}
-	}
+	StartFadeIn(tag, 1.0f); // 1秒でフェードイン（任意で調整）
 }
 
-/**
- * @brief 指定タグのエミッターの音声を停止する
- *
- * @param tag 停止対象のタグ文字列
- */
 void Audio3DSystem::StopByTag(const std::string& tag)
 {
-	for (auto& e : emitters) {
-		if (e.tag == tag) {
-			e.sourceVoice->Stop();
-		}
-	}
+	StartFadeOut(tag, 1.0f); // 1秒でフェードアウト
 }
-
 /**
  * @brief エミッターの3D音響更新処理用スレッドを開始する
  *
  * 60FPS相当の周期（約16ms）でUpdateEmittersを呼び出し、
  * 立体音響計算と音声パラメータの更新を行う。
  */
-void Audio3DSystem::StartUpdateThread()
-{
-	running = true;
-	updateThread = std::thread([this]() {
-		while (running) {
-			{
-				std::lock_guard<std::mutex> lock(dataMutex); ///< 排他制御
-				UpdateEmitters();
-			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(16)); // 約60FPS更新
-		}
-	});
-}
-
-/**
- * @brief エミッター更新スレッドを停止し、終了を待機する
- */
-void Audio3DSystem::StopUpdateThread()
-{
-	running = false;
-	if (updateThread.joinable()) {
-		updateThread.join();
-	}
-}
-/**
- * @brief 指定タグのエミッターのみ音量を変更する
- *
- * @param tag 音量変更対象のタグ文字列
- */
+ //void Audio3DSystem::StartUpdateThread(float elapsedTime)
+ //{
+ //	running = true;
+ //	updateThread = std::thread([this]() {
+ //		while (running) {
+ //			{
+ //				std::lock_guard<std::mutex> lock(dataMutex); ///< 排他制御
+ //				UpdateEmitters(elapsedTime);
+ //			}
+ //			std::this_thread::sleep_for(std::chrono::milliseconds(16)); // 約60FPS更新
+ //		}
+ //	});
+ //}
+ //
+ ///**
+ // * @brief エミッター更新スレッドを停止し、終了を待機する
+ // */
+ //void Audio3DSystem::StopUpdateThread()
+ //{
+ //	running = false;
+ //	if (updateThread.joinable()) {
+ //		updateThread.join();
+ //	}
+ //}
+ /**
+  * @brief 指定タグのエミッターのみ音量を変更する
+  *
+  * @param tag 音量変更対象のタグ文字列
+  */
 void Audio3DSystem::SetVolumeByTag(const std::string& tag, float volume)
 {
 	std::lock_guard<std::mutex> lock(dataMutex); ///< 排他制御
@@ -466,6 +478,58 @@ void Audio3DSystem::SetVolumeByAll()
 				e.sourceVoice->SetVolume(e.Volume * masterVolume * bgmVolume);
 				break;
 			}
+		}
+	}
+}
+void Audio3DSystem::StartFadeIn(const std::string& tag, float duration)
+{
+	for (auto& e : emitters) {
+		if (e.tag == tag) {
+			e.fadeInfo = { FadeState::FadeIn, 0.0f, duration, 0.0f, e.Volume };
+			e.sourceVoice->FlushSourceBuffers();
+			e.sourceVoice->SubmitSourceBuffer(&e.buffer);
+			e.sourceVoice->Start();
+			e.sourceVoice->SetVolume(0.0f); // 開始音量0
+		}
+	}
+}
+
+void Audio3DSystem::StartFadeOut(const std::string& tag, float duration)
+{
+	for (auto& e : emitters) {
+		if (e.tag == tag) {
+			e.fadeInfo = { FadeState::FadeOut, 0.0f, duration, e.Volume, 0.0f };
+		}
+	}
+}
+void Audio3DSystem::UpdateFadeVolumes(float elapsedTime)
+{
+	for (auto& e : emitters) {
+		auto& fade = e.fadeInfo;
+		if (fade.state == FadeState::None)
+			continue;
+
+		fade.timer += elapsedTime;
+		float t = min(fade.timer / fade.duration, 1.0f);
+		float vol = Lerp(fade.startVolume, fade.targetVolume, t);
+
+		if (e.sourceVoice) {
+			switch (e.soundType) {
+			case SoundType::SE:
+				e.sourceVoice->SetVolume(vol * masterVolume * seVolume);
+				break;
+			case SoundType::BGM:
+				e.sourceVoice->SetVolume(vol * masterVolume * bgmVolume);
+				break;
+			}
+		}
+
+		// 終了時処理
+		if (fade.timer >= fade.duration) {
+			if (fade.state == FadeState::FadeOut) {
+				e.sourceVoice->Stop();
+			}
+			fade.state = FadeState::None;
 		}
 	}
 }

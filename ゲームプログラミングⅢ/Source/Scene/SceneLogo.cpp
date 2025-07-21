@@ -81,7 +81,7 @@ void SceneLogo::Update(float elapsedTime)
 	Graphics::Instance().UpdateConstantBuffer(timer, transtimer);
 
 	// 3Dオーディオシステムのエミッター更新
-	Audio3DSystem::Instance().UpdateEmitters();
+	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 
 
 }

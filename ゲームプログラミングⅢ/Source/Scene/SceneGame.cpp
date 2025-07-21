@@ -71,7 +71,7 @@ void SceneGame::Initialize()
 
 
 	// 3Dオーディオシステムの再生開始
-	Audio3DSystem::Instance().UpdateEmitters();
+	//Audio3DSystem::Instance().UpdateEmitters(elapsed);
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
 }
@@ -209,7 +209,7 @@ void SceneGame::Update(float elapsedTime)
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
 
-	Audio3DSystem::Instance().UpdateEmitters();
+	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 }
 
 // 描画処理
