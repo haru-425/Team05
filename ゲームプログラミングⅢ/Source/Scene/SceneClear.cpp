@@ -11,7 +11,7 @@ void Game_Clear::Initialize()
 	timer = 0.0f; // タイマー初期化
 	transTimer = 0.0f; // シーン遷移タイマー初期化
 	sceneTrans = false; // シーン遷移フラグ初期化
-	RankSystem::Instance().SetRank(1, 1, 3);
+	//RankSystem::Instance().SetRank(1, 1, 3);
 	result = RankSystem::Instance().GetRank();
 	angle = 0;
 
@@ -147,7 +147,7 @@ void Game_Clear::Render()
 				s_bg1->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, -(360 / loop * i + angle), 1, 1, 1, 0.5f);
 			}
 		}
-		s_bg2->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, 0, 1, 1, 1, 1);
+		//s_bg2->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, 0, 1, 1, 1, 1);
 		s_rank->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, 0, 1, 1, 1, 1);
 
 		// --- 2. 画面左上中央（左端に寄せる, 上から1/4の位置） ---

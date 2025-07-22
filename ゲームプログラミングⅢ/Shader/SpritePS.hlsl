@@ -19,8 +19,8 @@ float4 main(VS_OUT pin) : SV_TARGET
     if (flag == 1)
     {
         //50, 720 - 200
-       // float2 center_1 = float2(TEXTURE_WIDTH / 2.0f, (720 - TEXTURE_HEIGHT) + TEXTURE_HEIGHT / 2.0f);
-        float2 center_1 = float2(TEXTURE_WIDTH / 2.0f + size.x, TEXTURE_HEIGHT / 2.0f + size.y);
+        float2 center_1 = float2(TEXTURE_WIDTH / 2.0f, (720 - TEXTURE_HEIGHT) + TEXTURE_HEIGHT / 2.0f);
+        //float2 center_1 = float2(TEXTURE_WIDTH / 2.0f + size.x, TEXTURE_HEIGHT / 2.0f + size.y);
         float distance = length(center_1 - pin.position.xy);
         if (distance < radius - 10)
         {
@@ -37,9 +37,9 @@ float4 main(VS_OUT pin) : SV_TARGET
             float angle = atan2(-mater_vec.x, -mater_vec.y);
             if (angle < 0)
                 angle += 2.0f * 3.14159265f;
-         
+
             float standard_angle = parametar * (3.14159265f / 180.0f);
-         
+
             float4 metar_color = { 0.84567625, 0.84567625, 0.84567625, 1 };
             if (standard_angle >= angle)
             {
@@ -54,5 +54,5 @@ float4 main(VS_OUT pin) : SV_TARGET
         }
     }
     return spriteTexture.Sample(spriteSampler, pin.texcoord) * pin.color;
-    
+
 }
