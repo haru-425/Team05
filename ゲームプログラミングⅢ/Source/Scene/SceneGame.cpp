@@ -16,7 +16,7 @@
 
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
-
+float reminingTime = 300.0f;
 // 初期化
 void SceneGame::Initialize()
 {

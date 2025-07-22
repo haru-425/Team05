@@ -13,6 +13,7 @@
 
 #include "System/ShadowCaster.h"
 
+extern float reminingTime;
 // ゲームシーン
 class SceneGame :public Scene
 {
@@ -55,7 +56,6 @@ private:
 	MiniMap* minimap = nullptr;
 	float timer = 0.0f; // タイマー
 	float transTimer = 0.0f; // シーン遷移タイマー
-	float reminingTime = 180.0f;
 	bool sceneTrans = false;
 	Scene* nextScene = nullptr; ///< 1秒後に遷移するシーン
 	enum class SelectTrans {

@@ -1,4 +1,5 @@
 #include "SceneClear.h"
+#include "SceneGame.h"
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "SceneTitle.h"
@@ -14,7 +15,6 @@ void Game_Clear::Initialize()
 	//RankSystem::Instance().SetRank(1, 1, 3);
 	result = RankSystem::Instance().GetRank();
 	angle = 0;
-
 }
 
 void Game_Clear::Finalize()
