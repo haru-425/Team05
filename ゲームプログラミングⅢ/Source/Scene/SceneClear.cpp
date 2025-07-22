@@ -139,15 +139,15 @@ void Game_Clear::Render()
 		{
 			if (i % 2 == 0)
 			{
-				s_bg1->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, 360 / loop * i + angle, 1, 1, 1, 0.5f);
+				s_bg1->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 0, 0, 512, 512, 360 / loop * i + angle, 1, 1, 1, 0.5f);
 
 			}
 			else {
 
-				s_bg1->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, -(360 / loop * i + angle), 1, 1, 1, 0.5f);
+				s_bg1->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 0, 0, 512, 512, -(360 / loop * i + angle), 1, 1, 1, 0.5f);
 			}
 		}
-		//s_bg2->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, 0, 1, 1, 1, 1);
+		s_bg2->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 0, 0, 512, 512, 0, 1, 1, 1, 1);
 		s_rank->Render(rc, resultX, resultY, 0, bigSize * scaleX, bigSize * scaleY, 512 * float(result.Result), 0, 512, 512, 0, 1, 1, 1, 1);
 
 		// --- 2. 画面左上中央（左端に寄せる, 上から1/4の位置） ---
