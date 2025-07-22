@@ -10,6 +10,7 @@
 #include "./LightModels/LightManager.h"
 #include "./Aircon/AirconManager.h"
 #include "./Object/ObjectManager.h"
+#include "GameObjects/battery/batteryManager.h"
 
 #include <imgui.h>
 
@@ -74,6 +75,8 @@ void SceneGame::Initialize()
 	//Audio3DSystem::Instance().UpdateEmitters(elapsed);
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
+
+	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
 }
 
 // 終了化
@@ -629,7 +632,7 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// プレイヤー視点
 		if (!useCamera)
 		{
-			if (player->GetIsEvent())
+			if (!player->GetIsEvent())
 			{
 				cameraPos = player->GetPosition();
 				cameraPos.y = player->GetViewPoint();
