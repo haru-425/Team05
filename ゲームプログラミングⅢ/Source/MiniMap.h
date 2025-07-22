@@ -35,8 +35,12 @@ private:
 	Sprite* ring = nullptr;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	DirectX::XMFLOAT2 MapPosition = { 0,720 - 200 };
 	//DirectX::XMFLOAT2 MapPosition = { 50,720 - 200 };
+=======
+	DirectX::XMFLOAT2 MapPosition;/* = { 0,720 - 200 }*/;
+>>>>>>> Stashed changes
 =======
 	DirectX::XMFLOAT2 MapPosition;/* = { 0,720 - 200 }*/;
 >>>>>>> Stashed changes

@@ -43,6 +43,10 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 	{
 	/*	float screenWidth = static_cast<float>(1280);
 		float screenHeight = static_cast<float>(720);*/
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
 
 
@@ -71,6 +75,7 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 		minimap->Render(rc,
 			MapPosition.x, MapPosition.y, 0, spriteWidth, spriteHeight,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 			spriteWidth / 2.0f + cutPosition.x, spriteHeight / 2.0f + cutPosition.y,
 			cutsize, cutsize,
 			0,
@@ -80,11 +85,20 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 			242, 202,
 			0,
 			1, 1, 1, 1, true, radius, parametar);
+=======
+			0,0,
+			242, 202,
+			0,
+			1, 1, 1, 1, true, radius, parametar);
+>>>>>>> Stashed changes
 
 		//minimap->Render(rc,
 		//	MapPosition.x, MapPosition.y, 0, spriteWidth, spriteHeight,
 		//	0,
 		//	1, 1, 1, 1);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 		//minimap->Render(rc,
