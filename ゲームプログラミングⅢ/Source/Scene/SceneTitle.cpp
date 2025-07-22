@@ -399,6 +399,9 @@ void SceneTitle::DrawGUI()
 
 		ImGui::TreePop();
 	}
+
+	ImGui::Checkbox("isVolumeSliderActive", &isVolumeSliderActive);
+
 	Graphics::Instance().DebugGUI();
 
 
@@ -523,18 +526,19 @@ void SceneTitle::UpdateUI()
 	/// メニューの選択肢
 	for (auto& ui : um.GetUIs())
 	{
-        int id = ui->GetID();
-        if (!(id == 0 || id == 1 || id == 2 || id == 9 ||
-            id == 14 || id == 19 || id == 24 || id == 29 ||
-            id == 30 || id == 31))continue;
+		int id = ui->GetID();
+		if (!(id == 0 || id == 1 || id == 2 || id == 9 ||
+			id == 14 || id == 19 || id == 24 || id == 29 ||
+			id == 30 || id == 31))continue;
 
-
-		if (ui->GetIsHit() || (id == 1 && selectOptions) || (id == 0 && selectStart))
-		{
-			ui->GetSpriteData().color = { 1,1,1,1 };
+		if (!isVolumeSliderActive) {
+			if (ui->GetIsHit() || (id == 1 && selectOptions) || (id == 0 && selectStart))
+			{
+				ui->GetSpriteData().color = { 1,1,1,1 };
+			}
+			else
+				ui->GetSpriteData().color = { 0.660,0.660,0.660,1 };
 		}
-		else
-			ui->GetSpriteData().color = { 0.660,0.660,0.660,1 };
 	}
 
 	if (!(mouse.GetButton() & mouse.BTN_LEFT))
@@ -578,89 +582,121 @@ void SceneTitle::UpdateUI()
 
 			break;
 		case 9:
-			um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
-			if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
-			{
-
-				previousDow = true;
+			if ((mouse.GetButtonDown() & mouse.BTN_LEFT) && um.GetUIs().at(id)->GetIsHit()) {
+				um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+				isVolumeSliderActive = true;
 				lastSelectID = id;
+			}
+			if (isVolumeSliderActive) {
+				if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+				{
+					previousDow = true;
+					//lastSelectID = id;
+				}
+			}
+			if (mouse.GetButtonUp() & mouse.BTN_LEFT || previousDow) {
+				isVolumeSliderActive = false;
 			}
 			break;
 		case 14:
-			um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
-			if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
-			{
-
-				previousDow = true;
+			if ((mouse.GetButtonDown() & mouse.BTN_LEFT) && um.GetUIs().at(id)->GetIsHit()) {
+				um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+				isVolumeSliderActive = true;
 				lastSelectID = id;
+			}
+			if (isVolumeSliderActive) {
+				if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+				{
+					previousDow = true;
+					//lastSelectID = id;
+				}
+			}
+			if (mouse.GetButtonUp() & mouse.BTN_LEFT || previousDow) {
+				isVolumeSliderActive = false;
 			}
 			break;
 		case 19:
-			um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
-			if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
-			{
-
-				previousDow = true;
+			if ((mouse.GetButtonDown() & mouse.BTN_LEFT) && um.GetUIs().at(id)->GetIsHit()) {
+				um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+				isVolumeSliderActive = true;
 				lastSelectID = id;
+			}
+			if (isVolumeSliderActive) {
+				if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+				{
+					previousDow = true;
+					/*lastSelectID = id;*/
+				}
+			}
+			if (mouse.GetButtonUp() & mouse.BTN_LEFT || previousDow) {
+				isVolumeSliderActive = false;
 			}
 			break;
 		case 24:
-			um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
-			if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
-			{
-
-				previousDow = true;
+			if ((mouse.GetButtonDown() & mouse.BTN_LEFT) && um.GetUIs().at(id)->GetIsHit()) {
+				um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+				isVolumeSliderActive = true;
 				lastSelectID = id;
+			}
+			if (isVolumeSliderActive) {
+				if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+				{
+					previousDow = true;
+					//lastSelectID = id;
+				}
+			}
+			if (mouse.GetButtonUp() & mouse.BTN_LEFT || previousDow) {
+				isVolumeSliderActive = false;
 			}
 			break;
 		case 29:
-            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
-            {
-                sm.SetGameMode(GameMode::Tutorial);
+			if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+			{
+				sm.SetGameMode(GameMode::Tutorial);
 				Difficulty::Instance().SetDifficulty(Difficulty::mode::tutorial);
-                isStartGame = true;
-            }
+				isStartGame = true;
+			}
 
-            um.GetUIs().at(32)->GetSpriteData().texturePos.y = 441;
-            um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 86;
-            um.GetUIs().at(32)->GetSpriteData().textureSize.y = 92;
-            break;
-    case 30:
-            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
-            {
-                sm.SetGameMode(GameMode::Noraml);
+			um.GetUIs().at(32)->GetSpriteData().texturePos.y = 441;
+			um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 86;
+			um.GetUIs().at(32)->GetSpriteData().textureSize.y = 92;
+			break;
+		case 30:
+			if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+			{
+				sm.SetGameMode(GameMode::Noraml);
 				Difficulty::Instance().SetDifficulty(Difficulty::mode::normal);
-                isStartGame = true;
-            }
+				isStartGame = true;
+			}
 
-            um.GetUIs().at(32)->GetSpriteData().texturePos.y = 539;
-            um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 86;
-            um.GetUIs().at(32)->GetSpriteData().textureSize.y = 92;
-            break;
-    case 31:
-            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
-            {
-                sm.SetGameMode(GameMode::Hard);
+			um.GetUIs().at(32)->GetSpriteData().texturePos.y = 539;
+			um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 86;
+			um.GetUIs().at(32)->GetSpriteData().textureSize.y = 92;
+			break;
+		case 31:
+			if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+			{
+				sm.SetGameMode(GameMode::Hard);
 				Difficulty::Instance().SetDifficulty(Difficulty::mode::hard);
-                isStartGame = true;
-            }
+				isStartGame = true;
+			}
 
-            um.GetUIs().at(32)->GetSpriteData().texturePos.y = 610;
-            um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 60;
-            um.GetUIs().at(32)->GetSpriteData().textureSize.y = 64;
-            break;
-    default:
-            if (!previousDow)
-            {
-                um.GetUIs().at(9)->GetSpriteData().spriteSize = { 16,54 };
-                um.GetUIs().at(14)->GetSpriteData().spriteSize = { 16,54 };
-                um.GetUIs().at(19)->GetSpriteData().spriteSize = { 16,54 };
-                um.GetUIs().at(24)->GetSpriteData().spriteSize = { 16,54 };
-            }
+			um.GetUIs().at(32)->GetSpriteData().texturePos.y = 610;
+			um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 60;
+			um.GetUIs().at(32)->GetSpriteData().textureSize.y = 64;
+			break;
+		default:
+			if (!previousDow)
+			{
+				um.GetUIs().at(9)->GetSpriteData().spriteSize = { 16,54 };
+				um.GetUIs().at(14)->GetSpriteData().spriteSize = { 16,54 };
+				um.GetUIs().at(19)->GetSpriteData().spriteSize = { 16,54 };
+				um.GetUIs().at(24)->GetSpriteData().spriteSize = { 16,54 };
+			}
 
-            um.GetUIs().at(32)->GetSpriteData().texturePos.y = -100;
-            break;
-		  }
+			um.GetUIs().at(32)->GetSpriteData().texturePos.y = -100;
+			break;
+		}
 	}
 
 #if 1
