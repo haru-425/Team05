@@ -105,7 +105,7 @@ private:
 
 #define POINTLIGHT_MAX     34
 #define TORUSLIGHT_MAX     13
-#define LINELIGHT_MAX      47
+#define LINELIGHT_MAX      46
 
 #define POINTLIGHT_RANGE    5.5f
 

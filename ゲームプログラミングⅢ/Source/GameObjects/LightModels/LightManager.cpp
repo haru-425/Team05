@@ -159,10 +159,10 @@ void LightManager::Initialize()
 		lightData.emplace_back(LightData{ {24.0f, LIGHT_HEIGHT, 5.0f},  90, 1 });
 
 		/* ‘å˜L‰º */
-		lightData.emplace_back(LightData{ {-16.0f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { -6.0f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ {  6.0f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { 16.0f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-17.0f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { -4.5f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {  4.5f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 17.0f,LIGHT_HEIGHT, -4.0f}, 90, 1 });
 
 		/* OBJŠp */
 		lightData.emplace_back(LightData{ {-23.0f, LIGHT_HEIGHT, -13.0f}, 90, 1 });
@@ -191,14 +191,13 @@ void LightManager::Initialize()
 
 		/* “üŒû */
 		lightData.emplace_back(LightData{ {  1.0f,LIGHT_HEIGHT, -17.0f},  0, 1 });
-		lightData.emplace_back(LightData{ {-18.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ {-13.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { -8.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-15.5f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-10.5f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
 		lightData.emplace_back(LightData{ {  7.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { 11.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
-		lightData.emplace_back(LightData{ { 17.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 12.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ { 16.0f,LIGHT_HEIGHT, -23.0f}, 90, 1 });
 		 
-		for (int i = 0; i < 13; ++i) {
+		for (int i = 0; i < 12; ++i) {
 			lineLights.emplace_back(LineLightConstants{ {0,CHEILING_HEIGHT,0,0},{0,0,0,0},{lightColor.yellow},LINELIGHT_RANGE });
 		}
 
@@ -208,12 +207,12 @@ void LightManager::Initialize()
 		lightData.emplace_back(LightData{ { 17.0f,LIGHT_HEIGHT,  5.0f}, 90, 1 });
 
 		/* ¼˜L‰º */
-		lightData.emplace_back(LightData{ {-21.0f,LIGHT_HEIGHT,   0.0f}, 0, 1 });
-		lightData.emplace_back(LightData{ {-21.0f,LIGHT_HEIGHT,  -8.5f}, 0, 1 });
+		lightData.emplace_back(LightData{ {-21.0f,LIGHT_HEIGHT,  -0.5f}, 0, 1 });
+		lightData.emplace_back(LightData{ {-21.0f,LIGHT_HEIGHT,  -7.5f}, 0, 1 });
 
 		/* OBJ—Î */
 		lightData.emplace_back(LightData{ {-11.0f,LIGHT_HEIGHT,  -9.0f},  0, 1 });
-		lightData.emplace_back(LightData{ {-17.0f,LIGHT_HEIGHT, -13.0f}, 90, 1 });
+		lightData.emplace_back(LightData{ {-18.0f,LIGHT_HEIGHT, -13.0f}, 90, 1 });
 
 		for (int i = 0; i < 6; ++i) {
 			lineLights.emplace_back(LineLightConstants{ {0,CHEILING_HEIGHT,0,0},{0,0,0,0},{lightColor.green},LINELIGHT_RANGE });
@@ -225,11 +224,11 @@ void LightManager::Initialize()
 		lightData.emplace_back(LightData{ {  -4.0f,LIGHT_HEIGHT,  5.0f}, 90, 1 });
 
 		/* “Œ˜L‰º */
-		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT,  0.0f}, 0, 1 });
-		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT, -8.5f}, 0, 1 });
+		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT, -0.5f}, 0, 1 });
+		lightData.emplace_back(LightData{ { 21.0f,LIGHT_HEIGHT,-10.0f}, 0, 1 });
 
 		/* OBJŽ‡ */
-		lightData.emplace_back(LightData{ { 11.0f, LIGHT_HEIGHT,  -8.0f},  0, 1 });
+		lightData.emplace_back(LightData{ { 11.0f, LIGHT_HEIGHT,  -6.5f},  0, 1 });
 		lightData.emplace_back(LightData{ { 17.0f ,LIGHT_HEIGHT, -13.0f}, 90, 1 });
 
 		for (int i = 0; i < 6; ++i) {
@@ -325,8 +324,8 @@ void LightManager::Update()
 		for (int i = 0; i < LINELIGHT_MAX; ++i) {
 			if (i < 4) { lineLights.at(i).color       = { lightColor.blue }; }
 			else if (i < 22) { lineLights.at(i).color = { lightColor.red }; }
-			else if (i < 35) { lineLights.at(i).color = { lightColor.yellow }; }
-			else if (i < 41) { lineLights.at(i).color = { lightColor.green }; }
+			else if (i < 34) { lineLights.at(i).color = { lightColor.yellow }; }
+			else if (i < 40) { lineLights.at(i).color = { lightColor.green }; }
 			else if (i < LINELIGHT_MAX) { lineLights.at(i).color = { lightColor.purple }; }
 		}
 	}
@@ -438,15 +437,15 @@ void LightManager::DebugGUI()
 			LineLightDebug("No OBJ(red)",               18, 21);
 
 			LineLightDebug("north corridor(yellow)",    22, 27);
-			LineLightDebug("entrance(yellow)",          28, 34);
+			LineLightDebug("entrance(yellow)",          28, 33);
 
-			LineLightDebug("Laboratory(green)",         35, 36);
-			LineLightDebug("west corridor(green)",      37, 38);
-			LineLightDebug("OBJ green(green)",          39, 40);
+			LineLightDebug("Laboratory(green)",         34, 35);
+			LineLightDebug("west corridor(green)",      36, 37);
+			LineLightDebug("OBJ green(green)",          38, 39);
 
-			LineLightDebug("TV room(purple)",           41, 42);
-			LineLightDebug("east corridor(purple)",     43, 44);
-			LineLightDebug("OBJ purple(purple)",        45, LINELIGHT_MAX - 1);			
+			LineLightDebug("TV room(purple)",           40, 41);
+			LineLightDebug("east corridor(purple)",     42, 43);
+			LineLightDebug("OBJ purple(purple)",        44, LINELIGHT_MAX - 1);			
 
 			ImGui::TreePop();
 		}
