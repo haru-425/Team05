@@ -100,7 +100,7 @@ private:
 #ifdef _DEBUG
 	BOOL screenMode = FALSE;
 #else
-	BOLL screenMode = TRUE;
+	BOOL screenMode = TRUE;
 #endif
 	BOOL tearingSupported = FALSE;
 	RECT windowedRect = {};

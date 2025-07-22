@@ -8,6 +8,7 @@
 #include"SceneGraphics.h"
 #include "Scene/SceneMattsu.h"
 #include "./LightModels/LightManager.h"
+#include "System/difficulty.h"
 #include "Camera/CameraController/SceneCameraController.h"
 #include "System/SettingsManager.h"
 #include <algorithm>
@@ -20,79 +21,86 @@ static bool isStart = false;
 //初期化
 void SceneTitle::Initialize()
 {
-	//スプライト初期化
-	sprite = new Sprite("Data/Sprite/GameTitleStrings.png");
-	TitleTimer = 0.25f; // タイトル画面のタイマー初期化
-	TitleSignalTimer = 0.0f; // タイトル画面の信号タイマー初期化
-	sceneTrans = false; // シーン遷移フラグ初期化
+    //スプライト初期化
+    sprite = new Sprite("Data/Sprite/GameTitleStrings.png");
+    TitleTimer = 0.25f; // タイトル画面のタイマー初期化
+    TitleSignalTimer = 0.0f; // タイトル画面の信号タイマー初期化
+    sceneTrans = false; // シーン遷移フラグ初期化
 
-	isStart = true;
+    isStart = true;
 
-	/// ステージ初期化
-	{
-		/// モデル生成
-		model = std::make_unique<Stage>();
+    /// ステージ初期化
+    {
+        /// モデル生成
+        model = std::make_unique<Stage>();
 
-		/// 行列作成
-		DirectX::XMMATRIX M = DirectX::XMMatrixIdentity();
-		scale = { 0.01f, 0.01f, 0.01f };
-		DirectX::XMStoreFloat4x4(&world, M);
-		UpdateTransform();
-	}
+        /// 行列作成
+        DirectX::XMMATRIX M = DirectX::XMMatrixIdentity();
+        scale = { 0.01f, 0.01f, 0.01f };
+        DirectX::XMStoreFloat4x4(&world, M);
+        UpdateTransform();
+    }
 
-	i_cameraController = std::make_unique<SceneCameraController>();
+    i_cameraController = std::make_unique<SceneCameraController>();
 
-	// shadowMap
-	ID3D11Device* device = Graphics::Instance().GetDevice();
-	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
+    // shadowMap
+    ID3D11Device* device = Graphics::Instance().GetDevice();
+    shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
-	LightManager::Instance().Initialize();
+    LightManager::Instance().Initialize();
 
-	//for (int i = 0; i < 7; ++i)
-	//{
-	//    uiSprits.emplace_back(std::make_unique<Sprite>("./Data/Sprite/image.png"));
-	//}
-	//for (int i = 0; i < 1; ++i)
-	//{
-	//    ui.emplace_back(std::make_unique<UI>("./Data/Sprite/image.png"));
-	//}
+    //for (int i = 0; i < 7; ++i)
+    //{
+    //    uiSprits.emplace_back(std::make_unique<Sprite>("./Data/Sprite/image.png"));
+    //} 
+    //for (int i = 0; i < 1; ++i)
+    //{
+    //    ui.emplace_back(std::make_unique<UI>("./Data/Sprite/image.png"));
+    //}
 
-	/// ゲーム選択
-	um.CreateUI("./Data/Sprite/image.png", "Game");
-	um.CreateUI("./Data/Sprite/image.png", "Option");
-	um.CreateUI("./Data/Sprite/image.png", "Exit");
-	/// オプション項目
-	um.CreateUI("./Data/Sprite/back.png", "OptionBack");
-	um.CreateUI("./Data/Sprite/image.png", "Sensitivity");
-	um.CreateUI("./Data/Sprite/volume.png", "Main");
-	um.CreateUI("./Data/Sprite/volume.png", "BGM");
-	um.CreateUI("./Data/Sprite/volume.png", "SE");
-	/// 感度
-	um.CreateUI("./Data/Sprite/image.png", "OptionBarBack");
-	um.CreateUI("./Data/Sprite/image.png", "OptionBar"); ///< 9
-	um.CreateUI("./Data/Sprite/numbers.png", "100");
-	um.CreateUI("./Data/Sprite/numbers.png", "10");
-	um.CreateUI("./Data/Sprite/numbers.png", "1");
-	/// マスター用バー
-	um.CreateUI("./Data/Sprite/image.png", "MainBarBack");
-	um.CreateUI("./Data/Sprite/image.png", "MainBar"); ///< 14
-	um.CreateUI("./Data/Sprite/numbers.png", "Main100");
-	um.CreateUI("./Data/Sprite/numbers.png", "Main10");
-	um.CreateUI("./Data/Sprite/numbers.png", "Main1");
-	/// BGM用バー
-	um.CreateUI("./Data/Sprite/image.png", "BGMBarBack");
-	um.CreateUI("./Data/Sprite/image.png", "BGMBar"); ///< 19
-	um.CreateUI("./Data/Sprite/numbers.png", "BGM100");
-	um.CreateUI("./Data/Sprite/numbers.png", "BGM10");
-	um.CreateUI("./Data/Sprite/numbers.png", "BGM1");
-	/// SE用バー
-	um.CreateUI("./Data/Sprite/image.png", "SEBarBack");
-	um.CreateUI("./Data/Sprite/image.png", "SEBar"); ///< 24
-	um.CreateUI("./Data/Sprite/numbers.png", "SE100");
-	um.CreateUI("./Data/Sprite/numbers.png", "SE10");
-	um.CreateUI("./Data/Sprite/numbers.png", "SE1");
+    /// ゲーム選択
+    um.CreateUI("./Data/Sprite/image.png", "Game");
+    um.CreateUI("./Data/Sprite/image.png", "Option");
+    um.CreateUI("./Data/Sprite/image.png", "Exit");
+    /// オプション項目
+    um.CreateUI("./Data/Sprite/back.png", "OptionBack");
+    um.CreateUI("./Data/Sprite/image.png" ,"Sensitivity");
+    um.CreateUI("./Data/Sprite/volume.png", "Main");
+    um.CreateUI("./Data/Sprite/volume.png", "BGM");
+    um.CreateUI("./Data/Sprite/volume.png", "SE");
+    /// 感度
+    um.CreateUI("./Data/Sprite/image.png", "OptionBarBack");
+    um.CreateUI("./Data/Sprite/image.png", "OptionBar"); ///< 9
+    um.CreateUI("./Data/Sprite/numbers.png", "100");
+    um.CreateUI("./Data/Sprite/numbers.png", "10");
+    um.CreateUI("./Data/Sprite/numbers.png", "1");
+    /// マスター用バー
+    um.CreateUI("./Data/Sprite/image.png", "MainBarBack");
+    um.CreateUI("./Data/Sprite/image.png", "MainBar"); ///< 14
+    um.CreateUI("./Data/Sprite/numbers.png", "Main100");
+    um.CreateUI("./Data/Sprite/numbers.png", "Main10");
+    um.CreateUI("./Data/Sprite/numbers.png", "Main1");
+    /// BGM用バー
+    um.CreateUI("./Data/Sprite/image.png", "BGMBarBack");
+    um.CreateUI("./Data/Sprite/image.png", "BGMBar"); ///< 19
+    um.CreateUI("./Data/Sprite/numbers.png", "BGM100");
+    um.CreateUI("./Data/Sprite/numbers.png", "BGM10");
+    um.CreateUI("./Data/Sprite/numbers.png", "BGM1");
+    /// SE用バー
+    um.CreateUI("./Data/Sprite/image.png", "SEBarBack");
+    um.CreateUI("./Data/Sprite/image.png", "SEBar"); ///< 24
+    um.CreateUI("./Data/Sprite/numbers.png", "SE100");
+    um.CreateUI("./Data/Sprite/numbers.png", "SE10");
+    um.CreateUI("./Data/Sprite/numbers.png", "SE1");
+    /// ゲームモード選択
+    um.CreateUI("./Data/Sprite/gameMode.png", "GameMode");
+    um.CreateUI("./Data/Sprite/gameMode.png", "Tutorial");
+    um.CreateUI("./Data/Sprite/gameMode.png", "Normal");
+    um.CreateUI("./Data/Sprite/gameMode.png", "Hard");
+    um.CreateUI("./Data/Sprite/gameMode.png", "Info");
 
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
+  // リスナーの初期位置と向きを設定
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
 
 
@@ -464,40 +472,39 @@ static int seVolume = 0; ///< se
 static bool isChangeSettings = false;
 void SceneTitle::UpdateUI()
 {
-	static bool selectOptions = false;
-	static bool selectStart = false;
-	static bool previousDow = false;
-	static int lastSelectID = -1;
-	/// 最初シーンを読み込んだときだけ処理が通り
-	/// UIを設定に合わせるために設定の値を表示に使う変数に代入
-	if (isStart)
-	{
-		selectOptions = false;
-		selectStart = false;
-		previousDow = false;
-		lastSelectID = -1;
+    static bool selectOptions = false;
+    static bool selectStart = false;
+    static bool previousDow = false;
+    static int lastSelectID = -1;
+    /// 最初シーンを読み込んだときだけ処理が通り
+    /// UIを設定に合わせるために設定の値を表示に使う変数に代入
+    if (isStart)
+    {
+        selectOptions = false;
+        selectStart = false;
+        previousDow = false;
+        lastSelectID = -1;
 
-		GameSettings setting = SettingsManager::Instance().GetGameSettings();
-		sensitivity = setting.sensitivity * 100; ///< 感度
-		mVolume = setting.masterVolume * 100; ///< マスター
-		bgmVolume = setting.bgmVolume * 100; ///< BGM
-		seVolume = setting.seVolume * 100; ///< SE
+        GameSettings setting = SettingsManager::Instance().GetGameSettings();
+        sensitivity = setting.sensitivity  * 100; ///< 感度
+        mVolume     = setting.masterVolume * 100; ///< マスター
+        bgmVolume   = setting.bgmVolume    * 100; ///< BGM
+        seVolume    = setting.seVolume     * 100; ///< SE
 
-		/// スライダーの位置を合わせる                     バーの端からバーの長さを設定値で割ったところがスライダーの位置
-		um.GetUIs().at(9)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.sensitivity) - SLIDER_WIDTH;
-		um.GetUIs().at(14)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.masterVolume) - SLIDER_WIDTH;
-		um.GetUIs().at(19)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.bgmVolume) - SLIDER_WIDTH;
-		um.GetUIs().at(24)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.seVolume) - SLIDER_WIDTH;
-	}
+        /// スライダーの位置を合わせる                     バーの端からバーの長さを設定値で割ったところがスライダーの位置
+        um.GetUIs().at(9)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.sensitivity) - SLIDER_WIDTH;
+        um.GetUIs().at(14)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.masterVolume) - SLIDER_WIDTH;
+        um.GetUIs().at(19)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.bgmVolume) - SLIDER_WIDTH;
+        um.GetUIs().at(24)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.seVolume) - SLIDER_WIDTH;
+    }
 
-	Mouse& mouse = Input::Instance().GetMouse();
+    Mouse& mouse = Input::Instance().GetMouse();
+    SceneManager& sm = SceneManager::instance();
 
-	/// マウス座標取得
-	DirectX::XMFLOAT2 scaleFactor = Graphics::Instance().GetWindowScaleFactor();
-	DirectX::XMFLOAT2 mousePos = { (float)Input::Instance().GetMouse().GetPositionX(), (float)Input::Instance().GetMouse().GetPositionY() };
-	um.Update(mousePos);
-	//mousePos.x *= scaleFactor.x;
-	//mousePos.y *= scaleFactor.y;
+    /// マウス座標取得
+  	DirectX::XMFLOAT2 scaleFactor = Graphics::Instance().GetWindowScaleFactor();
+    DirectX::XMFLOAT2 mousePos = { (float)Input::Instance().GetMouse().GetPositionX(), (float)Input::Instance().GetMouse().GetPositionY() };
+    um.Update(mousePos);
 
 #if 1
 	/// ゲーム、設定、終了の三項目の選択を快適にするため
@@ -516,9 +523,10 @@ void SceneTitle::UpdateUI()
 	/// メニューの選択肢
 	for (auto& ui : um.GetUIs())
 	{
-		int id = ui->GetID();
-		if (!(id == 0 || id == 1 || id == 2 || id == 9 ||
-			id == 14 || id == 19 || id == 24))continue;
+        int id = ui->GetID();
+        if (!(id == 0 || id == 1 || id == 2 || id == 9 ||
+            id == 14 || id == 19 || id == 24 || id == 29 ||
+            id == 30 || id == 31))continue;
 
 
 		if (ui->GetIsHit() || (id == 1 && selectOptions) || (id == 0 && selectStart))
@@ -547,7 +555,7 @@ void SceneTitle::UpdateUI()
 				if (selectOptions)
 					selectOptions = !selectOptions;
 
-				isStartGame = true;
+				//isStartGame = true;
 			}
 
 			break;
@@ -605,43 +613,97 @@ void SceneTitle::UpdateUI()
 				lastSelectID = id;
 			}
 			break;
-		default:
-			if (!previousDow)
-			{
-				um.GetUIs().at(9)->GetSpriteData().spriteSize = { 16,54 };
-				um.GetUIs().at(14)->GetSpriteData().spriteSize = { 16,54 };
-				um.GetUIs().at(19)->GetSpriteData().spriteSize = { 16,54 };
-				um.GetUIs().at(24)->GetSpriteData().spriteSize = { 16,54 };
-			}
-			break;
-		}
+		case 29:
+            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+            {
+                sm.SetGameMode(GameMode::Tutorial);
+				Difficulty::Instance().SetDifficulty(Difficulty::mode::tutorial);
+                isStartGame = true;
+            }
+
+            um.GetUIs().at(32)->GetSpriteData().texturePos.y = 441;
+            um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 86;
+            um.GetUIs().at(32)->GetSpriteData().textureSize.y = 92;
+            break;
+    case 30:
+            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+            {
+                sm.SetGameMode(GameMode::Noraml);
+				Difficulty::Instance().SetDifficulty(Difficulty::mode::normal);
+                isStartGame = true;
+            }
+
+            um.GetUIs().at(32)->GetSpriteData().texturePos.y = 539;
+            um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 86;
+            um.GetUIs().at(32)->GetSpriteData().textureSize.y = 92;
+            break;
+    case 31:
+            if (mouse.GetButtonDown() & mouse.BTN_LEFT)
+            {
+                sm.SetGameMode(GameMode::Hard);
+				Difficulty::Instance().SetDifficulty(Difficulty::mode::hard);
+                isStartGame = true;
+            }
+
+            um.GetUIs().at(32)->GetSpriteData().texturePos.y = 610;
+            um.GetUIs().at(32)->GetSpriteData().spriteSize.y = 60;
+            um.GetUIs().at(32)->GetSpriteData().textureSize.y = 64;
+            break;
+    default:
+            if (!previousDow)
+            {
+                um.GetUIs().at(9)->GetSpriteData().spriteSize = { 16,54 };
+                um.GetUIs().at(14)->GetSpriteData().spriteSize = { 16,54 };
+                um.GetUIs().at(19)->GetSpriteData().spriteSize = { 16,54 };
+                um.GetUIs().at(24)->GetSpriteData().spriteSize = { 16,54 };
+            }
+
+            um.GetUIs().at(32)->GetSpriteData().texturePos.y = -100;
+            break;
+		  }
 	}
 
-	/// オプション項目の表示
-	if (selectOptions)
-	{
-		for (int i = 3; i < um.GetUIs().size(); ++i)
-		{
-			um.GetUIs().at(i)->GetSpriteData().isVisible = true;
-		}
-	}
-	else
-	{
-		for (int i = 3; i < um.GetUIs().size(); ++i)
-		{
-			um.GetUIs().at(i)->GetSpriteData().isVisible = false;
-		}
-	}
-	/// ゲームモードの表示
-	if (selectStart)
-	{
-		um.GetUIs().at(3)->GetSpriteData().isVisible = true;
-	}
-	else if (!selectStart && !selectOptions)
-	{
-		um.GetUIs().at(3)->GetSpriteData().isVisible = false;
-	}
-
+#if 1
+  /// オプション項目の表示
+  if (selectOptions)
+  {
+      for (int i = 3; i < um.GetUIs().size(); ++i)
+      {
+          um.GetUIs().at(i)->GetSpriteData().isVisible = true;
+      }
+  }
+  else
+  {
+      for (int i = 3; i < um.GetUIs().size(); ++i)
+      {
+          um.GetUIs().at(i)->GetSpriteData().isVisible = false;
+      }
+  }
+  /// ゲームモードの表示
+  if (selectStart)
+  {
+      for (int i = 28; i < um.GetUIs().size(); i++)
+      {
+          um.GetUIs().at(i)->GetSpriteData().isVisible = true;
+      }
+  }
+  else if(!selectStart)
+  {
+      for (int i = 28; i < um.GetUIs().size(); i++)
+      {
+          um.GetUIs().at(i)->GetSpriteData().isVisible = false;
+      }
+  }
+  if (selectStart || selectOptions)
+  {
+      um.GetUIs().at(3)->GetSpriteData().isVisible = true;
+  }
+  else if (!selectStart && !selectOptions)
+  {
+      um.GetUIs().at(3)->GetSpriteData().isVisible = false;
+  }
+#endif
+  
 	/// 感度とかのバーの動作
 	if (previousDow)
 	{

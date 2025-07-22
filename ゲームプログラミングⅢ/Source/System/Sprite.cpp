@@ -132,10 +132,10 @@ void Sprite::Render(const RenderContext& rc,
 	float sw, float sh,					// 画像切り抜きサイズ
 	float angle,						// 角度
 	float r, float g, float b, float a	// 色
-	,bool minimapFlg//ミニマップのように表示するかどうか
-	,float radius,//半径
+	, bool minimapFlg//ミニマップのように表示するかどうか
+	, float radius,//半径
 	float parametar
-	) 
+)
 {
 
 	ID3D11DeviceContext* dc = rc.deviceContext;
@@ -237,6 +237,8 @@ void Sprite::Render(const RenderContext& rc,
 		minimap.Flag = minimapFlg;
 		minimap.radius = radius;
 		minimap.paramatar = parametar;
+		minimap.sisex = dx;
+		minimap.sisey = dy;
 		dc->UpdateSubresource(minimap_constant_Buffer.Get(), 0, 0, &minimap, 0, 0);
 
 	}
@@ -256,7 +258,7 @@ void Sprite::Render(const RenderContext& rc,
 		Noise noise{ };
 		noise.time = time;
 		noise.strength = strength;
-		dc->UpdateSubresource(noise_constant_Buffer.Get(),0,nullptr,&noise,0,0);
+		dc->UpdateSubresource(noise_constant_Buffer.Get(), 0, nullptr, &noise, 0, 0);
 		dc->PSSetConstantBuffers(1, 1, noise_constant_Buffer.GetAddressOf());
 
 		dc->PSSetShaderResources(0, 1, shaderResourceView.GetAddressOf());
@@ -287,7 +289,7 @@ void Sprite::Render(const RenderContext& rc,
 	float dw, float dh,					// 幅、高さ
 	float angle,						// 角度
 	float r, float g, float b, float a	// 色
-	) 
+)
 {
 	Render(rc, dx, dy, dz, dw, dh, 0, 0, textureWidth, textureHeight, angle, r, g, b, a);
 }
