@@ -141,13 +141,14 @@ float4 main(float4 pos : SV_Position, float2 uv : TEXCOORD) : SV_Target
     float2 charUV = float2(frac(posInDisplay.x), posInDisplay.y);
 
     // 残り時間からmm:ss:msを計算
-    //float time = remTime; // 残り時間（秒）
-    float time = 180 - iTime; // ここではiTimeを使用（例として）
-    if (time < 0)
-        time = 0;
+    float time = remTime; // 残り時間（秒）
+    //float time = 180 - iTime; // ここではiTimeを使用（例として）
     //float RemainingTime = 180.0 - iTime;
     //float time = max(RemainingTime, 0.0);
-   // float time = 123.45;
+
+    //float time = 123.45;
+    if (time < 0)
+        time = 0;
     int minutes = (int) (time / 60);
     int seconds = (int) (time) % 60;
     int milliseconds = (int) ((time - floor(time)) * 100);

@@ -196,7 +196,7 @@ void SceneGame::Update(float elapsedTime)
 
 	UpdateCamera(elapsedTime);
 
-	Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
+	//Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
 
 	Collision();
 
