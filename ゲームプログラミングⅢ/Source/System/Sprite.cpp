@@ -239,8 +239,6 @@ void Sprite::Render(const RenderContext& rc,
 		minimap.Flag = minimapFlg;
 		minimap.radius = radius * minimap.screen_size.x;
 		minimap.paramatar = parametar;
-		minimap.sisex = dx;
-		minimap.sisey = dy;
 		dc->UpdateSubresource(minimap_constant_Buffer.Get(), 0, 0, &minimap, 0, 0);
 	}
 

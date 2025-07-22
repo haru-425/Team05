@@ -43,12 +43,6 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 	{
 	/*	float screenWidth = static_cast<float>(1280);
 		float screenHeight = static_cast<float>(720);*/
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
-
-
 
 		/*	spriteWidth = 485 ;
 			spriteHeight = 411;
@@ -74,32 +68,17 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 
 		minimap->Render(rc,
 			MapPosition.x, MapPosition.y, 0, spriteWidth, spriteHeight,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 			spriteWidth / 2.0f + cutPosition.x, spriteHeight / 2.0f + cutPosition.y,
 			cutsize, cutsize,
 			0,
 			1, 1, 1, 1, true, radius, parametar);
-=======
-			0,0,
-			242, 202,
-			0,
-			1, 1, 1, 1, true, radius, parametar);
-=======
-			0,0,
-			242, 202,
-			0,
-			1, 1, 1, 1, true, radius, parametar);
->>>>>>> Stashed changes
+
 
 		//minimap->Render(rc,
 		//	MapPosition.x, MapPosition.y, 0, spriteWidth, spriteHeight,
 		//	0,
 		//	1, 1, 1, 1);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
 
 		//minimap->Render(rc,
 		//	MapPosition.x, MapPosition.y, 0, spriteWidth, spriteHeight,
@@ -119,20 +98,20 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 
 void MiniMap::DrawImGui()
 {
-	ImVec2 Size = { 200,500 };
-	ImGui::SetNextWindowSize(Size);
-	if (ImGui::Begin("MiniMap", nullptr))
-	{
-		ImGui::DragFloat2("MapPosition", &MapPosition.x);
-		ImGui::DragFloat("MapSize", &mapsize, 0.01f);
-		ImGui::DragFloat("IconSize", &iconsize, 0.01f);
-		ImGui::InputFloat2("iconPosition", &iconPosition.x);
-		ImGui::InputFloat3("playerPosition", &playerPosition.x);
-		ImGui::InputFloat("Angle", &this->angle);
-		ImGui::InputFloat2("cutPosition", &cutPosition.x);
-		ImGui::DragFloat("cutsize", &cutsize, 1.0f);
-		ImGui::DragFloat("radius", &radius);
-		ImGui::DragFloat("parametar", &parametar);
-	}
-	ImGui::End();
+	//ImVec2 Size = { 200,500 };
+	//ImGui::SetNextWindowSize(Size);
+	//if (ImGui::Begin("MiniMap", nullptr))
+	//{
+	//	ImGui::DragFloat2("MapPosition", &MapPosition.x);
+	//	ImGui::DragFloat("MapSize", &mapsize, 0.01f);
+	//	ImGui::DragFloat("IconSize", &iconsize, 0.01f);
+	//	ImGui::InputFloat2("iconPosition", &iconPosition.x);
+	//	ImGui::InputFloat3("playerPosition", &playerPosition.x);
+	//	ImGui::InputFloat("Angle", &this->angle);
+	//	ImGui::InputFloat2("cutPosition", &cutPosition.x);
+	//	ImGui::DragFloat("cutsize", &cutsize, 1.0f);
+	//	ImGui::DragFloat("radius", &radius);
+	//	ImGui::DragFloat("parametar", &parametar);
+	//}
+	//ImGui::End();
 }
