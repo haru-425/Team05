@@ -138,6 +138,10 @@ void SceneGame::Update(float elapsedTime)
 			transTimer = 0.0f;
 			selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
 			reminingTime = 0.0f;
+			RankSystem::Instance().SetRank(
+				batteryManager::Instance().getPlayerHasBattery(),
+				batteryManager::Instance().getMAXBattery(),
+				3); // タイムアップでSランク
 		}
 	}
 	else

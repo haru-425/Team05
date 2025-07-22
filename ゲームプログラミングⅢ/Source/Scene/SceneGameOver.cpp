@@ -2,6 +2,10 @@
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "SceneGame.h"
+#include "SceneClear.h"
+#include "RankSystem/Ranksystem.h"
+
+#include "GameObjects/battery/batteryManager.h"
 int Game_Over::life_number = 2;
 void Game_Over::Initialize()
 {
@@ -50,6 +54,17 @@ void Game_Over::Update(float elapsedTime)
 	}
 
 	if (GameOvertime >= 5.0f) {
+		if (life_number <= 0)
+		{
+			nextScene = new Game_Clear;
+			sceneTrans = true;
+			transTimer = 0.0f;
+			selectTrans = SelectTrans::Title; // ゲームオーバーシーンに遷移
+			RankSystem::Instance().SetRank(
+				batteryManager::Instance().getPlayerHasBattery(),
+				batteryManager::Instance().getMAXBattery(),
+				3); // タイムアップでSランクク
+		}
 		if (!sceneTrans)
 		{
 
@@ -73,7 +88,7 @@ void Game_Over::Update(float elapsedTime)
 		}
 
 	}
-		timer += elapsedTime;
+	timer += elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
 	GameOvertime += elapsedTime;
 }
