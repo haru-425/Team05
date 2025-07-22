@@ -406,6 +406,20 @@ void SceneTitle::DrawGUI()
 
 	/// UI更新処理
 	um.DrawDebug();
+
+	DirectX::XMFLOAT2 mousePos;
+	mousePos.x = Input::Instance().GetMouse().GetPositionX();
+	mousePos.y = Input::Instance().GetMouse().GetPositionY();
+
+	char buf1[256];
+	char buf2[256];
+	sprintf_s(buf1, sizeof(buf1), "mouseX : %f\n", mousePos.x);
+	sprintf_s(buf2, sizeof(buf2), "mouseY : %f\n", mousePos.y);
+	ImGui::Begin("mousePos");
+	ImGui::Text(buf1);
+	ImGui::Text(buf2);
+	ImGui::End();
+	
 }
 
 void SceneTitle::UpdateTransform()
@@ -488,6 +502,7 @@ void SceneTitle::UpdateUI()
     SceneManager& sm = SceneManager::instance();
 
     /// マウス座標取得
+  	DirectX::XMFLOAT2 scaleFactor = Graphics::Instance().GetWindowScaleFactor();
     DirectX::XMFLOAT2 mousePos = { (float)Input::Instance().GetMouse().GetPositionX(), (float)Input::Instance().GetMouse().GetPositionY() };
     um.Update(mousePos);
 
@@ -698,12 +713,14 @@ void SceneTitle::UpdateUI()
 		///                              ↑マウスの座標 = BAR_MIN + SLIDER_WIDTH / 2
 		///                             /---------------------------------------------------------------/
 		///
+		float barMin = BAR_MIN * scaleFactor.x, barMax = BAR_MAX * scaleFactor.x, sliderWidth = SLIDER_WIDTH * scaleFactor.x;
+		
 		if (lastSelectID == 9)
 		{
-			mousePos.x = std::clamp((float)mousePos.x, (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
-			sensitivity = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x - SLIDER_WIDTH / 2;
-			sensitivity -= 804.0f; ///< ゲージのUIのX座標
-			float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
+			mousePos.x = std::clamp((float)mousePos.x, (barMin + sliderWidth / 2), (barMax - sliderWidth / 2));
+			sensitivity = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x / scaleFactor.x - (sliderWidth / 2);
+			sensitivity -= 804.0f * scaleFactor.x; ///< ゲージのUIのX座標
+			float barWidth = (barMax - barMin) - sliderWidth;
 			sensitivity /= barWidth / 100;
 		}
 		else if (lastSelectID == 14)
@@ -868,7 +885,7 @@ void SceneTitle::UpdateUI()
 		setting.seVolume = seVolume * 0.01;
 
 		SettingsManager::Instance().SetGameSettings(setting);
-		SettingsManager::Instance().Save();
+		//SettingsManager::Instance().Save();
 		isChangeSettings = false;
 	}
 	Audio3DSystem::Instance().masterVolume = setting.masterVolume;

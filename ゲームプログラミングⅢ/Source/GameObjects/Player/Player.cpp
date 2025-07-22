@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include <algorithm>
 
+static bool hit = false;
 Player::Player()
 {
 #ifdef TEST
@@ -28,6 +29,8 @@ Player::Player()
         radius = 0.6;                         // デバッグ用
         enableHijackTime = maxHijackTime;   // ハイジャックできる時間の設定
         acceleration = 1.1f;
+        deceleration = 1.2f;
+        hit = false;
     }
 
     /// アニメーション関係設定
@@ -60,6 +63,9 @@ void Player::Update(float dt)
     // 移動処理
     Move(dt);
 
+    if (isEvent) ///< Move() の中でフラグ切り替えをしてる
+        DeathState(dt);
+
 #ifdef TEST
     TestTransformUpdate();
 #endif
@@ -91,7 +97,7 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
     /// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
     /// プレイヤーを描画するとどうしても、モデルとカメラが被ってしまうので、
     /// 敵視点の時のみの描画にする
-    if(model && useCam)
+    if (model && useCam)
         renderer->Render(rc, world, model.get(), ShaderId::Custom);
 
     // テクスチャのクリア
@@ -132,14 +138,24 @@ void Player::DrawDebug()
 // 移動処理
 void Player::Move(float dt)
 {
-    /// 敵と接触した場合はだんだん速度を落として演出に入る
-    if (isHit)
+    if (!hit && isHit) ///< やりかたは汚いけど、一度ヒットしたらそれ以降はヒット判定にするために書く hit はPlayerコンストラクタの上でグローバルとしておいてる
     {
-        acceleration = 0;
+        accel = 0;
+        hit = isHit;
+    }
+
+    /// 敵と接触した場合はだんだん速度を落として演出に入る
+    if (hit)
+    {
         if (speed > 0)
-            accel -= 1.5f * dt;
+            accel -= deceleration * dt;
         else
             isEvent = true;
+    }
+    else
+    {
+        /// 加速処理
+        accel += acceleration * dt;
     }
 
     Camera& cam = Camera::Instance();
@@ -163,10 +179,7 @@ void Player::Move(float dt)
     }
     saveDirection = forward;
 
-    /// 加速処理
-    accel += acceleration * dt;
-
-#if 0
+#if 1
     speed += accel * dt;
 #else
     if (Input::Instance().GetMouse().GetButton() & Mouse::BTN_RIGHT)
@@ -175,6 +188,7 @@ void Player::Move(float dt)
         speed = 0;
 #endif
     speed = DirectX::XMMin(speed, maxSpeed);
+    speed = DirectX::XMMax(speed, 0.0f);
     position.x += speed * forward.x * dt;
     position.z += speed * forward.z * dt;
 
@@ -273,6 +287,54 @@ void Player::UpdateHijack(float dt)
 // アニメーション更新処理
 void Player::UpdateAnimation(float dt)
 {
-    if(!model->GetResource()->GetAnimations().empty())
+    if (!model->GetResource()->GetAnimations().empty())
         animationController.UpdateAnimation(dt);
+}
+
+void Player::DeathState(float dt)
+{
+    DirectX::XMFLOAT3 enemyPos = enemyRef->GetPosition();
+    DirectX::XMVECTOR EnemyPos, PlayerPos, PlayerToEnemyDir;
+
+    EnemyPos = DirectX::XMLoadFloat3(&enemyPos);
+    PlayerPos = DirectX::XMLoadFloat3(&position);
+    PlayerToEnemyDir = DirectX::XMVectorSubtract(EnemyPos, PlayerPos);
+    PlayerToEnemyDir = DirectX::XMVector3Normalize(PlayerToEnemyDir);
+
+    float x, y, z;
+    DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&world);
+    DirectX::XMVECTOR Forward = M.r[2];
+
+    x = DirectX::XMVectorGetX(Forward);
+    z = DirectX::XMVectorGetZ(Forward);
+
+    y = DirectX::XMVectorGetY(Forward);
+
+    pitch = asinf(y);             // 上下の向き
+    yaw = atan2f(x, z);           // 左右の向き
+
+    // 角度を求める
+    {
+        //DirectX::XMFLOAT3 front = { 0,0,1 };
+        DirectX::XMVECTOR Front, PlayerDir;
+        //Front = DirectX::XMLoadFloat3(&front);
+        //PlayerDir = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&forward));
+
+        PlayerDir = 
+
+        DirectX::XMVECTOR Dot, Cross;
+        DirectX::XMFLOAT3 crossVector;
+        float dot;
+        Dot = DirectX::XMVector3Dot(PlayerDir, PlayerToEnemyDir);
+        Cross = DirectX::XMVector3Cross(PlayerDir, PlayerToEnemyDir);
+        DirectX::XMStoreFloat(&dot, Dot);
+        DirectX::XMStoreFloat3(&crossVector, Cross);
+
+        float radian = acosf(dot);
+
+        if (crossVector.y < 0)
+            radian *= -1;
+
+        angle.y = radian;
+    }
 }
