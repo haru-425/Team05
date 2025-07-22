@@ -51,9 +51,9 @@ private:
 
     void UpdateHijack(float dt);
 
-    void UpdateAnimationState();
-
     void UpdateAnimation(float dt);
+
+    void DeathState(float dt); ///< Ž€–S‰‰o—p
 
 private:
     std::shared_ptr<Model> model;

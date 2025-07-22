@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include <algorithm>
 
+static bool hit = false;
 Player::Player()
 {
 #ifdef TEST
@@ -28,6 +29,8 @@ Player::Player()
         radius = 0.6;                         // デバッグ用
         enableHijackTime = maxHijackTime;   // ハイジャックできる時間の設定
         acceleration = 1.1f;
+        deceleration = 1.8f;
+        hit = false;
     }
 
     /// アニメーション関係設定
@@ -59,6 +62,9 @@ void Player::Update(float dt)
 
     // 移動処理
     Move(dt);
+
+    if(isEvent) ///< Move() の中でフラグ切り替えをしてる
+        DeathState(dt);
 
 #ifdef TEST
     TestTransformUpdate();
@@ -132,14 +138,21 @@ void Player::DrawDebug()
 // 移動処理
 void Player::Move(float dt)
 {
+    if (!hit && isHit) ///< やりかたは汚いけど、一度ヒットしたらそれ以降はヒット判定にするために書く hit はPlayerコンストラクタの上でグローバルとしておいてる
+        hit = isHit;
+
     /// 敵と接触した場合はだんだん速度を落として演出に入る
-    if (isHit)
+    if (hit)
     {
-        acceleration = 0;
         if (speed > 0)
-            accel -= 1.5f * dt;
+            accel = -deceleration * dt;
         else
             isEvent = true;
+    }
+    else
+    {
+        /// 加速処理
+        accel += acceleration * dt;
     }
 
     Camera& cam = Camera::Instance();
@@ -163,10 +176,7 @@ void Player::Move(float dt)
     }
     saveDirection = forward;
 
-    /// 加速処理
-    accel += acceleration * dt;
-
-#if 0
+#if 1
     speed += accel * dt;
 #else
     if (Input::Instance().GetMouse().GetButton() & Mouse::BTN_RIGHT)
@@ -175,6 +185,7 @@ void Player::Move(float dt)
         speed = 0;
 #endif
     speed = DirectX::XMMin(speed, maxSpeed);
+    speed = DirectX::XMMax(speed, 0.0f);
     position.x += speed * forward.x * dt;
     position.z += speed * forward.z * dt;
 
@@ -275,4 +286,8 @@ void Player::UpdateAnimation(float dt)
 {
     if(!model->GetResource()->GetAnimations().empty())
         animationController.UpdateAnimation(dt);
+}
+
+void Player::DeathState(float dt)
+{
 }
