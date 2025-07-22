@@ -7,6 +7,9 @@ void MiniMap::Update(DirectX::XMFLOAT3 playerPosition)
 	DirectX::XMFLOAT3 camerafront = Camera::Instance().GetFront();
 	angle = atan2f(camerafront.x, camerafront.z);
 
+	float screenWidth = static_cast<float>(Graphics::Instance().GetScreenWidth() * Graphics::Instance().GetWindowScaleFactor().x);
+	float screenHeight = static_cast<float>(Graphics::Instance().GetScreenHeight() * Graphics::Instance().GetWindowScaleFactor().y);
+
 	spriteWidth = 240;
 	spriteHeight = 200;
 
@@ -14,6 +17,8 @@ void MiniMap::Update(DirectX::XMFLOAT3 playerPosition)
 	iconHeight = 64 * iconsize;
 
 	//MapPosition.y = 720 - spriteHeight;
+	MapPosition.x = 0;
+	MapPosition.y = 720 - spriteHeight;
 
 	iconPosition.x = spriteWidth / 2.0f - iconWidth / 2.0f;
 	iconPosition.y = MapPosition.y + spriteHeight / 2.0f - iconHeight / 2.0f;
@@ -36,8 +41,9 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 
 	//2Dスプライト描画
 	{
-		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
-		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
+	/*	float screenWidth = static_cast<float>(1280);
+		float screenHeight = static_cast<float>(720);*/
+
 
 
 		/*	spriteWidth = 485 ;
@@ -55,12 +61,31 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 
 		cutPosition.x = ((playerPosition.x * (spriteWidth / 60))) - cutsize / 2.0f;
 		cutPosition.y = ((-playerPosition.z * (spriteHeight / 50))) - cutsize / 2.0f;
+		//minimap->Render(rc,
+		//	 MapPosition.x,MapPosition.y, 0, spriteWidth, spriteHeight,
+		//	spriteWidth/2.0f + cutPosition.x ,spriteHeight/2.0f + cutPosition.y,
+		//	cutsize,cutsize,
+		//	0,
+		//	1, 1, 1, 1,true,radius,parametar);
+
 		minimap->Render(rc,
 			MapPosition.x, MapPosition.y, 0, spriteWidth, spriteHeight,
+<<<<<<< Updated upstream
 			spriteWidth / 2.0f + cutPosition.x, spriteHeight / 2.0f + cutPosition.y,
 			cutsize, cutsize,
 			0,
 			1, 1, 1, 1, true, radius, parametar);
+=======
+			0,0,
+			242, 202,
+			0,
+			1, 1, 1, 1, true, radius, parametar);
+
+		//minimap->Render(rc,
+		//	MapPosition.x, MapPosition.y, 0, spriteWidth, spriteHeight,
+		//	0,
+		//	1, 1, 1, 1);
+>>>>>>> Stashed changes
 
 		//minimap->Render(rc,
 		//	MapPosition.x, MapPosition.y, 0, spriteWidth, spriteHeight,

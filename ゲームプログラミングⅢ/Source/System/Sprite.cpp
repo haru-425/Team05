@@ -234,13 +234,14 @@ void Sprite::Render(const RenderContext& rc,
 	{
 		//ミニマップ
 		MiniMap minimap{};
+		minimap.screen_size.x = Graphics::Instance().GetScreenWidth() * Graphics::Instance().GetWindowScaleFactor().x / 1280.0f;
+		minimap.screen_size.y = Graphics::Instance().GetScreenHeight() * Graphics::Instance().GetWindowScaleFactor().y;
 		minimap.Flag = minimapFlg;
-		minimap.radius = radius;
+		minimap.radius = radius * minimap.screen_size.x;
 		minimap.paramatar = parametar;
 		minimap.sisex = dx;
 		minimap.sisey = dy;
 		dc->UpdateSubresource(minimap_constant_Buffer.Get(), 0, 0, &minimap, 0, 0);
-
 	}
 
 	dc->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
@@ -292,5 +293,7 @@ void Sprite::Render(const RenderContext& rc,
 )
 {
 	Render(rc, dx, dy, dz, dw, dh, 0, 0, textureWidth, textureHeight, angle, r, g, b, a);
+	int x;
+	x = 0;
 }
 

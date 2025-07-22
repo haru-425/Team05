@@ -34,8 +34,12 @@ private:
 	Sprite* metar = nullptr;
 	Sprite* ring = nullptr;
 
+<<<<<<< Updated upstream
 	DirectX::XMFLOAT2 MapPosition = { 0,720 - 200 };
 	//DirectX::XMFLOAT2 MapPosition = { 50,720 - 200 };
+=======
+	DirectX::XMFLOAT2 MapPosition;/* = { 0,720 - 200 }*/;
+>>>>>>> Stashed changes
 	DirectX::XMFLOAT2 iconPosition = { 0,0 };
 	DirectX::XMFLOAT3 playerPosition = { 0,0,0 };
 	DirectX::XMFLOAT2 cutPosition = { 0 , 0 };

@@ -26,9 +26,16 @@ public:
 		int Flag;
 		float radius;
 		float paramatar;
+<<<<<<< Updated upstream
 		float sisex;
 		float sisey;
 		float dummy[3];
+=======
+		float d;
+
+		DirectX::XMFLOAT2 screen_size;
+		DirectX::XMFLOAT2 dummy;
+>>>>>>> Stashed changes
 	};
 
 	struct Noise
