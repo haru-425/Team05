@@ -182,7 +182,7 @@ void Audio3DSystem::Initialize()
 	AddEmitter("Data/Sound/electrical_noise.wav", { 0.0f, 0.0f, 0.0f }, "electrical_noise", SoundType::BGM, 0.1f, true, true, true, 0.0f);
 
 
-	AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", SoundType::BGM, 0.5f, true);
+	AddEmitter("Data/Sound/atmosphere_noise.wav", { 0.0f, 0.0f, 0.0f }, "atmosphere_noise", SoundType::BGM, 0.7f, true);
 
 	AirconManager::Instance().Initialize(); // エアコンマネージャーの初期化
 	for (int i = 0; i < AIRCON_MAX; i++)
@@ -208,8 +208,8 @@ void Audio3DSystem::Initialize()
 	//AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f,-23.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
 
 
-	AddEmitter("Data/Sound/enemy_run.wav", { 21.0f, 3.0f,-23.0f }, "enemy_run", SoundType::SE, 1.f, true, true, false, 0.1f);
-	AddEmitter("Data/Sound/enemy_walk.wav", { 21.0f, 3.0f,-23.0f }, "enemy_walk", SoundType::SE, 1.f, true, true, false, 0.1f);
+	AddEmitter("Data/Sound/enemy_run.wav", { 21.0f, 3.0f,-23.0f }, "enemy_run", SoundType::SE, 1.f, true, true, false, 0.3f);
+	AddEmitter("Data/Sound/enemy_walk.wav", { 21.0f, 3.0f,-23.0f }, "enemy_walk", SoundType::SE, 1.f, true, true, false, 0.3f);
 
 	AddEmitter("Data/Sound/change_camera.wav", { 21.0f, 3.0f,-23.0f }, "change_camera", SoundType::SE, 0.1f, true, true, false, 1.f);
 	AddEmitter("Data/Sound/lightoff.wav", { 21.0f, 3.0f,-23.0f }, "lightoff", SoundType::SE, 0.1f, true, true, false, 1.f);

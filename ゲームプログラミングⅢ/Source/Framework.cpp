@@ -178,7 +178,10 @@ int Framework::Run()
 			//	: syncInterval / static_cast<float>(GetDeviceCaps(hDC, VREFRESH))
 			//	;
 			float elapsedTime = timer.TimeInterval();
-
+			if (elapsedTime >= 1.0f / 60.0f)
+			{
+				elapsedTime = 1.0 / 60.0f;
+			}
 			Update(elapsedTime);
 
 			Render(elapsedTime);
@@ -228,7 +231,7 @@ LRESULT CALLBACK Framework::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LP
 		timer.Start();
 		break;
 
-	case WM_SIZE :
+	case WM_SIZE:
 	{
 		RECT clientRect = {};
 		GetClientRect(hWnd, &clientRect);

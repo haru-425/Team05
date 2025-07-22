@@ -211,8 +211,8 @@ void SceneGame::Update(float elapsedTime)
 
 	LightManager::Instance().Update();
 	ObjectManager::Instance().Update(elapsedTime);
-	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
 
