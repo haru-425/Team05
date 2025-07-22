@@ -23,6 +23,18 @@ private:
         AislePartition,
         Door,
     };
+    struct OneWayGate {
+        std::shared_ptr<Model> model;              // 扉の3Dモデル
+        DirectX::XMFLOAT3      position;
+        DirectX::XMFLOAT3      angle;
+        bool                   hasPassed = false;          // プレイヤーが通過したかどうか
+        DirectX::XMFLOAT4X4    world = {
+            1,0,0,0,
+            0,1,0,0,
+            0,0,1,0,
+            0,0,0,1
+        };
+    };
 
 public:
     Stage();
@@ -33,6 +45,15 @@ public:
 
     //描画処理
     void Render(const RenderContext& rc, ModelRenderer* renderer);
+
+    void DrawGUI();
+
+    // プレイヤー専用通路用
+    DirectX::XMFLOAT4X4 GetGateWorld(int index) const { return gateElements[index].world; }
+    Model* GetGateModel(int index) { return gateElements[index].model.get(); }
+
+    void SetGatePassed(int index, bool isUse) { gateElements[index].hasPassed = isUse; }
+    bool GetGatePassed(int index) { return gateElements[index].hasPassed; }
 
     //経路探索用
     // ウェイポイントのインデックスからポジションを取得
@@ -65,8 +86,10 @@ private:
     static const int MODEL_MAX = 6;
 
     std::unique_ptr<Model> model[MODEL_MAX] = {};
-
     std::unique_ptr<LoadTextures> textures[MODEL_MAX] = {};
+
+    OneWayGate gateElements[3];
+    std::shared_ptr<Model> gateModelData[2];
 
     std::unique_ptr<Model> collisionMesh;
     DirectX::XMFLOAT4X4 collisionMeshMatrix;
