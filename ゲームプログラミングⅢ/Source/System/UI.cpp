@@ -5,6 +5,7 @@
 #include "imgui.h"
 
 #include "UI.h"
+#include "Graphics.h"
 using json = nlohmann::json;
 
 void to_json(json& j, const SpriteData& data)
@@ -101,8 +102,10 @@ void UI::DrawDebug()
 
 void UI::GetSelectedUI(const DirectX::XMFLOAT2& mousePos)
 {
-    if ((sprData.spritePos.x <= mousePos.x && sprData.spritePos.x + sprData.spriteSize.x >= mousePos.x) &&
-        (sprData.spritePos.y <= mousePos.y && sprData.spritePos.y + sprData.spriteSize.y >= mousePos.y))
+    DirectX::XMFLOAT2 scaleFactor = Graphics::Instance().GetWindowScaleFactor();
+
+    if ((sprData.spritePos.x * scaleFactor.x <= mousePos.x && sprData.spritePos.x * scaleFactor.x + sprData.spriteSize.x * scaleFactor.x >= mousePos.x) &&
+        (sprData.spritePos.y * scaleFactor.y <= mousePos.y && sprData.spritePos.y * scaleFactor.y + sprData.spriteSize.y * scaleFactor.y >= mousePos.y))
     {
         isHit = true;
 #if 0

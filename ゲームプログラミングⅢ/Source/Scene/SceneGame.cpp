@@ -599,6 +599,16 @@ void SceneGame::PlayerVsEnemy()
 }
 
 /**
+* @brief プレイヤーとドアの判定
+*/
+void SceneGame::PlayerVsDoor()
+{
+	float p;
+	DirectX::XMFLOAT3 pPos = player->GetPosition();
+	//if(Collision::IntersectSphereVsSphere())
+}
+
+/**
 * @brief カメラの更新処理
 *
 * プレイヤー視点カメラから敵視点カメラに切り換えるやつ
@@ -619,8 +629,16 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// プレイヤー視点
 		if (!useCamera)
 		{
-			cameraPos = player->GetPosition();
-			cameraPos.y = player->GetViewPoint();
+			if (player->GetIsEvent())
+			{
+				cameraPos = player->GetPosition();
+				cameraPos.y = player->GetViewPoint();
+			}
+			else
+			{
+				i_CameraController->SetPitch(player->GetPitch());
+				i_CameraController->SetYaw(player->GetYaw());
+			}
 		}
 		/// 敵視点
 		else

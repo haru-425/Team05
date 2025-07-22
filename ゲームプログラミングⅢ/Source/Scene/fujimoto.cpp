@@ -10,6 +10,7 @@
 #include "fujimoto.h"
 #include "Pursuer/SearchAI.h"
 #include "GameObjects/battery/batteryManager.h"
+#include "GameObjects/Object/ObjectManager.h"
 #include "imgui.h"                    // ImGuiの基本機能
 #include "imgui_impl_win32.h"        // Win32用バックエンド
 #include "imgui_impl_dx11.h"         // DirectX11用バックエンド
@@ -170,6 +171,8 @@ void fujimoto::Update(float elapsedTime)
 	LightManager::Instance().Update();
 
 	batteryManager::Instance().Update(elapsedTime);
+
+	ObjectManager::Instance().Update(elapsedTime);
 }
 
 // 描画処理
@@ -216,6 +219,8 @@ void fujimoto::Render()
 		//AirconManager::Instance().Render(rc);
 
 		batteryManager::Instance().Render(rc, modelRenderer);
+
+		ObjectManager::Instance().Render(rc, modelRenderer);
 	}
 
 	// 3Dデバッグ描画

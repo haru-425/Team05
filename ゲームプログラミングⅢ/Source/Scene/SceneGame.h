@@ -42,6 +42,8 @@ private:
 
 	void PlayerVsEnemy();
 
+	void PlayerVsDoor(); ///< ƒhƒA‚Æ‚Ì“–‚½‚è”»’è
+
 	void UpdateCamera(float elapsedTime);
 
 private:

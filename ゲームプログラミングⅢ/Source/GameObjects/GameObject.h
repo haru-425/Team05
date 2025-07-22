@@ -93,6 +93,7 @@ protected:
     DirectX::XMFLOAT2 velocity = {};    // 今回は落下がないからfloat2型
     float radius = 0;                   // 探索に使う？
     float acceleration = 0;             // 加速度
+    float deceleration = 0;             // 減速度
     DirectX::XMFLOAT3 saveDirection;    // 最後のカメラの方向を保存するため
 
     bool isHit = false;

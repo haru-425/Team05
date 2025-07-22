@@ -9,7 +9,7 @@ public:
 
 	enum mode
 	{
-		easy,
+		tutorial,
 		normal,
 		hard
 	};
