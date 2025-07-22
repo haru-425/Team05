@@ -5,6 +5,9 @@
 #include "Pursuer/ObjectBase.h"
 #include "Pursuer/SearchAI.h"
 #include "Player/player.h"
+#include "Scene/SceneManager.h"
+#include "Scene/SceneLoading.h"
+#include "Scene/SceneGameOver.h"
 #include "3DAudio/3dAudio.h"
 #include "./Collision.h"
 #include "imgui.h"                    // ImGuiの基本機能
@@ -100,7 +103,7 @@ void Enemy::Update(float elapsedTime)
 	DirectX::XMFLOAT3 hitpos, n;
 	//bool a = Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n);      //(デバッグ用)
 	loocking = !(Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n));
-
+	
 	// ヒット位置とプレイヤー位置との距離を比較
 	float hitdist = DirectX::XMVectorGetX(
 		DirectX::XMVector3Length(
@@ -110,17 +113,15 @@ void Enemy::Update(float elapsedTime)
 		DirectX::XMVector3Length(
 			DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
 
-	if (playerdist<attackRange)
+	if (playerdist<attackRange && state != State::Attack)
 	{
 		state = State::Attack;
 		Animationplay();
-		//ここにゲームオーバー演出へ遷移するコードを書く
-
 		return;
 	}
 
 	// プレイヤーが見えているか近づいているなら
-	if (((loocking && playerdist < lockonRange) || playerdist < searchRange) && state != State::miss)
+	if (((loocking && playerdist < lockonRange) || (loocking && playerdist < searchRange)) && state != State::miss)
 	{
 		if (!isTrackingPlayer)
 		{
@@ -273,6 +274,13 @@ void Enemy::Update(float elapsedTime)
 			Animationplay();
 		}
 		break;
+
+	case State::Attack:
+		if (animationcontroller.GetEndAnimation())
+		{
+			SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
+		}
+		break;
 	}
 
 	// 行列更新とモデルの描画準備
@@ -324,7 +332,7 @@ void Enemy::Updatemovement(float elapsedTime)
 	// ターゲット方向に向けた移動
 	DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&position);
 	DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&targetPosition);
-	if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition()), posVec))) < 3.0f)
+	if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition()), posVec))) < 3.0f && loocking)
 	{
 		targetVec = DirectX::XMLoadFloat3(&playerRef.lock().get()->GetPosition());
 		JageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
@@ -360,7 +368,6 @@ void Enemy::Updatemovement(float elapsedTime)
 			{
 				currentTargetIndex++;
 			}
-
 		}
 		if (currentTargetIndex >= route.size())
 		{
@@ -637,7 +644,7 @@ void Enemy::SetDifficulty()
 {
 	switch (Difficulty::Instance().GetDifficulty())
 	{
-	case Difficulty::easy:
+	case Difficulty::tutorial:
 		searchRange = EASY_SR;
 		lockonRange = EASY_LR;
 		break;

@@ -111,27 +111,27 @@ void Stage::DestinationPointSet()
 	wayPoint[6] = std::make_shared<WayPoint>(6, DirectX::XMFLOAT3{ 8,0,13 });
 	wayPoint[7] = std::make_shared<WayPoint>(7, DirectX::XMFLOAT3{ -8,0,13 });
 	wayPoint[8] = std::make_shared<WayPoint>(8, DirectX::XMFLOAT3{ 5.5,0,5 });
-	wayPoint[9] = std::make_shared<WayPoint>(9, DirectX::XMFLOAT3{ 3.5,0,0.5 });
+	wayPoint[9] = std::make_shared<WayPoint>(9, DirectX::XMFLOAT3{ 3,0,1 });
 	wayPoint[10] = std::make_shared<WayPoint>(10, DirectX::XMFLOAT3{ 4,0,-4 });
 	wayPoint[11] = std::make_shared<WayPoint>(11, DirectX::XMFLOAT3{ -6,0,-4 });
-	wayPoint[12] = std::make_shared<WayPoint>(12, DirectX::XMFLOAT3{ -8,0,2.5 });
+	wayPoint[12] = std::make_shared<WayPoint>(12, DirectX::XMFLOAT3{ -8,0,3 });
 	wayPoint[13] = std::make_shared<WayPoint>(13, DirectX::XMFLOAT3{ -13,0,5 });
 	wayPoint[14] = std::make_shared<WayPoint>(14, DirectX::XMFLOAT3{ 8,0,22 });
 	wayPoint[15] = std::make_shared<WayPoint>(15, DirectX::XMFLOAT3{ 14,0,13 });
 	wayPoint[16] = std::make_shared<WayPoint>(16, DirectX::XMFLOAT3{ -8,0,22 });
 	wayPoint[17] = std::make_shared<WayPoint>(17, DirectX::XMFLOAT3{ -13,0,13 });
 	wayPoint[18] = std::make_shared<WayPoint>(18, DirectX::XMFLOAT3{ 7.5,0,5 });
-	wayPoint[19] = std::make_shared<WayPoint>(19, DirectX::XMFLOAT3{ 5.5,0,0.5 });
+	wayPoint[19] = std::make_shared<WayPoint>(19, DirectX::XMFLOAT3{ 5.5,0,1 });
 	wayPoint[20] = std::make_shared<WayPoint>(20, DirectX::XMFLOAT3{ 6,0,-4 });
 	wayPoint[21] = std::make_shared<WayPoint>(21, DirectX::XMFLOAT3{ -11,0,-4 });
-	wayPoint[22] = std::make_shared<WayPoint>(22, DirectX::XMFLOAT3{ -13,0,2.5 });
+	wayPoint[22] = std::make_shared<WayPoint>(22, DirectX::XMFLOAT3{ -13,0,3 });
 	wayPoint[23] = std::make_shared<WayPoint>(23, DirectX::XMFLOAT3{ -21,0,5 });
 	wayPoint[24] = std::make_shared<WayPoint>(24, DirectX::XMFLOAT3{ 3.5,0,22 });
 	wayPoint[25] = std::make_shared<WayPoint>(25, DirectX::XMFLOAT3{ 21,0,13 });
 	wayPoint[26] = std::make_shared<WayPoint>(26, DirectX::XMFLOAT3{ -2.5,0,22 });
 	wayPoint[27] = std::make_shared<WayPoint>(27, DirectX::XMFLOAT3{ -17,0,13 });
 	wayPoint[28] = std::make_shared<WayPoint>(28, DirectX::XMFLOAT3{ 9.5,0,5 });
-	wayPoint[29] = std::make_shared<WayPoint>(29, DirectX::XMFLOAT3{ 7.5,0,0.5 });
+	wayPoint[29] = std::make_shared<WayPoint>(29, DirectX::XMFLOAT3{ 7.5,0,1 });
 	wayPoint[30] = std::make_shared<WayPoint>(30, DirectX::XMFLOAT3{ 8,0,-4 });
 	wayPoint[31] = std::make_shared<WayPoint>(31, DirectX::XMFLOAT3{ -11,0,-12 });
 	wayPoint[32] = std::make_shared<WayPoint>(32, DirectX::XMFLOAT3{ -16,0,-4 });
@@ -143,7 +143,7 @@ void Stage::DestinationPointSet()
 	wayPoint[38] = std::make_shared<WayPoint>(38, DirectX::XMFLOAT3{ 21,0,5 });
 	wayPoint[39] = std::make_shared<WayPoint>(39, DirectX::XMFLOAT3{ -0.5,0,22 });
 	wayPoint[40] = std::make_shared<WayPoint>(40, DirectX::XMFLOAT3{ 15,0,5 });
-	wayPoint[41] = std::make_shared<WayPoint>(41, DirectX::XMFLOAT3{ 9.5,0,0.5 });
+	wayPoint[41] = std::make_shared<WayPoint>(41, DirectX::XMFLOAT3{ 8,0,1 });
 	wayPoint[42] = std::make_shared<WayPoint>(42, DirectX::XMFLOAT3{ 11,0,-4 });
 	wayPoint[43] = std::make_shared<WayPoint>(43, DirectX::XMFLOAT3{ -11,0,-13 });
 	wayPoint[44] = std::make_shared<WayPoint>(44, DirectX::XMFLOAT3{ -21,0,-13 });
@@ -400,13 +400,6 @@ int Stage::NearWayPointIndex(DirectX::XMFLOAT3 target)
 			minLength = length;
 			index = i;
 		}
-	}
-
-
-	//TODO
-	if (index < 0)
-	{
-		int x = 10;
 	}
 
 	return index;
