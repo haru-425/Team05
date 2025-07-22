@@ -23,6 +23,8 @@ public:
     void SetPitch(float pitch) { this->pitch = pitch; }
     void SetYaw(float yaw) { this->yaw = yaw; }
 
+    void SetIsEvent(bool isEvent) { this->isEvent = isEvent; }
+
 protected:
     DirectX::XMFLOAT3   target = { 0,0,0 };                 // 三人称カメラに使う
     DirectX::XMFLOAT3   cameraPos = { 0.0f, 2.0f, -5.0f };  // 一人称カメラに使う、カメラの位置やけどプレイヤーに持たせるから意味はない
@@ -42,5 +44,6 @@ protected:
 
     bool isChange = false;
     bool useEnemyCam = false;
+    bool isEvent = false;
 };
 

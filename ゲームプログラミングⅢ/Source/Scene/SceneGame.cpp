@@ -10,6 +10,7 @@
 #include "./LightModels/LightManager.h"
 #include "./Aircon/AirconManager.h"
 #include "./Object/ObjectManager.h"
+#include "System/CollisionEditor.h"
 
 #include <imgui.h>
 
@@ -36,6 +37,7 @@ void SceneGame::Initialize()
 
 	player = std::make_shared<Player>();
 	enemy = std::make_shared<Enemy>(player, stage);
+	player->SetEnemy(enemy);
 
 	//ミニマップスプライト初期化
 	minimap = new MiniMap();
@@ -74,6 +76,8 @@ void SceneGame::Initialize()
 	//Audio3DSystem::Instance().UpdateEmitters(elapsed);
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
+
+	CollisionEditor::Instance();
 }
 
 // 終了化
@@ -167,32 +171,32 @@ void SceneGame::Update(float elapsedTime)
 	enemy->Update(elapsedTime);
 	minimap->Update(player->GetPosition());
 
-	// 一人称用カメラ
-	if (typeid(*i_CameraController) == typeid(FPCameraController))
-	{
-		POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
-		ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
-		DirectX::XMFLOAT3 cameraPos = player->GetPosition();
-		cameraPos.y = player->GetViewPoint();
-		i_CameraController->SetCameraPos(cameraPos);
-		i_CameraController->Update(elapsedTime);
-		SetCursorPos(screenPoint.x, screenPoint.y);
+	//// 一人称用カメラ
+	//if (typeid(*i_CameraController) == typeid(FPCameraController))
+	//{
+	//	POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
+	//	ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
+	//	DirectX::XMFLOAT3 cameraPos = player->GetPosition();
+	//	cameraPos.y = player->GetViewPoint();
+	//	i_CameraController->SetCameraPos(cameraPos);
+	//	i_CameraController->Update(elapsedTime);
+	//	SetCursorPos(screenPoint.x, screenPoint.y);
 
-		if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
-		{
-			i_CameraController = std::make_unique<LightDebugCameraController>();
-		}
-	}
-	// フリーカメラ
-	else
-	{
-		i_CameraController->Update(elapsedTime);
+	//	if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
+	//	{
+	//		i_CameraController = std::make_unique<LightDebugCameraController>();
+	//	}
+	//}
+	//// フリーカメラ
+	//else
+	//{
+	//	i_CameraController->Update(elapsedTime);
 
-		if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
-		{
-			i_CameraController = std::make_unique<FPCameraController>();
-		}
-	}
+	//	if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
+	//	{
+	//		i_CameraController = std::make_unique<FPCameraController>();
+	//	}
+	//}
 
 	UpdateCamera(elapsedTime);
 
@@ -309,6 +313,7 @@ void SceneGame::Render()
 
 	/// フレームバッファのディアクティベート
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
+#if 1
 	if (player->GetUseCam())
 	{
 		//enemy
@@ -459,6 +464,8 @@ void SceneGame::Render()
 		);
 
 	}
+#endif
+		CollisionEditor::Instance().Render(rc, shapeRenderer);
 }
 
 // GUI描画
@@ -503,6 +510,10 @@ void SceneGame::DrawGUI()
 	LightManager::Instance().DebugGUI();
 	AirconManager::Instance().DebugGUI();
 	ObjectManager::Instance().DebugGUI();
+
+	player->DrawDebug();
+
+	CollisionEditor::Instance().DrawDebug();
 }
 
 void SceneGame::Collision()
@@ -629,13 +640,11 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// プレイヤー視点
 		if (!useCamera)
 		{
-			if (player->GetIsEvent())
+			cameraPos = player->GetPosition();
+			cameraPos.y = player->GetViewPoint();
+			if(player->GetIsEvent())
 			{
-				cameraPos = player->GetPosition();
-				cameraPos.y = player->GetViewPoint();
-			}
-			else
-			{
+				i_CameraController->SetIsEvent(player->GetIsEvent());
 				i_CameraController->SetPitch(player->GetPitch());
 				i_CameraController->SetYaw(player->GetYaw());
 			}

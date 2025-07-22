@@ -19,7 +19,7 @@ void FPCameraController::Update(float dt)
     float sensitivity = 0.005f * SettingsManager::Instance().GetGameSettings().sensitivity; // マウス感度
 
     float mouseX = mouse.GetPositionX(), mouseY = mouse.GetPositionY(), screenW = mouse.GetScreenWidth(), screenH = mouse.GetScreenHeight();
-    if (!useEnemyCam)
+    if (!useEnemyCam && !isEvent)
     {
         yaw += (mouseX - screenW / 2) * sensitivity;
         pitch += -(mouseY - screenH / 2) * sensitivity;

@@ -3,8 +3,11 @@
 #include "Camera/Camera.h"
 #include "imgui.h"
 #include <algorithm>
+#include "Math/Easing.h"
 
 static bool hit = false;
+static float time = 0;
+static constexpr float totalTime = 1;
 Player::Player()
 {
 #ifdef TEST
@@ -31,6 +34,7 @@ Player::Player()
         acceleration = 1.1f;
         deceleration = 1.2f;
         hit = false;
+        time = 0;
     }
 
     /// アニメーション関係設定
@@ -58,7 +62,7 @@ void Player::Update(float dt)
     UpdateHijack(dt);
 
     // カメラ切り替え処理
-    ChangeCamera();
+    //ChangeCamera();
 
     // 移動処理
     Move(dt);
@@ -293,6 +297,8 @@ void Player::UpdateAnimation(float dt)
 
 void Player::DeathState(float dt)
 {
+    time += dt; ///< 演出用に使うタイマー
+
     DirectX::XMFLOAT3 enemyPos = enemyRef->GetPosition();
     DirectX::XMVECTOR EnemyPos, PlayerPos, PlayerToEnemyDir;
 
@@ -320,21 +326,49 @@ void Player::DeathState(float dt)
         //Front = DirectX::XMLoadFloat3(&front);
         //PlayerDir = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&forward));
 
-        PlayerDir = 
-
         DirectX::XMVECTOR Dot, Cross;
         DirectX::XMFLOAT3 crossVector;
         float dot;
-        Dot = DirectX::XMVector3Dot(PlayerDir, PlayerToEnemyDir);
-        Cross = DirectX::XMVector3Cross(PlayerDir, PlayerToEnemyDir);
+        Dot = DirectX::XMVector3Dot(Forward, PlayerToEnemyDir);
+        Cross = DirectX::XMVector3Cross(Forward, PlayerToEnemyDir);
         DirectX::XMStoreFloat(&dot, Dot);
         DirectX::XMStoreFloat3(&crossVector, Cross);
 
         float radian = acosf(dot);
 
-        if (crossVector.y < 0)
-            radian *= -1;
+        //if (crossVector.y < 0)
+        //    radian *= -1;
 
-        angle.y = radian;
+    
+        if (crossVector.y < 0)
+        {
+           if(radian > 0)
+                radian *= -1;
+            //if (angle.y > radian)
+            //    angle.y -= 10 * 0.01745f * dt;
+
+            //else
+            //{
+            //    
+            //}
+
+            //angle.y = radian;
+        }
+        //else
+        //{
+        //    if (angle.y < radian)
+        //        angle.y += 10 * 0.01745f * dt;
+        //}
+        time = DirectX::XMMin(time, totalTime);
+
+        static float angleX = angle.x;
+        static float angleY = angle.y;
+
+        if(angle.x < 0)
+            angle.x = Easing::InSine(time, totalTime, 0.0f, angleX);
+        else
+            angle.x = Easing::InSine(time, totalTime, angleX, 0.0f);
+
+        angle.y = Easing::OutBack(time, totalTime, 1.0f, angleY, radian);
     }
 }

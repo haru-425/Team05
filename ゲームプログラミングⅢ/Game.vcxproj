@@ -145,6 +145,7 @@
     <ClInclude Include="Source\LightDebugCameraController.h" />
     <ClInclude Include="Source\GameObjects\LightModels\LightManager.h" />
     <ClInclude Include="Source\Math\Collision.h" />
+    <ClInclude Include="Source\Math\Easing.h" />
     <ClInclude Include="Source\MiniMap.h" />
     <ClInclude Include="Source\Projectile.h" />
     <ClInclude Include="Source\ProjectileHoming.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Source\System\AudioSource.h" />
     <ClInclude Include="Source\System\BasicShader.h" />
     <ClInclude Include="Source\System\bloom.h" />
+    <ClInclude Include="Source\System\CollisionEditor.h" />
     <ClInclude Include="Source\System\CustomShader.h" />
     <ClInclude Include="Source\System\difficulty.h" />
     <ClInclude Include="Source\System\FrameBuffer.h" />
@@ -258,6 +260,7 @@
     <ClCompile Include="Source\System\AudioSource.cpp" />
     <ClCompile Include="Source\System\BasicShader.cpp" />
     <ClCompile Include="Source\System\Bloom.cpp" />
+    <ClCompile Include="Source\System\CollisionEditor.cpp" />
     <ClCompile Include="Source\System\CustomShader.cpp" />
     <ClCompile Include="Source\System\FrameBuffer.cpp" />
     <ClCompile Include="Source\System\FullScreenQuad.cpp" />
