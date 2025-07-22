@@ -13,7 +13,6 @@ Stage::Stage()
 	model[static_cast<int>(ModelLavel::Door)] = std::make_unique<Model>("Data/Model/Stage/Map/Door/Door.mdl");
 
 	scale = { 0.01f,0.01f,0.01f };
-
 	angle.y = DirectX::XMConvertToRadians(180);
 
 	//スケール行列を作成
@@ -27,8 +26,43 @@ Stage::Stage()
 	//計算したワールド行列を取り出す
 	DirectX::XMStoreFloat4x4(&world, W);
 
-	DestinationPointSet();
+	// プレイヤー専用通路のモデル
+	{
+		// すり替え用モデルデータの読み込み
+		gateModelData[0]= std::make_unique<Model>("Data/Model/Stage/Map/Door/door_green.mdl");
+		gateModelData[1]= std::make_unique<Model>("Data/Model/Stage/Map/Door/door_red.mdl");
 
+		// データの初期化
+		gateElements[0].position = { -7.5f,0,12.0f };
+		gateElements[0].angle = { 0,DirectX::XMConvertToRadians(180),0 };
+
+		gateElements[1].position = { 7.5f,0,12.0f };
+		gateElements[1].angle = { 0,DirectX::XMConvertToRadians(180),0 };
+
+		gateElements[2].position = { 0.5f,0,-10.0f };
+		gateElements[2].angle = { 0,0,0 };
+		
+		// 行列の作成
+		for (auto& p : gateElements) {
+
+			p.model = gateModelData[0];
+			p.hasPassed = false;
+
+			//スケール行列を作成
+			DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
+			//回転行列
+			DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(p.angle.x, p.angle.y, p.angle.z);
+			//位置行列を作成
+			DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(p.position.x, p.position.y, p.position.z);
+
+			//３つの行列を組み合わせ、ワールド行列を作成
+			DirectX::XMMATRIX W = S * R * T;
+			//計算したワールド行列を取り出す
+			DirectX::XMStoreFloat4x4(&p.world, W);
+		}
+	}
+
+	DestinationPointSet();
 
 	// テクスチャの読み込み
 	{
@@ -62,9 +96,7 @@ Stage::Stage()
 		textures[static_cast<int>(ModelLavel::Door)]->LoadRoughness("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Roughness.1001.png");
 		textures[static_cast<int>(ModelLavel::Door)]->LoadMetalness("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Metalness.1001.png");
 		textures[static_cast<int>(ModelLavel::Door)]->LoadEmisive("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Emissive.1001.png");
-		textures[static_cast<int>(ModelLavel::Door)]->LoadOcclusion("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Opacity.1001.png");
-
-		
+		textures[static_cast<int>(ModelLavel::Door)]->LoadOcclusion("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Opacity.1001.png");		
 	}
 
 
@@ -81,11 +113,38 @@ Stage::~Stage()
 //更新処理
 void Stage::Update(float elapsedTime)
 {
+	// 行列の作成
+	for (auto& p : gateElements) {
 
+		//スケール行列を作成
+		DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
+		//回転行列
+		DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(p.angle.x, p.angle.y, p.angle.z);
+		//位置行列を作成
+		DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(p.position.x, p.position.y, p.position.z);
+
+		//３つの行列を組み合わせ、ワールド行列を作成
+		DirectX::XMMATRIX W = S * R * T;
+		//計算したワールド行列を取り出す
+		DirectX::XMStoreFloat4x4(&p.world, W);
+	}
+
+	for (auto& p : gateElements) {
+		if (!p.hasPassed) {
+			p.model = gateModelData[0];
+		}
+		if (p.hasPassed) {
+			p.model = gateModelData[1];
+		}
+	}
 }
 //描画
 void Stage::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
+	for (auto& p : gateElements) {
+		textures[static_cast<int>(ModelLavel::Door)]->Set(rc);
+		renderer->Render(rc, p.world, p.model.get(), ShaderId::Custom);
+	}
 	for (int i = 0; i < MODEL_MAX; ++i) {
 		textures[i]->Set(rc);
 		renderer->Render(rc, world, model[i].get(), ShaderId::Custom);
@@ -93,7 +152,37 @@ void Stage::Render(const RenderContext& rc, ModelRenderer* renderer)
 	}
 }
 
+void Stage::DrawGUI()
+{
+	if (ImGui::TreeNode("OneWayGates")) {
+		for (size_t i = 0; i < 3; ++i) {
+			ImGui::PushID(static_cast<int>(i));
 
+			DirectX::XMFLOAT3& position = gateElements[i].position;
+			float angleDeg = DirectX::XMConvertToDegrees(gateElements[i].angle.y);
+			bool hasPassed = gateElements[i].hasPassed;
+
+			std::string posLabel = "Position##" + std::to_string(i);
+			std::string angleLabel = "Angle##" + std::to_string(i);
+			std::string passLabel = "HasPassed##" + std::to_string(i);
+
+			if (ImGui::DragFloat3(posLabel.c_str(), &position.x, 0.1f, -30.0f, 30.0f)) {
+				gateElements[i].position = position;
+			}
+
+			if (ImGui::DragFloat(angleLabel.c_str(), &angleDeg, 0.1f, -180.0f, 180.0f)) {
+				gateElements[i].angle.y = DirectX::XMConvertToRadians(angleDeg);
+			}
+
+			if (ImGui::Checkbox(passLabel.c_str(), &hasPassed)) {
+				gateElements[i].hasPassed = hasPassed;
+			}
+
+			ImGui::PopID();
+		}
+		ImGui::TreePop();
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //経路探索用

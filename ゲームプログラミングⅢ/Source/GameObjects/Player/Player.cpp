@@ -313,28 +313,28 @@ void Player::DeathState(float dt)
     pitch = asinf(y);             // è„â∫ÇÃå¸Ç´
     yaw = atan2f(x, z);           // ç∂âEÇÃå¸Ç´
 
-    // äpìxÇãÅÇﬂÇÈ
-    {
-        //DirectX::XMFLOAT3 front = { 0,0,1 };
-        DirectX::XMVECTOR Front, PlayerDir;
-        //Front = DirectX::XMLoadFloat3(&front);
-        //PlayerDir = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&forward));
+    //// äpìxÇãÅÇﬂÇÈ
+    //{
+    //    //DirectX::XMFLOAT3 front = { 0,0,1 };
+    //    DirectX::XMVECTOR Front, PlayerDir;
+    //    //Front = DirectX::XMLoadFloat3(&front);
+    //    //PlayerDir = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&forward));
 
-        PlayerDir = 
+    //    PlayerDir = 
 
-        DirectX::XMVECTOR Dot, Cross;
-        DirectX::XMFLOAT3 crossVector;
-        float dot;
-        Dot = DirectX::XMVector3Dot(PlayerDir, PlayerToEnemyDir);
-        Cross = DirectX::XMVector3Cross(PlayerDir, PlayerToEnemyDir);
-        DirectX::XMStoreFloat(&dot, Dot);
-        DirectX::XMStoreFloat3(&crossVector, Cross);
+    //    DirectX::XMVECTOR Dot, Cross;
+    //    DirectX::XMFLOAT3 crossVector;
+    //    float dot;
+    //    Dot = DirectX::XMVector3Dot(PlayerDir, PlayerToEnemyDir);
+    //    Cross = DirectX::XMVector3Cross(PlayerDir, PlayerToEnemyDir);
+    //    DirectX::XMStoreFloat(&dot, Dot);
+    //    DirectX::XMStoreFloat3(&crossVector, Cross);
 
-        float radian = acosf(dot);
+    //    float radian = acosf(dot);
 
-        if (crossVector.y < 0)
-            radian *= -1;
+    //    if (crossVector.y < 0)
+    //        radian *= -1;
 
-        angle.y = radian;
-    }
+    //    angle.y = radian;
+    //}
 }
