@@ -44,6 +44,19 @@ public:
 
     DirectX::XMFLOAT3 GetDirection() const { return saveDirection; }
 
+    /// 死亡演出用フラグのゲッター
+    bool GetIsEvent() const { return isEvent; }
+
+    float GetPitch() const {    return pitch;}
+    float GetYaw() const { return yaw; }
+
+    void AddHijackTimer(float timer) {
+
+        enableHijackTime += timer;
+        if (enableHijackTime > maxHijackTime)
+            enableHijackTime = maxHijackTime;
+    }
+
 private:
     void Move(float dt);
 
@@ -69,6 +82,9 @@ private:
 
     float enableHijackTime; // ハイジャック時間
     float hijackSpeed = 0.0f;  // 視界ジャックの時間を減らす速度
+
+    float pitch;
+    float yaw;
 
     AnimationController animationController; // アニメーション
     AnimationState state = AnimationState::MOVE;
