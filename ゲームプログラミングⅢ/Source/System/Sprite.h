@@ -26,7 +26,9 @@ public:
 		int Flag;
 		float radius;
 		float paramatar;
-		float dummy;
+		float sisex;
+		float sisey;
+		float dummy[3];
 	};
 
 	struct Noise
@@ -65,7 +67,7 @@ public:
 
 	ID3D11ShaderResourceView* GetSRV() const { return shaderResourceView.Get(); }
 
-	void SetNoise(int noise) {this->noise_flag = noise;}
+	void SetNoise(int noise) { this->noise_flag = noise; }
 	void SetStrength(int strength) { this->strength = strength; }
 
 private:
