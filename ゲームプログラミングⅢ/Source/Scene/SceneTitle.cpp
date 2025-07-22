@@ -409,6 +409,9 @@ void SceneTitle::DrawGUI()
 
 		ImGui::TreePop();
 	}
+
+	ImGui::Checkbox("isVolumeSliderActive", &isVolumeSliderActive);
+
 	Graphics::Instance().DebugGUI();
 
 
@@ -538,13 +541,14 @@ void SceneTitle::UpdateUI()
 			id == 14 || id == 19 || id == 24 || id == 29 ||
 			id == 30 || id == 31))continue;
 
-
-		if (ui->GetIsHit() || (id == 1 && selectOptions) || (id == 0 && selectStart))
-		{
-			ui->GetSpriteData().color = { 1,1,1,1 };
+		if (!isVolumeSliderActive) {
+			if (ui->GetIsHit() || (id == 1 && selectOptions) || (id == 0 && selectStart))
+			{
+				ui->GetSpriteData().color = { 1,1,1,1 };
+			}
+			else
+				ui->GetSpriteData().color = { 0.660,0.660,0.660,1 };
 		}
-		else
-			ui->GetSpriteData().color = { 0.660,0.660,0.660,1 };
 	}
 
 	if (!(mouse.GetButton() & mouse.BTN_LEFT))
@@ -588,39 +592,71 @@ void SceneTitle::UpdateUI()
 
 			break;
 		case 9:
-			um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
-			if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
-			{
-
-				previousDow = true;
+			if ((mouse.GetButtonDown() & mouse.BTN_LEFT) && um.GetUIs().at(id)->GetIsHit()) {
+				um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+				isVolumeSliderActive = true;
 				lastSelectID = id;
+			}
+			if (isVolumeSliderActive) {
+				if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+				{
+					previousDow = true;
+					//lastSelectID = id;
+				}
+			}
+			if (mouse.GetButtonUp() & mouse.BTN_LEFT || previousDow) {
+				isVolumeSliderActive = false;
 			}
 			break;
 		case 14:
-			um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
-			if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
-			{
-
-				previousDow = true;
+			if ((mouse.GetButtonDown() & mouse.BTN_LEFT) && um.GetUIs().at(id)->GetIsHit()) {
+				um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+				isVolumeSliderActive = true;
 				lastSelectID = id;
+			}
+			if (isVolumeSliderActive) {
+				if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+				{
+					previousDow = true;
+					//lastSelectID = id;
+				}
+			}
+			if (mouse.GetButtonUp() & mouse.BTN_LEFT || previousDow) {
+				isVolumeSliderActive = false;
 			}
 			break;
 		case 19:
-			um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
-			if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
-			{
-
-				previousDow = true;
+			if ((mouse.GetButtonDown() & mouse.BTN_LEFT) && um.GetUIs().at(id)->GetIsHit()) {
+				um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+				isVolumeSliderActive = true;
 				lastSelectID = id;
+			}
+			if (isVolumeSliderActive) {
+				if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+				{
+					previousDow = true;
+					/*lastSelectID = id;*/
+				}
+			}
+			if (mouse.GetButtonUp() & mouse.BTN_LEFT || previousDow) {
+				isVolumeSliderActive = false;
 			}
 			break;
 		case 24:
-			um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
-			if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
-			{
-
-				previousDow = true;
+			if ((mouse.GetButtonDown() & mouse.BTN_LEFT) && um.GetUIs().at(id)->GetIsHit()) {
+				um.GetUIs().at(id)->GetSpriteData().spriteSize = { 20,58 };
+				isVolumeSliderActive = true;
 				lastSelectID = id;
+			}
+			if (isVolumeSliderActive) {
+				if (mouse.GetButton() & mouse.BTN_LEFT || previousDow)
+				{
+					previousDow = true;
+					//lastSelectID = id;
+				}
+			}
+			if (mouse.GetButtonUp() & mouse.BTN_LEFT || previousDow) {
+				isVolumeSliderActive = false;
 			}
 			break;
 		case 29:
