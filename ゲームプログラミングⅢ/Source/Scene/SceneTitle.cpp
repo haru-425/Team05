@@ -8,6 +8,7 @@
 #include"SceneGraphics.h"
 #include "Scene/SceneMattsu.h"
 #include "./LightModels/LightManager.h"
+#include "System/difficulty.h"
 #include "Camera/CameraController/SceneCameraController.h"
 #include "System/SettingsManager.h"
 #include <algorithm>
@@ -601,6 +602,7 @@ void SceneTitle::UpdateUI()
             if (mouse.GetButtonDown() & mouse.BTN_LEFT)
             {
                 sm.SetGameMode(GameMode::Tutorial);
+				Difficulty::Instance().SetDifficulty(Difficulty::mode::tutorial);
                 isStartGame = true;
             }
 
@@ -612,6 +614,7 @@ void SceneTitle::UpdateUI()
             if (mouse.GetButtonDown() & mouse.BTN_LEFT)
             {
                 sm.SetGameMode(GameMode::Noraml);
+				Difficulty::Instance().SetDifficulty(Difficulty::mode::normal);
                 isStartGame = true;
             }
 
@@ -623,6 +626,7 @@ void SceneTitle::UpdateUI()
             if (mouse.GetButtonDown() & mouse.BTN_LEFT)
             {
                 sm.SetGameMode(GameMode::Hard);
+				Difficulty::Instance().SetDifficulty(Difficulty::mode::hard);
                 isStartGame = true;
             }
 
