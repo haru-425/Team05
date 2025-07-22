@@ -2,12 +2,16 @@
 #include "battery.h"
 #include "Player/Player.h"
 #include "Enemy/Enemy.h"
+#include "System/difficulty.h"
 #include <chrono>
 #include <DirectXMath.h>
 #include <vector>
 
 #define BATTERY_MAX 10
-#define BATTERY_DROP_INTERVAL 20.0f
+#define BATTERY_DROP_NORML_INTERVAL 20.0f
+#define BATTERY_DROP_HARD_INTERVAL 10.0f
+#define NORML_RECOVERY 10.0f
+#define HARD_RECOVERY 5.0f
 
 class batteryManager
 {
@@ -17,6 +21,20 @@ public:
         static batteryManager instance;
         return instance;
     }
+
+    void SetDifficulty(int diff)
+    {
+        if (Difficulty::Instance().GetDifficulty() == Difficulty::normal)
+        {
+            battery_recovery = NORML_RECOVERY;
+            drop_interval = BATTERY_DROP_NORML_INTERVAL;
+        }
+        else if (Difficulty::Instance().GetDifficulty() == Difficulty::hard)
+        {
+            battery_recovery = HARD_RECOVERY;
+            drop_interval = BATTERY_DROP_HARD_INTERVAL;
+        }
+    };
 
     void Update(float elapsedTime)
     {
@@ -30,7 +48,7 @@ public:
             hasBattery.erase(hasBattery.begin());
         }
         deleteBattery(player->GetPosition());
-        if (droptime >= BATTERY_DROP_INTERVAL)
+        if (droptime >= drop_interval)
         {
             addBattery(enemy->GetPosition());
 			droptime = 0;
@@ -62,8 +80,7 @@ public:
 			{
 				it = hasBattery.erase(it);
                 player_Get_Batterry++;
-                //ここにゲージを回復させるコードを書く
-
+                player->AddHijackTimer(battery_recovery);
                 break;
 			}
 			else
@@ -91,6 +108,10 @@ private:
     int player_Get_Batterry = 0;
 
     int game_Max_Batterry = 0;
+
+    float battery_recovery = 0;
+
+    float drop_interval = 0;
 
     float droptime = 0;
 };
