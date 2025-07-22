@@ -499,6 +499,7 @@ void SceneGame::DrawGUI()
 
 		ImGui::TreePop();
 	}
+	stage->DrawGUI();
 	Graphics::Instance().DebugGUI();
 	LightManager::Instance().DebugGUI();
 	AirconManager::Instance().DebugGUI();
