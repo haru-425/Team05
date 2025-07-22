@@ -5,6 +5,11 @@ battery::battery()
     scale.x = scale.y = scale.z = 0.0169f; // スケール設定（非常に小さい）
     angle.z = DirectX::XMConvertToRadians(20.0f); 
     angle.y = DirectX::XMConvertToRadians(10.0f);  
+
+    textures = std::make_unique<LoadTextures>();
+    textures->LoadNormal("battery_Normal_DirectX.png");
+    textures->LoadRoughness("battery_Roughness.png");
+    textures->LoadMetalness("battery_Metallic.png");
 }
 
 battery::~battery()
@@ -45,7 +50,7 @@ void battery::Update(float elapsedTime)
 
 void battery::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-   // textures->Set(rc);
+    textures->Set(rc);
     renderer->Render(rc, world, model.get(), ShaderId::Lambert);
-    //textures->Clear(rc);
+    textures->Clear(rc);
 }

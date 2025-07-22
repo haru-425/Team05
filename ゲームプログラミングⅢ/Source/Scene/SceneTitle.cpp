@@ -534,22 +534,58 @@ void SceneTitle::UpdateUI()
 #endif
 
 	/// メニューの選択肢
+	//for (auto& ui : um.GetUIs())
+	//{
+	//	int id = ui->GetID();
+	//	if (!(id == 0 || id == 1 || id == 2 || id == 9 ||
+	//		id == 14 || id == 19 || id == 24 || id == 29 ||
+	//		id == 30 || id == 31))continue;
+
+	//	if (!isVolumeSliderActive) {
+	//		if (ui->GetIsHit() || (id == 1 && selectOptions) || (id == 0 && selectStart))
+	//		{
+	//			ui->GetSpriteData().color = { 1,1,1,1 };
+	//		}
+	//		else
+	//			ui->GetSpriteData().color = { 0.660,0.660,0.660,1 };
+	//	}
+	//}
+
+
 	for (auto& ui : um.GetUIs())
 	{
 		int id = ui->GetID();
+
+		// 対象IDのみ処理
 		if (!(id == 0 || id == 1 || id == 2 || id == 9 ||
 			id == 14 || id == 19 || id == 24 || id == 29 ||
-			id == 30 || id == 31))continue;
+			id == 30 || id == 31)) continue;
 
-		if (!isVolumeSliderActive) {
-			if (ui->GetIsHit() || (id == 1 && selectOptions) || (id == 0 && selectStart))
-			{
-				ui->GetSpriteData().color = { 1,1,1,1 };
-			}
-			else
-				ui->GetSpriteData().color = { 0.660,0.660,0.660,1 };
+		bool isHit = ui->GetIsHit();
+		bool isSelected = (id == lastSelectID);
+		bool isSpecialID = (id == 9 || id == 14 || id == 19 || id == 24);
+
+		bool shouldHighlight = false;
+
+		// 選択中のときは選択されたUIだけをハイライト
+		if (lastSelectID >= 0) {
+			shouldHighlight = isSelected;
 		}
+		else {
+			// 選択されていない場合の通常処理
+			if (isSpecialID) {
+				if (!isVolumeSliderActive) {
+					shouldHighlight = isHit || (id == 1 && selectOptions) || (id == 0 && selectStart);
+				}
+			}
+			else {
+				shouldHighlight = isHit || (id == 1 && selectOptions) || (id == 0 && selectStart);
+			}
+		}
+
+		ui->GetSpriteData().color = shouldHighlight ? ui->GetSpriteData().color = { 1, 1, 1, 1 } : ui->GetSpriteData().color = { 0.660, 0.660, 0.660, 1 };
 	}
+
 
 	if (!(mouse.GetButton() & mouse.BTN_LEFT))
 	{
