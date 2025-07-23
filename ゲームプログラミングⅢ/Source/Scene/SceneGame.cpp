@@ -147,7 +147,7 @@ void SceneGame::Update(float elapsedTime)
 			RankSystem::Instance().SetRank(
 				batteryManager::Instance().getPlayerHasBattery(),
 				batteryManager::Instance().getMAXBattery(),
-				Game_Over::life_number); // タイムアップでSランク
+				3); // タイムアップでSランク
 		}
 	}
 	else
