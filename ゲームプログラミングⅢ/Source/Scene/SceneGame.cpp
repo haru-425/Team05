@@ -352,6 +352,10 @@ void SceneGame::Render()
 	// 2Dスプライト描画
 	{
 		//minimap->Render(player->GetPosition());
+		auto easeOutSine = [](float x) -> float
+			{
+				return sin((x * DirectX::XM_PI) / 2);
+			};
 
 		if (tutorial_Flug)
 		{
@@ -359,10 +363,12 @@ void SceneGame::Render()
 			switch (tutorial_Step)
 			{
 			case 16:
+				next_navi_vision = true;
 				//「(現在を付け足す)現在、敵の活動時間は残り2分。頑張って逃げましょう！」
 				tutorial[11]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 15:
+				next_navi_vision = true;
 				//「【残り時間】最後に制限時間です。この秒数が...」
 				tutorial[10]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
@@ -370,30 +376,37 @@ void SceneGame::Render()
 				//残り時間が表示
 				break;
 			case 13:
+				next_navi_vision = true;
 				//「さてと、後は時間まで逃げるだけですね。」
 				tutorial[9]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 12:
+				next_navi_vision = true;
 				//「【プレイヤー専用通路】（これだけ扉の画像のある説明用の画像を表示して説明）壁沿いにある、緑色のライトが...」
 				tutorial[8]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 11:
+				next_navi_vision = true;
 				//「【バッテリー】このように敵は巡回中に、バッテリーを...」
 				tutorial[7]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 10:
+				next_navi_vision = true;
 				//「これは敵が落としていったバッテリー...」
 				tutorial[6]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 6:
+				next_navi_vision = true;
 				//「操作方法】マウスで視点を...」
 				tutorial[5]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 5:
+				next_navi_vision = true;
 				//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
 				tutorial[4]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 4:
+				next_navi_vision = true;
 				//「少し、ゲージを消費してしまいましたね。」
 				tutorial[3]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
@@ -402,17 +415,19 @@ void SceneGame::Render()
 				tutorial[2]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 1:
+				next_navi_vision = true;
 				//「【マップ】あなたの現在位置は、中央の印で...」
 				tutorial[1]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 0:
+				next_navi_vision=true;
 				//「…起動完了。 」
 				tutorial[0]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			}
 			if (next_navi_vision)
 			{
-				tutorial[12]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, button_effect);
+				tutorial[12]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, easeOutSine(button_effect_timer) + 0.5f);
 			}
 		}
 
@@ -438,7 +453,10 @@ void SceneGame::Render()
 			Graphics::Instance().bloomer->shader_resource_view(),
 		};
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
-		metar->render();
+		if (!tutorial_Flug || tutorial_Step >= 4)
+		{
+			metar->render();
+		}
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
 
 		//Timer
@@ -507,7 +525,10 @@ void SceneGame::Render()
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
 
 		minimap->Render(player->GetPosition());
-		metar->render();
+		if (!tutorial_Flug || tutorial_Step >= 4)
+		{
+			metar->render();
+		}
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
 
 
@@ -861,6 +882,18 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 	{
 		tutorial_Step++;
 	}
+
+	button_effect_timer += button_effect * elapsedTime;
+	if (button_effect_timer > 1.0f)
+	{
+		button_effect *= -1;
+	}
+	if (button_effect_timer < 0.0f)
+	{
+		button_effect *= -1;
+		button_effect_timer = 0.0f;
+	}
+
 	switch (tutorial_Step)
 	{
 	case 17:
@@ -872,9 +905,15 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		break;
 	case 15:
 		//「【残り時間】最後に制限時間です。この秒数が...」
-		break;
+		break; 
 	case 14:
-		//残り時間が表示
+		//残り時間表示
+		tutorialTimer += elapsedTime;
+		if (tutorialTimer >= 2.0f)
+		{
+			tutorial_Step += 1;
+			tutorialTimer = 0;
+		}
 		break;
 	case 13:
 		//「さてと、後は時間まで逃げるだけですね。」
@@ -896,6 +935,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		if (tutorialTimer >= 2.0f)
 		{
 			tutorial_Step += 2;
+			tutorialTimer = 0;
 		}
 		break;
 	case 7:
@@ -924,6 +964,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		{
 			tutorial_Step += 2;
 		}
+		metar->update(player->GetenableHijackTime());
 		break;
 	case 1:
 		//「【マップ】あなたの現在位置は、中央の印で...」
