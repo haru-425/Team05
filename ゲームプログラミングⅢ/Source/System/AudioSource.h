@@ -20,6 +20,8 @@ public:
 	// âπó ê›íË
 	void SetVolume(float volume);
 
+	bool IsPlaying() const;
+
 private:
 	IXAudio2SourceVoice*			sourceVoice = nullptr;
 	std::shared_ptr<AudioResource>	resource;

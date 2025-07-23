@@ -65,6 +65,7 @@ void fujimoto::Initialize()
 	batteryManager::Instance().addBattery({ 0,0,0 });
 	batteryManager::Instance().SetPlayer_and_enemy(player, enemy);
 	batteryManager::Instance().ResetPlayer_get_Batterry();
+	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
 }
 
 // èIóπâª

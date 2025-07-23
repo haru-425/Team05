@@ -33,13 +33,14 @@ void AudioSource::Play(bool loop)
 	buffer.pAudioData = resource->GetAudioData();
 	buffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
-	
+
 	sourceVoice->SubmitSourceBuffer(&buffer);
 
 	HRESULT hr = sourceVoice->Start();
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	sourceVoice->SetVolume(1.0f);
 }
+
 
 // 停止
 void AudioSource::Stop()
@@ -52,4 +53,15 @@ void AudioSource::Stop()
 void AudioSource::SetVolume(float volume)
 {
 	sourceVoice->SetVolume(volume);
+}
+
+
+// 再生中かどうかを確認
+bool AudioSource::IsPlaying() const
+{
+	XAUDIO2_VOICE_STATE state;
+	sourceVoice->GetState(&state);
+
+	// 再生中なら true（バッファが残っている）
+	return state.BuffersQueued > 0;
 }

@@ -29,7 +29,7 @@ Framework::Framework(HWND hWnd)
 	SettingsManager::Instance().Load();
 
 	// オーディオ初期化
-	Audio::Instance().Instance();
+	Audio::Instance().Initialize();
 
 	hDC = GetDC(hWnd);
 
@@ -147,7 +147,7 @@ void Framework::CalculateFrameStats()
 		float mspf = 1000.0f / fps;
 		std::ostringstream outs;
 		outs.precision(6);
-		outs << "FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)";
+		outs << "Rubot FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)";
 		SetWindowTextA(hWnd, outs.str().c_str());
 
 		// Reset for next average.
