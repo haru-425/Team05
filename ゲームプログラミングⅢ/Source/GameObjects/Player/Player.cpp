@@ -13,39 +13,36 @@ static constexpr float totalTime = 1;
 Player::Player()
 {
 #ifdef TEST
-	// テスト用モデルの読み込み
+	// 繝・せ繝育畑繝｢繝・Ν縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ
 	model = std::make_shared<Model>("./Data/Model/Test/test_walk_animation_model.mdl");
 	t_position.x += 0.2f;
 	t_position.z += 0.5f;
 	t_position.y = 1.15f;
 	t_scale = { 0.025,0.025,0.025 };
 #else
-	// 製品版プレイヤーモデルの読み込み
+	// 陬ｽ蜩∫沿繝励Ξ繧､繝､繝ｼ繝｢繝・Ν縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ
 	model = std::make_unique<Model>("./Data/Model/Player/player_mesh.mdl");
 #endif
 
-	// 初期パラメータの設定
+	// 蛻晄悄繝代Λ繝｡繝ｼ繧ｿ縺ｮ險ｭ螳・
 	{
 		position = { 1,0,-24 };
 		scale = { 0.015, 0.015, 0.015 };
-		viewPoint = 1.5;           // 視点の高さ
-		radius = 0.6;              // 当たり判定半径
-		enableHijackTime = maxHijackTime;   // ハイジャック可能時間の初期値
+		viewPoint = 1.5;           // 隕也せ縺ｮ鬮倥＆
+		radius = 0.6;              // 蠖薙◆繧雁愛螳壼濠蠕・
+		enableHijackTime = maxHijackTime;   // 繝上う繧ｸ繝｣繝・け蜿ｯ閭ｽ譎る俣縺ｮ蛻晄悄蛟､
 		acceleration = 1.1f;
 		deceleration = 1.2f;
 		hit = false;
 		time = 0;
 	}
 
-	// アニメーション初期設定
 	{
 		animationController.SetModel(model);
 		animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
 		animationController.SetAnimationSecondScale(1.0f);
 	}
 
-
-    /// テクスチャの読み込み
 	textures = std::make_unique<LoadTextures>();
 	textures->LoadNormal("Data/Model/Player/Texture/player_mtl_Normal_DirectX.png");
 	textures->LoadMetalness("Data/Model/Player/Texture/player_mtl_Metallic.png");
@@ -59,52 +56,51 @@ Player::Player()
 
 Player::~Player()
 {
+
 }
 
 void Player::Update(float dt)
 {
-	// ハイジャック関連の更新処理
+	// 繝上う繧ｸ繝｣繝・け髢｢騾｣縺ｮ譖ｴ譁ｰ蜃ｦ逅・
 	UpdateHijack(dt);
 
-    // カメラ切り替え処理
+    // 繧ｫ繝｡繝ｩ蛻・ｊ譖ｿ縺亥・逅・
     if (changeCameraInSE->IsPlaying())
         changeCameraInSE->SetVolume(0.5f);
 
 	// カメラ切り替え処理
 	ChangeCamera();
 
-	// プレイヤー移動処理
 	Move(dt);
 
-	if (isEvent) // 移動中にイベント状態へ移行
+	if (isEvent) // 遘ｻ蜍穂ｸｭ縺ｫ繧､繝吶Φ繝育憾諷九∈遘ｻ陦・
 		DeathState(dt);
 
 #ifdef TEST
 	TestTransformUpdate();
 #endif
-
-	// モデルワールド行列の更新
+	// 繝｢繝・Ν繝ｯ繝ｼ繝ｫ繝芽｡悟・縺ｮ譖ｴ譁ｰ
 	UpdateTransform();
 
-	// アニメーションの更新
+	// 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮ譖ｴ譁ｰ
 	UpdateAnimation(dt);
 
-	// モデルにワールド行列を適用
+	// 繝｢繝・Ν縺ｫ繝ｯ繝ｼ繝ｫ繝芽｡悟・繧帝←逕ｨ
 	model->UpdateTransform();
 }
 
-// モデルの描画
+// 繝｢繝・Ν縺ｮ謠冗判
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
 #ifndef TEST
-	// テクスチャ設定
+	// 繝・け繧ｹ繝√Ε險ｭ螳・
 	textures->Set(rc);
 
-	// モデルが存在し、カメラ切り替え中であれば描画
+	// 繝｢繝・Ν縺悟ｭ伜惠縺励√き繝｡繝ｩ蛻・ｊ譖ｿ縺井ｸｭ縺ｧ縺ゅｌ縺ｰ謠冗判
 	if (model && useCam)
 		renderer->Render(rc, world, model.get(), ShaderId::Custom);
 
-	// テクスチャの解除
+	// 繝・け繧ｹ繝√Ε縺ｮ隗｣髯､
 	textures->Clear(rc);
 #else
 	DirectX::XMMATRIX T_T = DirectX::XMLoadFloat4x4(&t_transform);
@@ -117,7 +113,7 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 #endif
 }
 
-// デバッグ描画（ImGui）
+// 繝・ヰ繝・げ謠冗判・・mGui・・
 void Player::DrawDebug()
 {
 	if (ImGui::Begin("Player", nullptr))
@@ -156,13 +152,13 @@ void Player::DeleteSounds()
 // プレイヤー移動処理
 void Player::Move(float dt)
 {
-	if (!hit && isHit) // 初めて攻撃を受けた時の処理
+	if (!hit && isHit) // 蛻昴ａ縺ｦ謾ｻ謦・ｒ蜿励￠縺滓凾縺ｮ蜃ｦ逅・
 	{
 		accel = 0;
 		hit = isHit;
 	}
 
-	// 減速処理
+	// 貂幃溷・逅・
 	if (hit)
 	{
 		if (speed > 0)
@@ -172,14 +168,14 @@ void Player::Move(float dt)
 	}
 	else
 	{
-		// 加速処理
+		// 蜉騾溷・逅・
 		accel += acceleration * dt;
 	}
 
 	Camera& cam = Camera::Instance();
 
 	DirectX::XMFLOAT3 forward;
-	// 通常カメラ or ハイジャック視点
+	// 騾壼ｸｸ繧ｫ繝｡繝ｩ or 繝上う繧ｸ繝｣繝・け隕也せ
 	if (!useCam)
 	{
 		forward = cam.GetFront();
@@ -187,7 +183,7 @@ void Player::Move(float dt)
 	else
 		forward = saveDirection;
 
-	// XZ 平面の方向ベクトルに正規化
+	// XZ 蟷ｳ髱｢縺ｮ譁ｹ蜷代・繧ｯ繝医Ν縺ｫ豁｣隕丞喧
 	forward.y = 0;
 	float len = sqrtf(forward.x * forward.x + forward.z * forward.z);
 	if (len > 0.0f)
@@ -210,7 +206,7 @@ void Player::Move(float dt)
 	position.x += speed * forward.x * dt;
 	position.z += speed * forward.z * dt;
 
-	// プレイヤーの向き計算（Y軸回転）
+	// 繝励Ξ繧､繝､繝ｼ縺ｮ蜷代″險育ｮ暦ｼ・霆ｸ蝗櫁ｻ｢・・
 	{
 		DirectX::XMFLOAT3 front = { 0,0,1 };
 		DirectX::XMVECTOR Front, PlayerDir;
@@ -234,7 +230,7 @@ void Player::Move(float dt)
 	}
 }
 
-// カメラの切り替え処理（左クリック）
+// 繧ｫ繝｡繝ｩ縺ｮ蛻・ｊ譖ｿ縺亥・逅・ｼ亥ｷｦ繧ｯ繝ｪ繝・け・・
 void Player::ChangeCamera()
 {
 	if (isHit)return;
@@ -244,20 +240,20 @@ void Player::ChangeCamera()
 	if (isChange)isChange = false;
 	if (isHijack)isHijack = false;
 
-	// カメラ切り替え入力（左クリック）
+	// 繧ｫ繝｡繝ｩ蛻・ｊ譖ｿ縺亥・蜉幢ｼ亥ｷｦ繧ｯ繝ｪ繝・け・・
 	if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
 	{
 		if (useCam)
-			isChange = true; // 元に戻す
+			isChange = true; // 蜈・↓謌ｻ縺・
 		else {
-			isHijack = true; // 新たにハイジャック開始
+			isHijack = true; // 譁ｰ縺溘↓繝上う繧ｸ繝｣繝・け髢句ｧ・
 			changeCameraInSE->Play(false);
 		}
 
 		useCam = !useCam;
 	}
 
-	// ハイジャック時間切れで強制解除
+	// 繝上う繧ｸ繝｣繝・け譎る俣蛻・ｌ縺ｧ蠑ｷ蛻ｶ隗｣髯､
 	if (enableHijackTime <= 0 && useCam)
 	{
 		useCam = false;
@@ -265,29 +261,30 @@ void Player::ChangeCamera()
 	}
 }
 
-// ハイジャック関連の状態更新
+
+// 繝上う繧ｸ繝｣繝・け髢｢騾｣縺ｮ迥ｶ諷区峩譁ｰ
 void Player::UpdateHijack(float dt)
 {
-	// 攻撃されたら強制解除
+	// 謾ｻ謦・＆繧後◆繧牙ｼｷ蛻ｶ隗｣髯､
 	if (isHit)useCam = false;
 
 	enableHijack = true;
 	if (enableHijackTime < 8.0f && !useCam)
 		enableHijack = false;
 
-	// ハイジャック開始時のコスト消費
+	// 繝上う繧ｸ繝｣繝・け髢句ｧ区凾縺ｮ繧ｳ繧ｹ繝域ｶ郁ｲｻ
 	if (isHijack)
 	{
 		enableHijackTime -= hijackCost;
 	}
 
-	// ハイジャック中のゲージ消費
+	// 繝上う繧ｸ繝｣繝・け荳ｭ縺ｮ繧ｲ繝ｼ繧ｸ豸郁ｲｻ
 	if (useCam)
 	{
 		enableHijackTime -= hijackCostPerSec * dt;
 		changeCameraKeepSE->Play(true);
 	}
-	else // 非ハイジャック時のゲージ回復
+	else // 髱槭ワ繧､繧ｸ繝｣繝・け譎ゅ・繧ｲ繝ｼ繧ｸ蝗槫ｾｩ
 	{
 		if (changeCameraKeepSE->IsPlaying()) {
 			changeCameraKeepSE->Stop();
@@ -302,14 +299,14 @@ void Player::UpdateHijack(float dt)
 	}
 }
 
-// アニメーション更新
+// 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ譖ｴ譁ｰ
 void Player::UpdateAnimation(float dt)
 {
 	if (!model->GetResource()->GetAnimations().empty())
 		animationController.UpdateAnimation(dt);
 }
 
-// 死亡時の演出処理（カメラ回転など）
+// 豁ｻ莠｡譎ゅ・貍泌・蜃ｦ逅・ｼ医き繝｡繝ｩ蝗櫁ｻ｢縺ｪ縺ｩ・・
 void Player::DeathState(float dt)
 {
 	time += dt;
@@ -333,10 +330,10 @@ void Player::DeathState(float dt)
 	z = DirectX::XMVectorGetZ(Forward);
 	y = DirectX::XMVectorGetY(Forward);
 
-	pitch = asinf(y);       // ピッチ角
-	yaw = atan2f(x, z);     // ヨー角
+	pitch = asinf(y);       // 繝斐ャ繝∬ｧ・
+	yaw = atan2f(x, z);     // 繝ｨ繝ｼ隗・
 
-	// 敵方向への回転補間
+	// 謨ｵ譁ｹ蜷代∈縺ｮ蝗櫁ｻ｢陬憺俣
 	{
 		DirectX::XMVECTOR Dot, Cross;
 		DirectX::XMFLOAT3 crossVector;
@@ -345,7 +342,7 @@ void Player::DeathState(float dt)
 		Cross = DirectX::XMVector3Cross(Forward, PlayerToEnemyDir);
 		DirectX::XMStoreFloat(&dot, Dot);
 		DirectX::XMStoreFloat3(&crossVector, Cross);
-
+    
 		float radian = acosf(dot);
 		if (crossVector.y < 0 && radian > 0)
 			radian *= -1;

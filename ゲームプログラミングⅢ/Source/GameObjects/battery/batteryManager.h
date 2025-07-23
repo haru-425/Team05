@@ -118,7 +118,7 @@ private:
 
 	int game_Max_Batterry = 0;
 
-	float battery_recovery = 0;
+	float battery_recovery = NORML_RECOVERY;
 
 	float drop_interval = BATTERY_DROP_NORML_INTERVAL;
 
