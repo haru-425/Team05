@@ -49,6 +49,8 @@ private:
 
 	void UpdateCamera(float elapsedTime);
 
+	void TutorialUpdate(float elapsedTime);
+
 private:
 	Stage* stage = nullptr;
 
@@ -57,6 +59,10 @@ private:
 	std::shared_ptr<Enemy> enemy;
 	std::shared_ptr<Metar> metar;
 	MiniMap* minimap = nullptr;
+	bool tutorial_Flug = false;
+	int tutorial_Step = 0;
+	float tutorialTimer = 0.0f;
+	float button_effect;
 	float timer = 0.0f; // タイマー
 	float transTimer = 0.0f; // シーン遷移タイマー
 	bool sceneTrans = false;
@@ -118,4 +124,11 @@ private:
 	Audio3DSystem audioSystem; ///< 3Dオーディオシステムのインスタンス
 
 	int life_number;
+
+	// ======================================
+	// チュ－トリアルのスプライト配列
+	// ======================================
+	std::unique_ptr<Sprite> tutorial[13];
+
+
 };

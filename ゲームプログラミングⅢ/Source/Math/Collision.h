@@ -44,4 +44,18 @@ public:
         const Model* model,
         DirectX::XMFLOAT3& hitPosition,
         DirectX::XMFLOAT3& hitNormal);
+
+    /**
+    * @brief ボックスと球の当たり判定
+    * 
+    * ボックスと球で当たり判定を行い、
+    * 押し出し量も求めます。
+    */
+    static bool AABBVsSphere(
+        const DirectX::XMFLOAT3& boxMin,
+        const DirectX::XMFLOAT3& boxMax,
+        const DirectX::XMFLOAT3& sphereCenter,
+        float sphereRadius,
+        DirectX::XMFLOAT3& outPosition
+    );
 };

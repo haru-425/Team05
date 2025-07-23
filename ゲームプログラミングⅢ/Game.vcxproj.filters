@@ -121,6 +121,7 @@
     <ClCompile Include="Source\GameObjects\Object\Object.cpp" />
     <ClCompile Include="Source\GameObjects\Object\ObjectManager.cpp" />
     <ClCompile Include="Source\metar.cpp" />
+    <ClCompile Include="Source\System\CollisionEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -213,6 +214,8 @@
     <ClInclude Include="Source\GameObjects\Object\ObjectManager.h" />
     <ClInclude Include="Source\System\difficulty.h" />
     <ClInclude Include="Source\metar.h" />
+    <ClInclude Include="Source\Math\Easing.h" />
+    <ClInclude Include="Source\System\CollisionEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
