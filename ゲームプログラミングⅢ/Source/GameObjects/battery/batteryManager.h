@@ -90,7 +90,7 @@ public:
 		}
 	}
 
-	void SetPlaye_and_enemy(std::shared_ptr<Player> players, std::shared_ptr<Enemy> enemys) { player = players; enemy = enemys; };
+	void SetPlayer_and_enemy(std::shared_ptr<Player> players, std::shared_ptr<Enemy> enemys) { player = players; enemy = enemys; };
 
 	void ResetPlayer_get_Batterry() { player_Get_Batterry = 0; };
 	int getMAXBattery()

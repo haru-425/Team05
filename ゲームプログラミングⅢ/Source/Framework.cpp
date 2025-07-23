@@ -147,7 +147,7 @@ void Framework::CalculateFrameStats()
 		float mspf = 1000.0f / fps;
 		std::ostringstream outs;
 		outs.precision(6);
-		outs << "FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)";
+		outs << "Rubot FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)";
 		SetWindowTextA(hWnd, outs.str().c_str());
 
 		// Reset for next average.
@@ -178,7 +178,10 @@ int Framework::Run()
 			//	: syncInterval / static_cast<float>(GetDeviceCaps(hDC, VREFRESH))
 			//	;
 			float elapsedTime = timer.TimeInterval();
-
+			if (elapsedTime >= 1.0f / 60.0f)
+			{
+				elapsedTime = 1.0 / 60.0f;
+			}
 			Update(elapsedTime);
 
 			Render(elapsedTime);
@@ -228,7 +231,7 @@ LRESULT CALLBACK Framework::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LP
 		timer.Start();
 		break;
 
-	case WM_SIZE :
+	case WM_SIZE:
 	{
 		RECT clientRect = {};
 		GetClientRect(hWnd, &clientRect);

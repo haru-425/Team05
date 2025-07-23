@@ -7,6 +7,7 @@ class Game_Over :public Scene
 {
 public:
 	Game_Over() {}
+	Game_Over(int life):life_number(life){}
 	~Game_Over() {}
 
 	//初期化
@@ -30,7 +31,7 @@ private:
 
 	int life_rest = 2;
 
-	static int life_number;
+	int life_number;
 
 	float timer = 0.0f; // タイマー
 	float transTimer = 0.0f; // シーン遷移タイマー

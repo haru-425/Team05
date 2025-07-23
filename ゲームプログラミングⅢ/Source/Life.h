@@ -5,7 +5,7 @@
 class Life
 {
 public:
-	Life();
+	Life(int life);
 	~Life();
 
 	void  Update(float elapsed_Time);

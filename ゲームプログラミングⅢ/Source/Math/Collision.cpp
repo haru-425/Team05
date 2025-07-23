@@ -1,5 +1,7 @@
 #include "Collision.h"
 #include <DirectXCollision.h>
+#include <algorithm>
+#include <cmath>
 
 //円同士の当たり判定
 bool Collision::IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, float radiusA, const DirectX::XMFLOAT3& positionB, float radiusB, DirectX::XMFLOAT3& outPositionB)
@@ -193,4 +195,54 @@ bool Collision::RayCast(
 		}
 	}
 	return hit;
+}
+
+bool Collision::AABBVsSphere(const DirectX::XMFLOAT3& boxMin, const DirectX::XMFLOAT3& boxMax, const DirectX::XMFLOAT3& sphereCenter, float sphereRadius, DirectX::XMFLOAT3& outPosition)
+{
+    using namespace DirectX;
+
+    // 最近接点を求める
+    XMFLOAT3 closest;
+    closest.x = DirectX::XMMax(boxMin.x, DirectX::XMMin(sphereCenter.x, boxMax.x));
+    closest.y = DirectX::XMMax(boxMin.y, DirectX::XMMin(sphereCenter.y, boxMax.y));
+    closest.z = DirectX::XMMax(boxMin.z, DirectX::XMMin(sphereCenter.z, boxMax.z));
+
+    XMFLOAT3 diff;
+    diff.x = sphereCenter.x - closest.x;
+    diff.y = sphereCenter.y - closest.y;
+    diff.z = sphereCenter.z - closest.z;
+    XMVECTOR Diff = XMVector3LengthSq(XMLoadFloat3(&diff));
+    float distSq = XMVectorGetX(Diff);
+    float radiusSq = sphereRadius * sphereRadius;
+
+    if (distSq < radiusSq) {
+        float dist = std::sqrtf(distSq);
+        float penetration = sphereRadius - dist;
+
+        // 零距離を避ける
+        if (dist != 0.0f) {
+            XMFLOAT3 normal;
+            normal.x = diff.x / dist; // 単位ベクトル
+            normal.y = diff.y / dist; // 単位ベクトル
+            normal.z = diff.z / dist; // 単位ベクトル
+            outPosition.x = sphereCenter.x + normal.x * penetration; // 押し戻し
+            outPosition.y = sphereCenter.y + normal.y * penetration; // 押し戻し
+            outPosition.z = sphereCenter.z + normal.z * penetration; // 押し戻し
+        }
+        else {
+            // 完全に中心がAABBの中にいる → 上に押し出すとか決め打ちでもOK
+            outPosition.y = sphereCenter.y + sphereRadius;
+            //DirectX::XMFLOAT3 normal;
+            //normal.x = diff.x / dist; // 単位ベクトル
+            //normal.y = diff.y / dist; // 単位ベクトル
+            //normal.z = diff.z / dist; // 単位ベクトル
+            //outPosition.x =sphereCenter.x + normal.x * 5; // 押し戻し
+            //outPosition.y =sphereCenter.y + normal.y * 5; // 押し戻し
+            //outPosition.z =sphereCenter.z + normal.z * 5; // 押し戻し
+        }
+
+        return true; // 衝突＆押し戻し済み
+    }
+
+    return false; // 衝突してない
 }

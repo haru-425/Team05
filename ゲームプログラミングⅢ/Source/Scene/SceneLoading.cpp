@@ -15,6 +15,9 @@ void SceneLoading::Initialize()
 	timer = 0.0f;
 	transtimer = 0.0f;
 	nextSceneReadyTime = -1.0f; // 次のシーンの準備完了時刻を初期化
+	// 3Dオーディオシステムの再生開始
+	Audio3DSystem::Instance().PlayByTag("electrical_noise");
+	Audio3DSystem::Instance().SetVolumeByAll();
 }
 
 //終了化
@@ -34,6 +37,7 @@ void SceneLoading::Finalize()
 		delete sprite;
 		sprite = nullptr;
 	}
+	Audio3DSystem::Instance().StopByTag("electrical_noise"); // 音声停止
 }
 
 //更新処理
@@ -69,6 +73,8 @@ void SceneLoading::Update(float elapsedTime)
 		transtimer += elapsedTime;
 	}
 	Graphics::Instance().UpdateConstantBuffer(timer, transtimer);
+	// 3Dオーディオシステムのエミッター更新
+	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 }
 
 //描画処理
