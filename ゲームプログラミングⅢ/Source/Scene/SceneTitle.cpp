@@ -534,24 +534,6 @@ void SceneTitle::UpdateUI()
 #endif
 
 	/// メニューの選択肢
-	//for (auto& ui : um.GetUIs())
-	//{
-	//	int id = ui->GetID();
-	//	if (!(id == 0 || id == 1 || id == 2 || id == 9 ||
-	//		id == 14 || id == 19 || id == 24 || id == 29 ||
-	//		id == 30 || id == 31))continue;
-
-	//	if (!isVolumeSliderActive) {
-	//		if (ui->GetIsHit() || (id == 1 && selectOptions) || (id == 0 && selectStart))
-	//		{
-	//			ui->GetSpriteData().color = { 1,1,1,1 };
-	//		}
-	//		else
-	//			ui->GetSpriteData().color = { 0.660,0.660,0.660,1 };
-	//	}
-	//}
-
-
 	for (auto& ui : um.GetUIs())
 	{
 		int id = ui->GetID();
@@ -567,15 +549,20 @@ void SceneTitle::UpdateUI()
 
 		bool shouldHighlight = false;
 
-		// 選択中のときは選択されたUIだけをハイライト
+		// 選択中のときは isSpecialID の中で選択されたUIだけをハイライト
 		if (lastSelectID >= 0) {
-			shouldHighlight = isSelected;
+			if (isSpecialID) {
+				shouldHighlight = isSelected;
+			}
+			else {
+				shouldHighlight = (id == 1 && selectOptions) || (id == 0 && selectStart);
+			}
 		}
 		else {
 			// 選択されていない場合の通常処理
 			if (isSpecialID) {
 				if (!isVolumeSliderActive) {
-					shouldHighlight = isHit || (id == 1 && selectOptions) || (id == 0 && selectStart);
+					shouldHighlight = isHit;
 				}
 			}
 			else {
@@ -583,8 +570,10 @@ void SceneTitle::UpdateUI()
 			}
 		}
 
-		ui->GetSpriteData().color = shouldHighlight ? ui->GetSpriteData().color = { 1, 1, 1, 1 } : ui->GetSpriteData().color = { 0.660, 0.660, 0.660, 1 };
+		ui->GetSpriteData().color = shouldHighlight ?
+			ui->GetSpriteData().color = { 1, 1, 1, 1 } : ui->GetSpriteData().color = { 0.660f, 0.660f, 0.660f, 1 };
 	}
+
 
 
 	if (!(mouse.GetButton() & mouse.BTN_LEFT))
@@ -598,10 +587,10 @@ void SceneTitle::UpdateUI()
 
 		switch (id)
 		{
-		case 0: ///< id 1はゲーム開始
+		case 0: ///< id 0はゲーム開始
 			if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 			{
-				selectStart = !selectStart;
+				selectStart = true;
 				if (selectOptions)
 					selectOptions = !selectOptions;
 
@@ -609,10 +598,10 @@ void SceneTitle::UpdateUI()
 			}
 
 			break;
-		case 1: ///< id 2は設定
+		case 1: ///< id 1は設定
 			if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 			{
-				selectOptions = !selectOptions;
+				selectOptions = true;
 				if (selectStart)
 					selectStart = !selectStart;
 			}
@@ -795,39 +784,38 @@ void SceneTitle::UpdateUI()
 		///                              ↑マウスの座標 = BAR_MIN + SLIDER_WIDTH / 2
 		///                             /---------------------------------------------------------------/
 		///
-		float barMin = BAR_MIN * scaleFactor.x, barMax = BAR_MAX * scaleFactor.x, sliderWidth = SLIDER_WIDTH * scaleFactor.x;
 
 		if (lastSelectID == 9)
 		{
-			mousePos.x = std::clamp((float)mousePos.x, (barMin + sliderWidth / 2), (barMax - sliderWidth / 2));
-			sensitivity = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x / scaleFactor.x - (sliderWidth / 2);
-			sensitivity -= 804.0f * scaleFactor.x; ///< ゲージのUIのX座標
-			float barWidth = (barMax - barMin) - sliderWidth;
+			mousePos.x = std::clamp(((float)mousePos.x / scaleFactor.x), (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
+			sensitivity = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = (mousePos.x) - (SLIDER_WIDTH / 2);
+			sensitivity -= um.GetUIs().at(8)->GetSpriteData().spritePos.x; ///< ゲージのUIのX座標
+			float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
 			sensitivity /= barWidth / 100;
 		}
 		else if (lastSelectID == 14)
 		{
-			mousePos.x = std::clamp((float)mousePos.x, (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
+			mousePos.x = std::clamp(((float)mousePos.x / scaleFactor.x), (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
 			mVolume = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x - SLIDER_WIDTH / 2;
-			mVolume -= 804.0f; ///< ゲージのUIのX座標
+			mVolume -= um.GetUIs().at(13)->GetSpriteData().spritePos.x; ///< ゲージのUIのX座標
 			float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
 			mVolume /= barWidth / 100;
 			//OutputDebugStringA("ID 14 is selected\n");
 		}
 		else if (lastSelectID == 19)
 		{
-			mousePos.x = std::clamp((float)mousePos.x, (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
+			mousePos.x = std::clamp(((float)mousePos.x / scaleFactor.x), (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
 			bgmVolume = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x - SLIDER_WIDTH / 2;
-			bgmVolume -= 804.0f; ///< ゲージのUIのX座標
+			bgmVolume -= um.GetUIs().at(18)->GetSpriteData().spritePos.x; ///< ゲージのUIのX座標
 			float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
 			bgmVolume /= barWidth / 100;
 			//OutputDebugStringA("ID 19 is selected\n");
 		}
 		else if (lastSelectID == 24)
 		{
-			mousePos.x = std::clamp((float)mousePos.x, (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
+			mousePos.x = std::clamp(((float)mousePos.x / scaleFactor.x), (BAR_MIN + SLIDER_WIDTH / 2), (BAR_MAX - SLIDER_WIDTH / 2));
 			seVolume = um.GetUIs().at(lastSelectID)->GetSpriteData().spritePos.x = mousePos.x - SLIDER_WIDTH / 2;
-			seVolume -= 804.0f; ///< ゲージのUIのX座標
+			seVolume -= um.GetUIs().at(23)->GetSpriteData().spritePos.x; ///< ゲージのUIのX座標
 			float barWidth = (BAR_MAX - BAR_MIN) - SLIDER_WIDTH;
 			seVolume /= barWidth / 100;
 			//OutputDebugStringA("ID 24 is selected\n");
