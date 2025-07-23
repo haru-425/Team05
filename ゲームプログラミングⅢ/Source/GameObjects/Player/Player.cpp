@@ -19,32 +19,32 @@ Player::Player()
 	t_scale = { 0.025,0.025,0.025 };
 
 #else
-	// 実際に使うモデル
+	// 実際に使ぁE��チE��
 	//model = std::make_unique<Model>("./Data/Model/Player/player.mdl");
 	model = std::make_unique<Model>("./Data/Model/Player/player_mesh.mdl");
 #endif
 
-    // プレイヤーのパラメータ初期設定
+    // プレイヤーのパラメータ初期設宁E
     {
         position = { 1,0,-24 };
         scale = { 0.015, 0.015, 0.015 };    // スケール
-        viewPoint = 1.5;                    // カメラの目線を設定するため
-        radius = 0.6;                         // デバッグ用
-        enableHijackTime = maxHijackTime;   // ハイジャックできる時間の設定
+        viewPoint = 1.5;                    // カメラの目線を設定するためE
+        radius = 0.6;                         // チE��チE��用
+        enableHijackTime = maxHijackTime;   // ハイジャチE��できる時間の設宁E
         acceleration = 1.1f;
         deceleration = 1.2f;
         hit = false;
         time = 0;
     }
 
-    /// アニメーション関係設定
+    /// アニメーション関係設宁E
     {
         animationController.SetModel(model);
         animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
         animationController.SetAnimationSecondScale(1.0f);
     }
 
-    /// テクスチャの読み込み
+    /// チE��スチャの読み込み
     textures = std::make_unique<LoadTextures>();
     textures->LoadNormal("Data/Model/Player/Texture/player_mtl_Normal_DirectX.png");
     textures->LoadMetalness("Data/Model/Player/Texture/player_mtl_Metallic.png");
@@ -58,53 +58,53 @@ Player::~Player()
 
 void Player::Update(float dt)
 {
-	// ハイジャックの時間処理
+	// ハイジャチE��の時間処琁E
 	UpdateHijack(dt);
 
-  // カメラ切り替え処理
+  // カメラ刁E��替え�E琁E
   //ChangeCamera();
 
-	// 移動処理
+	// 移動�E琁E
 	Move(dt);
 
-	if (isEvent) ///< Move() の中でフラグ切り替えをしてる
+	if (isEvent) ///< Move() の中でフラグ刁E��替えをしてめE
 		DeathState(dt);
 
 #ifdef TEST
 	TestTransformUpdate();
 #endif
-	// シーンの最後にもすることにします
-	// プレイヤーの行動、行列更新
-	// ↓
+	// シーンの最後にもすることにしまぁE
+	// プレイヤーの行動、行�E更新
+	// ↁE
 	// コリジョン
-	// ↓
-	// 行列更新
+	// ↁE
+	// 行�E更新
 	// 
-	// 行列更新処理
+	// 行�E更新処琁E
 	UpdateTransform();
 
-	// アニメーションの更新処理
+	// アニメーションの更新処琁E
 	UpdateAnimation(dt);
 
-	// モデルの行列更新処理
+	// モチE��の行�E更新処琁E
 	model->UpdateTransform();
 }
 
-// 描画処理
+// 描画処琁E
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
 #ifndef TEST
 
-	/// テクスチャのセット
+	/// チE��スチャのセチE��
 	textures->Set(rc);
 
-	/// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
-	/// プレイヤーを描画するとどうしても、モデルとカメラが被ってしまうので、
-	/// 敵視点の時のみの描画にする
+	/// モチE��があるときかつ、�Eレイヤーが敵カメラを使ってぁE��場吁E
+	/// プレイヤーを描画するとどぁE��ても、モチE��とカメラが被ってしまぁE�Eで、E
+	/// 敵視点の時�Eみの描画にする
 	if (model && useCam)
 		renderer->Render(rc, world, model.get(), ShaderId::Custom);
 
-	// テクスチャのクリア
+	// チE��スチャのクリア
 	textures->Clear(rc);
 #else
 	DirectX::XMMATRIX T_T = DirectX::XMLoadFloat4x4(&t_transform);
@@ -117,7 +117,7 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 #endif
 }
 
-// デバッグ描画処理
+// チE��チE��描画処琁E
 void Player::DrawDebug()
 {
 	if (ImGui::Begin("Player", nullptr))
@@ -139,16 +139,16 @@ void Player::DrawDebug()
 	ImGui::End();
 }
 
-// 移動処理
+// 移動�E琁E
 void Player::Move(float dt)
 {
-	if (!hit && isHit) ///< やりかたは汚いけど、一度ヒットしたらそれ以降はヒット判定にするために書く hit はPlayerコンストラクタの上でグローバルとしておいてる
+	if (!hit && isHit) ///< めE��かたは汚いけど、一度ヒットしたらそれ以降�Eヒット判定にするために書ぁEhit はPlayerコンストラクタの上でグローバルとしておいてめE
 	{
 		accel = 0;
 		hit = isHit;
 	}
 
-	/// 敵と接触した場合はだんだん速度を落として演出に入る
+	/// 敵と接触した場合�Eだんだん速度を落として演�Eに入めE
 	if (hit)
 	{
 		if (speed > 0)
@@ -158,14 +158,14 @@ void Player::Move(float dt)
 	}
 	else
 	{
-		/// 加速処理
+		/// 加速�E琁E
 		accel += acceleration * dt;
 	}
 
 	Camera& cam = Camera::Instance();
 
 	DirectX::XMFLOAT3 forward;
-	// カメラが切り替わっていないときだけカメラの方向を取る
+	// カメラが�Eり替わってぁE��ぁE��きだけカメラの方向を取る
 	if (!useCam)
 	{
 		forward = cam.GetFront();
@@ -173,7 +173,7 @@ void Player::Move(float dt)
 	else
 		forward = saveDirection;
 
-	// カメラの方向をXZ面に固定
+	// カメラの方向をXZ面に固宁E
 	forward.y = 0;
 	float len = sqrtf(forward.x * forward.x + forward.z * forward.z);
 	if (len > 0.0f)
@@ -196,7 +196,7 @@ void Player::Move(float dt)
 	position.x += speed * forward.x * dt;
 	position.z += speed * forward.z * dt;
 
-	// 角度を求める
+	// 角度を求めめE
 	{
 		DirectX::XMFLOAT3 front = { 0,0,1 };
 		DirectX::XMVECTOR Front, PlayerDir;
@@ -220,7 +220,7 @@ void Player::Move(float dt)
 	}
 }
 
-// カメラ切り替え処理、実際のカメラ切り替えは外部でする
+// カメラ刁E��替え�E琁E��実際のカメラ刁E��替え�E外部でする
 void Player::ChangeCamera()
 {
 	if (isHit)return;
@@ -230,18 +230,18 @@ void Player::ChangeCamera()
 	if (isChange)isChange = false; // 一回だけ通したい
 	if (isHijack)isHijack = false;
 
-	// カメラ切り替え
+	// カメラ刁E��替ぁE
 	if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
 	{
 		if (useCam)
-			isChange = true; // 敵→プレイヤー
+			isChange = true; // 敵→�Eレイヤー
 		else
-			isHijack = true; // プレイヤーがカメラを持ってハイジャックしたか
+			isHijack = true; // プレイヤーがカメラを持ってハイジャチE��したぁE
 
 		useCam = !useCam;
 	}
 
-	// ゲージがなくなると強制的に戻す
+	// ゲージがなくなると強制皁E��戻ぁE
 	if (enableHijackTime <= 0 && useCam)
 	{
 		useCam = false;
@@ -249,10 +249,10 @@ void Player::ChangeCamera()
 	}
 }
 
-// ハイジャックゲージの更新処理
+// ハイジャチE��ゲージの更新処琁E
 void Player::UpdateHijack(float dt)
 {
-	/// 敵と接触した場合はプレイヤー視点に戻す
+	/// 敵と接触した場合�Eプレイヤー視点に戻ぁE
 	if (isHit)useCam = false;
 
 	enableHijack = true;
@@ -266,13 +266,13 @@ void Player::UpdateHijack(float dt)
 		enableHijackTime -= hijackCost;
 	}
 
-	// カメラをハイジャックしている場合
+	// カメラをハイジャチE��してぁE��場吁E
 	if (useCam)
 	{
 
 		// �Q�[�W�̏���
 
-		// �Q�[�W�̏���
+		// �E�Q�E�[�E�W�E�̏��E��E�
 
 		enableHijackTime -= hijackCostPerSec * dt;
 
@@ -280,23 +280,23 @@ void Player::UpdateHijack(float dt)
 		//enableHijackTime -= hijackCostPerSec * dt;
 
 	}
-	// 視界がプレイヤーの場合
+	// 視界が�Eレイヤーの場吁E
 	else
 	{
-		// ハイジャックできる時間がハイジャックできる最大時間より小さい場合
+		// ハイジャチE��できる時間がハイジャチE��できる最大時間より小さぁE��吁E
 		if (maxHijackTime > enableHijackTime)
 		{
 			// ゲージの回復
 			enableHijackTime += hijackRecoveryPerSec * dt;
 
-			// ゲージの制限
+			// ゲージの制陁E
 			if (enableHijackTime > maxHijackTime)
 				enableHijackTime = maxHijackTime;
 		}
 	}
 }
 
-// アニメーション更新処理
+// アニメーション更新処琁E
 void Player::UpdateAnimation(float dt)
 {
 	if (!model->GetResource()->GetAnimations().empty())
@@ -305,7 +305,7 @@ void Player::UpdateAnimation(float dt)
 
 void Player::DeathState(float dt)
 {
-    time += dt; ///< 演出用に使うタイマー
+    time += dt; ///< 演�E用に使ぁE��イマ�E
   
 	DirectX::XMFLOAT3 enemyPos = {};
 	if (enemyRef)
@@ -327,10 +327,10 @@ void Player::DeathState(float dt)
 
 	y = DirectX::XMVectorGetY(Forward);
 
-	pitch = asinf(y);             // 上下の向き
+	pitch = asinf(y);             // 上下�E向き
 	yaw = atan2f(x, z);           // 左右の向き
 
-  // 角度を求める
+  // 角度を求めめE
   {
         DirectX::XMVECTOR Dot, Cross;
         DirectX::XMFLOAT3 crossVector;

@@ -194,6 +194,7 @@ void SceneGame::Update(float elapsedTime)
 		stage->Update(elapsedTime);
 		minimap->Update(player->GetPosition());
 		TutorialUpdate(elapsedTime);
+		metar->update(player->GetenableHijackTime());
 		return;
 	}
 
