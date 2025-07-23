@@ -13,31 +13,31 @@ static constexpr float totalTime = 1;
 Player::Player()
 {
 #ifdef TEST
-	// ƒeƒXƒg—pƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ
+	// ãƒ†ã‚¹ãƒˆç”¨ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿
 	model = std::make_shared<Model>("./Data/Model/Test/test_walk_animation_model.mdl");
 	t_position.x += 0.2f;
 	t_position.z += 0.5f;
 	t_position.y = 1.15f;
 	t_scale = { 0.025,0.025,0.025 };
 #else
-	// »•i”ÅƒvƒŒƒCƒ„[ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ
+	// è£½å“ç‰ˆãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿
 	model = std::make_unique<Model>("./Data/Model/Player/player_mesh.mdl");
 #endif
 
-	// ‰Šúƒpƒ‰ƒ[ƒ^‚Ìİ’è
+	// åˆæœŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®è¨­å®š
 	{
 		position = { 1,0,-24 };
 		scale = { 0.015, 0.015, 0.015 };
-		viewPoint = 1.5;           // ‹“_‚Ì‚‚³
-		radius = 0.6;              // “–‚½‚è”»’è”¼Œa
-		enableHijackTime = maxHijackTime;   // ƒnƒCƒWƒƒƒbƒN‰Â”\ŠÔ‚Ì‰Šú’l
+		viewPoint = 1.5;           // è¦–ç‚¹ã®é«˜ã•
+		radius = 0.6;              // å½“ãŸã‚Šåˆ¤å®šåŠå¾„
+		enableHijackTime = maxHijackTime;   // ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯å¯èƒ½æ™‚é–“ã®åˆæœŸå€¤
 		acceleration = 1.1f;
 		deceleration = 1.2f;
 		hit = false;
 		time = 0;
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‰Šúİ’è
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³åˆæœŸè¨­å®š
 	{
 		animationController.SetModel(model);
 		animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
@@ -45,14 +45,14 @@ Player::Player()
 	}
 
 
-    /// ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ
+    /// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èª­ã¿è¾¼ã¿
 	textures = std::make_unique<LoadTextures>();
 	textures->LoadNormal("Data/Model/Player/Texture/player_mtl_Normal_DirectX.png");
 	textures->LoadMetalness("Data/Model/Player/Texture/player_mtl_Metallic.png");
 	textures->LoadEmisive("Data/Model/Player/Texture/player_mtl_Emissive.png");
 	textures->LoadOcclusion("Data/Model/Player/Texture/player_mtl_Opacity.png");
 
-    // SE‚Ì“Ç‚İ‚İ
+    // SEã®èª­ã¿è¾¼ã¿
     changeCameraSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera.wav");
     changeCameraInSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
     changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
@@ -60,7 +60,7 @@ Player::Player()
 
 Player::~Player()
 {
-    //ƒ~ƒjƒ}ƒbƒvI—¹‰»
+    //ãƒŸãƒ‹ãƒãƒƒãƒ—çµ‚äº†åŒ–
     if (changeCameraSE != nullptr)
     {
         delete changeCameraSE;
@@ -70,49 +70,48 @@ Player::~Player()
 
 void Player::Update(float dt)
 {
-	// ƒnƒCƒWƒƒƒbƒNŠÖ˜A‚ÌXVˆ—
+	// ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯é–¢é€£ã®æ›´æ–°å‡¦ç†
 	UpdateHijack(dt);
 
-    // ƒJƒƒ‰Ø‚è‘Ö‚¦ˆ—
+    // ã‚«ãƒ¡ãƒ©åˆ‡ã‚Šæ›¿ãˆå‡¦ç†
     if (changeCameraInSE->IsPlaying())
         changeCameraInSE->SetVolume(0.5f);
 
-	// ƒJƒƒ‰Ø‚è‘Ö‚¦ˆ—i–³Œø‰»’†j
+	// ã‚«ãƒ¡ãƒ©åˆ‡ã‚Šæ›¿ãˆå‡¦ç†ï¼ˆç„¡åŠ¹åŒ–ä¸­ï¼‰
 	//ChangeCamera();
 
 
-	// ƒvƒŒƒCƒ„[ˆÚ“®ˆ—
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç§»å‹•å‡¦ç†
 	Move(dt);
 
-	if (isEvent) // ˆÚ“®’†‚ÉƒCƒxƒ“ƒgó‘Ô‚ÖˆÚs
+	if (isEvent) // ç§»å‹•ä¸­ã«ã‚¤ãƒ™ãƒ³ãƒˆçŠ¶æ…‹ã¸ç§»è¡Œ
 		DeathState(dt);
 
 #ifdef TEST
 	TestTransformUpdate();
 #endif
-
-	// ƒ‚ƒfƒ‹ƒ[ƒ‹ƒhs—ñ‚ÌXV
+	// ãƒ¢ãƒ‡ãƒ«ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã®æ›´æ–°
 	UpdateTransform();
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	UpdateAnimation(dt);
 
-	// ƒ‚ƒfƒ‹‚Éƒ[ƒ‹ƒhs—ñ‚ğ“K—p
+	// ãƒ¢ãƒ‡ãƒ«ã«ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã‚’é©ç”¨
 	model->UpdateTransform();
 }
 
-// ƒ‚ƒfƒ‹‚Ì•`‰æ
+// ãƒ¢ãƒ‡ãƒ«ã®æç”»
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
 #ifndef TEST
-	// ƒeƒNƒXƒ`ƒƒİ’è
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£è¨­å®š
 	textures->Set(rc);
 
-	// ƒ‚ƒfƒ‹‚ª‘¶İ‚µAƒJƒƒ‰Ø‚è‘Ö‚¦’†‚Å‚ ‚ê‚Î•`‰æ
+	// ãƒ¢ãƒ‡ãƒ«ãŒå­˜åœ¨ã—ã€ã‚«ãƒ¡ãƒ©åˆ‡ã‚Šæ›¿ãˆä¸­ã§ã‚ã‚Œã°æç”»
 	if (model && useCam)
 		renderer->Render(rc, world, model.get(), ShaderId::Custom);
 
-	// ƒeƒNƒXƒ`ƒƒ‚Ì‰ğœ
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®è§£é™¤
 	textures->Clear(rc);
 #else
 	DirectX::XMMATRIX T_T = DirectX::XMLoadFloat4x4(&t_transform);
@@ -125,7 +124,7 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 #endif
 }
 
-// ƒfƒoƒbƒO•`‰æiImGuij
+// ãƒ‡ãƒãƒƒã‚°æç”»ï¼ˆImGuiï¼‰
 void Player::DrawDebug()
 {
 	if (ImGui::Begin("Player", nullptr))
@@ -147,16 +146,16 @@ void Player::DrawDebug()
 	ImGui::End();
 }
 
-// ƒvƒŒƒCƒ„[ˆÚ“®ˆ—
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç§»å‹•å‡¦ç†
 void Player::Move(float dt)
 {
-	if (!hit && isHit) // ‰‚ß‚ÄUŒ‚‚ğó‚¯‚½‚Ìˆ—
+	if (!hit && isHit) // åˆã‚ã¦æ”»æ’ƒã‚’å—ã‘ãŸæ™‚ã®å‡¦ç†
 	{
 		accel = 0;
 		hit = isHit;
 	}
 
-	// Œ¸‘¬ˆ—
+	// æ¸›é€Ÿå‡¦ç†
 	if (hit)
 	{
 		if (speed > 0)
@@ -166,14 +165,14 @@ void Player::Move(float dt)
 	}
 	else
 	{
-		// ‰Á‘¬ˆ—
+		// åŠ é€Ÿå‡¦ç†
 		accel += acceleration * dt;
 	}
 
 	Camera& cam = Camera::Instance();
 
 	DirectX::XMFLOAT3 forward;
-	// ’ÊíƒJƒƒ‰ or ƒnƒCƒWƒƒƒbƒN‹“_
+	// é€šå¸¸ã‚«ãƒ¡ãƒ© or ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯è¦–ç‚¹
 	if (!useCam)
 	{
 		forward = cam.GetFront();
@@ -181,7 +180,7 @@ void Player::Move(float dt)
 	else
 		forward = saveDirection;
 
-	// XZ •½–Ê‚Ì•ûŒüƒxƒNƒgƒ‹‚É³‹K‰»
+	// XZ å¹³é¢ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã«æ­£è¦åŒ–
 	forward.y = 0;
 	float len = sqrtf(forward.x * forward.x + forward.z * forward.z);
 	if (len > 0.0f)
@@ -204,7 +203,7 @@ void Player::Move(float dt)
 	position.x += speed * forward.x * dt;
 	position.z += speed * forward.z * dt;
 
-	// ƒvƒŒƒCƒ„[‚ÌŒü‚«ŒvZiY²‰ñ“]j
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ãè¨ˆç®—ï¼ˆYè»¸å›è»¢ï¼‰
 	{
 		DirectX::XMFLOAT3 front = { 0,0,1 };
 		DirectX::XMVECTOR Front, PlayerDir;
@@ -228,7 +227,7 @@ void Player::Move(float dt)
 	}
 }
 
-// ƒJƒƒ‰‚ÌØ‚è‘Ö‚¦ˆ—i¶ƒNƒŠƒbƒNj
+// ã‚«ãƒ¡ãƒ©ã®åˆ‡ã‚Šæ›¿ãˆå‡¦ç†ï¼ˆå·¦ã‚¯ãƒªãƒƒã‚¯ï¼‰
 void Player::ChangeCamera()
 {
 	if (isHit)return;
@@ -238,20 +237,20 @@ void Player::ChangeCamera()
 	if (isChange)isChange = false;
 	if (isHijack)isHijack = false;
 
-	// ƒJƒƒ‰Ø‚è‘Ö‚¦“ü—Íi¶ƒNƒŠƒbƒNj
+	// ã‚«ãƒ¡ãƒ©åˆ‡ã‚Šæ›¿ãˆå…¥åŠ›ï¼ˆå·¦ã‚¯ãƒªãƒƒã‚¯ï¼‰
 	if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
 	{
 		if (useCam)
-			isChange = true; // Œ³‚É–ß‚·
+			isChange = true; // å…ƒã«æˆ»ã™
 		else {
-			isHijack = true; // V‚½‚ÉƒnƒCƒWƒƒƒbƒNŠJn
+			isHijack = true; // æ–°ãŸã«ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯é–‹å§‹
 			changeCameraInSE->Play(false);
 		}
 
 		useCam = !useCam;
 	}
 
-	// ƒnƒCƒWƒƒƒbƒNŠÔØ‚ê‚Å‹­§‰ğœ
+	// ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯æ™‚é–“åˆ‡ã‚Œã§å¼·åˆ¶è§£é™¤
 	if (enableHijackTime <= 0 && useCam)
 	{
 		useCam = false;
@@ -259,29 +258,30 @@ void Player::ChangeCamera()
 	}
 }
 
-// ƒnƒCƒWƒƒƒbƒNŠÖ˜A‚Ìó‘ÔXV
+
+// ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯é–¢é€£ã®çŠ¶æ…‹æ›´æ–°
 void Player::UpdateHijack(float dt)
 {
-	// UŒ‚‚³‚ê‚½‚ç‹­§‰ğœ
+	// æ”»æ’ƒã•ã‚ŒãŸã‚‰å¼·åˆ¶è§£é™¤
 	if (isHit)useCam = false;
 
 	enableHijack = true;
 	if (enableHijackTime < 8.0f && !useCam)
 		enableHijack = false;
 
-	// ƒnƒCƒWƒƒƒbƒNŠJn‚ÌƒRƒXƒgÁ”ï
+	// ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯é–‹å§‹æ™‚ã®ã‚³ã‚¹ãƒˆæ¶ˆè²»
 	if (isHijack)
 	{
 		enableHijackTime -= hijackCost;
 	}
 
-	// ƒnƒCƒWƒƒƒbƒN’†‚ÌƒQ[ƒWÁ”ï
+	// ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ä¸­ã®ã‚²ãƒ¼ã‚¸æ¶ˆè²»
 	if (useCam)
 	{
 		enableHijackTime -= hijackCostPerSec * dt;
 		changeCameraKeepSE->Play(true);
 	}
-	else // ”ñƒnƒCƒWƒƒƒbƒN‚ÌƒQ[ƒW‰ñ•œ
+	else // éãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯æ™‚ã®ã‚²ãƒ¼ã‚¸å›å¾©
 	{
 		if (changeCameraKeepSE->IsPlaying()) {
 			changeCameraKeepSE->Stop();
@@ -296,14 +296,14 @@ void Player::UpdateHijack(float dt)
 	}
 }
 
-// ƒAƒjƒ[ƒVƒ‡ƒ“XV
+// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ›´æ–°
 void Player::UpdateAnimation(float dt)
 {
 	if (!model->GetResource()->GetAnimations().empty())
 		animationController.UpdateAnimation(dt);
 }
 
-// €–S‚Ì‰‰oˆ—iƒJƒƒ‰‰ñ“]‚È‚Çj
+// æ­»äº¡æ™‚ã®æ¼”å‡ºå‡¦ç†ï¼ˆã‚«ãƒ¡ãƒ©å›è»¢ãªã©ï¼‰
 void Player::DeathState(float dt)
 {
 	time += dt;
@@ -327,10 +327,10 @@ void Player::DeathState(float dt)
 	z = DirectX::XMVectorGetZ(Forward);
 	y = DirectX::XMVectorGetY(Forward);
 
-	pitch = asinf(y);       // ƒsƒbƒ`Šp
-	yaw = atan2f(x, z);     // ƒˆ[Šp
+	pitch = asinf(y);       // ãƒ”ãƒƒãƒè§’
+	yaw = atan2f(x, z);     // ãƒ¨ãƒ¼è§’
 
-	// “G•ûŒü‚Ö‚Ì‰ñ“]•âŠÔ
+	// æ•µæ–¹å‘ã¸ã®å›è»¢è£œé–“
 	{
 		DirectX::XMVECTOR Dot, Cross;
 		DirectX::XMFLOAT3 crossVector;
@@ -339,7 +339,7 @@ void Player::DeathState(float dt)
 		Cross = DirectX::XMVector3Cross(Forward, PlayerToEnemyDir);
 		DirectX::XMStoreFloat(&dot, Dot);
 		DirectX::XMStoreFloat3(&crossVector, Cross);
-
+    
 		float radian = acosf(dot);
 		if (crossVector.y < 0 && radian > 0)
 			radian *= -1;
