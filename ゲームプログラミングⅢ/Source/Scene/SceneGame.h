@@ -15,7 +15,7 @@
 #include "System/ShadowCaster.h"
 
 extern float reminingTime;
-// ƒQ[ƒ€ƒV[ƒ“
+// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³
 class SceneGame :public Scene
 {
 public:
@@ -23,19 +23,19 @@ public:
 	SceneGame(int Life):life_number(Life){}
 	~SceneGame() override {}
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Initialize()override;
 
-	// I—¹‰»
+	// çµ‚äº†åŒ–
 	void Finalize()override;
 
-	// XVˆ—
+	// æ›´æ–°å‡¦ç†
 	void Update(float elapsedTime)override;
 
-	// •`‰æˆ—
+	// æç”»å‡¦ç†
 	void Render()override;
 
-	// GUI•`‰æ
+	// GUIæç”»
 	void DrawGUI()override;
 
 private:
@@ -45,9 +45,11 @@ private:
 
 	void PlayerVsEnemy();
 
-	void PlayerVsDoor(); ///< ƒhƒA‚Æ‚Ì“–‚½‚è”»’è
+	void PlayerVsDoor(); ///< ãƒ‰ã‚¢ã¨ã®å½“ãŸã‚Šåˆ¤å®š
 
 	void UpdateCamera(float elapsedTime);
+
+	void TutorialUpdate(float elapsedTime);
 
 private:
 	Stage* stage = nullptr;
@@ -57,65 +59,77 @@ private:
 	std::shared_ptr<Enemy> enemy;
 	std::shared_ptr<Metar> metar;
 	MiniMap* minimap = nullptr;
-	float timer = 0.0f; // ƒ^ƒCƒ}[
-	float transTimer = 0.0f; // ƒV[ƒ“‘JˆÚƒ^ƒCƒ}[
+	bool tutorial_Flug = false;
+	int tutorial_Step = 0;
+	float tutorialTimer = 0.0f;
+	float button_effect;
+	float timer = 0.0f; // ã‚¿ã‚¤ãƒãƒ¼
+	float transTimer = 0.0f; // ã‚·ãƒ¼ãƒ³é·ç§»ã‚¿ã‚¤ãƒãƒ¼
 	bool sceneTrans = false;
-	Scene* nextScene = nullptr; ///< 1•bŒã‚É‘JˆÚ‚·‚éƒV[ƒ“
+	Scene* nextScene = nullptr; ///< 1ç§’å¾Œã«é·ç§»ã™ã‚‹ã‚·ãƒ¼ãƒ³
 	enum class SelectTrans {
-		Clear, // ƒV[ƒ“ƒNƒŠƒA
-		GameOver, // ƒQ[ƒ€ƒI[ƒo[
+		Clear, // ã‚·ãƒ¼ãƒ³ã‚¯ãƒªã‚¢
+		GameOver, // ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼
 		cnt,
 	};
-	SelectTrans selectTrans = SelectTrans::GameOver; // ƒV[ƒ“‘JˆÚ‘I‘ğ
+	SelectTrans selectTrans = SelectTrans::GameOver; // ã‚·ãƒ¼ãƒ³é·ç§»é¸æŠ
 	// ==============================
-	// ƒVƒƒƒhƒEŠÖ˜A’è”
+	// ã‚·ãƒ£ãƒ‰ã‚¦é–¢é€£å®šæ•°
 	// ==============================
 
-	// ƒ‰ƒCƒg‹“_‚©‚ç‚Ìƒrƒ…[Ë‰es—ñiƒVƒƒƒhƒEƒ}ƒbƒvì¬—pj
+	// ãƒ©ã‚¤ãƒˆè¦–ç‚¹ã‹ã‚‰ã®ãƒ“ãƒ¥ãƒ¼å°„å½±è¡Œåˆ—ï¼ˆã‚·ãƒ£ãƒ‰ã‚¦ãƒãƒƒãƒ—ä½œæˆç”¨ï¼‰
 	DirectX::XMFLOAT4X4 lightViewProjection;
 
-	// ƒVƒƒƒhƒE‚Ì[“xƒoƒCƒAƒXiƒAƒNƒl–h~j
+	// ã‚·ãƒ£ãƒ‰ã‚¦ã®æ·±åº¦ãƒã‚¤ã‚¢ã‚¹ï¼ˆã‚¢ã‚¯ãƒé˜²æ­¢ï¼‰
 	float shadowBias = 0.001f;
 
-	// ‰e‚ÌFi‚â‚â–¾‚é‚ß‚ÌƒOƒŒ[j
+	// å½±ã®è‰²ï¼ˆã‚„ã‚„æ˜ã‚‹ã‚ã®ã‚°ãƒ¬ãƒ¼ï¼‰
 	DirectX::XMFLOAT3 shadowColor = { 0.7812f,0.7812f,0.7812f };
 	DirectX::XMFLOAT4 edgeColor = { .0f,.0f,.0f,1.0f };
 
-	// ƒVƒƒƒhƒEƒ}ƒbƒv•`‰æ”ÍˆÍiƒfƒoƒbƒO•`‰æ—pHj
+	// ã‚·ãƒ£ãƒ‰ã‚¦ãƒãƒƒãƒ—æç”»ç¯„å›²ï¼ˆãƒ‡ãƒãƒƒã‚°æç”»ç”¨ï¼Ÿï¼‰
 	float SHADOWMAP_DRAWRECT = 30.0f;
 
-	// ƒVƒƒƒhƒEƒ}ƒbƒv•`‰æE¶¬‚ğ’S“–‚·‚éƒNƒ‰ƒX
+	// ã‚·ãƒ£ãƒ‰ã‚¦ãƒãƒƒãƒ—æç”»ãƒ»ç”Ÿæˆã‚’æ‹…å½“ã™ã‚‹ã‚¯ãƒ©ã‚¹
 	std::unique_ptr<ShadowCaster> shadow;
 
 
 	// ==============================
-	// ƒtƒHƒOEŠÂ‹«ŒõŠÖ˜A’è”
+	// ãƒ•ã‚©ã‚°ãƒ»ç’°å¢ƒå…‰é–¢é€£å®šæ•°
 	// ==============================
 
-	// ƒAƒ“ƒrƒGƒ“ƒgƒ‰ƒCƒg‚ÌFiˆÃ‚ß‚ÌƒOƒŒ[j
+	// ã‚¢ãƒ³ãƒ“ã‚¨ãƒ³ãƒˆãƒ©ã‚¤ãƒˆã®è‰²ï¼ˆæš—ã‚ã®ã‚°ãƒ¬ãƒ¼ï¼‰
 	DirectX::XMFLOAT4 ambientColor = { 0.1093f, 0.1093f, 0.1093f, 1.0f };
 
-	// ƒtƒHƒO‚ÌFi”’‚É‹ß‚¢ƒOƒŒ[j
+	// ãƒ•ã‚©ã‚°ã®è‰²ï¼ˆç™½ã«è¿‘ã„ã‚°ãƒ¬ãƒ¼ï¼‰
 	DirectX::XMFLOAT4 fogColor = { .0f,.0f,.0f, 1.0f };
 
-	// ƒtƒHƒO‚Ì”ÍˆÍiŠJn20.0AI—¹100.0j
+	// ãƒ•ã‚©ã‚°ã®ç¯„å›²ï¼ˆé–‹å§‹20.0ã€çµ‚äº†100.0ï¼‰
 	DirectX::XMFLOAT4 fogRange = { 10.0f, 30.0f, 0, 0 };
 
 	// ==============================
-	// ƒJƒƒ‰Eƒ‰ƒCƒg•ûŒü
+	// ã‚«ãƒ¡ãƒ©ãƒ»ãƒ©ã‚¤ãƒˆæ–¹å‘
 	// ==============================
 
-	// •½sŒõŒ¹‚Ì•ûŒüƒxƒNƒgƒ‹iÎ‚ßã‚©‚çÆËj
+	// å¹³è¡Œå…‰æºã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ï¼ˆæ–œã‚ä¸Šã‹ã‚‰ç…§å°„ï¼‰
 	DirectX::XMFLOAT3 lightDirection = { 0.0f, -3.0f, 0.0f };
 
-	// ƒJƒƒ‰‚Ìƒ[ƒ‹ƒhÀ•W
+	// ã‚«ãƒ¡ãƒ©ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™
 	DirectX::XMFLOAT3 cameraPosition = { 0.0f, 0.0f, 0.0f };
 	void UpdateConstants(RenderContext& rc);
 
 
-	// 3DƒI[ƒfƒBƒIƒVƒXƒeƒ€
+	// 3Dã‚ªãƒ¼ãƒ‡ã‚£ã‚ªã‚·ã‚¹ãƒ†ãƒ 
 
-	Audio3DSystem audioSystem; ///< 3DƒI[ƒfƒBƒIƒVƒXƒeƒ€‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
+	Audio3DSystem audioSystem; ///< 3Dã‚ªãƒ¼ãƒ‡ã‚£ã‚ªã‚·ã‚¹ãƒ†ãƒ ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+
 
 	int life_number;
+
+	// ======================================
+	// ãƒãƒ¥ï¼ãƒˆãƒªã‚¢ãƒ«ã®ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆé…åˆ—
+	// ======================================
+	std::unique_ptr<Sprite> tutorial[13];
+
+
 };

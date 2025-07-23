@@ -184,14 +184,7 @@ void Enemy::Update(float elapsedTime)
 	switch (state)
 	{
 	case State::Roaming:
-		if (isTrackingPlayer)
-		{
-			Audio3DSystem::Instance().PlayByTag("enemy_run");
-		}
-		else
-		{
-			Audio3DSystem::Instance().PlayByTag("enemy_walk");
-		}
+
 		Updatemovement(elapsedTime); // 経路に沿って移動
 		break;
 
@@ -199,6 +192,7 @@ void Enemy::Update(float elapsedTime)
 		if (animationcontroller.GetEndAnimation())
 		{
 			state = State::Roaming;
+			Audio3DSystem::Instance().PlayByTag("enemy_walk");
 			Animationplay();
 		}
 		break;
@@ -252,12 +246,14 @@ void Enemy::Update(float elapsedTime)
 		{
 			moveSpeed = TRACKING_SPEED; // 追跡スピード
 			state = State::Roaming;
+			Audio3DSystem::Instance().PlayByTag("enemy_run");
 			Animationplay();
 		}
 		break;
 
 	case State::feeling:
 
+		Audio3DSystem::Instance().PlayByTag("enemy_run");
 		moveSpeed = FEELING_SPEED; // 近距離反応スピード
 		state = State::Roaming;
 		Animationplay();
@@ -278,7 +274,7 @@ void Enemy::Update(float elapsedTime)
 	case State::Attack:
 		if (animationcontroller.GetEndAnimation())
 		{
-			SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
+			//SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
 		}
 		break;
 	}

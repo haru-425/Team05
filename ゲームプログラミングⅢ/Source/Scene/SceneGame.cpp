@@ -78,6 +78,27 @@ void SceneGame::Initialize()
 	Audio3DSystem::Instance().PlayByTag("aircon");
 
 	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
+
+	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
+	{
+		tutorial_Flug=true;
+
+		{
+			tutorial[0] = std::make_unique<Sprite>("Data/Sprite/dialog/01.png");
+			tutorial[1] = std::make_unique<Sprite>("Data/Sprite/dialog/02.png");
+			tutorial[2] = std::make_unique<Sprite>("Data/Sprite/dialog/03.png");
+			tutorial[3] = std::make_unique<Sprite>("Data/Sprite/dialog/04.png");
+			tutorial[4] = std::make_unique<Sprite>("Data/Sprite/dialog/05.png");
+			tutorial[5] = std::make_unique<Sprite>("Data/Sprite/dialog/06.png");
+			tutorial[6] = std::make_unique<Sprite>("Data/Sprite/dialog/07.png");
+			tutorial[7] = std::make_unique<Sprite>("Data/Sprite/dialog/08.png");
+			tutorial[8] = std::make_unique<Sprite>("Data/Sprite/dialog/09.png");
+			tutorial[9] = std::make_unique<Sprite>("Data/Sprite/dialog/10.png");
+			tutorial[10] = std::make_unique<Sprite>("Data/Sprite/dialog/11.png");
+			tutorial[11] = std::make_unique<Sprite>("Data/Sprite/dialog/12.png");
+			tutorial[12] = std::make_unique<Sprite>("Data/Sprite/dialog/next_navi.png");
+		}
+	}
 }
 
 // 終了化
@@ -168,6 +189,13 @@ void SceneGame::Update(float elapsedTime)
 	//	SceneManager::instance().ChangeScene(new Game_Over);
 	//}
 
+	if (tutorial_Flug)
+	{
+		stage->Update(elapsedTime);
+		minimap->Update(player->GetPosition());
+		TutorialUpdate(elapsedTime);
+		return;
+	}
 
 	//ステージ更新処理
 	stage->Update(elapsedTime);
@@ -312,6 +340,70 @@ void SceneGame::Render()
 	// 2Dスプライト描画
 	{
 		//minimap->Render(player->GetPosition());
+
+		if (tutorial_Flug)
+		{
+			bool next_navi_vision = false;
+			switch (tutorial_Step)
+			{
+			case 16:
+				//「(現在を付け足す)現在、敵の活動時間は残り2分。頑張って逃げましょう！」
+				tutorial[11]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 15:
+				//「【残り時間】最後に制限時間です。この秒数が...」
+				tutorial[10]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 14:
+				//残り時間が表示
+				break;
+			case 13:
+				//「さてと、後は時間まで逃げるだけですね。」
+				tutorial[9]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 12:
+				//「【プレイヤー専用通路】（これだけ扉の画像のある説明用の画像を表示して説明）壁沿いにある、緑色のライトが...」
+				tutorial[8]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 11:
+				//「【バッテリー】このように敵は巡回中に、バッテリーを...」
+				tutorial[7]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 10:
+				//「これは敵が落としていったバッテリー...」
+				tutorial[6]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 6:
+				//「操作方法】マウスで視点を...」
+				tutorial[5]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 5:
+				//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
+				tutorial[4]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 4:
+				//「少し、ゲージを消費してしまいましたね。」
+				tutorial[3]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 2:
+				//「【操作方法】右クリックで敵の視点を...」
+				tutorial[2]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 1:
+				//「【マップ】あなたの現在位置は、中央の印で...」
+				tutorial[1]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 0:
+				//「…起動完了。 」
+				tutorial[0]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			}
+			if (next_navi_vision)
+			{
+				tutorial[12]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, button_effect);
+			}
+		}
+
 	}
 
 	shadow->Release(dc);
@@ -710,4 +802,81 @@ void SceneGame::UpdateConstants(RenderContext& rc)
 
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
+}
+
+
+void SceneGame::TutorialUpdate(float elapsedTime)
+{
+	if (false)//左クリックされたら
+	{
+		tutorial_Step++;
+	}
+	switch (tutorial_Step)
+	{
+	case 17:
+		tutorial_Flug = false;
+		//オートランやらなんやらはここで初期化
+		break;
+	case 16:
+		//「(現在を付け足す)現在、敵の活動時間は残り2分。頑張って逃げましょう！」
+		break;
+	case 15:
+		//「【残り時間】最後に制限時間です。この秒数が...」
+		break;
+	case 14:
+		//残り時間が表示
+		break;
+	case 13:
+		//「さてと、後は時間まで逃げるだけですね。」
+		break;
+	case 12:
+		//「【プレイヤー専用通路】（これだけ扉の画像のある説明用の画像を表示して説明）壁沿いにある、緑色のライトが...」
+		break;
+	case 11:
+		//「【バッテリー】このように敵は巡回中に、バッテリーを...」
+		break;
+	case 10:
+		//「これは敵が落としていったバッテリー...」
+		break;
+	case 9:
+		tutorial_Step--;
+	case 8:
+		batteryManager::Instance().Update(elapsedTime);
+		tutorialTimer += elapsedTime;
+		if (tutorialTimer>= 2.0f)
+		{
+			tutorial_Step += 2;
+		}
+	case 7:
+		batteryManager::Instance().addBattery({ 0,0,0 });//プレイヤーの見える位置にバッテリーを置く
+		tutorialTimer = 0;
+		tutorial_Step++;
+		break;
+	case 6:
+		//「操作方法】マウスで視点を...」
+		break;
+	case 5:
+		//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
+		break;
+	case 4:
+		//「少し、ゲージを消費してしまいましたね。」
+		break;
+	case 3:
+		tutorial_Step--;
+	case 2:
+		//「【操作方法】右クリックで敵の視点を...」
+		if (false)//右クリックが二回押されたら
+		{
+			tutorial_Step += 2;
+		}
+		break;
+	case 1:
+		//「【マップ】あなたの現在位置は、中央の印で...」
+		break;
+	case 0:
+		//「…起動完了。 」
+		break;
+	default:
+		break;
+	}
 }
