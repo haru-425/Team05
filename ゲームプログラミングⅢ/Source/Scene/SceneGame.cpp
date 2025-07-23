@@ -450,8 +450,19 @@ void SceneGame::Render()
 		//TemporalNoise
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
-		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+
+		if (!tutorial_Flug || tutorial_Step >= 14)
+		{
+
+			Graphics::Instance().bit_block_transfer->blit(dc,
+				Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+
+		}
+		else {
+
+			Graphics::Instance().bit_block_transfer->blit(dc,
+				Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+		}
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
 		//FilmGrainDustPS
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->clear(dc);
@@ -510,8 +521,22 @@ void SceneGame::Render()
 		//BreathShake
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->activate(dc);
-		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::BreathShake)].Get());
+		if (!tutorial_Flug || tutorial_Step >= 14)
+		{
+			//タイマー表示あり
+			Graphics::Instance().bit_block_transfer->blit(dc,
+				Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::BreathShake)].Get());
+
+		}
+		else {
+			//タイマー表示なし
+			Graphics::Instance().bit_block_transfer->blit(dc,
+				Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::BreathShake)].Get());
+
+
+
+		}
+
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->deactivate(dc);
 
 		//VisionBootDown
@@ -832,7 +857,7 @@ void SceneGame::UpdateConstants(RenderContext& rc)
 
 void SceneGame::TutorialUpdate(float elapsedTime)
 {
-	if (false)//左クリックされたら
+	if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)//左クリックされたら
 	{
 		tutorial_Step++;
 	}
@@ -872,13 +897,14 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		{
 			tutorial_Step += 2;
 		}
+		break;
 	case 7:
 		batteryManager::Instance().addBattery({ 0,0,0 });//プレイヤーの見える位置にバッテリーを置く
 		tutorialTimer = 0;
 		tutorial_Step++;
 		break;
 	case 6:
-		//「操作方法】マウスで視点を...」
+		//「【操作方法】マウスで視点を...」
 		break;
 	case 5:
 		//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
@@ -890,7 +916,11 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		tutorial_Step--;
 	case 2:
 		//「【操作方法】右クリックで敵の視点を...」
-		if (false)//右クリックが二回押されたら
+		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_RIGHT)
+		{
+			tutorial_Click_Count++;
+		}
+		if (tutorial_Click_Count >= 2)//右クリックが二回押されたら
 		{
 			tutorial_Step += 2;
 		}
