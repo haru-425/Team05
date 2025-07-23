@@ -137,6 +137,7 @@ void SceneTitle::Finalize()
 	// SEの終了化
 	if (selectSE != nullptr)
 	{
+		selectSE->Stop();
 		delete selectSE;
 		selectSE = nullptr;
 	}

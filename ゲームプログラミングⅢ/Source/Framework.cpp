@@ -59,9 +59,9 @@ Framework::~Framework()
 
 	ReleaseDC(hWnd, hDC);
 
-	Audio::Instance().Finalize();
-
 	ResourceManager::Instance().Clear();
+
+	Audio::Instance().Finalize();
 }
 
 // XVˆ—

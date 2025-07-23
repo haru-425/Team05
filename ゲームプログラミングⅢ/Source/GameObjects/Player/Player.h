@@ -60,6 +60,8 @@ public:
 
     float GetenableHijackTime(){ return enableHijackTime;}
 
+    void DeleteSounds();
+
 private:
     void Move(float dt);
 
@@ -70,6 +72,7 @@ private:
     void UpdateAnimation(float dt);
 
     void DeathState(float dt); ///< 死亡演出用
+
 
 private:
     std::shared_ptr<Model> model;
@@ -97,7 +100,6 @@ private:
     std::unique_ptr<LoadTextures> textures;  // テクスチャ
 
     // カメラ切り替えのSE
-    AudioSource* changeCameraSE = nullptr;
     AudioSource* changeCameraInSE = nullptr;
     AudioSource* changeCameraKeepSE = nullptr;
 

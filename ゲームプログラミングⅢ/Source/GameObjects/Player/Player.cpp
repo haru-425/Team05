@@ -53,19 +53,12 @@ Player::Player()
 	textures->LoadOcclusion("Data/Model/Player/Texture/player_mtl_Opacity.png");
 
     // SEの読み込み
-    changeCameraSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera.wav");
     changeCameraInSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
     changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
 }
 
 Player::~Player()
 {
-    //ミニマップ終了化
-    if (changeCameraSE != nullptr)
-    {
-        delete changeCameraSE;
-        changeCameraSE = nullptr;
-    }
 }
 
 void Player::Update(float dt)
@@ -77,9 +70,8 @@ void Player::Update(float dt)
     if (changeCameraInSE->IsPlaying())
         changeCameraInSE->SetVolume(0.5f);
 
-	// カメラ切り替え処理（無効化中）
-	//ChangeCamera();
-
+	// カメラ切り替え処理
+	ChangeCamera();
 
 	// プレイヤー移動処理
 	Move(dt);
@@ -145,6 +137,20 @@ void Player::DrawDebug()
 		ImGui::Checkbox("isHit", &isHit);
 	}
 	ImGui::End();
+}
+
+void Player::DeleteSounds()
+{
+	if (changeCameraInSE) {
+		changeCameraInSE->Stop();
+		delete changeCameraInSE;
+		changeCameraInSE = nullptr;
+	}
+	if (changeCameraKeepSE) {
+		changeCameraKeepSE->Stop();
+		delete changeCameraKeepSE;
+		changeCameraKeepSE = nullptr;
+	}
 }
 
 // プレイヤー移動処理

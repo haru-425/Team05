@@ -55,6 +55,7 @@ private:
 	Stage* stage = nullptr;
 
 	std::unique_ptr<ICameraController> i_CameraController = nullptr;
+	//std::shared_ptr<Player> player;
 	std::shared_ptr<Player> player;
 	std::shared_ptr<Enemy> enemy;
 	std::shared_ptr<Metar> metar;

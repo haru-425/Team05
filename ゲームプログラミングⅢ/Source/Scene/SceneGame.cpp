@@ -112,6 +112,8 @@ void SceneGame::Initialize()
 // 終了化
 void SceneGame::Finalize()
 {
+	player->DeleteSounds();
+
 	//ステージ終了化
 	if (stage != nullptr)
 	{
@@ -656,7 +658,7 @@ void SceneGame::DrawGUI()
 void SceneGame::Collision()
 {
 	//PlayerVsStage();
-	DirectX::XMFLOAT3 outPos;
+	DirectX::XMFLOAT3 outPos = {};
 	if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
 		player->SetPosition(outPos);
 
@@ -781,7 +783,7 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		{
 			cameraPos = player->GetPosition();
 			cameraPos.y = player->GetViewPoint();
-			if (player->GetIsEvent())
+			if (!player->GetIsEvent())
 			{
 				cameraPos = player->GetPosition();
 				cameraPos.y = player->GetViewPoint();

@@ -233,9 +233,9 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 lineDiffuse = 0, lineSpecular = 0;
     for (i = 0; i < 47; ++i)
     {
-        for (int s = 0; s < 6; ++s)
+        for (int s = 0; s < 4; ++s)
         {
-            float t = s / 5.0f;
+            float t = s / 3.0f;
             float3 pointOnLine = lerp(lineLights[i].start.xyz, lineLights[i].end.xyz, t);
              
             float3 LP = normalize(pointOnLine - pin.position.xyz);

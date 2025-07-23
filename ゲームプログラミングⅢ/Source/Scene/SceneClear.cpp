@@ -61,6 +61,7 @@ void Game_Clear::Finalize()
 
 	if (selectSE != nullptr)
 	{
+		selectSE->Stop();
 		delete selectSE;
 		selectSE = nullptr;
 	}
