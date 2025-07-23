@@ -10,6 +10,7 @@
 #include "Player/Player.h"
 #include"miniMap.h"
 #include "3DAudio/3DAudio.h"
+#include"Metar.h"
 
 #include "System/ShadowCaster.h"
 
@@ -19,6 +20,7 @@ class SceneGame :public Scene
 {
 public:
 	SceneGame() {}
+	SceneGame(int Life):life_number(Life){}
 	~SceneGame() override {}
 
 	// 初期化
@@ -53,6 +55,7 @@ private:
 	std::unique_ptr<ICameraController> i_CameraController = nullptr;
 	std::shared_ptr<Player> player;
 	std::shared_ptr<Enemy> enemy;
+	std::shared_ptr<Metar> metar;
 	MiniMap* minimap = nullptr;
 	float timer = 0.0f; // タイマー
 	float transTimer = 0.0f; // シーン遷移タイマー
@@ -113,4 +116,6 @@ private:
 	// 3Dオーディオシステム
 
 	Audio3DSystem audioSystem; ///< 3Dオーディオシステムのインスタンス
+
+	int life_number;
 };

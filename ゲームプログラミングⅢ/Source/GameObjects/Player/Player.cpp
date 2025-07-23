@@ -266,7 +266,7 @@ void Player::UpdateHijack(float dt)
 	if (useCam)
 	{
 		// ゲージの消費
-		//enableHijackTime -= hijackCostPerSec * dt;
+		enableHijackTime -= hijackCostPerSec * dt;
 	}
 	// 視界がプレイヤーの場合
 	else

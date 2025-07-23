@@ -6,13 +6,15 @@
 #include "RankSystem/Ranksystem.h"
 
 #include "GameObjects/battery/batteryManager.h"
-int Game_Over::life_number = 2;
+//int Game_Over::life_number = 2;
+
 void Game_Over::Initialize()
 {
+
 	GameOver = new Sprite("Data/Sprite/GameOver.png");
 	for (int i = 0; i < 3; i++)
 	{
-		life[i] = new Life();
+		life[i] = new Life(life_number);
 	}
 
 	timer = 0.0f; // タイマー初期化
@@ -20,6 +22,7 @@ void Game_Over::Initialize()
 
 	selectTrans = SelectTrans::Game; // シーン遷移選択初期化
 	sceneTrans = false; // シーン遷移フラグ初期化
+
 }
 
 void Game_Over::Finalize()
@@ -39,14 +42,16 @@ void Game_Over::Finalize()
 	}
 	GameOvertime = 0.0f; ///< デバッグ用タイマー初期化
 
-	life_number--;
 	timer = 0;
+
+	//残機を減らす
+	life_number--;
 
 }
 
 void Game_Over::Update(float elapsedTime)
 {
-	life[life_rest]->SetFlag(true);
+	life[life_number]->SetFlag(true);
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -65,7 +70,7 @@ void Game_Over::Update(float elapsedTime)
 		if (!sceneTrans)
 		{
 
-			nextScene = new SceneGame;
+			nextScene = new SceneGame(life_number);
 			sceneTrans = true;
 			transTimer = 0.0f;
 			selectTrans = SelectTrans::Game; // ゲームオーバーシーンに遷移
@@ -106,7 +111,7 @@ void Game_Over::Render()
 	rc.renderState = graphics.GetRenderState();
 	GameOver->Render(rc, 100, 100, 0, 1095, 316, 0, 1, 1, 1, 1);
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < life_number + 1; i++)
 	{
 		if (life[i] != nullptr)
 		{
@@ -135,7 +140,7 @@ void Game_Over::Render()
 
 
 		//ノイズの影響を受けないものはここ
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < life_number + 1; i++)
 		{
 			if (life[i] != nullptr)
 			{

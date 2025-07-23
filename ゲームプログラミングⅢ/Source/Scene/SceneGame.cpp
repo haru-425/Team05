@@ -37,6 +37,7 @@ void SceneGame::Initialize()
 
 	player = std::make_shared<Player>();
 	enemy = std::make_shared<Enemy>(player, stage);
+	metar = std::make_shared<Metar>();
 
 	//ミニマップスプライト初期化
 	minimap = new MiniMap();
@@ -119,7 +120,7 @@ void SceneGame::Update(float elapsedTime)
 	{
 		if (zKey)
 		{
-			nextScene = new Game_Over;
+			nextScene = new Game_Over(--life_number);
 			sceneTrans = true;
 			transTimer = 0.0f;
 			selectTrans = SelectTrans::GameOver; // ゲームオーバーシーンに遷移
@@ -208,6 +209,7 @@ void SceneGame::Update(float elapsedTime)
 	Collision();
 
 	player->UpdateTransform();
+	metar->update(player->GetenableHijackTime());
 
 	LightManager::Instance().Update();
 	ObjectManager::Instance().Update(elapsedTime);
@@ -331,7 +333,9 @@ void SceneGame::Render()
 			Graphics::Instance().bloomer->shader_resource_view(),
 		};
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
+		metar->render();
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
+
 
 		//Timer
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->clear(dc);
@@ -370,8 +374,6 @@ void SceneGame::Render()
 
 		);
 
-
-
 	}
 	else//player
 	{
@@ -386,11 +388,10 @@ void SceneGame::Render()
 			Graphics::Instance().bloomer->shader_resource_view(),
 		};
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
-
-
-
 		minimap->Render(player->GetPosition());
+		metar->render();
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
+		
 
 
 		//Timer
@@ -506,6 +507,8 @@ void SceneGame::DrawGUI()
 
 		ImGui::TreePop();
 	}
+	float a = player->GetenableHijackTime();
+	ImGui::InputFloat("GetenableHijackTime", &a);
 	stage->DrawGUI();
 	Graphics::Instance().DebugGUI();
 	LightManager::Instance().DebugGUI();

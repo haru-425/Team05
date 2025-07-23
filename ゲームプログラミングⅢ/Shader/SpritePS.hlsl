@@ -19,7 +19,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     if (flag == 1)
     {
         //50, 720 - 200
-        float2 center_1 = float2(TEXTURE_WIDTH / 2.0f, (720 - TEXTURE_HEIGHT) + TEXTURE_HEIGHT / 2.0f)*screen_size.x;
+        float2 center_1 = float2((TEXTURE_WIDTH / 2.0f) * screen_size.x,((720 - TEXTURE_HEIGHT) + TEXTURE_HEIGHT / 2.0f) * screen_size.x);
         //float2 center_1 = float2(TEXTURE_WIDTH / 2.0f + size.x, TEXTURE_HEIGHT / 2.0f + size.y);
         float distance = length(center_1 - pin.position.xy);
         if (distance < radius - 10)

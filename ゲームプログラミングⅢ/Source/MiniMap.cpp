@@ -19,7 +19,7 @@ void MiniMap::Update(DirectX::XMFLOAT3 playerPosition)
 	iconHeight = 64 * iconsize;
 
 	MapPosition.x = 0;
-	MapPosition.y = screenHeight - spriteHeight;
+	MapPosition.y = 720 - spriteHeight;
 	//MapPosition.y = 720 - spriteHeight;
 
 	iconPosition.x = spriteWidth / 2.0f - iconWidth / 2.0f;
@@ -66,6 +66,7 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 
 		cutPosition.x = ((playerPosition.x * (spriteWidth / 60))) - cutsize / 2.0f;
 		cutPosition.y = ((-playerPosition.z * (spriteHeight / 50))) - cutsize / 2.0f;
+
 		minimap->Render(rc,
 			MapPosition.x, MapPosition.y, 0, spriteWidth, spriteHeight,
 			spriteWidth / 2.0f + cutPosition.x, spriteHeight / 2.0f + cutPosition.y,
