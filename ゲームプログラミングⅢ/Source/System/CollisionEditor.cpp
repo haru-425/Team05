@@ -5,6 +5,7 @@
 using json = nlohmann::json;
 
 #include "CollisionEditor.h"
+#include "Collision.h"
 
 void to_json(json& j, const AABB& aabb)
 {
@@ -97,8 +98,19 @@ void CollisionEditor::Initialize()
 /**
 * @brief
 */
-void CollisionEditor::Update(float dt)
+bool CollisionEditor::Collision(const DirectX::XMFLOAT3& targetPosition, float range, DirectX::XMFLOAT3& outPos)
 {
+    bool flag = false;
+    for (auto& box : volumes)
+    {
+        DirectX::XMFLOAT3 size = box.size;
+        DirectX::XMFLOAT3 position = box.position;
+        DirectX::XMFLOAT3 minPos = { position.x - size.x / 2, position.y / 2 - size.y, position.z - size.z / 2 };
+        DirectX::XMFLOAT3 maxPos = { position.x + size.x / 2, position.y / 2 + size.y, position.z + size.z / 2 };
+        if (Collision::AABBVsSphere(minPos, maxPos, targetPosition, range, outPos))
+            flag = true;
+    }
+    return flag;
 }
 
 /**
@@ -106,9 +118,11 @@ void CollisionEditor::Update(float dt)
 */
 void CollisionEditor::Render(const RenderContext& rc, ShapeRenderer* renderer)
 {
+    if (!isVisible)return;
+
     for (auto& boxes : volumes)
     {
-        renderer->RenderBox(rc, { boxes.position.x + boxes.size.x / 2, boxes.position.y + boxes.size.y / 2 , boxes.position.z + boxes.size.z / 2 },
+        renderer->RenderBox(rc, { boxes.position.x, boxes.position.y , boxes.position.z },
             { 0.0f, 0.0f, 0.0f },
             { boxes.size.x / 2, boxes.size.y / 2 ,boxes.size.z / 2 },
             { 1,0,0,1 });
@@ -134,6 +148,8 @@ void CollisionEditor::DrawDebug()
             loader.Load(volumes);
         }
         
+        ImGui::Checkbox("isVisible", &isVisible);
+
         static int type = 0;
         /// “–‚½‚è”»’è‚ÌŽí—Þ‚ð‘I‘ð
         ImGui::SetNextItemWidth(size.x / 4);

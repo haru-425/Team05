@@ -54,7 +54,7 @@ public:
     static bool AABBVsSphere(
         const DirectX::XMFLOAT3& boxMin,
         const DirectX::XMFLOAT3& boxMax,
-        DirectX::XMFLOAT3& sphereCenter,
+        const DirectX::XMFLOAT3& sphereCenter,
         float sphereRadius,
         DirectX::XMFLOAT3& outPosition
     );

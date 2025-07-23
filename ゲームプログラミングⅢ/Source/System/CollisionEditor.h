@@ -57,7 +57,7 @@ public:
 
     void Initialize();
 
-    void Update(float dt); ///< 更新処理
+    bool Collision(const DirectX::XMFLOAT3& targetPosition, float range, DirectX::XMFLOAT3& outPos); ///< 更新処理
 
     void Render(const RenderContext& rc, ShapeRenderer* renderer); ///< 当たり判定の可視化用
 
@@ -68,7 +68,7 @@ private:
 
 private:
     CollisionDataLoader loader; ///< 当たり判定情報の取得用
-    std::vector<AABB> volumes;
-    bool isVisible = true;
+    std::vector<AABB> volumes;  ///< AABBの集合体
+    bool isVisible = true;      ///< デバッグの可視化
     CollisionType colType = CollisionType::AABB;
 };

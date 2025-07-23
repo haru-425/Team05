@@ -197,7 +197,7 @@ bool Collision::RayCast(
 	return hit;
 }
 
-bool Collision::AABBVsSphere(const DirectX::XMFLOAT3& boxMin, const DirectX::XMFLOAT3& boxMax, DirectX::XMFLOAT3& sphereCenter, float sphereRadius, DirectX::XMFLOAT3& outPosition)
+bool Collision::AABBVsSphere(const DirectX::XMFLOAT3& boxMin, const DirectX::XMFLOAT3& boxMax, const DirectX::XMFLOAT3& sphereCenter, float sphereRadius, DirectX::XMFLOAT3& outPosition)
 {
     using namespace DirectX;
 
@@ -225,13 +225,20 @@ bool Collision::AABBVsSphere(const DirectX::XMFLOAT3& boxMin, const DirectX::XMF
             normal.x = diff.x / dist; // 単位ベクトル
             normal.y = diff.y / dist; // 単位ベクトル
             normal.z = diff.z / dist; // 単位ベクトル
-            sphereCenter.x += normal.x * penetration; // 押し戻し
-            sphereCenter.y += normal.y * penetration; // 押し戻し
-            sphereCenter.z += normal.z * penetration; // 押し戻し
+            outPosition.x = sphereCenter.x + normal.x * penetration; // 押し戻し
+            outPosition.y = sphereCenter.y + normal.y * penetration; // 押し戻し
+            outPosition.z = sphereCenter.z + normal.z * penetration; // 押し戻し
         }
         else {
             // 完全に中心がAABBの中にいる → 上に押し出すとか決め打ちでもOK
-            sphereCenter.y += sphereRadius;
+            outPosition.y = sphereCenter.y + sphereRadius;
+            //DirectX::XMFLOAT3 normal;
+            //normal.x = diff.x / dist; // 単位ベクトル
+            //normal.y = diff.y / dist; // 単位ベクトル
+            //normal.z = diff.z / dist; // 単位ベクトル
+            //outPosition.x =sphereCenter.x + normal.x * 5; // 押し戻し
+            //outPosition.y =sphereCenter.y + normal.y * 5; // 押し戻し
+            //outPosition.z =sphereCenter.z + normal.z * 5; // 押し戻し
         }
 
         return true; // 衝突＆押し戻し済み

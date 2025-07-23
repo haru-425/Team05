@@ -77,7 +77,7 @@ void SceneGame::Initialize()
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
 
-	CollisionEditor::Instance();
+	CollisionEditor::Instance().Initialize();;
 }
 
 // 終了化
@@ -154,7 +154,7 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	timer += elapsedTime;
-	reminingTime -= elapsedTime;
+	//reminingTime -= elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	////ゲームオーバーに強制遷移
@@ -519,7 +519,10 @@ void SceneGame::DrawGUI()
 void SceneGame::Collision()
 {
 	/// プレイヤーとステージとの当たり判定
-	PlayerVsStage();
+	//PlayerVsStage();
+	DirectX::XMFLOAT3 outPos;
+	if(CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
+		player->SetPosition(outPos);
 
 	/// プレイヤーと敵との当たり判定
 	PlayerVsEnemy();
@@ -599,7 +602,7 @@ void SceneGame::PlayerVsEnemy()
 	DirectX::XMFLOAT3 outPos = {};
 	if (Collision::IntersectSphereVsSphere(pPos, pRadius, ePos, eRadius, outPos))
 	{
-		player->SetIsHit(true);
+		//player->SetIsHit(true);
 		enemy->SetIsHit(true);
 	}
 	else

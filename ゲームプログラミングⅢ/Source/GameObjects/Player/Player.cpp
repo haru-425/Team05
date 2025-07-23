@@ -183,7 +183,7 @@ void Player::Move(float dt)
     }
     saveDirection = forward;
 
-#if 1
+#if 0
     speed += accel * dt;
 #else
     if (Input::Instance().GetMouse().GetButton() & Mouse::BTN_RIGHT)
