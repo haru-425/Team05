@@ -129,6 +129,7 @@ void Enemy::Update(float elapsedTime)
 			// 経路をリセットし、新たに探索開始
 			stage->path.clear();
 			route.clear();
+			currentTargetIndex = 0;
 
 			Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
 			Start::Instance().SetPosition(this->position);
@@ -151,6 +152,7 @@ void Enemy::Update(float elapsedTime)
 				Animationplay();
 			}
 
+			targetPosition = route[0];
 			isTrackingPlayer = true;
 		}
 		else
@@ -236,6 +238,7 @@ void Enemy::Update(float elapsedTime)
 			break;
 
 		refinePath(start, current);
+		targetPosition = route[0];
 		state = State::Roaming;
 		Animationplay();
 #endif
