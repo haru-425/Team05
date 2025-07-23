@@ -269,6 +269,10 @@ void Player::UpdateHijack(float dt)
 	// カメラをハイジャックしている場合
 	if (useCam)
 	{
+
+		// �Q�[�W�̏���
+		enableHijackTime -= hijackCostPerSec * dt;
+
 		// ゲージの消費
 		//enableHijackTime -= hijackCostPerSec * dt;
 	}
