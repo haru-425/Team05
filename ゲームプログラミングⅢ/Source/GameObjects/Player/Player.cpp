@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "System/Input.h"
 #include "Camera/Camera.h"
+#include "System/Audio.h"
 #include "imgui.h"
 #include <algorithm>
 
@@ -46,10 +47,21 @@ Player::Player()
     textures->LoadMetalness("Data/Model/Player/Texture/player_mtl_Metallic.png");
     textures->LoadEmisive("Data/Model/Player/Texture/player_mtl_Emissive.png");
     textures->LoadOcclusion("Data/Model/Player/Texture/player_mtl_Opacity.png");
+
+    // SEの読み込み
+    changeCameraSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera.wav");
+    changeCameraInSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
+    changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
 }
 
 Player::~Player()
 {
+    //ミニマップ終了化
+    if (changeCameraSE != nullptr)
+    {
+        delete changeCameraSE;
+        changeCameraSE = nullptr;
+    }
 }
 
 void Player::Update(float dt)
@@ -58,6 +70,8 @@ void Player::Update(float dt)
     UpdateHijack(dt);
 
     // カメラ切り替え処理
+    if (changeCameraInSE->IsPlaying())
+        changeCameraInSE->SetVolume(0.5f);
     ChangeCamera();
 
     // 移動処理
@@ -229,10 +243,13 @@ void Player::ChangeCamera()
     // カメラ切り替え
     if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
     {
-        if (useCam)
+        if (useCam) {
             isChange = true; // 敵→プレイヤー
-        else
+        }
+        else {
             isHijack = true; // プレイヤーがカメラを持ってハイジャックしたか
+            changeCameraInSE->Play(false);
+        }
 
         useCam = !useCam;
     }
@@ -267,10 +284,14 @@ void Player::UpdateHijack(float dt)
     {
         // ゲージの消費
         //enableHijackTime -= hijackCostPerSec * dt;
+        changeCameraKeepSE->Play(true);
     }
     // 視界がプレイヤーの場合
     else
     {
+        if (changeCameraKeepSE->IsPlaying()) {
+            changeCameraKeepSE->Stop();
+        }
         // ハイジャックできる時間がハイジャックできる最大時間より小さい場合
         if (maxHijackTime > enableHijackTime)
         {

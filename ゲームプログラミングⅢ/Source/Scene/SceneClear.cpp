@@ -3,6 +3,9 @@
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "SceneTitle.h"
+#include "System/Audio.h"
+#include "System/Input.h"
+
 void Game_Clear::Initialize()
 {
 	s_rank = new Sprite("Data/Sprite/rank.png");
@@ -15,6 +18,9 @@ void Game_Clear::Initialize()
 	//RankSystem::Instance().SetRank(1, 1, 3);
 	result = RankSystem::Instance().GetRank();
 	angle = 0;
+
+	// SE‚Ì“Ç‚Ýž‚Ý
+	selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
 }
 
 void Game_Clear::Finalize()
@@ -46,14 +52,21 @@ void Game_Clear::Finalize()
 
 	timer = 0;
 
+	if (selectSE != nullptr)
+	{
+		delete selectSE;
+		selectSE = nullptr;
+	}
 }
 
 void Game_Clear::Update(float elapsedTime)
 {
+	Mouse& mouse = Input::Instance().GetMouse();
 
-	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	if(mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
 		GameCleartime = 120.0f;
+		selectSE->Play(false);
 	}
 	if (GameCleartime >= 120.0f) {
 		if (!sceneTrans)
@@ -62,8 +75,6 @@ void Game_Clear::Update(float elapsedTime)
 			nextScene = new SceneTitle;
 			sceneTrans = true;
 			transTimer = 0.0f;
-
-
 		}
 		else
 		{

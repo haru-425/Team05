@@ -4,6 +4,7 @@
 #include "Enemy/Enemy.h"
 #include "System/AnimationController.h"
 #include "System/LoadTextures.h"
+#include "System/AudioSource.h"
 
 // テスト用のモデルだったりを切り替えるよう
 //#define TEST
@@ -90,6 +91,11 @@ private:
     AnimationState state = AnimationState::MOVE;
 
     std::unique_ptr<LoadTextures> textures;  // テクスチャ
+
+    // カメラ切り替えのSE
+    AudioSource* changeCameraSE = nullptr;
+    AudioSource* changeCameraInSE = nullptr;
+    AudioSource* changeCameraKeepSE = nullptr;
 
     // テスト用なので気にしないで下さい
 #pragma region テスト用
