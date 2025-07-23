@@ -63,7 +63,7 @@ void fujimoto::Initialize()
 	AirconManager::Instance().Initialize();
 
 	batteryManager::Instance().addBattery({ 0,0,0 });
-	batteryManager::Instance().SetPlaye_and_enemy(player, enemy);
+	batteryManager::Instance().SetPlayer_and_enemy(player, enemy);
 	batteryManager::Instance().ResetPlayer_get_Batterry();
 }
 
@@ -240,7 +240,7 @@ void fujimoto::Render()
 	{
 		//minimap->Render(player->GetPosition());
 	}
-	
+
 }
 
 // GUI•`‰æ

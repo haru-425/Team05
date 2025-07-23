@@ -188,8 +188,8 @@ void Audio3DSystem::Initialize()
 	for (int i = 0; i < AIRCON_MAX; i++)
 	{
 		DirectX::XMFLOAT3 pos = AirconManager::Instance().GetAirconPosition(i);
-		pos.y - 2.0f;
-		AddEmitter("Data/Sound/air_conditioner.wav", pos, "aircon", SoundType::SE, 1.f, true, true, false, 0.07f);
+		pos.y;
+		AddEmitter("Data/Sound/air_conditioner.wav", pos, "aircon", SoundType::SE, 1.f, true, true, false, 0.2f);
 
 	}
 
@@ -208,8 +208,8 @@ void Audio3DSystem::Initialize()
 	//AddEmitter("Data/Sound/air_conditioner.wav", { 21.0f, 3.0f,-23.0f }, "aircon", SoundType::BGM, true, true, false, 0.1f);
 
 
-	AddEmitter("Data/Sound/enemy_run.wav", { 21.0f, 3.0f,-23.0f }, "enemy_run", SoundType::SE, 1.f, true, true, false, 0.3f);
-	AddEmitter("Data/Sound/enemy_walk.wav", { 21.0f, 3.0f,-23.0f }, "enemy_walk", SoundType::SE, 1.f, true, true, false, 0.3f);
+	AddEmitter("Data/Sound/enemy_run.wav", { 21.0f, 3.0f,-23.0f }, "enemy_run", SoundType::SE, 1.f, true, true, false, 0.1f);
+	AddEmitter("Data/Sound/enemy_walk.wav", { 21.0f, 3.0f,-23.0f }, "enemy_walk", SoundType::SE, 1.f, true, true, false, 0.1f);
 
 	AddEmitter("Data/Sound/change_camera.wav", { 21.0f, 3.0f,-23.0f }, "change_camera", SoundType::SE, 0.1f, true, true, false, 1.f);
 	AddEmitter("Data/Sound/lightoff.wav", { 21.0f, 3.0f,-23.0f }, "lightoff", SoundType::SE, 0.1f, true, true, false, 1.f);

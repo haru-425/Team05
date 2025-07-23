@@ -17,6 +17,7 @@
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 float reminingTime = 300.0f;
+
 // 初期化
 void SceneGame::Initialize()
 {
@@ -77,6 +78,7 @@ void SceneGame::Initialize()
 	Audio3DSystem::Instance().PlayByTag("aircon");
 
 	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
+	batteryManager::Instance().SetPlayer_and_enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
 }
 
 // 終了化
@@ -95,7 +97,11 @@ void SceneGame::Finalize()
 		minimap = nullptr;
 	}
 	Audio3DSystem::Instance().StopByTag("atmosphere_noise"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("electrical_noise"); // 音声停止
+
 	Audio3DSystem::Instance().StopByTag("aircon"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("enemy_run");
+	Audio3DSystem::Instance().StopByTag("enemy_walk");
 }
 
 // 更新処理
@@ -141,7 +147,7 @@ void SceneGame::Update(float elapsedTime)
 			RankSystem::Instance().SetRank(
 				batteryManager::Instance().getPlayerHasBattery(),
 				batteryManager::Instance().getMAXBattery(),
-				3); // タイムアップでSランク
+				Game_Over::life_number); // タイムアップでSランク
 		}
 	}
 	else
@@ -173,6 +179,7 @@ void SceneGame::Update(float elapsedTime)
 	player->Update(elapsedTime);
 	enemy->Update(elapsedTime);
 	minimap->Update(player->GetPosition());
+	batteryManager::Instance().Update(elapsedTime);
 
 	// 一人称用カメラ
 	if (typeid(*i_CameraController) == typeid(FPCameraController))
@@ -293,6 +300,8 @@ void SceneGame::Render()
 		AirconManager::Instance().Render(rc);
 
 		ObjectManager::Instance().Render(rc, modelRenderer);
+
+		batteryManager::Instance().Render(rc, modelRenderer);
 	}
 
 	// 3Dデバッグ描画
