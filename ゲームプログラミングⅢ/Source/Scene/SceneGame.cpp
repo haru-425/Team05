@@ -46,7 +46,7 @@ void SceneGame::Initialize()
 	minimap = new MiniMap();
 	timer = 0.0f; // タイマー初期化
 	transTimer = 0.0f; // シーン遷移タイマー初期化
-	reminingTime = 180.0f;
+	reminingTime = 300.0f;
 
 	selectTrans = SelectTrans::GameOver; // シーン遷移選択初期化
 	sceneTrans = false; // シーン遷移フラグ初期化
@@ -200,7 +200,7 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	timer += elapsedTime;
-	//reminingTime -= elapsedTime;
+	reminingTime -= elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	////ゲームオーバーに強制遷移

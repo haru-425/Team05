@@ -964,12 +964,6 @@ void SceneTitle::UpdateUI()
 		}
 	}
 
-	ImGui::Begin("test");
-	char buffer[256];
-	sprintf_s(buffer, "testValue %d", sensitivity);
-	ImGui::Text(buffer);
-	ImGui::End();
-
 	if (isStart)isStart = false;
 
 #if 1

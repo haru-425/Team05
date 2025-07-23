@@ -67,6 +67,12 @@ Framework::~Framework()
 // 更新処理
 void Framework::Update(float elapsedTime)
 {
+	static int count = 0;
+#ifndef _DEBUG
+	if(count == 1)
+		Graphics::Instance().StylizeWindow(Graphics::Instance().GetScreenMode());
+#endif
+
 	// インプット更新処理
 	Input::Instance().Update();
 
@@ -77,11 +83,15 @@ void Framework::Update(float elapsedTime)
 	//sceneGame.Update(elapsedTime);
 	SceneManager::instance().Update(elapsedTime);
 
+#ifdef _DEBUG
 	GamePad& input = Input::Instance().GetGamePad();
 	if ((input.GetButtonDown() & GamePad::F2))
 	{
 		Graphics::Instance().StylizeWindow(!Graphics::Instance().GetScreenMode());
 	}
+#endif
+
+	count++;
 }
 float elapsed = 0;
 // 描画処理
