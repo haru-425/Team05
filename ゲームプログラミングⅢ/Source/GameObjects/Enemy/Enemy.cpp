@@ -277,6 +277,7 @@ void Enemy::Update(float elapsedTime)
 		{
 			//SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
 			batteryManager::Instance().stop();
+			batteryManager::Instance().ClearBattery();
 		}
 		break;
 	}
