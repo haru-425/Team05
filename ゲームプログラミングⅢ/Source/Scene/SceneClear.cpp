@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "SceneTitle.h"
+#include "3DAudio/3DAudio.h"
 void Game_Clear::Initialize()
 {
 	s_rank = new Sprite("Data/Sprite/rank.png");
@@ -15,6 +16,7 @@ void Game_Clear::Initialize()
 	//RankSystem::Instance().SetRank(1, 1, 3);
 	result = RankSystem::Instance().GetRank();
 	angle = 0;
+	Audio3DSystem::Instance().PlayByTag("electrical_noise");
 }
 
 void Game_Clear::Finalize()
@@ -45,6 +47,7 @@ void Game_Clear::Finalize()
 
 
 	timer = 0;
+	Audio3DSystem::Instance().StopByTag("electrical_noise"); // 音声停止
 
 }
 
@@ -82,6 +85,14 @@ void Game_Clear::Update(float elapsedTime)
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
 	GameCleartime += elapsedTime;
 	angle += 0.1f;
+	Audio3DSystem::Instance().UpdateListener(
+		{ 0.0f, 0.0f, 0.0f }, // リスナーの位置
+		{ 0.0f, 0.0f, 1.0f }, // リスナーの向き
+		{ 0.0f, 1.0f, 0.0f }  // リスナーの上方向
+	);
+	Audio3DSystem::Instance().SetEmitterPositionByTag("electrical_noise", { 0.0f, 0.0f, 0.0f }); // エミッターの位置を更新
+	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
+
 }
 
 void Game_Clear::Render()

@@ -15,6 +15,8 @@
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 
+#define MAX_LIFE 3
+
 /// データをロードしてUIの表示を合わせるため
 static bool isStart = false;
 
@@ -158,7 +160,7 @@ void SceneTitle::Update(float elapsedTime)
 	{
 		if (isStartGame)
 		{
-			nextScene = new SceneGame;
+			nextScene = new SceneGame(MAX_LIFE);
 			sceneTrans = true;
 			TitleSignalTimer = 0.0f; // タイマー再スタート
 

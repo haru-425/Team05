@@ -10,7 +10,6 @@
 #include "./LightModels/LightManager.h"
 #include "./Aircon/AirconManager.h"
 #include "./Object/ObjectManager.h"
-#include "System/CollisionEditor.h"
 #include "GameObjects/battery/batteryManager.h"
 
 #include <imgui.h>
@@ -18,7 +17,6 @@
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 float reminingTime = 300.0f;
-
 // 初期化
 void SceneGame::Initialize()
 {
@@ -39,7 +37,7 @@ void SceneGame::Initialize()
 
 	player = std::make_shared<Player>();
 	enemy = std::make_shared<Enemy>(player, stage);
-	player->SetEnemy(enemy);
+	metar = std::make_shared<Metar>();
 
 	//ミニマップスプライト初期化
 	minimap = new MiniMap();
@@ -67,6 +65,7 @@ void SceneGame::Initialize()
 
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 
+
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
 	//Audio3DSystem::Instance().SetEmitterPositionByTag("aircon", enemy->GetPosition());
@@ -78,13 +77,7 @@ void SceneGame::Initialize()
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
 
-
-	/// 当たり判定エディターの初期化
-	CollisionEditor::Instance().Initialize();
-
 	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
-	batteryManager::Instance().SetPlayer_and_enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
-
 
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
@@ -124,11 +117,7 @@ void SceneGame::Finalize()
 		minimap = nullptr;
 	}
 	Audio3DSystem::Instance().StopByTag("atmosphere_noise"); // 音声停止
-	Audio3DSystem::Instance().StopByTag("electrical_noise"); // 音声停止
-
 	Audio3DSystem::Instance().StopByTag("aircon"); // 音声停止
-	Audio3DSystem::Instance().StopByTag("enemy_run");
-	Audio3DSystem::Instance().StopByTag("enemy_walk");
 }
 
 // 更新処理
@@ -152,7 +141,7 @@ void SceneGame::Update(float elapsedTime)
 	{
 		if (zKey)
 		{
-			nextScene = new Game_Over;
+			nextScene = new Game_Over(--life_number);
 			sceneTrans = true;
 			transTimer = 0.0f;
 			selectTrans = SelectTrans::GameOver; // ゲームオーバーシーンに遷移
@@ -190,7 +179,7 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	timer += elapsedTime;
-	//reminingTime -= elapsedTime;
+	reminingTime -= elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	////ゲームオーバーに強制遷移
@@ -213,32 +202,34 @@ void SceneGame::Update(float elapsedTime)
 	player->Update(elapsedTime);
 	enemy->Update(elapsedTime);
 	minimap->Update(player->GetPosition());
-	batteryManager::Instance().Update(elapsedTime);
 
-	//// 一人称用カメラ
-	//if (typeid(*i_CameraController) == typeid(FPCameraController))
-	//{
-	//	POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
-	//	ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
-	//	DirectX::XMFLOAT3 cameraPos = player->GetPosition();
-	//	cameraPos.y = player->GetViewPoint();
-	//	i_CameraController->SetCameraPos(cameraPos);
-	//	i_CameraController->Update(elapsedTime);
-	//	SetCursorPos(screenPoint.x, screenPoint.y);
+	// 一人称用カメラ
+	if (typeid(*i_CameraController) == typeid(FPCameraController))
+	{
+		POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
+		ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
+		DirectX::XMFLOAT3 cameraPos = player->GetPosition();
+		cameraPos.y = player->GetViewPoint();
+		i_CameraController->SetCameraPos(cameraPos);
+		i_CameraController->Update(elapsedTime);
+		SetCursorPos(screenPoint.x, screenPoint.y);
 
-	//	if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
-	//	{
-	//		i_CameraController = std::make_unique<LightDebugCameraController>();
-	//	}
-	//}
-	//// フリーカメラ
-	//else
-	//{
-	//	if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
-	//	{
-	//		i_CameraController = std::make_unique<FPCameraController>();
-	//	}
-	//}
+		if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
+		{
+			i_CameraController = std::make_unique<LightDebugCameraController>();
+		}
+	}
+	// フリーカメラ
+	else
+	{
+		i_CameraController->Update(elapsedTime);
+
+		if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
+		{
+			i_CameraController = std::make_unique<FPCameraController>();
+		}
+	}
+
 	UpdateCamera(elapsedTime);
 
 	//Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
@@ -246,6 +237,7 @@ void SceneGame::Update(float elapsedTime)
 	Collision();
 
 	player->UpdateTransform();
+	metar->update(player->GetenableHijackTime());
 
 	LightManager::Instance().Update();
 	ObjectManager::Instance().Update(elapsedTime);
@@ -331,8 +323,6 @@ void SceneGame::Render()
 		AirconManager::Instance().Render(rc);
 
 		ObjectManager::Instance().Render(rc, modelRenderer);
-
-		batteryManager::Instance().Render(rc, modelRenderer);
 	}
 
 	// 3Dデバッグ描画
@@ -420,7 +410,6 @@ void SceneGame::Render()
 
 	/// フレームバッファのディアクティベート
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->deactivate(dc);
-#if 1
 	if (player->GetUseCam())
 	{
 		//enemy
@@ -436,7 +425,9 @@ void SceneGame::Render()
 			Graphics::Instance().bloomer->shader_resource_view(),
 		};
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
+		metar->render();
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
+
 
 		//Timer
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->clear(dc);
@@ -475,8 +466,6 @@ void SceneGame::Render()
 
 		);
 
-
-
 	}
 	else//player
 	{
@@ -491,11 +480,10 @@ void SceneGame::Render()
 			Graphics::Instance().bloomer->shader_resource_view(),
 		};
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
-
-
-
 		minimap->Render(player->GetPosition());
+		metar->render();
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
+		
 
 
 		//Timer
@@ -571,8 +559,6 @@ void SceneGame::Render()
 		);
 
 	}
-#endif
-	CollisionEditor::Instance().Render(rc, shapeRenderer);
 }
 
 // GUI描画
@@ -613,23 +599,19 @@ void SceneGame::DrawGUI()
 
 		ImGui::TreePop();
 	}
+	float a = player->GetenableHijackTime();
+	ImGui::InputFloat("GetenableHijackTime", &a);
 	stage->DrawGUI();
 	Graphics::Instance().DebugGUI();
 	LightManager::Instance().DebugGUI();
 	AirconManager::Instance().DebugGUI();
 	ObjectManager::Instance().DebugGUI();
-	
-	player->DrawDebug();
-
-	CollisionEditor::Instance().DrawDebug();
 }
 
 void SceneGame::Collision()
 {
-	//PlayerVsStage();
-	DirectX::XMFLOAT3 outPos;
-	if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
-		player->SetPosition(outPos);
+	/// プレイヤーとステージとの当たり判定
+	PlayerVsStage();
 
 	/// プレイヤーと敵との当たり判定
 	PlayerVsEnemy();
@@ -709,7 +691,7 @@ void SceneGame::PlayerVsEnemy()
 	DirectX::XMFLOAT3 outPos = {};
 	if (Collision::IntersectSphereVsSphere(pPos, pRadius, ePos, eRadius, outPos))
 	{
-		//player->SetIsHit(true);
+		player->SetIsHit(true);
 		enemy->SetIsHit(true);
 	}
 	else
@@ -750,16 +732,13 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// プレイヤー視点
 		if (!useCamera)
 		{
-			cameraPos = player->GetPosition();
-			cameraPos.y = player->GetViewPoint();
-			if (player->GetIsEvent())
+			if (!player->GetIsEvent())
 			{
 				cameraPos = player->GetPosition();
 				cameraPos.y = player->GetViewPoint();
 			}
 			else
 			{
-				i_CameraController->SetIsEvent(player->GetIsEvent());
 				i_CameraController->SetPitch(player->GetPitch());
 				i_CameraController->SetYaw(player->GetYaw());
 			}

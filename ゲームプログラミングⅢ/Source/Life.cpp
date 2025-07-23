@@ -37,14 +37,29 @@ float Lerp(float a, float b, float t)
 }
 
 
-Life::Life()
+Life::Life(int life)
 {
-	life = new Sprite("Data/Sprite/life.png");
+	this->life = new Sprite("Data/Sprite/life.png");
 	life_number = life_now_number++;
 
-	position.x = life_number * 200 + 300;
-	position.y = 600;
-	position.z = 0;
+	switch (life)
+	{
+	case 0:
+		position.x = life_number * 200 -600;
+		position.y = 600;
+		position.z = 0;
+		break;
+	case 1:
+		position.x = life_number * 200 -200;
+		position.y = 600;
+		position.z = 0;
+		break;
+	case 2:
+		position.x = life_number * 200 + 300;
+		position.y = 600;
+		position.z = 0;
+		break;
+	}
 }
 
 Life::~Life()
@@ -81,9 +96,6 @@ void Life::Update(float elapsed_Time)
 		break;
 	case 1:
 	{
-		//float add_position = easeOutElastic(count);
-		//position.y -= add_position;
-		//count += 0.01f;
 		if (count > 2.5f)
 		{
 			state++;

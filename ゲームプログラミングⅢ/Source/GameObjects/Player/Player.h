@@ -57,6 +57,8 @@ public:
             enableHijackTime = maxHijackTime;
     }
 
+    float GetenableHijackTime(){ return enableHijackTime;}
+
 private:
     void Move(float dt);
 

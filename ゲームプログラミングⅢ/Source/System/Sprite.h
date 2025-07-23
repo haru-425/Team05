@@ -27,7 +27,6 @@ public:
 		float radius;
 		float paramatar;
 		float d;
-
 		DirectX::XMFLOAT2 screen_size;
 		DirectX::XMFLOAT2 dummy;
 	};
