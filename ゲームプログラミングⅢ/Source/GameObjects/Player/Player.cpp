@@ -271,6 +271,9 @@ void Player::UpdateHijack(float dt)
 	{
 
 		// ƒQ[ƒW‚ÌÁ”ï
+
+		// ï¿½Qï¿½[ï¿½Wï¿½Ìï¿½ï¿½ï¿½
+
 		enableHijackTime -= hijackCostPerSec * dt;
 
 		// ã‚²ãƒ¼ã‚¸ã®æ¶ˆè²»
