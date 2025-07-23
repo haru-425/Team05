@@ -85,6 +85,7 @@ void SceneGame::Initialize()
 
 	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
 	batteryManager::Instance().SetPlayer_and_enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
+	batteryManager::Instance().start();
 
 
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)

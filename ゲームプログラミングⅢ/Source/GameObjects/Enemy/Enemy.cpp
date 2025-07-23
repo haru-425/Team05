@@ -9,6 +9,7 @@
 #include "Scene/SceneLoading.h"
 #include "Scene/SceneGameOver.h"
 #include "3DAudio/3dAudio.h"
+#include "GameObjects/battery/batteryManager.h"
 #include "./Collision.h"
 #include "imgui.h"                    // ImGuiの基本機能
 #include "imgui_impl_win32.h"        // Win32用バックエンド
@@ -275,6 +276,7 @@ void Enemy::Update(float elapsedTime)
 		if (animationcontroller.GetEndAnimation())
 		{
 			//SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
+			batteryManager::Instance().stop();
 		}
 		break;
 	}
