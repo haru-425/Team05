@@ -48,7 +48,7 @@ public:
 			hasBattery.erase(hasBattery.begin());
 		}
 		deleteBattery(player->GetPosition());
-		if (droptime >= drop_interval)
+		if (droptime >= drop_interval && dropFlag)
 		{
 			addBattery(enemy->GetPosition());
 			droptime = 0;
@@ -90,9 +90,10 @@ public:
 		}
 	}
 
-	void SetPlayer_and_enemy(std::shared_ptr<Player> players, std::shared_ptr<Enemy> enemys) { player = players; enemy = enemys; };
+	void SetPlayer_and_Enemy(std::shared_ptr<Player> players, std::shared_ptr<Enemy> enemys) { player = players; enemy = enemys; };
 
-	void ResetPlayer_get_Batterry() { player_Get_Batterry = 0; };
+	void ClearBattery() { hasBattery.clear(); }
+	void ResetPlayer_Get_Batterry() { player_Get_Batterry = 0; };
 	int getMAXBattery()
 	{
 
@@ -102,6 +103,10 @@ public:
 	{
 		return player_Get_Batterry;
 	}
+
+	void stop(){ dropFlag = false; }
+
+	void start(){ dropFlag = true; }
 private:
 	batteryManager() {}
 	~batteryManager() {}
@@ -123,4 +128,6 @@ private:
 	float drop_interval = BATTERY_DROP_NORML_INTERVAL;
 
 	float droptime = 0;
+
+	bool dropFlag = true;
 };

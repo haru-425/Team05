@@ -84,7 +84,8 @@ void SceneGame::Initialize()
 	CollisionEditor::Instance().Initialize();
 
 	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
-	batteryManager::Instance().SetPlayer_and_enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
+	batteryManager::Instance().SetPlayer_and_Enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
+	batteryManager::Instance().start();
 
 
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
@@ -185,6 +186,7 @@ void SceneGame::Update(float elapsedTime)
 				batteryManager::Instance().getPlayerHasBattery(),
 				batteryManager::Instance().getMAXBattery(),
 				life_number); // タイムアップでSランク
+			batteryManager::Instance().ResetPlayer_Get_Batterry();
 		}
 	}
 	else

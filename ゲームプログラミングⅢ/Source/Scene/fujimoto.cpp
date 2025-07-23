@@ -63,8 +63,8 @@ void fujimoto::Initialize()
 	AirconManager::Instance().Initialize();
 
 	batteryManager::Instance().addBattery({ 0,0,0 });
-	batteryManager::Instance().SetPlayer_and_enemy(player, enemy);
-	batteryManager::Instance().ResetPlayer_get_Batterry();
+	batteryManager::Instance().SetPlayer_and_Enemy(player, enemy);
+	batteryManager::Instance().ResetPlayer_Get_Batterry();
 	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
 }
 
