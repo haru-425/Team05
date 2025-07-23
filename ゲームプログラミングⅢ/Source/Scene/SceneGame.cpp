@@ -90,7 +90,7 @@ void SceneGame::Initialize()
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
 		tutorial_Flug = true;
-
+		reminingTime=120.0f;
 		{
 			tutorial[0] = std::make_unique<Sprite>("Data/Sprite/dialog/01.png");
 			tutorial[1] = std::make_unique<Sprite>("Data/Sprite/dialog/02.png");
