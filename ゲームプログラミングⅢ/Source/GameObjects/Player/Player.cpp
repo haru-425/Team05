@@ -11,40 +11,40 @@ static constexpr float totalTime = 1;
 Player::Player()
 {
 #ifdef TEST
-    // Šm”F—p
-    model = std::make_shared<Model>("./Data/Model/Test/test_walk_animation_model.mdl");
-    t_position.x += 0.2f;
-    t_position.z += 0.5f;
-    t_position.y = 1.15f;
-    t_scale = { 0.025,0.025,0.025 };
+	// ç¢ºèªç”¨
+	model = std::make_shared<Model>("./Data/Model/Test/test_walk_animation_model.mdl");
+	t_position.x += 0.2f;
+	t_position.z += 0.5f;
+	t_position.y = 1.15f;
+	t_scale = { 0.025,0.025,0.025 };
 
 #else
-    // ÀÛ‚Ég‚¤ƒ‚ƒfƒ‹
-    //model = std::make_unique<Model>("./Data/Model/Player/player.mdl");
-    model = std::make_unique<Model>("./Data/Model/Player/player_mesh.mdl");
+	// å®Ÿéš›ã«ä½¿ã†ãƒ¢ãƒ‡ãƒ«
+	//model = std::make_unique<Model>("./Data/Model/Player/player.mdl");
+	model = std::make_unique<Model>("./Data/Model/Player/player_mesh.mdl");
 #endif
 
-    // ƒvƒŒƒCƒ„[‚Ìƒpƒ‰ƒ[ƒ^‰Šúİ’è
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿åˆæœŸè¨­å®š
     {
         position = { 1,0,-24 };
-        scale = { 0.015, 0.015, 0.015 };    // ƒXƒP[ƒ‹
-        viewPoint = 1.5;                    // ƒJƒƒ‰‚Ì–Úü‚ğİ’è‚·‚é‚½‚ß
-        radius = 0.6;                         // ƒfƒoƒbƒO—p
-        enableHijackTime = maxHijackTime;   // ƒnƒCƒWƒƒƒbƒN‚Å‚«‚éŠÔ‚Ìİ’è
+        scale = { 0.015, 0.015, 0.015 };    // ã‚¹ã‚±ãƒ¼ãƒ«
+        viewPoint = 1.5;                    // ã‚«ãƒ¡ãƒ©ã®ç›®ç·šã‚’è¨­å®šã™ã‚‹ãŸã‚
+        radius = 0.6;                         // ãƒ‡ãƒãƒƒã‚°ç”¨
+        enableHijackTime = maxHijackTime;   // ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã§ãã‚‹æ™‚é–“ã®è¨­å®š
         acceleration = 1.1f;
         deceleration = 1.2f;
         hit = false;
         time = 0;
     }
 
-    /// ƒAƒjƒ[ƒVƒ‡ƒ“ŠÖŒWİ’è
+    /// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é–¢ä¿‚è¨­å®š
     {
         animationController.SetModel(model);
         animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
         animationController.SetAnimationSecondScale(1.0f);
     }
 
-    /// ƒeƒNƒXƒ`ƒƒ‚Ì“Ç‚İ‚İ
+    /// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èª­ã¿è¾¼ã¿
     textures = std::make_unique<LoadTextures>();
     textures->LoadNormal("Data/Model/Player/Texture/player_mtl_Normal_DirectX.png");
     textures->LoadMetalness("Data/Model/Player/Texture/player_mtl_Metallic.png");
@@ -58,274 +58,272 @@ Player::~Player()
 
 void Player::Update(float dt)
 {
-    // ƒnƒCƒWƒƒƒbƒN‚ÌŠÔˆ—
-    UpdateHijack(dt);
+	// ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã®æ™‚é–“å‡¦ç†
+	UpdateHijack(dt);
 
-    // ƒJƒƒ‰Ø‚è‘Ö‚¦ˆ—
-    //ChangeCamera();
+  // ã‚«ãƒ¡ãƒ©åˆ‡ã‚Šæ›¿ãˆå‡¦ç†
+  //ChangeCamera();
 
-    // ˆÚ“®ˆ—
-    Move(dt);
+	// ç§»å‹•å‡¦ç†
+	Move(dt);
 
-    if (isEvent) ///< Move() ‚Ì’†‚Åƒtƒ‰ƒOØ‚è‘Ö‚¦‚ğ‚µ‚Ä‚é
-        DeathState(dt);
+	if (isEvent) ///< Move() ã®ä¸­ã§ãƒ•ãƒ©ã‚°åˆ‡ã‚Šæ›¿ãˆã‚’ã—ã¦ã‚‹
+		DeathState(dt);
 
 #ifdef TEST
-    TestTransformUpdate();
+	TestTransformUpdate();
 #endif
-    // ƒV[ƒ“‚ÌÅŒã‚É‚à‚·‚é‚±‚Æ‚É‚µ‚Ü‚·
-    // ƒvƒŒƒCƒ„[‚Ìs“®As—ñXV
-    // «
-    // ƒRƒŠƒWƒ‡ƒ“
-    // «
-    // s—ñXV
-    // 
-    // s—ñXVˆ—
-    UpdateTransform();
+	// ã‚·ãƒ¼ãƒ³ã®æœ€å¾Œã«ã‚‚ã™ã‚‹ã“ã¨ã«ã—ã¾ã™
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è¡Œå‹•ã€è¡Œåˆ—æ›´æ–°
+	// â†“
+	// ã‚³ãƒªã‚¸ãƒ§ãƒ³
+	// â†“
+	// è¡Œåˆ—æ›´æ–°
+	// 
+	// è¡Œåˆ—æ›´æ–°å‡¦ç†
+	UpdateTransform();
 
-    // ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXVˆ—
-    UpdateAnimation(dt);
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°å‡¦ç†
+	UpdateAnimation(dt);
 
-    // ƒ‚ƒfƒ‹‚Ìs—ñXVˆ—
-    model->UpdateTransform();
+	// ãƒ¢ãƒ‡ãƒ«ã®è¡Œåˆ—æ›´æ–°å‡¦ç†
+	model->UpdateTransform();
 }
 
-// •`‰æˆ—
+// æç”»å‡¦ç†
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
 #ifndef TEST
 
-    /// ƒeƒNƒXƒ`ƒƒ‚ÌƒZƒbƒg
-    textures->Set(rc);
+	/// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚»ãƒƒãƒˆ
+	textures->Set(rc);
 
-    /// ƒ‚ƒfƒ‹‚ª‚ ‚é‚Æ‚«‚©‚ÂAƒvƒŒƒCƒ„[‚ª“GƒJƒƒ‰‚ğg‚Á‚Ä‚¢‚éê‡
-    /// ƒvƒŒƒCƒ„[‚ğ•`‰æ‚·‚é‚Æ‚Ç‚¤‚µ‚Ä‚àAƒ‚ƒfƒ‹‚ÆƒJƒƒ‰‚ª”í‚Á‚Ä‚µ‚Ü‚¤‚Ì‚ÅA
-    /// “G‹“_‚Ì‚Ì‚İ‚Ì•`‰æ‚É‚·‚é
-    if (model && useCam)
-        renderer->Render(rc, world, model.get(), ShaderId::Custom);
+	/// ãƒ¢ãƒ‡ãƒ«ãŒã‚ã‚‹ã¨ãã‹ã¤ã€ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæ•µã‚«ãƒ¡ãƒ©ã‚’ä½¿ã£ã¦ã„ã‚‹å ´åˆ
+	/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æç”»ã™ã‚‹ã¨ã©ã†ã—ã¦ã‚‚ã€ãƒ¢ãƒ‡ãƒ«ã¨ã‚«ãƒ¡ãƒ©ãŒè¢«ã£ã¦ã—ã¾ã†ã®ã§ã€
+	/// æ•µè¦–ç‚¹ã®æ™‚ã®ã¿ã®æç”»ã«ã™ã‚‹
+	if (model && useCam)
+		renderer->Render(rc, world, model.get(), ShaderId::Custom);
 
-    // ƒeƒNƒXƒ`ƒƒ‚ÌƒNƒŠƒA
-    textures->Clear(rc);
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚¯ãƒªã‚¢
+	textures->Clear(rc);
 #else
-    DirectX::XMMATRIX T_T = DirectX::XMLoadFloat4x4(&t_transform);
-    DirectX::XMMATRIX PT = DirectX::XMLoadFloat4x4(&world);
-    T_T = DirectX::XMMatrixMultiply(T_T, PT);
-    DirectX::XMStoreFloat4x4(&t_transform, T_T);
+	DirectX::XMMATRIX T_T = DirectX::XMLoadFloat4x4(&t_transform);
+	DirectX::XMMATRIX PT = DirectX::XMLoadFloat4x4(&world);
+	T_T = DirectX::XMMatrixMultiply(T_T, PT);
+	DirectX::XMStoreFloat4x4(&t_transform, T_T);
 
-    if (model)
-        renderer->Render(rc, t_transform, model.get(), ShaderId::Lambert);
+	if (model)
+		renderer->Render(rc, t_transform, model.get(), ShaderId::Lambert);
 #endif
 }
 
-// ƒfƒoƒbƒO•`‰æˆ—
+// ãƒ‡ãƒãƒƒã‚°æç”»å‡¦ç†
 void Player::DrawDebug()
 {
-    if (ImGui::Begin("Player", nullptr))
-    {
-        ImGui::InputFloat3("saveDirection", &saveDirection.x);
-        ImGui::InputFloat3("position", &position.x);
+	if (ImGui::Begin("Player", nullptr))
+	{
+		ImGui::InputFloat3("saveDirection", &saveDirection.x);
+		ImGui::InputFloat3("position", &position.x);
 
-        DirectX::XMFLOAT3 playerAngle = { angle.x / 0.01745f, angle.y / 0.01745f, angle.z / 0.01745f };
-        ImGui::InputFloat3("angle", &playerAngle.x);
-        DirectX::XMFLOAT3 camDir = Camera::Instance().GetFront();
-        ImGui::InputFloat3("camDir", &camDir.x);
+		DirectX::XMFLOAT3 playerAngle = { angle.x / 0.01745f, angle.y / 0.01745f, angle.z / 0.01745f };
+		ImGui::InputFloat3("angle", &playerAngle.x);
+		DirectX::XMFLOAT3 camDir = Camera::Instance().GetFront();
+		ImGui::InputFloat3("camDir", &camDir.x);
 
-        char text[256];
-        sprintf_s(text, "HijackTimer %f", enableHijackTime);
-        ImGui::Text(text);
+		char text[256];
+		sprintf_s(text, "HijackTimer %f", enableHijackTime);
+		ImGui::Text(text);
 
-        ImGui::Checkbox("isHit", &isHit);
-    }
-    ImGui::End();
+		ImGui::Checkbox("isHit", &isHit);
+	}
+	ImGui::End();
 }
 
-// ˆÚ“®ˆ—
+// ç§»å‹•å‡¦ç†
 void Player::Move(float dt)
 {
-    if (!hit && isHit) ///< ‚â‚è‚©‚½‚Í‰˜‚¢‚¯‚ÇAˆê“xƒqƒbƒg‚µ‚½‚ç‚»‚êˆÈ~‚Íƒqƒbƒg”»’è‚É‚·‚é‚½‚ß‚É‘‚­ hit ‚ÍPlayerƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Ìã‚ÅƒOƒ[ƒoƒ‹‚Æ‚µ‚Ä‚¨‚¢‚Ä‚é
-    {
-        accel = 0;
-        hit = isHit;
-    }
+	if (!hit && isHit) ///< ã‚„ã‚Šã‹ãŸã¯æ±šã„ã‘ã©ã€ä¸€åº¦ãƒ’ãƒƒãƒˆã—ãŸã‚‰ãã‚Œä»¥é™ã¯ãƒ’ãƒƒãƒˆåˆ¤å®šã«ã™ã‚‹ãŸã‚ã«æ›¸ã hit ã¯Playerã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã®ä¸Šã§ã‚°ãƒ­ãƒ¼ãƒãƒ«ã¨ã—ã¦ãŠã„ã¦ã‚‹
+	{
+		accel = 0;
+		hit = isHit;
+	}
 
-    /// “G‚ÆÚG‚µ‚½ê‡‚Í‚¾‚ñ‚¾‚ñ‘¬“x‚ğ—‚Æ‚µ‚Ä‰‰o‚É“ü‚é
-    if (hit)
-    {
-        if (speed > 0)
-            accel -= deceleration * dt;
-        else
-            isEvent = true;
-    }
-    else
-    {
-        /// ‰Á‘¬ˆ—
-        accel += acceleration * dt;
-    }
+	/// æ•µã¨æ¥è§¦ã—ãŸå ´åˆã¯ã ã‚“ã ã‚“é€Ÿåº¦ã‚’è½ã¨ã—ã¦æ¼”å‡ºã«å…¥ã‚‹
+	if (hit)
+	{
+		if (speed > 0)
+			accel -= deceleration * dt;
+		else
+			isEvent = true;
+	}
+	else
+	{
+		/// åŠ é€Ÿå‡¦ç†
+		accel += acceleration * dt;
+	}
 
-    Camera& cam = Camera::Instance();
+	Camera& cam = Camera::Instance();
 
-    DirectX::XMFLOAT3 forward;
-    // ƒJƒƒ‰‚ªØ‚è‘Ö‚í‚Á‚Ä‚¢‚È‚¢‚Æ‚«‚¾‚¯ƒJƒƒ‰‚Ì•ûŒü‚ğæ‚é
-    if (!useCam)
-    {
-        forward = cam.GetFront();
-    }
-    else
-        forward = saveDirection;
+	DirectX::XMFLOAT3 forward;
+	// ã‚«ãƒ¡ãƒ©ãŒåˆ‡ã‚Šæ›¿ã‚ã£ã¦ã„ãªã„ã¨ãã ã‘ã‚«ãƒ¡ãƒ©ã®æ–¹å‘ã‚’å–ã‚‹
+	if (!useCam)
+	{
+		forward = cam.GetFront();
+	}
+	else
+		forward = saveDirection;
 
-    // ƒJƒƒ‰‚Ì•ûŒü‚ğXZ–Ê‚ÉŒÅ’è
-    forward.y = 0;
-    float len = sqrtf(forward.x * forward.x + forward.z * forward.z);
-    if (len > 0.0f)
-    {
-        forward.x /= len;
-        forward.z /= len;
-    }
-    saveDirection = forward;
+	// ã‚«ãƒ¡ãƒ©ã®æ–¹å‘ã‚’XZé¢ã«å›ºå®š
+	forward.y = 0;
+	float len = sqrtf(forward.x * forward.x + forward.z * forward.z);
+	if (len > 0.0f)
+	{
+		forward.x /= len;
+		forward.z /= len;
+	}
+	saveDirection = forward;
 
 #if 0
     speed += accel * dt;
 #else
-    if (Input::Instance().GetMouse().GetButton() & Mouse::BTN_RIGHT)
-        speed = 3;
-    else
-        speed = 0;
+	if (Input::Instance().GetMouse().GetButton() & Mouse::BTN_RIGHT)
+		speed = 3;
+	else
+		speed = 0;
 #endif
-    speed = DirectX::XMMin(speed, maxSpeed);
-    speed = DirectX::XMMax(speed, 0.0f);
-    position.x += speed * forward.x * dt;
-    position.z += speed * forward.z * dt;
+	speed = DirectX::XMMin(speed, maxSpeed);
+	speed = DirectX::XMMax(speed, 0.0f);
+	position.x += speed * forward.x * dt;
+	position.z += speed * forward.z * dt;
 
-    // Šp“x‚ğ‹‚ß‚é
-    {
-        DirectX::XMFLOAT3 front = { 0,0,1 };
-        DirectX::XMVECTOR Front, PlayerDir;
-        Front = DirectX::XMLoadFloat3(&front);
-        PlayerDir = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&forward));
+	// è§’åº¦ã‚’æ±‚ã‚ã‚‹
+	{
+		DirectX::XMFLOAT3 front = { 0,0,1 };
+		DirectX::XMVECTOR Front, PlayerDir;
+		Front = DirectX::XMLoadFloat3(&front);
+		PlayerDir = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&forward));
 
-        DirectX::XMVECTOR Dot, Cross;
-        DirectX::XMFLOAT3 crossVector;
-        float dot;
-        Dot = DirectX::XMVector3Dot(Front, PlayerDir);
-        Cross = DirectX::XMVector3Cross(Front, PlayerDir);
-        DirectX::XMStoreFloat(&dot, Dot);
-        DirectX::XMStoreFloat3(&crossVector, Cross);
+		DirectX::XMVECTOR Dot, Cross;
+		DirectX::XMFLOAT3 crossVector;
+		float dot;
+		Dot = DirectX::XMVector3Dot(Front, PlayerDir);
+		Cross = DirectX::XMVector3Cross(Front, PlayerDir);
+		DirectX::XMStoreFloat(&dot, Dot);
+		DirectX::XMStoreFloat3(&crossVector, Cross);
 
-        float radian = acosf(dot);
+		float radian = acosf(dot);
 
-        if (crossVector.y < 0)
-            radian *= -1;
+		if (crossVector.y < 0)
+			radian *= -1;
 
-        angle.y = radian;
-    }
+		angle.y = radian;
+	}
 }
 
-// ƒJƒƒ‰Ø‚è‘Ö‚¦ˆ—AÀÛ‚ÌƒJƒƒ‰Ø‚è‘Ö‚¦‚ÍŠO•”‚Å‚·‚é
+// ã‚«ãƒ¡ãƒ©åˆ‡ã‚Šæ›¿ãˆå‡¦ç†ã€å®Ÿéš›ã®ã‚«ãƒ¡ãƒ©åˆ‡ã‚Šæ›¿ãˆã¯å¤–éƒ¨ã§ã™ã‚‹
 void Player::ChangeCamera()
 {
-    if (isHit)return;
+	if (isHit)return;
 
-    Mouse& mouse = Input::Instance().GetMouse();
+	Mouse& mouse = Input::Instance().GetMouse();
 
-    if (isChange)isChange = false; // ˆê‰ñ‚¾‚¯’Ê‚µ‚½‚¢
-    if (isHijack)isHijack = false;
+	if (isChange)isChange = false; // ä¸€å›ã ã‘é€šã—ãŸã„
+	if (isHijack)isHijack = false;
 
-    // ƒJƒƒ‰Ø‚è‘Ö‚¦
-    if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
-    {
-        if (useCam)
-            isChange = true; // “G¨ƒvƒŒƒCƒ„[
-        else
-            isHijack = true; // ƒvƒŒƒCƒ„[‚ªƒJƒƒ‰‚ğ‚Á‚ÄƒnƒCƒWƒƒƒbƒN‚µ‚½‚©
+	// ã‚«ãƒ¡ãƒ©åˆ‡ã‚Šæ›¿ãˆ
+	if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
+	{
+		if (useCam)
+			isChange = true; // æ•µâ†’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
+		else
+			isHijack = true; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒã‚«ãƒ¡ãƒ©ã‚’æŒã£ã¦ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã—ãŸã‹
 
-        useCam = !useCam;
-    }
+		useCam = !useCam;
+	}
 
-    // ƒQ[ƒW‚ª‚È‚­‚È‚é‚Æ‹­§“I‚É–ß‚·
-    if (enableHijackTime <= 0 && useCam)
-    {
-        useCam = false;
-        isChange = true;
-    }
+	// ã‚²ãƒ¼ã‚¸ãŒãªããªã‚‹ã¨å¼·åˆ¶çš„ã«æˆ»ã™
+	if (enableHijackTime <= 0 && useCam)
+	{
+		useCam = false;
+		isChange = true;
+	}
 }
 
-// ƒnƒCƒWƒƒƒbƒNƒQ[ƒW‚ÌXVˆ—
+// ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã‚²ãƒ¼ã‚¸ã®æ›´æ–°å‡¦ç†
 void Player::UpdateHijack(float dt)
 {
-    /// “G‚ÆÚG‚µ‚½ê‡‚ÍƒvƒŒƒCƒ„[‹“_‚É–ß‚·
-    if (isHit)useCam = false;
+	/// æ•µã¨æ¥è§¦ã—ãŸå ´åˆã¯ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è¦–ç‚¹ã«æˆ»ã™
+	if (isHit)useCam = false;
 
-    enableHijack = true;
-    if (enableHijackTime < 8.0f && !useCam)
-        enableHijack = false;
+	enableHijack = true;
+	if (enableHijackTime < 8.0f && !useCam)
+		enableHijack = false;
 
-    // ‹ŠE•ÏX‚Éˆê’è”‚ÌƒQ[ƒW‚ÌŒ¸‚è
-    if (isHijack)
-    {
-        // ˆê’è”‚ÌƒQ[ƒWÁ”ï
-        enableHijackTime -= hijackCost;
-    }
+	// è¦–ç•Œå¤‰æ›´ã«ä¸€å®šæ•°ã®ã‚²ãƒ¼ã‚¸ã®æ¸›ã‚Š
+	if (isHijack)
+	{
+		// ä¸€å®šæ•°ã®ã‚²ãƒ¼ã‚¸æ¶ˆè²»
+		enableHijackTime -= hijackCost;
+	}
 
-    // ƒJƒƒ‰‚ğƒnƒCƒWƒƒƒbƒN‚µ‚Ä‚¢‚éê‡
-    if (useCam)
-    {
-        // ƒQ[ƒW‚ÌÁ”ï
-        //enableHijackTime -= hijackCostPerSec * dt;
-    }
-    // ‹ŠE‚ªƒvƒŒƒCƒ„[‚Ìê‡
-    else
-    {
-        // ƒnƒCƒWƒƒƒbƒN‚Å‚«‚éŠÔ‚ªƒnƒCƒWƒƒƒbƒN‚Å‚«‚éÅ‘åŠÔ‚æ‚è¬‚³‚¢ê‡
-        if (maxHijackTime > enableHijackTime)
-        {
-            // ƒQ[ƒW‚Ì‰ñ•œ
-            enableHijackTime += hijackRecoveryPerSec * dt;
+	// ã‚«ãƒ¡ãƒ©ã‚’ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã—ã¦ã„ã‚‹å ´åˆ
+	if (useCam)
+	{
+		// ã‚²ãƒ¼ã‚¸ã®æ¶ˆè²»
+		//enableHijackTime -= hijackCostPerSec * dt;
+	}
+	// è¦–ç•ŒãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å ´åˆ
+	else
+	{
+		// ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã§ãã‚‹æ™‚é–“ãŒãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã§ãã‚‹æœ€å¤§æ™‚é–“ã‚ˆã‚Šå°ã•ã„å ´åˆ
+		if (maxHijackTime > enableHijackTime)
+		{
+			// ã‚²ãƒ¼ã‚¸ã®å›å¾©
+			enableHijackTime += hijackRecoveryPerSec * dt;
 
-            // ƒQ[ƒW‚Ì§ŒÀ
-            if (enableHijackTime > maxHijackTime)
-                enableHijackTime = maxHijackTime;
-        }
-    }
+			// ã‚²ãƒ¼ã‚¸ã®åˆ¶é™
+			if (enableHijackTime > maxHijackTime)
+				enableHijackTime = maxHijackTime;
+		}
+	}
 }
 
-// ƒAƒjƒ[ƒVƒ‡ƒ“XVˆ—
+// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ›´æ–°å‡¦ç†
 void Player::UpdateAnimation(float dt)
 {
-    if (!model->GetResource()->GetAnimations().empty())
-        animationController.UpdateAnimation(dt);
+	if (!model->GetResource()->GetAnimations().empty())
+		animationController.UpdateAnimation(dt);
 }
 
 void Player::DeathState(float dt)
 {
-    time += dt; ///< ‰‰o—p‚Ég‚¤ƒ^ƒCƒ}[
+    time += dt; ///< æ¼”å‡ºç”¨ã«ä½¿ã†ã‚¿ã‚¤ãƒãƒ¼
+  
+	DirectX::XMFLOAT3 enemyPos = {};
+	if (enemyRef)
+		enemyPos = enemyRef->GetPosition();
 
-    DirectX::XMFLOAT3 enemyPos = enemyRef->GetPosition();
-    DirectX::XMVECTOR EnemyPos, PlayerPos, PlayerToEnemyDir;
+	DirectX::XMVECTOR EnemyPos, PlayerPos, PlayerToEnemyDir;
 
-    EnemyPos = DirectX::XMLoadFloat3(&enemyPos);
-    PlayerPos = DirectX::XMLoadFloat3(&position);
-    PlayerToEnemyDir = DirectX::XMVectorSubtract(EnemyPos, PlayerPos);
-    PlayerToEnemyDir = DirectX::XMVector3Normalize(PlayerToEnemyDir);
+	EnemyPos = DirectX::XMLoadFloat3(&enemyPos);
+	PlayerPos = DirectX::XMLoadFloat3(&position);
+	PlayerToEnemyDir = DirectX::XMVectorSubtract(EnemyPos, PlayerPos);
+	PlayerToEnemyDir = DirectX::XMVector3Normalize(PlayerToEnemyDir);
 
-    float x, y, z;
-    DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&world);
-    DirectX::XMVECTOR Forward = M.r[2];
+	float x, y, z;
+	DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&world);
+	DirectX::XMVECTOR Forward = M.r[2];
 
-    x = DirectX::XMVectorGetX(Forward);
-    z = DirectX::XMVectorGetZ(Forward);
+	x = DirectX::XMVectorGetX(Forward);
+	z = DirectX::XMVectorGetZ(Forward);
 
-    y = DirectX::XMVectorGetY(Forward);
+	y = DirectX::XMVectorGetY(Forward);
 
-    pitch = asinf(y);             // ã‰º‚ÌŒü‚«
-    yaw = atan2f(x, z);           // ¶‰E‚ÌŒü‚«
+	pitch = asinf(y);             // ä¸Šä¸‹ã®å‘ã
+	yaw = atan2f(x, z);           // å·¦å³ã®å‘ã
 
-    // Šp“x‚ğ‹‚ß‚é
-    {
-        //DirectX::XMFLOAT3 front = { 0,0,1 };
-        DirectX::XMVECTOR Front, PlayerDir;
-        //Front = DirectX::XMLoadFloat3(&front);
-        //PlayerDir = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&forward));
-
+  // è§’åº¦ã‚’æ±‚ã‚ã‚‹
+  {
         DirectX::XMVECTOR Dot, Cross;
         DirectX::XMFLOAT3 crossVector;
         float dot;
@@ -333,8 +331,6 @@ void Player::DeathState(float dt)
         Cross = DirectX::XMVector3Cross(Forward, PlayerToEnemyDir);
         DirectX::XMStoreFloat(&dot, Dot);
         DirectX::XMStoreFloat3(&crossVector, Cross);
-
-        float radian = acosf(dot);
 
         //if (crossVector.y < 0)
         //    radian *= -1;

@@ -11,11 +11,13 @@
 #include "./Aircon/AirconManager.h"
 #include "./Object/ObjectManager.h"
 #include "System/CollisionEditor.h"
+#include "GameObjects/battery/batteryManager.h"
 
 #include <imgui.h>
 
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
+float reminingTime = 300.0f;
 
 // 初期化
 void SceneGame::Initialize()
@@ -76,8 +78,12 @@ void SceneGame::Initialize()
 	//Audio3DSystem::Instance().UpdateEmitters(elapsed);
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
-
+  
+  /// 当たり判定エディターの初期化
 	CollisionEditor::Instance().Initialize();;
+
+	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
+	batteryManager::Instance().SetPlayer_and_enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
 }
 
 // 終了化
@@ -96,7 +102,11 @@ void SceneGame::Finalize()
 		minimap = nullptr;
 	}
 	Audio3DSystem::Instance().StopByTag("atmosphere_noise"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("electrical_noise"); // 音声停止
+
 	Audio3DSystem::Instance().StopByTag("aircon"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("enemy_run");
+	Audio3DSystem::Instance().StopByTag("enemy_walk");
 }
 
 // 更新処理
@@ -139,6 +149,10 @@ void SceneGame::Update(float elapsedTime)
 			transTimer = 0.0f;
 			selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
 			reminingTime = 0.0f;
+			RankSystem::Instance().SetRank(
+				batteryManager::Instance().getPlayerHasBattery(),
+				batteryManager::Instance().getMAXBattery(),
+				3); // タイムアップでSランク
 		}
 	}
 	else
@@ -170,6 +184,7 @@ void SceneGame::Update(float elapsedTime)
 	player->Update(elapsedTime);
 	enemy->Update(elapsedTime);
 	minimap->Update(player->GetPosition());
+	batteryManager::Instance().Update(elapsedTime);
 
 	//// 一人称用カメラ
 	//if (typeid(*i_CameraController) == typeid(FPCameraController))
@@ -200,7 +215,7 @@ void SceneGame::Update(float elapsedTime)
 
 	UpdateCamera(elapsedTime);
 
-	Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
+	//Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
 
 	Collision();
 
@@ -208,8 +223,8 @@ void SceneGame::Update(float elapsedTime)
 
 	LightManager::Instance().Update();
 	ObjectManager::Instance().Update(elapsedTime);
-	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
 
@@ -290,6 +305,8 @@ void SceneGame::Render()
 		AirconManager::Instance().Render(rc);
 
 		ObjectManager::Instance().Render(rc, modelRenderer);
+
+		batteryManager::Instance().Render(rc, modelRenderer);
 	}
 
 	// 3Dデバッグ描画
@@ -506,6 +523,7 @@ void SceneGame::DrawGUI()
 
 		ImGui::TreePop();
 	}
+	stage->DrawGUI();
 	Graphics::Instance().DebugGUI();
 	LightManager::Instance().DebugGUI();
 	AirconManager::Instance().DebugGUI();
@@ -643,9 +661,15 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// プレイヤー視点
 		if (!useCamera)
 		{
-			cameraPos = player->GetPosition();
+
+    	cameraPos = player->GetPosition();
 			cameraPos.y = player->GetViewPoint();
 			if(player->GetIsEvent())
+			{
+				cameraPos = player->GetPosition();
+				cameraPos.y = player->GetViewPoint();
+			}
+			else
 			{
 				i_CameraController->SetIsEvent(player->GetIsEvent());
 				i_CameraController->SetPitch(player->GetPitch());

@@ -80,6 +80,7 @@ private:
 	std::vector<std::unique_ptr<Sprite>> uiSprits;
 	std::vector<std::unique_ptr<UI>> ui;
 	UIManager um;
+	bool isVolumeSliderActive = false;
 
 	/// シェーダ関連
 	// ==============================

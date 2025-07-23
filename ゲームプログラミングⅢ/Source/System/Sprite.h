@@ -26,9 +26,10 @@ public:
 		int Flag;
 		float radius;
 		float paramatar;
-		float sisex;
-		float sisey;
-		float dummy[3];
+		float d;
+
+		DirectX::XMFLOAT2 screen_size;
+		DirectX::XMFLOAT2 dummy;
 	};
 
 	struct Noise
