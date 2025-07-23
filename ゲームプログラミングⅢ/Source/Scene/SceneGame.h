@@ -62,6 +62,7 @@ private:
 	bool tutorial_Flug = false;
 	int tutorial_Step = 0;
 	float tutorialTimer = 0.0f;
+	int tutorial_Click_Count = 0;
 	float button_effect;
 	float timer = 0.0f; // タイマー
 	float transTimer = 0.0f; // シーン遷移タイマー
