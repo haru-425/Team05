@@ -29,8 +29,8 @@ Stage::Stage()
 	// プレイヤー専用通路のモデル
 	{
 		// すり替え用モデルデータの読み込み
-		gateModelData[0]= std::make_unique<Model>("Data/Model/Stage/Map/Door/door_green.mdl");
-		gateModelData[1]= std::make_unique<Model>("Data/Model/Stage/Map/Door/door_red.mdl");
+		gateModelData[0]= std::make_shared<Model>("Data/Model/Stage/Map/Door/door_green.mdl");
+		gateModelData[1]= std::make_shared<Model>("Data/Model/Stage/Map/Door/door_red.mdl");
 
 		// データの初期化
 		gateElements[0].position = { -7.5f,0,12.0f };

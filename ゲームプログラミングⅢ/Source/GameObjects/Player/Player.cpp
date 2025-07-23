@@ -334,7 +334,7 @@ void Player::DeathState(float dt)
 
         //if (crossVector.y < 0)
         //    radian *= -1;
-
+		float radian = acosf(dot);
     
         if (crossVector.y < 0)
         {
