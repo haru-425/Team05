@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "System/Input.h"
 #include "Camera/Camera.h"
+#include "System/Audio.h"
 #include "imgui.h"
 #include <algorithm>
 #include "Math/Easing.h"
@@ -43,16 +44,28 @@ Player::Player()
 		animationController.SetAnimationSecondScale(1.0f);
 	}
 
-	// マテリアルテクスチャ読み込み
+
+    /// テクスチャの読み込み
 	textures = std::make_unique<LoadTextures>();
 	textures->LoadNormal("Data/Model/Player/Texture/player_mtl_Normal_DirectX.png");
 	textures->LoadMetalness("Data/Model/Player/Texture/player_mtl_Metallic.png");
 	textures->LoadEmisive("Data/Model/Player/Texture/player_mtl_Emissive.png");
 	textures->LoadOcclusion("Data/Model/Player/Texture/player_mtl_Opacity.png");
+
+    // SEの読み込み
+    changeCameraSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera.wav");
+    changeCameraInSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
+    changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
 }
 
 Player::~Player()
 {
+    //ミニマップ終了化
+    if (changeCameraSE != nullptr)
+    {
+        delete changeCameraSE;
+        changeCameraSE = nullptr;
+    }
 }
 
 void Player::Update(float dt)
@@ -60,8 +73,13 @@ void Player::Update(float dt)
 	// ハイジャック関連の更新処理
 	UpdateHijack(dt);
 
+    // カメラ切り替え処理
+    if (changeCameraInSE->IsPlaying())
+        changeCameraInSE->SetVolume(0.5f);
+
 	// カメラ切り替え処理（無効化中）
 	//ChangeCamera();
+
 
 	// プレイヤー移動処理
 	Move(dt);
@@ -225,8 +243,10 @@ void Player::ChangeCamera()
 	{
 		if (useCam)
 			isChange = true; // 元に戻す
-		else
+		else {
 			isHijack = true; // 新たにハイジャック開始
+			changeCameraInSE->Play(false);
+		}
 
 		useCam = !useCam;
 	}
@@ -259,9 +279,13 @@ void Player::UpdateHijack(float dt)
 	if (useCam)
 	{
 		enableHijackTime -= hijackCostPerSec * dt;
+		changeCameraKeepSE->Play(true);
 	}
 	else // 非ハイジャック時のゲージ回復
 	{
+		if (changeCameraKeepSE->IsPlaying()) {
+			changeCameraKeepSE->Stop();
+		}
 		if (maxHijackTime > enableHijackTime)
 		{
 			enableHijackTime += hijackRecoveryPerSec * dt;

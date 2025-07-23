@@ -29,7 +29,7 @@ Framework::Framework(HWND hWnd)
 	SettingsManager::Instance().Load();
 
 	// オーディオ初期化
-	Audio::Instance().Instance();
+	Audio::Instance().Initialize();
 
 	hDC = GetDC(hWnd);
 

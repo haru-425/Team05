@@ -3,6 +3,7 @@
 #include"System/Sprite.h"
 #include"Life.h"
 #include "RankSystem/Ranksystem.h"
+#include "System/AudioSource.h"
 class Game_Clear :public Scene
 {
 public:
@@ -36,4 +37,7 @@ private:
 	bool sceneTrans = false;
 	Scene* nextScene = nullptr; ///< 1•bŒã‚É‘JˆÚ‚·‚éƒV[ƒ“
 	float angle;
+
+	// ‰¹‹¿ŠÖ˜A•Ï”
+	AudioSource* selectSE = nullptr;
 };
