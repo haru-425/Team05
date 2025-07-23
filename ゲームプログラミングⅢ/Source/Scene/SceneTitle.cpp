@@ -181,37 +181,37 @@ void SceneTitle::Update(float elapsedTime)
 
 			reminingTime = 300.f;
 		}
-		else if (fKey)
-		{
-			nextScene = new fujimoto;
-			sceneTrans = true;
+		//else if (fKey)
+		//{
+		//	nextScene = new fujimoto;
+		//	sceneTrans = true;
 
-			reminingTime = 300.f;
-			TitleSignalTimer = 0.0f;
-		}
-		else if (mKey)
-		{
-			nextScene = new SceneMattsu;
-			sceneTrans = true;
-			TitleSignalTimer = 0.0f;
+		//	reminingTime = 300.f;
+		//	TitleSignalTimer = 0.0f;
+		//}
+		//else if (mKey)
+		//{
+		//	nextScene = new SceneMattsu;
+		//	sceneTrans = true;
+		//	TitleSignalTimer = 0.0f;
 
-			reminingTime = 300.f;
-		}
-		else if (gKey)
-		{
-			nextScene = new SceneGraphics;
-			sceneTrans = true;
-			TitleSignalTimer = 0.0f;
+		//	reminingTime = 300.f;
+		//}
+		//else if (gKey)
+		//{
+		//	nextScene = new SceneGraphics;
+		//	sceneTrans = true;
+		//	TitleSignalTimer = 0.0f;
 
-			reminingTime = 300.f;
-		}
-		else if (pKey) {
-			nextScene = new SceneGame;
-			sceneTrans = true;
-			TitleSignalTimer = 0.0f;
+		//	reminingTime = 300.f;
+		//}
+		//else if (pKey) {
+		//	nextScene = new SceneGame;
+		//	sceneTrans = true;
+		//	TitleSignalTimer = 0.0f;
 
-			reminingTime = 300.f;
-		}
+		//	reminingTime = 300.f;
+		//}
 	}
 	else
 	{
@@ -240,6 +240,8 @@ void SceneTitle::Update(float elapsedTime)
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
+
+	selectSE->SetVolume(0.5f);
 }
 
 

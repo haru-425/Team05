@@ -153,20 +153,27 @@ void SceneGame::Update(float elapsedTime)
 	// フラグがまだ立っていない場合に入力検出
 	if (!sceneTrans)
 	{
-		if (zKey)
+		if (GetAsyncKeyState(VK_ESCAPE))
 		{
-			nextScene = new Game_Over(--life_number);
-			sceneTrans = true;
-			transTimer = 0.0f;
-			selectTrans = SelectTrans::GameOver; // ゲームオーバーシーンに遷移
+			/// シーンマネージャーに終了することを伝えて、
+			/// Run 関数内で抜けるようにする
+			/// exit関数はメモリリークが大量発生する可能性があるのでこの方法にする
+			SceneManager::instance().SetIsExit(true);
 		}
-		if (rKey)
-		{
-			nextScene = new Game_Clear;
-			sceneTrans = true;
-			transTimer = 0.0f;
-			selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
-		}
+		//if (zKey)
+		//{
+		//	nextScene = new Game_Over(--life_number);
+		//	sceneTrans = true;
+		//	transTimer = 0.0f;
+		//	selectTrans = SelectTrans::GameOver; // ゲームオーバーシーンに遷移
+		//}
+		//if (rKey)
+		//{
+		//	nextScene = new Game_Clear;
+		//	sceneTrans = true;
+		//	transTimer = 0.0f;
+		//	selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
+		//}
 		if (reminingTime <= 0.0f)
 		{
 			nextScene = new Game_Clear;
@@ -342,7 +349,7 @@ void SceneGame::Render()
 
 	// 3Dデバッグ描画
 	{
-		player->RenderDebug(rc, shapeRenderer, { 1,2,1 }, { 1,1,1,1 }, DEBUG_MODE::BOX | DEBUG_MODE::CAPSULE);
+		//player->RenderDebug(rc, shapeRenderer, { 1,2,1 }, { 1,1,1,1 }, DEBUG_MODE::BOX | DEBUG_MODE::CAPSULE);
 
 	}
 
@@ -623,7 +630,7 @@ void SceneGame::Render()
 
 	}
 #endif
-	CollisionEditor::Instance().Render(rc, shapeRenderer);
+	//CollisionEditor::Instance().Render(rc, shapeRenderer);
 }
 
 // GUI描画

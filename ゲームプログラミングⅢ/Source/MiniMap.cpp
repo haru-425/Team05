@@ -90,7 +90,7 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 			DirectX::XMConvertToDegrees(angle),
 			0, 0, 1, 1);
 
-		ring->Render(rc, 500, 500, 0, 632, 632, 0, 0, 632, 632, 0, 1, 1, 1, 1);
+		//ring->Render(rc, 500, 500, 0, 632, 632, 0, 0, 632, 632, 0, 1, 1, 1, 1);
 		//metar->Render(rc, 500, 500, 0, 448, 447, 0, 1, 1, 1, 1);
 	}
 

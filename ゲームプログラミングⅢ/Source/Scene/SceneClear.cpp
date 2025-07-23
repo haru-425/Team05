@@ -71,6 +71,8 @@ void Game_Clear::Update(float elapsedTime)
 {
 	Mouse& mouse = Input::Instance().GetMouse();
 
+	selectSE->SetVolume(0.5f);
+
 	if(mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
 		GameCleartime = 120.0f;
