@@ -4,10 +4,22 @@
 #include "System/RenderContext.h"
 #include "System/ShapeRenderer.h"
 
+static enum class CollisionType
+{
+    AABB,
+    Sphere
+};
+
 static struct AABB
 {
     DirectX::XMFLOAT3 position;
     DirectX::XMFLOAT3 size;
+};
+
+static struct Sphere
+{
+    DirectX::XMFLOAT3 centerPos;
+    float radius;
 };
 
 /**
@@ -19,6 +31,11 @@ class CollisionDataLoader
 public:
     CollisionDataLoader();
     ~CollisionDataLoader();
+
+    void Save(std::vector<AABB>& aabb);
+
+    template<typename T>
+    void Load(std::vector<T>& array);
 };
 
 /**
@@ -38,18 +55,20 @@ public:
         return instance;
     }
 
-    void Update(float dt);
+    void Initialize();
 
-    void Render(const RenderContext& rc, ShapeRenderer* renderer);
+    bool Collision(const DirectX::XMFLOAT3& targetPosition, float range, DirectX::XMFLOAT3& outPos); ///< 更新処理
 
-    void AddCollision();
+    void Render(const RenderContext& rc, ShapeRenderer* renderer); ///< 当たり判定の可視化用
 
-    void DrawDebug();
-
-private:
+    void DrawDebug(); ///< デバッグ用
 
 private:
-    CollisionDataLoader loader;
-    std::vector<AABB> volumes;
-    bool isVisible = true;
+    void AddCollision(CollisionType type); ///< 当たり判定追加
+
+private:
+    CollisionDataLoader loader; ///< 当たり判定情報の取得用
+    std::vector<AABB> volumes;  ///< AABBの集合体
+    bool isVisible = true;      ///< デバッグの可視化
+    CollisionType colType = CollisionType::AABB;
 };

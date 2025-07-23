@@ -85,6 +85,8 @@ private:
 
     float pitch;
     float yaw;
+    float angleX; ///< 死亡演出用   
+    float angleY; ///< 死亡演出用   
 
     AnimationController animationController; // アニメーション
     AnimationState state = AnimationState::MOVE;

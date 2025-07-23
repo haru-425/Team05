@@ -274,7 +274,7 @@ void Enemy::Update(float elapsedTime)
 	case State::Attack:
 		if (animationcontroller.GetEndAnimation())
 		{
-			SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
+			//SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
 		}
 		break;
 	}
