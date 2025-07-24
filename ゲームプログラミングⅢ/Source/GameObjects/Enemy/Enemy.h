@@ -100,6 +100,8 @@ public:
     /// 現在向かっている経路ポイントのインデックス（デバッグ用）
     int GetindexWayPoint() const { return static_cast<int>(currentTargetIndex); }
 
+    bool GetIsDead() const { return isDead; }
+
 private:
     /**
      * @brief 経路の再構成を行う（補正用）
@@ -163,4 +165,6 @@ private:
     Direction olddirection = direction;
 
     DirectX::XMFLOAT2 cameraShakeScale = { 0.01f, 0.01f };
+
+    bool isDead = false;
 };

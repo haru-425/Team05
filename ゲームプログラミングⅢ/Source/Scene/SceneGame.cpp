@@ -198,6 +198,12 @@ void SceneGame::Update(float elapsedTime)
 		//	transTimer = 0.0f;
 		//	selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
 		//}
+		if (enemy->GetIsDead())
+		{
+			nextScene = new Game_Over(life_number);
+			sceneTrans = true;
+			transTimer = 0.0f;
+		}
 		if (reminingTime <= 0.0f)
 		{
 			nextScene = new Game_Clear;
@@ -777,7 +783,7 @@ void SceneGame::PlayerVsEnemy()
 	DirectX::XMFLOAT3 outPos = {};
 	if (Collision::IntersectSphereVsSphere(pPos, pRadius, ePos, eRadius, outPos))
 	{
-		//player->SetIsHit(true);
+		player->SetIsHit(true);
 		enemy->SetIsHit(true);
 	}
 	else
