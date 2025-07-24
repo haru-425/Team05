@@ -135,13 +135,23 @@ bool Collision::RayCast(
 	const ModelResource* resource = model->GetResource();
 	for (const ModelResource::Mesh& mesh : resource->GetMeshes())
 	{
-		// メッシュのワールド行列を求める
-		const Model::Node& node = model->GetNodes().at(mesh.nodeIndex);
-		DirectX::XMMATRIX GlobalTransform = DirectX::XMLoadFloat4x4(&node.globalTransform);
-		DirectX::XMMATRIX WorldTransform = DirectX::XMMatrixMultiply(GlobalTransform, ParentWorldTransform);
+		//// メッシュのワールド行列を求める
+		//const Model::Node& node = model->GetNodes().at(mesh.nodeIndex);
+		//DirectX::XMMATRIX GlobalTransform = DirectX::XMLoadFloat4x4(&node.globalTransform);
+		//DirectX::XMMATRIX WorldTransform = DirectX::XMMatrixMultiply(GlobalTransform, ParentWorldTransform);
+
+        const Model::Node& node = model->GetNodes().at(mesh.nodeIndex);
+        if (mesh.nodeIndex >= model->GetNodes().size()) continue;
+
+        DirectX::XMMATRIX GlobalTransform = DirectX::XMLoadFloat4x4(&node.globalTransform);
+        DirectX::XMMATRIX WorldTransform = DirectX::XMMatrixMultiply(GlobalTransform, ParentWorldTransform);
+
+        DirectX::XMVECTOR det;
+        DirectX::XMMATRIX InverseWorldTransform = DirectX::XMMatrixInverse(&det, WorldTransform);
+        if (DirectX::XMVectorGetX(det) == 0.0f) continue;
 
 		// レイをメッシュのローカル空間に変換する
-		DirectX::XMMATRIX InverseWorldTransform = DirectX::XMMatrixInverse(nullptr, WorldTransform);
+		//DirectX::XMMATRIX InverseWorldTransform = DirectX::XMMatrixInverse(nullptr, WorldTransform);
 		DirectX::XMVECTOR LocalRayStart = DirectX::XMVector3Transform(WorldRayStart, InverseWorldTransform);
 		DirectX::XMVECTOR LocalRayEnd = DirectX::XMVector3Transform(WorldRayEnd, InverseWorldTransform);
 		DirectX::XMVECTOR LocalRayVec = DirectX::XMVectorSubtract(LocalRayEnd, LocalRayStart);
