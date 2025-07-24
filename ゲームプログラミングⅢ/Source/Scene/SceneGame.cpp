@@ -218,6 +218,7 @@ void SceneGame::Update(float elapsedTime)
 		minimap->Update(player->GetPosition());
 		TutorialUpdate(elapsedTime);
 		metar->update(player->GetenableHijackTime());
+		UpdateCamera(elapsedTime);
 		return;
 	}
 
@@ -972,6 +973,8 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		{
 			tutorial_Click_Count++;
 		}
+		player->ChangeCamera();
+		player->UpdateHijack(elapsedTime);
 		if (tutorial_Click_Count >= 2)//右クリックが二回押されたら
 		{
 			tutorial_Step += 2;

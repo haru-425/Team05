@@ -55,6 +55,7 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 	state = State::Roaming;
 	Animationplay();
 
+	UpdateTransform();
 }
 
 Enemy::~Enemy()

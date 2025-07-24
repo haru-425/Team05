@@ -62,13 +62,13 @@ public:
 
     void DeleteSounds();
 
-private:
-    void Move(float dt);
-
     void ChangeCamera();
 
     void UpdateHijack(float dt);
 
+private:
+
+    void Move(float dt);
     void UpdateAnimation(float dt);
 
     void DeathState(float dt); ///< Ž€–S‰‰o—p
