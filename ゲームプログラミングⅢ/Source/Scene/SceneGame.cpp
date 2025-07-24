@@ -109,6 +109,8 @@ void SceneGame::Initialize()
 			tutorial[10] = std::make_unique<Sprite>("Data/Sprite/dialog/11.png");
 			tutorial[11] = std::make_unique<Sprite>("Data/Sprite/dialog/12.png");
 			tutorial[12] = std::make_unique<Sprite>("Data/Sprite/dialog/next_navi.png");
+			tutorial[13] = std::make_unique<Sprite>("Data/Sprite/dialog/aisle.png");
+
 		}
 	}
 }
@@ -207,6 +209,19 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	timer += elapsedTime;
+
+	/// チュートリアル処理
+	if (tutorial_Flug)
+	{
+		stage->Update(elapsedTime);
+		minimap->Update(player->GetPosition());
+		TutorialUpdate(elapsedTime);
+		metar->update(player->GetenableHijackTime());
+		UpdateCamera(elapsedTime);
+		Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
+		return;
+	}
+
 	reminingTime -= elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
@@ -216,17 +231,6 @@ void SceneGame::Update(float elapsedTime)
 	//	// Zキーが押されているときに実行される
 	//	SceneManager::instance().ChangeScene(new Game_Over);
 	//}
-
-  /// チュートリアル処理
-  if (tutorial_Flug)
-	{
-		stage->Update(elapsedTime);
-		minimap->Update(player->GetPosition());
-		TutorialUpdate(elapsedTime);
-		metar->update(player->GetenableHijackTime());
-		UpdateCamera(elapsedTime);
-		return;
-	}
   
 	stage->Update(elapsedTime);						///< ステージ更新処理
 	player->Update(elapsedTime);					///< プレイヤー更新処理
@@ -355,50 +359,51 @@ void SceneGame::Render()
 			bool next_navi_vision = false;
 			switch (tutorial_Step)
 			{
-			case 16:
+			case 17:
 				next_navi_vision = true;
 				//「(現在を付け足す)現在、敵の活動時間は残り2分。頑張って逃げましょう！」
 				tutorial[11]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 15:
+			case 16:
 				next_navi_vision = true;
 				//「【残り時間】最後に制限時間です。この秒数が...」
 				tutorial[10]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 14:
+			case 15:
 				//残り時間が表示
 				break;
-			case 13:
+			case 14:
 				next_navi_vision = true;
 				//「さてと、後は時間まで逃げるだけですね。」
 				tutorial[9]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 12:
+			case 13:
 				next_navi_vision = true;
 				//「【プレイヤー専用通路】（これだけ扉の画像のある説明用の画像を表示して説明）壁沿いにある、緑色のライトが...」
 				tutorial[8]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				tutorial[13]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 11:
+			case 12:
 				next_navi_vision = true;
 				//「【バッテリー】このように敵は巡回中に、バッテリーを...」
 				tutorial[7]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 10:
+			case 11:
 				next_navi_vision = true;
 				//「これは敵が落としていったバッテリー...」
 				tutorial[6]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 6:
+			case 7:
 				next_navi_vision = true;
 				//「操作方法】マウスで視点を...」
 				tutorial[5]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 5:
+			case 6:
 				next_navi_vision = true;
 				//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
 				tutorial[4]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 4:
+			case 5:
 				next_navi_vision = true;
 				//「少し、ゲージを消費してしまいましたね。」
 				tutorial[3]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
@@ -461,7 +466,7 @@ void SceneGame::Render()
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
 
-		if (!tutorial_Flug || tutorial_Step >= 14)
+		if (!tutorial_Flug || tutorial_Step >= 15)
 		{
 
 			Graphics::Instance().bit_block_transfer->blit(dc,
@@ -542,7 +547,7 @@ void SceneGame::Render()
 		//BreathShake
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->activate(dc);
-		if (!tutorial_Flug || tutorial_Step >= 14)
+		if (!tutorial_Flug || tutorial_Step >= 15)
 		{
 			//タイマー表示あり
 			Graphics::Instance().bit_block_transfer->blit(dc,
@@ -910,17 +915,17 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 
 	switch (tutorial_Step)
 	{
-	case 17:
+	case 18:
 		tutorial_Flug = false;
 		//オートランやらなんやらはここで初期化
 		break;
-	case 16:
+	case 17:
 		//「(現在を付け足す)現在、敵の活動時間は残り2分。頑張って逃げましょう！」
 		break;
-	case 15:
+	case 16:
 		//「【残り時間】最後に制限時間です。この秒数が...」
 		break;
-	case 14:
+	case 15:
 		//残り時間表示
 		tutorialTimer += elapsedTime;
 		if (tutorialTimer >= 2.0f)
@@ -929,21 +934,23 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 			tutorialTimer = 0;
 		}
 		break;
-	case 13:
+	case 14:
 		//「さてと、後は時間まで逃げるだけですね。」
 		break;
-	case 12:
+	case 13:
 		//「【プレイヤー専用通路】（これだけ扉の画像のある説明用の画像を表示して説明）壁沿いにある、緑色のライトが...」
+		batteryManager::Instance().deleteBattery({ -3,0,-23 });
+		batteryManager::Instance().deleteBattery({ 5,0,-23 });
 		break;
-	case 11:
+	case 12:
 		//「【バッテリー】このように敵は巡回中に、バッテリーを...」
 		break;
-	case 10:
+	case 11:
 		//「これは敵が落としていったバッテリー...」
 		break;
-	case 9:
+	case 10:
 		tutorial_Step--;
-	case 8:
+	case 9:
 		batteryManager::Instance().Update(elapsedTime);
 		tutorialTimer += elapsedTime;
 		if (tutorialTimer >= 2.0f)
@@ -952,19 +959,25 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 			tutorialTimer = 0;
 		}
 		break;
-	case 7:
-		batteryManager::Instance().addBattery({ 0,0,0 });//プレイヤーの見える位置にバッテリーを置く
+	case 8:
+		batteryManager::Instance().addBattery({ 1,0,-18 });//プレイヤーの見える位置にバッテリーを置く
+		batteryManager::Instance().addBattery({ -3,0,-23 });//プレイヤーの見える位置にバッテリーを置く
+		batteryManager::Instance().addBattery({ 5,0,-23 });//プレイヤーの見える位置にバッテリーを置く
 		tutorialTimer = 0;
 		tutorial_Step++;
 		break;
-	case 6:
+	case 7:
 		//「【操作方法】マウスで視点を...」
 		break;
-	case 5:
+	case 6:
 		//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
 		break;
-	case 4:
+	case 5:
 		//「少し、ゲージを消費してしまいましたね。」
+		break;
+	case 4:
+		player->ChangeCamera();
+		tutorial_Step++;
 		break;
 	case 3:
 		tutorial_Step--;

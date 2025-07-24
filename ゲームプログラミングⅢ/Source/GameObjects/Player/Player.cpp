@@ -222,7 +222,8 @@ void Player::ChangeCamera()
 
 	Mouse& mouse = Input::Instance().GetMouse();
 
-	if (isChange)isChange = false;
+	if (isChange)
+		isChange = false;
 	if (isHijack)isHijack = false;
 
 	// �E�N���b�N�Ő؂�ւ�
