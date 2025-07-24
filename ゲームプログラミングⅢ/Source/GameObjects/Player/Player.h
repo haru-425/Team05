@@ -16,7 +16,7 @@ static constexpr int hijackCost             = 5;   // ハイジャックコス�
 static constexpr int hijackCostPerSec       = 5;   // 一秒ごとのハイジャックコスト
 static constexpr float maxSpeed             = 3.0f; // プレイヤーの最高速度
 static float acceleration                   = 1.1f; // 加速度
-static constexpr float hijack_risc_time        = 5.0f; // カメラの高さ
+static constexpr float hijack_risc_time     = 5.0f; // ハイジャックしていて、プレイヤーの位置がばれるまでの時間
 
 static enum class AnimationState
 {
