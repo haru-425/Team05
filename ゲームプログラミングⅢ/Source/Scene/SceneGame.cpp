@@ -217,7 +217,7 @@ void SceneGame::Update(float elapsedTime)
 			{
 				nextScene = new Game_Over(life_number);
 				sceneTrans = true;
-				transTimer = 0.0f;
+				transTimer = 1.7f;
 			}
 		}
 
@@ -1029,13 +1029,13 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		tutorial_Step--;
 	case 3:
 		//「【操作方法】右クリックで敵の視点を...」
-		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_RIGHT)
+		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)
 		{
 			tutorial_Click_Count++;
 		}
 		player->ChangeCamera();
 		player->UpdateHijack(elapsedTime);
-		if (tutorial_Click_Count >= 2)//右クリックが二回押されたら
+		if (tutorial_Click_Count >= 3)//右クリックが二回押されたら
 		{
 			tutorial_Step += 2;
 		}
