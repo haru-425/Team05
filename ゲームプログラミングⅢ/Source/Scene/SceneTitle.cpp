@@ -149,7 +149,7 @@ void SceneTitle::Update(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 
 	GameSettings setting = SettingsManager::Instance().GetGameSettings();
-	selectSE->SetVolume(0.5f * setting.seVolume);
+	selectSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
 
 	bool isChangeScene = false;
 	/// マウス左クリックでメインシーンに遷移
