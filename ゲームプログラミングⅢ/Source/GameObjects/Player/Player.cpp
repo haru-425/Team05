@@ -46,6 +46,15 @@ Player::Player(const DirectX::XMFLOAT3& position)
 	/// SEの読み込み
 	changeCameraInSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
 	changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
+
+	if (Difficulty::Instance().GetDifficulty() == 2)
+	{
+		hijackRecoveryPerSec = 1;
+	}
+	else
+	{
+		hijackRecoveryPerSec = 3;
+	}
 }
 
 /// デストラクタ
