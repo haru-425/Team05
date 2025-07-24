@@ -94,7 +94,7 @@ void SceneGame::Initialize()
 	um.GetUIs().at(0)->GetSpriteData().textureSize = { 1280,720 };
 	um.GetUIs().at(0)->GetSpriteData().isVisible = false;
 
-	um.CreateUI("./Data/Sprite/doorUI.png", "Door_Passed");
+	um.CreateUI("./Data/Sprite/doorUI_used.png", "Door_Passed");
 	um.GetUIs().at(1)->GetSpriteData().spritePos = { 0,0,1 };
 	um.GetUIs().at(1)->GetSpriteData().color = { 1,1,1,1 };
 	um.GetUIs().at(1)->GetSpriteData().spriteSize = { 1280,720 };
@@ -251,8 +251,8 @@ void SceneGame::Update(float elapsedTime)
 	stage->Update(elapsedTime);						///< ステージ更新処理
 	if (!fadeStart) {
 		player->Update(elapsedTime);					///< プレイヤー更新処理
-		enemy->Update(elapsedTime);						///< 敵更新処理
 	}
+	enemy->Update(elapsedTime);						///< 敵更新処理
 	minimap->Update(player->GetPosition());	        ///< ミニマップ更新処理
 	batteryManager::Instance().Update(elapsedTime); ///< バッテリー更新処理
 	UpdateCamera(elapsedTime);                      ///< カメラ更新処理
@@ -360,7 +360,9 @@ void SceneGame::Render()
 	/// 当たり判定の更新
 	Collision();
 
-	player->UpdateTransform();
+	if (!fadeStart) {
+		player->UpdateTransform();
+	}
 
 	// 2Dスプライト描画
 	{
@@ -1079,22 +1081,18 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 					{
 						stage->SetGatePassed(i, true);
 						fadeStart = true;
+						selectDoorIndex = i;
 					}
 
 					canOpenGate = true;
 				}
 			}
-
+		}
+		else {
+			um.GetUIs().at(0)->GetSpriteData().isVisible = false;
+			um.GetUIs().at(1)->GetSpriteData().isVisible = false;
 		}
 	}
-
-	//// プレイヤー専用通路のUIの設定
-	//if (player->IsEnableOpenGate())
-	//	um.GetUIs().at(0)->GetSpriteData().isVisible = true;
-	//else if (!player->IsEnableOpenGate() || fadeStart)
-	//	um.GetUIs().at(0)->GetSpriteData().isVisible = false;
-
-
 	// UI非表示
 	if (!canOpenGate)
 	{
