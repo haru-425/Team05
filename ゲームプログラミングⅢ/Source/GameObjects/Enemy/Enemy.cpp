@@ -151,8 +151,10 @@ void Enemy::Update(float elapsedTime)
 				state = State::feeling;
 				Animationplay();
 			}
-
-			targetPosition = route[0];
+			if (!route.empty())
+			{
+				targetPosition = route[0];
+			}
 			isTrackingPlayer = true;
 		}
 		else
@@ -238,7 +240,10 @@ void Enemy::Update(float elapsedTime)
 			break;
 
 		refinePath(start, current);
-		targetPosition = route[0];
+		if (!route.empty())
+		{
+			targetPosition = route[0];
+		}
 		state = State::Roaming;
 		Animationplay();
 #endif
