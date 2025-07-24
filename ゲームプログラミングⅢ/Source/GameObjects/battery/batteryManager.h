@@ -25,6 +25,13 @@ public:
 		return instance;
 	}
 
+	// プレイヤーと敵のバインドを解除
+	void BindClear()
+	{
+		player.reset(); // player 2→1 残りは敵の参照？
+		enemy.reset(); // enemy 3→2 どこかわからん
+	}
+
 	void SetDifficulty(int diff)
 	{
 		if (Difficulty::Instance().GetDifficulty() == Difficulty::normal)

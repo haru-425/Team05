@@ -149,6 +149,11 @@ void SceneGame::Finalize()
 	Audio3DSystem::Instance().StopByTag("enemy_walk");
 
 	um.Clear();
+
+	batteryManager::Instance().BindClear();
+
+	player.reset();
+	enemy.reset();
 }
 
 // 更新処理

@@ -302,7 +302,7 @@ void Player::Move(float dt)
 // カメラ切り替え処理、実際のカメラ切り替えは外部でする
 void Player::ChangeCamera()
 {
-	if (isHit)return;
+	if (hit)return;
 	if (enableOpenGate && !useCam) return; ///< ドアが開ける場合
 
 	Mouse& mouse = Input::Instance().GetMouse();
