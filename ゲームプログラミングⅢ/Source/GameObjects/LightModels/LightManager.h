@@ -96,7 +96,7 @@ private:
 	struct LightColors
 	{
 		DirectX::XMFLOAT4 red    = { 0.8007f, 0.0f   , 0.0f   , 1 };
-		DirectX::XMFLOAT4 blue   = { 0.0f   , 0.0664f, 1.0f   , 1 };
+		DirectX::XMFLOAT4 blue   = { 0.0f   , 0.5468f, 1.0f   , 1 };
 		DirectX::XMFLOAT4 yellow = { 1.0f   , 0.9453f, 0.0f   , 1 };
 		DirectX::XMFLOAT4 green  = { 0.0f   , 0.8125f, 0.0f   , 1 };
 		DirectX::XMFLOAT4 purple = { 1.0f   , 0.0f   , 0.6015f, 1 };

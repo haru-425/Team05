@@ -207,7 +207,7 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	timer += elapsedTime;
-#ifdef DEBUG
+#ifndef _DEBUG
 	reminingTime -= elapsedTime;
 #endif
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
@@ -622,7 +622,7 @@ void SceneGame::Render()
 
 	}
 #endif
-#ifndef DEBUG
+#ifdef _DEBUG
 		CollisionEditor::Instance().Render(rc, shapeRenderer);
 
 #endif // DEBUG
