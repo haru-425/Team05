@@ -46,7 +46,7 @@ void SceneGame::Initialize()
 	minimap = new MiniMap();
 	timer = 0.0f; // タイマー初期化
 	transTimer = 0.0f; // シーン遷移タイマー初期化
-	reminingTime = 300.0f;
+	reminingTime = 180.0f;
 
 	selectTrans = SelectTrans::GameOver; // シーン遷移選択初期化
 	sceneTrans = false; // シーン遷移フラグ初期化
@@ -642,7 +642,7 @@ void SceneGame::Render()
 	}
 #endif
 #ifdef _DEBUG
-	//CollisionEditor::Instance().Render(rc, shapeRenderer);
+	CollisionEditor::Instance().Render(rc, shapeRenderer);
 
 #endif // DEBUG
 
