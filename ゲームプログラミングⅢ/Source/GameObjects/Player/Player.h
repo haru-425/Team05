@@ -24,7 +24,7 @@ static enum class AnimationState
 class Player : public GameObject
 {
 public:
-    Player();
+    Player(const DirectX::XMFLOAT3& position = {0,0,0});
     ~Player();
 
     // 更新処理
@@ -56,6 +56,10 @@ public:
         if (enableHijackTime > maxHijackTime)
             enableHijackTime = maxHijackTime;
     }
+
+    void SetEnableOpenGate(bool flag) { enableOpenGate = flag; }
+
+    bool GetIsDeath() const { return isDeath; } ///< プレイヤーが死亡したかどうかの判定
 
 private:
     void Move(float dt);
@@ -93,33 +97,7 @@ private:
 
     std::unique_ptr<LoadTextures> textures;  // テクスチャ
 
-    // テスト用なので気にしないで下さい
-#pragma region テスト用
-#if defined TEST
-    DirectX::XMFLOAT3 t_position = { 0,0,0 };
-    DirectX::XMFLOAT3 t_angle = { 0,0,0 };
-    DirectX::XMFLOAT3 t_scale = { 1,1,1 };
-    DirectX::XMFLOAT4X4 t_transform = {
-        1,0,0,0,
-        0,1,0,0,
-        0,0,1,0,
-        0,0,0,1
-    };
-
-    void TestTransformUpdate()
-    {
-        //スケール行列を作成
-        DirectX::XMMATRIX S = DirectX::XMMatrixScaling(t_scale.x, t_scale.y, t_scale.x);
-        //回転行列
-        DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(t_angle.x, t_angle.y, t_angle.z);
-        //位置行列を作成
-        DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(t_position.x, t_position.y, t_position.z);
-        //３つの行列を組み合わせ、ワールド行列を作成
-        DirectX::XMMATRIX W = S * R * T;
-        //計算したワールド行列を取り出す
-        DirectX::XMStoreFloat4x4(&t_transform, W);
-    }
-#endif
-#pragma endregion
+    bool enableOpenGate = false; ///< ドアをくぐれるかどうか このフラグがfalseの場合カメラの切り替え可能、trueの場合はカメラ切り替え不可
+    bool isDeath = false;
 };
 

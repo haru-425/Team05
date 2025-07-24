@@ -12,6 +12,7 @@
 #include "3DAudio/3DAudio.h"
 
 #include "System/ShadowCaster.h"
+#include "System/UiManager.h"
 
 extern float reminingTime;
 // ゲームシーン
@@ -43,9 +44,9 @@ private:
 
 	void PlayerVsEnemy();
 
-	void PlayerVsDoor(); ///< ドアとの当たり判定
-
 	void UpdateCamera(float elapsedTime);
+
+	void UpdateOneWay(float elapsedTime);
 
 private:
 	Stage* stage = nullptr;
@@ -113,4 +114,11 @@ private:
 	// 3Dオーディオシステム
 
 	Audio3DSystem audioSystem; ///< 3Dオーディオシステムのインスタンス
+
+	UIManager um;
+
+	float fadeTime;
+	bool fadeStart;
+	const float totalFadeTime = 0.5;
+	int selectDoorIndex = -1;
 };

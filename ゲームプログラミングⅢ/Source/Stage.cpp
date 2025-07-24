@@ -35,16 +35,20 @@ Stage::Stage()
 		// データの初期化
 		gateElements[0].position = { -7.5f,0,12.0f };
 		gateElements[0].angle = { 0,DirectX::XMConvertToRadians(180),0 };
+		gateElements[0].exitPos = { -7.5f, 0, 7.5f };
 
 		gateElements[1].position = { 7.5f,0,12.0f };
 		gateElements[1].angle = { 0,DirectX::XMConvertToRadians(180),0 };
+		gateElements[1].exitPos = { 7.5, 0, 6.5 };
 
 		gateElements[2].position = { 0.5f,0,-10.0f };
 		gateElements[2].angle = { 0,0,0 };
-		
+		gateElements[2].exitPos = { 0.5, 0, -4.6 };
+
 		// 行列の作成
 		for (auto& p : gateElements) {
 
+			p.collisionMesh = std::make_unique<Model>("./Data/Model/Stage/Map/Door/door_collision_mesh.mdl");
 			p.model = gateModelData[0];
 			p.hasPassed = false;
 

@@ -8,25 +8,14 @@
 static bool hit = false;
 static float time = 0;
 static constexpr float totalTime = 1;
-Player::Player()
+Player::Player(const DirectX::XMFLOAT3& position)
 {
-#ifdef TEST
-	// 確認用
-	model = std::make_shared<Model>("./Data/Model/Test/test_walk_animation_model.mdl");
-	t_position.x += 0.2f;
-	t_position.z += 0.5f;
-	t_position.y = 1.15f;
-	t_scale = { 0.025,0.025,0.025 };
-
-#else
 	// 実際に使うモデル
-	//model = std::make_unique<Model>("./Data/Model/Player/player.mdl");
 	model = std::make_unique<Model>("./Data/Model/Player/player_mesh.mdl");
-#endif
 
     // プレイヤーのパラメータ初期設定
     {
-        position = { 1,0,-24 };
+        this->position = position;				
         scale = { 0.015, 0.015, 0.015 };    // スケール
         viewPoint = 1.5;                    // カメラの目線を設定するため
         radius = 0.6;                         // デバッグ用
@@ -61,14 +50,14 @@ void Player::Update(float dt)
 	// ハイジャックの時間処理
 	UpdateHijack(dt);
 
-  // カメラ切り替え処理
-  //ChangeCamera();
+    // カメラ切り替え処理
+    ChangeCamera();
 
 	// 移動処理
 	Move(dt);
 
 	if (isEvent) ///< Move() の中でフラグ切り替えをしてる
-		DeathState(dt);
+		//DeathState(dt);
 
 #ifdef TEST
 	TestTransformUpdate();
@@ -93,8 +82,6 @@ void Player::Update(float dt)
 // 描画処理
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-#ifndef TEST
-
 	/// テクスチャのセット
 	textures->Set(rc);
 
@@ -106,15 +93,6 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 
 	// テクスチャのクリア
 	textures->Clear(rc);
-#else
-	DirectX::XMMATRIX T_T = DirectX::XMLoadFloat4x4(&t_transform);
-	DirectX::XMMATRIX PT = DirectX::XMLoadFloat4x4(&world);
-	T_T = DirectX::XMMatrixMultiply(T_T, PT);
-	DirectX::XMStoreFloat4x4(&t_transform, T_T);
-
-	if (model)
-		renderer->Render(rc, t_transform, model.get(), ShaderId::Lambert);
-#endif
 }
 
 // デバッグ描画処理
@@ -135,6 +113,8 @@ void Player::DrawDebug()
 		ImGui::Text(text);
 
 		ImGui::Checkbox("isHit", &isHit);
+
+		ImGui::Checkbox("enableOpenDoor", &enableOpenGate);
 	}
 	ImGui::End();
 }
@@ -224,6 +204,7 @@ void Player::Move(float dt)
 void Player::ChangeCamera()
 {
 	if (isHit)return;
+	if (enableOpenGate && !useCam) return; ///< ドアが開ける場合
 
 	Mouse& mouse = Input::Instance().GetMouse();
 

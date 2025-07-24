@@ -25,6 +25,7 @@ private:
     };
     struct OneWayGate {
         std::shared_ptr<Model> model;              // 扉の3Dモデル
+        std::unique_ptr<Model> collisionMesh;
         DirectX::XMFLOAT3      position;
         DirectX::XMFLOAT3      angle;
         bool                   hasPassed = false;          // プレイヤーが通過したかどうか
@@ -34,6 +35,7 @@ private:
             0,0,1,0,
             0,0,0,1
         };
+        DirectX::XMFLOAT3 exitPos;
     };
 
 public:
@@ -50,10 +52,11 @@ public:
 
     // プレイヤー専用通路用
     DirectX::XMFLOAT4X4 GetGateWorld(int index) const { return gateElements[index].world; }
-    Model* GetGateModel(int index) { return gateElements[index].model.get(); }
+    Model* GetGateModelCollisionMesh(int index) { return gateElements[index].collisionMesh.get(); }
 
     void SetGatePassed(int index, bool isUse) { gateElements[index].hasPassed = isUse; }
     bool GetGatePassed(int index) { return gateElements[index].hasPassed; }
+    DirectX::XMFLOAT3 GetExitPos(int index) { return gateElements[index].exitPos; }
 
     //経路探索用
     // ウェイポイントのインデックスからポジションを取得
@@ -66,6 +69,7 @@ public:
     std::shared_ptr<WayPoint> wayPoint[MAX_WAY_POINT];
     std::vector<int> path;
 
+    /// ステージの行列
     DirectX::XMFLOAT4X4 GetWorld() const { return world; }
     Model* GetModel() { return model[0].get(); }
 
