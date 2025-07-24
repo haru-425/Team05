@@ -231,7 +231,7 @@ bool Collision::AABBVsSphere(const DirectX::XMFLOAT3& boxMin, const DirectX::XMF
         }
         else {
             // 完全に中心がAABBの中にいる → 上に押し出すとか決め打ちでもOK
-            outPosition.y = sphereCenter.y + sphereRadius;
+            //outPosition.y = sphereCenter.y + sphereRadius;
             //DirectX::XMFLOAT3 normal;
             //normal.x = diff.x / dist; // 単位ベクトル
             //normal.y = diff.y / dist; // 単位ベクトル
