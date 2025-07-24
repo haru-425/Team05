@@ -5,6 +5,7 @@
 #include "System/AnimationController.h"
 #include "System/LoadTextures.h"
 #include "System/AudioSource.h"
+#include "System/difficulty.h"
 
 // テスト用のモデルだったりを切り替えるよう
 //#define TEST
@@ -13,7 +14,6 @@
 static constexpr float maxHijackTime        = 50; // ハイジャックの最大時間
 static constexpr int hijackCost             = 5;   // ハイジャックコスト
 static constexpr int hijackCostPerSec       = 5;   // 一秒ごとのハイジャックコスト
-static constexpr int hijackRecoveryPerSec   = 3;   // 一秒ごとのハイジャックコストの回復量
 static constexpr float maxSpeed             = 3.0f; // プレイヤーの最高速度
 static float acceleration                   = 1.1f; // 加速度
 
@@ -85,6 +85,7 @@ private:
 
     void DeathState(float dt); ///< 死亡演出用
 
+    float CalcAngle(); ///< 角度計算用
 
 private:
     std::shared_ptr<Model> model;
@@ -114,9 +115,15 @@ private:
     bool enableOpenGate = false; ///< ドアをくぐれるかどうか このフラグがfalseの場合カメラの切り替え可能、trueの場合はカメラ切り替え不可
     bool isDeath = false;
     bool inGate = false;
+    bool enemyIsFront = false;
 
     // カメラ切り替えのSE
     AudioSource* changeCameraInSE = nullptr;
     AudioSource* changeCameraKeepSE = nullptr;
+
+    bool deathStart = false;
+
+
+    int hijackRecoveryPerSec = 3;   // 一秒ごとのハイジャックコストの回復量
 };
 

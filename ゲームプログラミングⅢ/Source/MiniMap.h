@@ -11,8 +11,6 @@ public:
 	MiniMap() {
 		minimap = new Sprite("Data/Sprite/Map.png");
 		icon = new Sprite("Data/Sprite/icon.png");
-		metar = new Sprite("Data/Sprite/metar.png");
-		ring = new Sprite("Data/Sprite/ring.png");
 
 	}
 	~MiniMap() {

@@ -25,16 +25,16 @@ Player::Player(const DirectX::XMFLOAT3& position)
 		radius = 0.6;                       ///< 当たり判定用半径
 		enableHijackTime = maxHijackTime;   ///< 敵の視点をハイジャックできる時間の初期化
 		acceleration = 1.1f;                ///< 加速度
-		deceleration = 1.2f;                ///< 減速度
+		deceleration = 5.0f;                ///< 減速度
 		hit = false;                        ///< 死亡演出用(グローバル変数)
 		time = 0;                           ///< 死亡演出用(グローバル変数) 
 	}
 
 	/// アニメーション関係の設定(今回はアニメーションはなし)
 	{
-		animationController.SetModel(model);
-		animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
-		animationController.SetAnimationSecondScale(1.0f);
+	    animationController.SetModel(model);
+	    animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
+	    animationController.SetAnimationSecondScale(1.0f);
 	}
 
 	/// テクスチャの読み込み
@@ -50,6 +50,15 @@ Player::Player(const DirectX::XMFLOAT3& position)
 	changeCameraInSE->SetVolume(0.5f * setting.seVolume);
 	changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
 	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume);
+
+	if (Difficulty::Instance().GetDifficulty() == 2)
+	{
+		hijackRecoveryPerSec = 1;
+	}
+	else
+	{
+		hijackRecoveryPerSec = 3;
+	}
 }
 
 /// デストラクタ
@@ -64,7 +73,7 @@ void Player::Update(float dt)
 	UpdateHijack(dt);
 
 	/// カメラ切り替え処理(実際のカメラの切り替えはSceneでやってる)
-  /// カメラを切り替えたときの処理、フラグを更新してる
+	/// カメラを切り替えたときの処理、フラグを更新してる
 	ChangeCamera();
 
 	// �v���C���[�ړ�����
@@ -119,6 +128,19 @@ void Player::DrawDebug()
 		ImGui::Checkbox("isHit", &isHit);
 
 		ImGui::Checkbox("enableOpenDoor", &enableOpenGate);
+
+		float radian = CalcAngle();
+		std::string text2;
+		if (radian < 0.78 && radian > -0.78)text2 = "front";
+		else if (radian < 2.3 && radian >= 0.78)text2 = "right";
+		else text2 = "???";
+		ImGui::Text(text2.c_str());
+		ImGui::SameLine();
+		ImGui::InputFloat("radian", &radian);
+		DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&world);
+		DirectX::XMVECTOR Forward = DirectX::XMVector3Normalize(M.r[2]);
+		DirectX::XMFLOAT3 forward; DirectX::XMStoreFloat3(&forward, Forward);
+		ImGui::InputFloat3("forward", &forward.x);
 	}
 	ImGui::End();
 }
@@ -143,11 +165,28 @@ void Player::Move(float dt)
 	if (!hit && isHit)///< やりかたは汚いけど、一度ヒットしたらそれ以降はヒット判定にするために書く hit はPlayerコンストラクタの上でグローバルとしておいてる
 	{
 		accel = 0;
+		acceleration = 0;
 		hit = isHit;
 	}
 
 	/// 敵と接触した場合はだんだん速度を落として演出に入る
-	if (hit)
+	if ((CalcAngle() < 0.78 && CalcAngle() > -0.78) && hit)
+	{
+		if (!deathStart)
+		{
+			speed = -8;
+			deathStart = !deathStart;
+		}
+
+		if (speed < 0)
+			accel += 1.5f;
+		else
+		{
+			speed = 0;
+			accel = 0;
+		}
+	}
+	else if (hit)
 	{
 		if (speed > 0)
 			accel -= deceleration * dt;
@@ -164,7 +203,7 @@ void Player::Move(float dt)
 
 	DirectX::XMFLOAT3 forward;
 	// カメラが切り替わっていないときだけカメラの方向を取る
-	if (!useCam)
+	if (!useCam && !hit)
 	{
 		forward = cam.GetFront();
 	}
@@ -183,7 +222,7 @@ void Player::Move(float dt)
 
 	speed += accel * dt;
 	speed = DirectX::XMMin(speed, maxSpeed);
-	speed = DirectX::XMMax(speed, 0.0f);
+	//speed = DirectX::XMMax(speed, 0.0f);
 
 	//position.x += speed * forward.x * dt;
 	//position.z += speed * forward.z * dt;
@@ -339,52 +378,55 @@ void Player::DeathState(float dt)
 {
 	time += dt; ///< 演出用に使うタイマー(グローバル変数)
 
-	DirectX::XMFLOAT3 enemyPos = {};
+	static bool isStart = false;
+	static float radian;
+	if(!isStart)
+		radian = CalcAngle();
+
+	time = DirectX::XMMin(time, totalTime);
+	static float angleX = angle.x;
+	static float angleY = angle.y;
+
+	angle.y = Easing::OutBack(time, totalTime, 0.8f, radian + angleY, angleY);
+	angle.x = Easing::OutBack(time, totalTime, 0.8f, 0.0f, angleX);
+	isStart = true;
+}
+
+/// 角度計算用
+float Player::CalcAngle()
+{
+	using namespace DirectX;
+	XMFLOAT3 enemyPos;
 	if (enemyRef)
 		enemyPos = enemyRef->GetPosition();
 
-	DirectX::XMVECTOR EnemyPos, PlayerPos, PlayerToEnemyDir;
+	XMVECTOR PlayerToEnemy = XMVector3Normalize(XMVectorSubtract(XMLoadFloat3(&enemyPos), XMLoadFloat3(&position))); ///< プレイヤーから敵のベクトル
+	XMMATRIX M = XMLoadFloat4x4(&world);
+	XMVECTOR Forward = M.r[2];
 
-	EnemyPos = DirectX::XMLoadFloat3(&enemyPos);
-	PlayerPos = DirectX::XMLoadFloat3(&position);
-	PlayerToEnemyDir = DirectX::XMVectorSubtract(EnemyPos, PlayerPos);
-	PlayerToEnemyDir = DirectX::XMVector3Normalize(PlayerToEnemyDir);
-
-	float x, y, z;
-	DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&world);
-	DirectX::XMVECTOR Forward = M.r[2];
-
-	x = DirectX::XMVectorGetX(Forward);
-	z = DirectX::XMVectorGetZ(Forward);
-	y = DirectX::XMVectorGetY(Forward);
-
-	pitch = asinf(y);        // 上下の向き
-	yaw = atan2f(x, z);      // 左右の向き
-
-	// 角度を求める
+	/// プレイヤーのセーブピッチヨーを計算
 	{
-		DirectX::XMVECTOR Dot, Cross;
-		DirectX::XMFLOAT3 crossVector;
-		float dot;
-		Dot = DirectX::XMVector3Dot(Forward, PlayerToEnemyDir);
-		Cross = DirectX::XMVector3Cross(Forward, PlayerToEnemyDir);
-		DirectX::XMStoreFloat(&dot, Dot);
-		DirectX::XMStoreFloat3(&crossVector, Cross);
+		float x, y, z;
+		x = DirectX::XMVectorGetX(Forward);
+		z = DirectX::XMVectorGetZ(Forward);
+		y = DirectX::XMVectorGetY(Forward);
 
-		float radian = acosf(dot);
-		if (crossVector.y < 0 && radian > 0)
-			radian *= -1;
-
-		time = DirectX::XMMin(time, totalTime);
-
-		static float angleX = angle.x;
-		static float angleY = angle.y;
-
-		if (angle.x < 0)
-			angle.x = Easing::InSine(time, totalTime, 0.0f, angleX);
-		else
-			angle.x = Easing::InSine(time, totalTime, angleX, 0.0f);
-
-		angle.y = Easing::OutBack(time, totalTime, 1.0f, angleY, radian);
+		pitch = asinf(y);        // 上下の向き
+		yaw = atan2f(x, z);      // 左右の向き
 	}
+
+	XMVECTOR Dot = XMVector3Dot(DirectX::XMVector3Normalize(Forward), PlayerToEnemy);
+	float dot;
+	dot = std::clamp(dot, -1.0f, 1.0f);
+	XMStoreFloat(&dot ,Dot);
+	float radian = acosf(dot);
+
+	XMVECTOR Cross = XMVector3Cross(Forward, PlayerToEnemy);
+	XMFLOAT3 crossVec;
+	XMStoreFloat3(&crossVec, Cross);
+
+	if (crossVec.y < 0)
+		radian *= -1;
+
+	return radian;
 }

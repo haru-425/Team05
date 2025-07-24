@@ -279,14 +279,27 @@ void Enemy::Update(float elapsedTime)
 			state = State::Idle;
 			Animationplay();
 		}
+
+		if (((loocking && playerdist < lockonRange) || (loocking && playerdist < searchRange)))
+		{
+			state = State::detection;
+			JageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), DirectX::XMLoadFloat3(&position)));
+			Animationplay();
+		}
 		break;
 
 	case State::Attack:
 		if (animationcontroller.GetEndAnimation())
 		{
 			//SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
+			isDead = true;
+
+			Audio3DSystem::Instance().StopByTag("enemy_run");
+			Audio3DSystem::Instance().StopByTag("enemy_walk");
+
 			batteryManager::Instance().stop();
 			batteryManager::Instance().ClearBattery();
+			moveSpeed = 0;
 		}
 		break;
 	}
