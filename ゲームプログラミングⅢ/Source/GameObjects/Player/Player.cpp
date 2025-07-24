@@ -58,6 +58,7 @@ void Player::Update(float dt)
 	/// ハイジャックの時間処理
 	UpdateHijack(dt);
 
+	// 繧ｫ繝｡繝ｩ蛻・ｊ譖ｿ縺亥・逅・
 	if (changeCameraInSE->IsPlaying())
 		changeCameraInSE->SetVolume(0.5f);
 
