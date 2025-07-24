@@ -91,6 +91,10 @@ void SceneGame::Initialize()
 	um.GetUIs().at(0)->GetSpriteData().color = { 0,0,0,0 };
 	um.GetUIs().at(0)->GetSpriteData().isVisible = true;
 
+  um.CreateUI("./Data/Sprite/back.png", "door");
+	um.GetUIs().at(1)->GetSpriteData().color = { 1,1,1,1 };
+	um.GetUIs().at(1)->GetSpriteData().isVisible = false;
+
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
 		tutorial_Flug = true;
@@ -222,7 +226,9 @@ void SceneGame::Update(float elapsedTime)
 		return;
 	}
 
+#ifdef DEBUG
 	reminingTime -= elapsedTime;
+#endif
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	////ゲームオーバーに強制遷移
@@ -347,8 +353,8 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-		//minimap->Render(player->GetPosition());
-    
+		//minimap->Render(player->GetPosition());   
+
 		auto easeOutSine = [](float x) -> float
 			{
 				return sin((x * DirectX::XM_PI) / 2);
@@ -625,7 +631,17 @@ void SceneGame::Render()
 
 	}
 #endif
-		//CollisionEditor::Instance().Render(rc, shapeRenderer);
+#ifndef DEBUG
+		CollisionEditor::Instance().Render(rc, shapeRenderer);
+
+#endif // DEBUG
+
+		// プレイヤー専用通路のUIの設定
+		if (player->IsEnableOpenGate())
+			um.GetUIs().at(1)->GetSpriteData().isVisible = true;
+		else
+			um.GetUIs().at(1)->GetSpriteData().isVisible = false;
+
 		um.Render(rc);
 }
 
@@ -695,12 +711,13 @@ void SceneGame::PlayerVsStage()
 {
 	// ---------- 壁との当たり判定 ----------
 	/// 当たり判定処理はEditorと分離するべき
-	DirectX::XMFLOAT3 outPos = {};
-	if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
-		player->SetPosition(outPos);
+	//DirectX::XMFLOAT3 outPos = {};
+	//if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
+	//	player->SetPosition(outPos);
 
 	// ---------- 一方通行通路との当たり判定 ----------
 
+#if 0
 	/// ドア
 	DirectX::XMFLOAT3 rayS, rayE;
 	rayS = player->GetPosition();
@@ -732,6 +749,11 @@ void SceneGame::PlayerVsStage()
 			player->SetEnableOpenGate(flag);
 		}
 	}
+#else
+
+	CheckGateInteraction(player, stage, fadeStart);
+
+#endif
 }
 
 /**
@@ -818,7 +840,8 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// カメラモードの変更 (DEBUG モードのみ)
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
-			i_CameraController = std::make_unique<FreeCameraController>();
+			//i_CameraController = std::make_unique<FreeCameraController>();
+			i_CameraController = std::make_unique<LightDebugCameraController>();
 		}
 #endif
 	}
@@ -1003,5 +1026,61 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		break;
 	default:
 		break;
+	}
+}
+
+
+bool SceneGame::IsPlayerFacingDoor(const DirectX::XMFLOAT3& playerPos, const DirectX::XMFLOAT3& playerDir, const DirectX::XMFLOAT3& doorPos, float threshold = 0.7f)
+{
+	DirectX::XMFLOAT3 toDoor = {
+		doorPos.x - playerPos.x,
+		doorPos.y - playerPos.y,
+		doorPos.z - playerPos.z
+	};
+
+	DirectX::XMVECTOR toDoorVec = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&toDoor));
+	DirectX::XMVECTOR playerDirVec = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&playerDir));
+
+	float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(toDoorVec, playerDirVec));
+	return dot > threshold;
+}
+
+void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stage, bool& fadeStart)
+{
+	DirectX::XMFLOAT3 playerPos = player->GetPosition();
+	DirectX::XMFLOAT3 playerDir = player->GetDirection();
+	bool canOpenGate = false;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		DirectX::XMFLOAT3 gatePos = {
+			stage->GetGateWorld(i).m[3][0],
+			stage->GetGateWorld(i).m[3][1],
+			stage->GetGateWorld(i).m[3][2]
+		};
+
+		DirectX::XMFLOAT3 hitPos;
+		if (Collision::IntersectSphereVsSphere(playerPos, player->GetRadius(), gatePos, 0.05f, hitPos))
+		{
+			if (IsPlayerFacingDoor(playerPos, playerDir, gatePos))
+			{
+				// UI表示条件を満たす
+				player->SetEnableOpenGate(true);
+
+				if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT && !stage->GetGatePassed(i))
+				{
+					stage->SetGatePassed(i, true);
+					fadeStart = true;
+				}
+
+				canOpenGate = true;
+			}
+		}
+	}
+
+	// UI非表示
+	if (!canOpenGate)
+	{
+		player->SetEnableOpenGate(false);
 	}
 }

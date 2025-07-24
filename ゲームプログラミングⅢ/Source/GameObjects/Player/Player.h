@@ -59,6 +59,7 @@ public:
     }
 
     void SetEnableOpenGate(bool flag) { enableOpenGate = flag; }
+    bool IsEnableOpenGate() { return enableOpenGate; }
 
     bool GetIsDeath() const { return isDeath; } ///< プレイヤーが死亡したかどうかの判定
 

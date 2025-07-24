@@ -1,5 +1,14 @@
 #include "Collision.h"
 #include <DirectXCollision.h>
+
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
+
 #include <algorithm>
 #include <cmath>
 
@@ -245,4 +254,38 @@ bool Collision::AABBVsSphere(const DirectX::XMFLOAT3& boxMin, const DirectX::XMF
     }
 
     return false; // 衝突してない
+}
+
+
+
+bool Collision::AABBVsSphere(const DirectX::XMFLOAT3& min, const DirectX::XMFLOAT3& max,
+    const DirectX::XMFLOAT3& sphereCenter, float sphereRadius,
+    DirectX::XMFLOAT3& outPos, DirectX::XMFLOAT3& pushDir)
+{
+    // 最近接点を求める
+    DirectX::XMFLOAT3 closestPoint = {
+        std::max(min.x, std::min(sphereCenter.x, max.x)),
+        std::max(min.y, std::min(sphereCenter.y, max.y)),
+        std::max(min.z, std::min(sphereCenter.z, max.z))
+    };
+
+    // ベクトルと距離
+    DirectX::XMVECTOR centerVec = DirectX::XMLoadFloat3(&sphereCenter);
+    DirectX::XMVECTOR closestVec = DirectX::XMLoadFloat3(&closestPoint);
+    DirectX::XMVECTOR dirVec = DirectX::XMVectorSubtract(centerVec, closestVec);
+    float dist = DirectX::XMVectorGetX(DirectX::XMVector3Length(dirVec));
+
+    if (dist < sphereRadius)
+    {
+        // 法線（押し出し方向）
+        DirectX::XMVECTOR normal = DirectX::XMVector3Normalize(dirVec);
+        DirectX::XMVECTOR pushVec = DirectX::XMVectorScale(normal, sphereRadius - dist);
+        DirectX::XMVECTOR newPos = DirectX::XMVectorAdd(centerVec, pushVec);
+
+        DirectX::XMStoreFloat3(&outPos, newPos);
+        DirectX::XMStoreFloat3(&pushDir, normal);
+        return true;
+    }
+
+    return false;
 }

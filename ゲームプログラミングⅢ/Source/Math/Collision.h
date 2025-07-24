@@ -58,4 +58,12 @@ public:
         float sphereRadius,
         DirectX::XMFLOAT3& outPosition
     );
+
+    static bool AABBVsSphere(
+        const DirectX::XMFLOAT3& min, 
+        const DirectX::XMFLOAT3& max,
+        const DirectX::XMFLOAT3& sphereCenter,
+        float sphereRadius,
+        DirectX::XMFLOAT3& outPos,
+        DirectX::XMFLOAT3& pushDir);
 };
