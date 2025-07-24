@@ -188,8 +188,14 @@ void Player::Move(float dt)
 		forward.z /= len;
 	}
 	saveDirection = forward;
-
+#if 1
 	speed += accel * dt;
+#else
+	if (Input::Instance().GetMouse().GetButton() & Mouse::BTN_RIGHT)
+		speed = 3;
+	else
+		speed = 0;
+#endif
 	speed = DirectX::XMMin(speed, maxSpeed);
 	speed = DirectX::XMMax(speed, 0.0f);
 
