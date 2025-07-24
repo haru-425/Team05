@@ -59,14 +59,14 @@ void Game_Over::Update(float elapsedTime)
 	}
 
 	if (GameOvertime >= 5.0f) {
-		if (life_number <= 0 && transTimer <= 0)
-		{
-			nextScene = new Game_Clear;
-			sceneTrans = true;
-			transTimer = 0.0f;
-			selectTrans = SelectTrans::Game; // ゲームオーバーシーンに遷移
+		//if (life_number <= 0 && transTimer <= 0)
+		//{
+		//	nextScene = new Game_Clear;
+		//	sceneTrans = true;
+		//	transTimer = 0.0f;
+		//	selectTrans = SelectTrans::Game; // ゲームオーバーシーンに遷移
 
-		}
+		//}
 		if (!sceneTrans)
 		{
 
@@ -83,10 +83,10 @@ void Game_Over::Update(float elapsedTime)
 			transTimer += elapsedTime;
 			if (transTimer >= 3.0f && nextScene != nullptr)
 			{
-				RankSystem::Instance().SetRank(
-					batteryManager::Instance().getPlayerHasBattery(),
-					batteryManager::Instance().getMAXBattery(),
-					3); // タイムアップでSランクク
+				//RankSystem::Instance().SetRank(
+				//	batteryManager::Instance().getPlayerHasBattery(),
+				//	batteryManager::Instance().getMAXBattery(),
+				//	3); // タイムアップでSランクク
 				SceneManager::instance().ChangeScene(new SceneLoading(nextScene));
 				nextScene = nullptr; // 多重遷移防止
 				sceneTrans = false; // シーン遷移フラグをリセット
