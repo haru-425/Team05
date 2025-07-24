@@ -10,6 +10,8 @@ AudioSource::AudioSource(IXAudio2* xaudio, std::shared_ptr<AudioResource>& resou
 	// ソースボイスを生成
 	hr = xaudio->CreateSourceVoice(&sourceVoice, &resource->GetWaveFormat());
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+	sourceVoice->SetVolume(1.0f);
 }
 
 // デストラクタ
@@ -38,7 +40,6 @@ void AudioSource::Play(bool loop)
 
 	HRESULT hr = sourceVoice->Start();
 	_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-	sourceVoice->SetVolume(1.0f);
 }
 
 

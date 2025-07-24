@@ -148,6 +148,9 @@ void SceneTitle::Update(float elapsedTime)
 {
 	Mouse& mouse = Input::Instance().GetMouse();
 
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
+	selectSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
+
 	bool isChangeScene = false;
 	/// マウス左クリックでメインシーンに遷移
 	if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
@@ -240,8 +243,6 @@ void SceneTitle::Update(float elapsedTime)
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
-
-	selectSE->SetVolume(0.5f);
 }
 
 

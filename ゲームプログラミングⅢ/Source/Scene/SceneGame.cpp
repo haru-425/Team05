@@ -200,10 +200,27 @@ void SceneGame::Update(float elapsedTime)
 		//}
 		if (enemy->GetIsDead())
 		{
-			nextScene = new Game_Over(life_number);
-			sceneTrans = true;
-			transTimer = 0.0f;
+			if (life_number == 0)
+			{
+				nextScene = new Game_Clear;
+				sceneTrans = true;
+				transTimer = 0.0f;
+				selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
+				reminingTime = 0.0f;
+				RankSystem::Instance().SetRank(
+					batteryManager::Instance().getPlayerHasBattery(),
+					batteryManager::Instance().getMAXBattery(),
+					life_number); // タイムアップでSランク
+				batteryManager::Instance().ResetPlayer_Get_Batterry();
+			}
+			else
+			{
+				nextScene = new Game_Over(life_number);
+				sceneTrans = true;
+				transTimer = 0.0f;
+			}
 		}
+
 		if (reminingTime <= 0.0f)
 		{
 			nextScene = new Game_Clear;
@@ -231,7 +248,6 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	timer += elapsedTime;
-	reminingTime -= elapsedTime;
 
 	/// チュートリアル処理
 	if (tutorial_Flug)
@@ -245,7 +261,7 @@ void SceneGame::Update(float elapsedTime)
 		return;
 	}
 
-
+	reminingTime -= elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	Collision(); ///< 当たり判定 
@@ -1088,7 +1104,7 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 					player->SetEnableOpenGate(true);
 
 					um.GetUIs().at(0)->GetSpriteData().isVisible = true;
-					um.GetUIs().at(1)->GetSpriteData().isVisible = false;
+					//um.GetUIs().at(1)->GetSpriteData().isVisible = false;
 
 					if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)
 					{
@@ -1099,10 +1115,11 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 
 					canOpenGate = true;
 				}
+				break;
 			}
 		}
 		else {
-			um.GetUIs().at(0)->GetSpriteData().isVisible = false;
+			//um.GetUIs().at(0)->GetSpriteData().isVisible = false;
 			um.GetUIs().at(1)->GetSpriteData().isVisible = false;
 		}
 	}

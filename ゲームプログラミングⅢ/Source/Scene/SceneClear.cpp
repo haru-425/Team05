@@ -8,6 +8,7 @@
 #include "System/Input.h"
 
 #include "3DAudio/3DAudio.h"
+#include "System/SettingsManager.h"
 
 void Game_Clear::Initialize()
 {
@@ -22,11 +23,9 @@ void Game_Clear::Initialize()
 	result = RankSystem::Instance().GetRank();
 	angle = 0;
 
-	// SE‚Ì“Ç‚Ýž‚Ý
 	selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
 
 	Audio3DSystem::Instance().PlayByTag("electrical_noise");
-
 }
 
 void Game_Clear::Finalize()
@@ -69,9 +68,10 @@ void Game_Clear::Finalize()
 
 void Game_Clear::Update(float elapsedTime)
 {
-	Mouse& mouse = Input::Instance().GetMouse();
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
+	selectSE->SetVolume(0.5f * setting.seVolume);
 
-	selectSE->SetVolume(0.5f);
+	Mouse& mouse = Input::Instance().GetMouse();
 
 	if(mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
