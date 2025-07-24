@@ -59,6 +59,8 @@ public:
 
     bool Collision(const DirectX::XMFLOAT3& targetPosition, float range, DirectX::XMFLOAT3& outPos); ///< 更新処理
 
+    bool Collision(const DirectX::XMFLOAT3& targetPosition, float range, DirectX::XMFLOAT3& outPos, DirectX::XMFLOAT3& pushDir);
+
     void Render(const RenderContext& rc, ShapeRenderer* renderer); ///< 当たり判定の可視化用
 
     void DrawDebug(); ///< デバッグ用
