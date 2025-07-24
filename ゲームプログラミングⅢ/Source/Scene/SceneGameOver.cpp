@@ -140,7 +140,7 @@ void Game_Over::Render()
 
 
 		//ƒmƒCƒY‚Ì‰e‹¿‚ğó‚¯‚È‚¢‚à‚Ì‚Í‚±‚±
-		for (int i = 0; i < life_number  + 1; i++)
+		for (int i = 0; i < life_number; i++)
 		{
 			if (life[i] != nullptr)
 			{
