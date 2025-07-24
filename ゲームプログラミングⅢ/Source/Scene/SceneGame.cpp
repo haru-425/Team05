@@ -642,7 +642,7 @@ void SceneGame::Render()
 	}
 #endif
 #ifdef _DEBUG
-	//CollisionEditor::Instance().Render(rc, shapeRenderer);
+	CollisionEditor::Instance().Render(rc, shapeRenderer);
 
 #endif // DEBUG
 
