@@ -94,7 +94,7 @@ void SceneGame::Initialize()
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
 		tutorial_Flug = true;
-		reminingTime=120.0f;
+		reminingTime = 120.0f;
 		{
 			tutorial[0] = std::make_unique<Sprite>("Data/Sprite/dialog/01.png");
 			tutorial[1] = std::make_unique<Sprite>("Data/Sprite/dialog/02.png");
@@ -226,17 +226,18 @@ void SceneGame::Update(float elapsedTime)
 		minimap->Update(player->GetPosition());
 		TutorialUpdate(elapsedTime);
 		metar->update(player->GetenableHijackTime());
+		UpdateCamera(elapsedTime);
 		return;
 	}
   
-	stage->Update(elapsedTime);						          ///< ステージ更新処理
-	player->Update(elapsedTime);					          ///< プレイヤー更新処理
-	enemy->Update(elapsedTime);						          ///< 敵更新処理
+	stage->Update(elapsedTime);						///< ステージ更新処理
+	player->Update(elapsedTime);					///< プレイヤー更新処理
+	enemy->Update(elapsedTime);						///< 敵更新処理
 	minimap->Update(player->GetPosition());	        ///< ミニマップ更新処理
 	batteryManager::Instance().Update(elapsedTime); ///< バッテリー更新処理
 	UpdateCamera(elapsedTime);                      ///< カメラ更新処理
-  metar->update(player->GetenableHijackTime());   ///< 画面左のハイジャック時間メータの更新処理 
-  UpdateOneWay(elapsedTime);                      ///< 一方通行処理
+	metar->update(player->GetenableHijackTime());   ///< 画面左のハイジャック時間メータの更新処理 
+	UpdateOneWay(elapsedTime);                      ///< 一方通行処理
 
 	Collision(); ///< 当たり判定 
 
@@ -414,7 +415,7 @@ void SceneGame::Render()
 				tutorial[1]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 0:
-				next_navi_vision=true;
+				next_navi_vision = true;
 				//「…起動完了。 」
 				tutorial[0]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
@@ -524,12 +525,20 @@ void SceneGame::Render()
 		}
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
 
+		//temporalNoise	
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
+
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
 
 		//Timer
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Timer)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Timer)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->deactivate(dc);
 
 		//BreathShake
@@ -728,7 +737,7 @@ void SceneGame::PlayerVsStage()
 	for (int i = 0; i < 3; ++i)
 	{
 		DirectX::XMFLOAT3 stagePos = { stage->GetGateWorld(i).m[3][0], stage->GetGateWorld(i).m[3][1], stage->GetGateWorld(i).m[3][2] };
-		stagePos.y += 0.5;
+		//stagePos.y += 0.5;
 		if (Collision::IntersectSphereVsSphere(player->GetPosition(), player->GetRadius(), stagePos, 0.05, hitPos))
 		{
 			if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT && !stage->GetGatePassed(i))
@@ -854,7 +863,7 @@ void SceneGame::UpdateOneWay(float elapsedTime)
 	/// 一方通行の通路を通った時のフェードインフェードアウトの処理
 	if (fadeStart)
 	{
-		static bool flag = false;
+		static bool flag = false; /// falseでフェードイン trueでフェードアウト		
 		if (!flag)
 			fadeTime += elapsedTime;
 		else
@@ -873,11 +882,14 @@ void SceneGame::UpdateOneWay(float elapsedTime)
 		{
 			DirectX::XMFLOAT3 exitPos = stage->GetExitPos(selectDoorIndex);
 			player->SetPosition(exitPos);
+			player->SetInGate(true);
+			player->ResetSpeed();
 		}
 		else if (alpha < 0 && flag)
 		{
 			flag = false;
 			fadeStart = false;
+			player->SetInGate(false);
 		}
 	}
 }
@@ -936,7 +948,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		break;
 	case 15:
 		//「【残り時間】最後に制限時間です。この秒数が...」
-		break; 
+		break;
 	case 14:
 		//残り時間表示
 		tutorialTimer += elapsedTime;
@@ -991,6 +1003,8 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		{
 			tutorial_Click_Count++;
 		}
+		player->ChangeCamera();
+		player->UpdateHijack(elapsedTime);
 		if (tutorial_Click_Count >= 2)//右クリックが二回押されたら
 		{
 			tutorial_Step += 2;
