@@ -42,24 +42,11 @@ Life::Life(int life)
 	this->life = new Sprite("Data/Sprite/life.png");
 	life_number = life_now_number++;
 
-	switch (life)
-	{
-	case 0:
-		position.x = life_number * 200 -600;
-		position.y = 600;
-		position.z = 0;
-		break;
-	case 1:
-		position.x = life_number * 200 -200;
-		position.y = 600;
-		position.z = 0;
-		break;
-	case 2:
-		position.x = life_number * 200 + 300;
-		position.y = 600;
-		position.z = 0;
-		break;
-	}
+
+	position.x = life_number * 200 + 300;
+	position.y = 600;
+	position.z = 0;
+
 }
 
 Life::~Life()
@@ -69,6 +56,7 @@ Life::~Life()
 		delete life;
 		life = nullptr;
 	}
+	life_now_number = 0;
 }
 
 void Life::Update(float elapsed_Time)

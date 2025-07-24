@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "Math/Easing.h"
 #include "System/CollisionEditor.h"
+#include "System/SettingsManager.h"
 
 static bool hit = false;
 static float time = 0;
@@ -46,6 +47,15 @@ Player::Player(const DirectX::XMFLOAT3& position)
 	/// SEの読み込み
 	changeCameraInSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
 	changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
+
+	if (Difficulty::Instance().GetDifficulty() == 2)
+	{
+		hijackRecoveryPerSec = 1;
+	}
+	else
+	{
+		hijackRecoveryPerSec = 3;
+	}
 }
 
 /// デストラクタ
@@ -59,12 +69,13 @@ void Player::Update(float dt)
 	/// ハイジャックの時間処理
 	UpdateHijack(dt);
 
-	// 繧ｫ繝｡繝ｩ蛻・ｊ譖ｿ縺亥・逅・
-	if (changeCameraInSE->IsPlaying())
-		changeCameraInSE->SetVolume(0.5f);
-
 	/// カメラ切り替え処理(実際のカメラの切り替えはSceneでやってる)
 	/// カメラを切り替えたときの処理、フラグを更新してる
+	 
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
+	changeCameraInSE->SetVolume(0.5f * setting.seVolume);
+	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume);
+
 	ChangeCamera();
 
 	// �v���C���[�ړ�����
