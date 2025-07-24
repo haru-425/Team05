@@ -117,7 +117,9 @@ void SceneTitle::Initialize()
 	Audio3DSystem::Instance().PlayByTag("aircon");
 
 	// SE読み込み
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
 	selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
+	selectSE->SetVolume(0.5f * setting.seVolume);
 }
 
 //終了化
@@ -240,8 +242,6 @@ void SceneTitle::Update(float elapsedTime)
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
-
-	selectSE->SetVolume(0.5f);
 }
 
 
