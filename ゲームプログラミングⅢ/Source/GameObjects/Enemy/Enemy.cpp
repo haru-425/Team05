@@ -279,6 +279,12 @@ void Enemy::Update(float elapsedTime)
 			state = State::Idle;
 			Animationplay();
 		}
+
+		if (((loocking && playerdist < lockonRange) || (loocking && playerdist < searchRange)))
+		{
+			state = State::detection;
+			Animationplay();
+		}
 		break;
 
 	case State::Attack:
@@ -287,6 +293,7 @@ void Enemy::Update(float elapsedTime)
 			//SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
 			batteryManager::Instance().stop();
 			batteryManager::Instance().ClearBattery();
+			moveSpeed = 0;
 		}
 		break;
 	}
