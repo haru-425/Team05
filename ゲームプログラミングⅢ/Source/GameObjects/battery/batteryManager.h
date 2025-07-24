@@ -3,6 +3,8 @@
 #include "Player/Player.h"
 #include "Enemy/Enemy.h"
 #include "System/difficulty.h"
+#include "System/AudioSource.h"
+#include "System/SettingsManager.h"
 #include <chrono>
 #include <DirectXMath.h>
 #include <vector>
@@ -34,6 +36,7 @@ public:
 			battery_recovery = HARD_RECOVERY;
 			drop_interval = BATTERY_DROP_HARD_INTERVAL;
 		}
+		getSE=std::make_unique<AudioSource>("./Data/Sound/get.wav");
 	};
 
 	void Update(float elapsedTime)
@@ -53,6 +56,8 @@ public:
 			addBattery(enemy->GetPosition());
 			droptime = 0;
 		}
+		GameSettings setting = SettingsManager::Instance().GetGameSettings();
+		getSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
 	}
 
 	void Render(const RenderContext& rc, ModelRenderer* renderer)
@@ -78,6 +83,7 @@ public:
 		{
 			if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&it->getPos()), DirectX::XMLoadFloat3(&pos)))) < 0.5f)
 			{
+				getSE->Play(false);
 				it = hasBattery.erase(it);
 				player_Get_Batterry++;
 				player->AddHijackTimer(battery_recovery);
@@ -130,4 +136,6 @@ private:
 	float droptime = 0;
 
 	bool dropFlag = true;
+
+	std::unique_ptr<AudioSource> getSE;
 };
