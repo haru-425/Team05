@@ -149,7 +149,7 @@ void Enemy::Update(float elapsedTime)
 			int start = stage->NearWayPointIndex(this->position);
 
 			refinePath(start, current); // 経路を作成
-
+			isReverseTraced = false;
 			// ステート遷移
 			if (loocking && playerdist < lockonRange)
 			{
@@ -354,6 +354,7 @@ void Enemy::Updatemovement(float elapsedTime)
 				stage->path.clear();
 				route.clear();
 			}
+			isReverseTraced = false;
 			return;
 		}
 	}
@@ -432,6 +433,44 @@ void Enemy::refinePath(int start, int current)
 	for (auto i : stage->path)
 	{
 		this->Addroute(stage->wayPoint[i]->position);
+	}
+}
+
+void Enemy::remote_sensing(DirectX::XMFLOAT3 pos)
+{
+	if (isReverseTraced)
+	{
+		// 経路をリセットし、新たに探索開始
+		stage->path.clear();
+		route.clear();
+		currentTargetIndex = 0;
+
+		Goal::Instance().SetPosition(pos);
+		Start::Instance().SetPosition(this->position);
+		SearchAI::Instance().DijkstraSearch(stage);
+
+		int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+		int start = stage->NearWayPointIndex(this->position);
+
+		refinePath(start, current); // 経路を作成
+
+		state = State::Roaming;
+		isReverseTraced = true;
+	}
+	else
+	{
+		stage->path.clear();
+		Goal::Instance().SetPosition(pos);
+		if (!route.empty())
+			Start::Instance().SetPosition(route.back());
+		SearchAI::Instance().DijkstraSearch(stage);
+
+		int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+		int start = stage->NearWayPointIndex(Start::Instance().GetPosition());
+
+		refinePath(start, current);
+
+		state = State::Roaming;
 	}
 }
 

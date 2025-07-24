@@ -102,6 +102,8 @@ public:
 
     bool GetIsDead() const { return isDead; }
 
+    void remote_sensing(DirectX::XMFLOAT3 pos);
+
 private:
     /**
      * @brief 経路の再構成を行う（補正用）
@@ -147,6 +149,7 @@ private:
     /// 探索用のフラグ等
     bool loocking;                                         ///< 見ているかどうか
     bool isTrackingPlayer = false;                         ///< プレイヤーを追跡中か
+    bool isReverseTraced = false;                          ///< プレイヤーを逆探知した後かどうか
     float hitdist;                                         ///< 衝突までの距離
     float searchRange = 10.0f;                             ///< プレイヤー探索範囲
     float lockonRange = 30.0f;                             ///< 直線でプレイヤーを見つけれる距離

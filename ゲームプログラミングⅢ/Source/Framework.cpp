@@ -69,7 +69,7 @@ void Framework::Update(float elapsedTime)
 {
 	static int count = 0;
 #ifndef _DEBUG
-	if(count == 1)
+	if (count == 1)
 		Graphics::Instance().StylizeWindow(Graphics::Instance().GetScreenMode());
 #endif
 
@@ -157,7 +157,7 @@ void Framework::CalculateFrameStats()
 		float mspf = 1000.0f / fps;
 		std::ostringstream outs;
 		outs.precision(6);
-		outs << "Rubot FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)";
+		outs << "Rubot" /*FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)*/;
 		SetWindowTextA(hWnd, outs.str().c_str());
 
 		// Reset for next average.
