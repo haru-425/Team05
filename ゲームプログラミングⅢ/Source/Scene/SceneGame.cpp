@@ -87,13 +87,25 @@ void SceneGame::Initialize()
 	batteryManager::Instance().SetPlayer_and_Enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
 	batteryManager::Instance().start();
 
-  um.CreateUI("./Data/Sprite/back.png", "Fade");
-	um.GetUIs().at(0)->GetSpriteData().color = { 0,0,0,0 };
-	um.GetUIs().at(0)->GetSpriteData().isVisible = true;
+  um.CreateUI("./Data/Sprite/doorUI.png", "Door_Active");
+	um.GetUIs().at(0)->GetSpriteData().spritePos = { 0,0,1 };
+	um.GetUIs().at(0)->GetSpriteData().color = { 1,1,1,1 };
+	um.GetUIs().at(0)->GetSpriteData().spriteSize = { 1280,720 };
+	um.GetUIs().at(0)->GetSpriteData().textureSize = { 1280,720 };
+	um.GetUIs().at(0)->GetSpriteData().isVisible = false;
 
-  um.CreateUI("./Data/Sprite/back.png", "door");
+	um.CreateUI("./Data/Sprite/doorUI.png", "Door_Passed");
+	um.GetUIs().at(1)->GetSpriteData().spritePos = { 0,0,1 };
 	um.GetUIs().at(1)->GetSpriteData().color = { 1,1,1,1 };
+	um.GetUIs().at(1)->GetSpriteData().spriteSize = { 1280,720 };
+	um.GetUIs().at(1)->GetSpriteData().textureSize = { 1280,720 };
 	um.GetUIs().at(1)->GetSpriteData().isVisible = false;
+
+
+  um.CreateUI("./Data/Sprite/back.png", "Fade");
+	um.GetUIs().at(2)->GetSpriteData().color = { 0,0,0,0 };
+	um.GetUIs().at(2)->GetSpriteData().isVisible = true;
+
 
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
@@ -224,7 +236,7 @@ void SceneGame::Update(float elapsedTime)
 	//}
 
   /// チュートリアル処理
-  if (tutorial_Flug)
+	if (tutorial_Flug)
 	{
 		stage->Update(elapsedTime);
 		minimap->Update(player->GetPosition());
@@ -233,17 +245,20 @@ void SceneGame::Update(float elapsedTime)
 		UpdateCamera(elapsedTime);
 		return;
 	}
+
+	Collision(); ///< 当たり判定 
   
 	stage->Update(elapsedTime);						///< ステージ更新処理
-	player->Update(elapsedTime);					///< プレイヤー更新処理
-	enemy->Update(elapsedTime);						///< 敵更新処理
+	if (!fadeStart) {
+		player->Update(elapsedTime);					///< プレイヤー更新処理
+		enemy->Update(elapsedTime);						///< 敵更新処理
+	}
 	minimap->Update(player->GetPosition());	        ///< ミニマップ更新処理
 	batteryManager::Instance().Update(elapsedTime); ///< バッテリー更新処理
 	UpdateCamera(elapsedTime);                      ///< カメラ更新処理
 	metar->update(player->GetenableHijackTime());   ///< 画面左のハイジャック時間メータの更新処理 
 	UpdateOneWay(elapsedTime);                      ///< 一方通行処理
 
-	Collision(); ///< 当たり判定 
 
 	player->UpdateTransform(); ///< プレイヤーの行列更新処理
 
@@ -627,17 +642,11 @@ void SceneGame::Render()
 	}
 #endif
 #ifdef _DEBUG
-		CollisionEditor::Instance().Render(rc, shapeRenderer);
+	//CollisionEditor::Instance().Render(rc, shapeRenderer);
 
 #endif // DEBUG
 
-		// プレイヤー専用通路のUIの設定
-		if (player->IsEnableOpenGate())
-			um.GetUIs().at(1)->GetSpriteData().isVisible = true;
-		else
-			um.GetUIs().at(1)->GetSpriteData().isVisible = false;
-
-		um.Render(rc);
+	um.Render(rc);
 }
 
 // GUI描画
@@ -866,7 +875,7 @@ void SceneGame::UpdateOneWay(float elapsedTime)
 		}
 		float alpha = fadeTime / totalFadeTime;
 
-		um.GetUIs().at(0)->GetSpriteData().color.w = alpha;
+		um.GetUIs().at(2)->GetSpriteData().color.w = alpha;
 
 		if (alpha >= 1)
 		{
@@ -1049,21 +1058,42 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 		DirectX::XMFLOAT3 hitPos;
 		if (Collision::IntersectSphereVsSphere(playerPos, player->GetRadius(), gatePos, 0.05f, hitPos))
 		{
+
 			if (IsPlayerFacingDoor(playerPos, playerDir, gatePos))
 			{
-				// UI表示条件を満たす
-				player->SetEnableOpenGate(true);
-
-				if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT && !stage->GetGatePassed(i))
+				if (stage->GetGatePassed(i))
 				{
-					stage->SetGatePassed(i, true);
-					fadeStart = true;
+					// 使用済みの扉に向いている → 使用済みUI表示
+					um.GetUIs().at(0)->GetSpriteData().isVisible = false;
+					um.GetUIs().at(1)->GetSpriteData().isVisible = true;
 				}
+				else
+				{
+					// 未使用の扉に向いている → 通常UI表示
+					player->SetEnableOpenGate(true);
 
-				canOpenGate = true;
+					um.GetUIs().at(0)->GetSpriteData().isVisible = true;
+					um.GetUIs().at(1)->GetSpriteData().isVisible = false;
+
+					if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)
+					{
+						stage->SetGatePassed(i, true);
+						fadeStart = true;
+					}
+
+					canOpenGate = true;
+				}
 			}
+
 		}
 	}
+
+	//// プレイヤー専用通路のUIの設定
+	//if (player->IsEnableOpenGate())
+	//	um.GetUIs().at(0)->GetSpriteData().isVisible = true;
+	//else if (!player->IsEnableOpenGate() || fadeStart)
+	//	um.GetUIs().at(0)->GetSpriteData().isVisible = false;
+
 
 	// UI非表示
 	if (!canOpenGate)
