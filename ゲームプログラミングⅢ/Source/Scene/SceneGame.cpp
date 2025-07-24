@@ -39,7 +39,7 @@ void SceneGame::Initialize()
 
 	player = std::make_shared<Player>(DirectX::XMFLOAT3(1, 0, -23)); ///< プレイヤー初期化
 	enemy = std::make_shared<Enemy>(player, stage); ///< 敵初期化
-  metar = std::make_shared<Metar>();
+	metar = std::make_shared<Metar>();
 	player->SetEnemy(enemy); ///< プレイヤーが敵をバインド
 
 	//ミニマップスプライト初期化
@@ -87,7 +87,7 @@ void SceneGame::Initialize()
 	batteryManager::Instance().SetPlayer_and_Enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
 	batteryManager::Instance().start();
 
-  um.CreateUI("./Data/Sprite/doorUI.png", "Door_Active");
+	um.CreateUI("./Data/Sprite/doorUI.png", "Door_Active");
 	um.GetUIs().at(0)->GetSpriteData().spritePos = { 0,0,1 };
 	um.GetUIs().at(0)->GetSpriteData().color = { 1,1,1,1 };
 	um.GetUIs().at(0)->GetSpriteData().spriteSize = { 1280,720 };
@@ -102,7 +102,7 @@ void SceneGame::Initialize()
 	um.GetUIs().at(1)->GetSpriteData().isVisible = false;
 
 
-  um.CreateUI("./Data/Sprite/back.png", "Fade");
+	um.CreateUI("./Data/Sprite/back.png", "Fade");
 	um.GetUIs().at(2)->GetSpriteData().color = { 0,0,0,0 };
 	um.GetUIs().at(2)->GetSpriteData().isVisible = true;
 
@@ -264,9 +264,9 @@ void SceneGame::Update(float elapsedTime)
 	reminingTime -= elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
-	Collision(); ///< 当たり判定 
+	Collision(); ///< 当たり判定
 
-  
+
 	stage->Update(elapsedTime);						///< ステージ更新処理
 	if (!fadeStart) {
 		player->Update(elapsedTime);					///< プレイヤー更新処理
@@ -275,7 +275,7 @@ void SceneGame::Update(float elapsedTime)
 	minimap->Update(player->GetPosition());	        ///< ミニマップ更新処理
 	batteryManager::Instance().Update(elapsedTime); ///< バッテリー更新処理
 	UpdateCamera(elapsedTime);                      ///< カメラ更新処理
-	metar->update(player->GetenableHijackTime());   ///< 画面左のハイジャック時間メータの更新処理 
+	metar->update(player->GetenableHijackTime());   ///< 画面左のハイジャック時間メータの更新処理
 	UpdateOneWay(elapsedTime);                      ///< 一方通行処理
 
 
@@ -385,12 +385,12 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-		//minimap->Render(player->GetPosition());   
+		//minimap->Render(player->GetPosition());
 
 		auto easeOutSine = [](float x) -> float
-			{
-				return sin((x * DirectX::XM_PI) / 2);
-			};
+		{
+			return sin((x * DirectX::XM_PI) / 2);
+		};
 
 		if (tutorial_Flug)
 		{
@@ -566,7 +566,7 @@ void SceneGame::Render()
 		}
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
 
-		//temporalNoise	
+		//temporalNoise
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
 
@@ -830,9 +830,9 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// プレイヤー視点
 		if (!useCamera)
 		{
-    		cameraPos = player->GetPosition();
+			cameraPos = player->GetPosition();
 			cameraPos.y = player->GetViewPoint();
-			if(!player->GetIsEvent())
+			if (!player->GetIsEvent())
 			{
 				cameraPos = player->GetPosition();
 				cameraPos.y = player->GetViewPoint();
@@ -888,7 +888,7 @@ void SceneGame::UpdateOneWay(float elapsedTime)
 	/// 一方通行の通路を通った時のフェードインフェードアウトの処理
 	if (fadeStart)
 	{
-		static bool flag = false; /// falseでフェードイン trueでフェードアウト		
+		static bool flag = false; /// falseでフェードイン trueでフェードアウト
 		if (!flag)
 			fadeTime += elapsedTime;
 		else
