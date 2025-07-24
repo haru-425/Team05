@@ -75,8 +75,8 @@ void Player::Update(float dt)
 	/// カメラを切り替えたときの処理、フラグを更新してる
 	 
 	GameSettings setting = SettingsManager::Instance().GetGameSettings();
-	changeCameraInSE->SetVolume(0.5f * setting.seVolume * setting.seVolume);
-	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume * setting.seVolume);
+	changeCameraInSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
+	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
 
 	ChangeCamera();
 

@@ -123,11 +123,8 @@ private:
 
     bool deathStart = false;
 
-<<<<<<< HEAD
     int deathType = -1; // 0 前 1 後ろ
-=======
 
     int hijackRecoveryPerSec = 3;   // 一秒ごとのハイジャックコストの回復量
->>>>>>> add542749bfa5ebfeafa532a18e42f87c19c8676
 };
 

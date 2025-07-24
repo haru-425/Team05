@@ -4,6 +4,7 @@
 #include "Enemy/Enemy.h"
 #include "System/difficulty.h"
 #include "System/AudioSource.h"
+#include "System/Audio.h"
 #include "System/SettingsManager.h"
 #include <chrono>
 #include <DirectXMath.h>
@@ -36,7 +37,7 @@ public:
 			battery_recovery = HARD_RECOVERY;
 			drop_interval = BATTERY_DROP_HARD_INTERVAL;
 		}
-		getSE=std::make_unique<AudioSource>("./Data/Sound/get.wav");
+		getSE = Audio::Instance().LoadAudioSource("./Data/Sound/get.wav");
 	};
 
 	void Update(float elapsedTime)
@@ -137,5 +138,6 @@ private:
 
 	bool dropFlag = true;
 
-	std::unique_ptr<AudioSource> getSE;
+	//std::unique_ptr<AudioSource> getSE;
+	AudioSource* getSE;
 };
