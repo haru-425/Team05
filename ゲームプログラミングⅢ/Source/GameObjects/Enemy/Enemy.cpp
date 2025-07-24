@@ -291,6 +291,8 @@ void Enemy::Update(float elapsedTime)
 		if (animationcontroller.GetEndAnimation())
 		{
 			//SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
+			Audio3DSystem::Instance().StopByTag("enemy_run");
+			Audio3DSystem::Instance().StopByTag("enemy_walk");
 			batteryManager::Instance().stop();
 			batteryManager::Instance().ClearBattery();
 			moveSpeed = 0;
