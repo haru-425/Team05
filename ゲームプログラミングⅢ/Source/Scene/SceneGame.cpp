@@ -647,7 +647,7 @@ void SceneGame::Render()
 	}
 #endif
 #ifdef _DEBUG
-	CollisionEditor::Instance().Render(rc, shapeRenderer);
+	//CollisionEditor::Instance().Render(rc, shapeRenderer);
 
 #endif // DEBUG
 
@@ -1087,7 +1087,7 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 					player->SetEnableOpenGate(true);
 
 					um.GetUIs().at(0)->GetSpriteData().isVisible = true;
-					um.GetUIs().at(1)->GetSpriteData().isVisible = false;
+					//um.GetUIs().at(1)->GetSpriteData().isVisible = false;
 
 					if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)
 					{
@@ -1098,10 +1098,11 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 
 					canOpenGate = true;
 				}
+				break;
 			}
 		}
 		else {
-			um.GetUIs().at(0)->GetSpriteData().isVisible = false;
+			//um.GetUIs().at(0)->GetSpriteData().isVisible = false;
 			um.GetUIs().at(1)->GetSpriteData().isVisible = false;
 		}
 	}
