@@ -76,7 +76,6 @@ Sprite::Sprite(const char* filename)
 			inputLayout.GetAddressOf(),
 			vertexShader.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-
 	}
 
 	// ピクセルシェーダー
@@ -93,8 +92,6 @@ Sprite::Sprite(const char* filename)
 			NoiseShader.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
-
-
 
 	// テクスチャの生成	
 	if (filename != nullptr)
@@ -229,7 +226,6 @@ void Sprite::Render(const RenderContext& rc,
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 
-
 	//定数バッファ更新
 	{
 		//ミニマップ
@@ -264,7 +260,6 @@ void Sprite::Render(const RenderContext& rc,
 	else
 	{
 		dc->PSSetShader(pixelShader.Get(), nullptr, 0);
-
 		dc->PSSetShaderResources(0, 1, shaderResourceView.GetAddressOf());
 	}
 

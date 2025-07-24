@@ -3,9 +3,9 @@
 #include "Camera/Camera.h"
 #include "System/GamePad.h"
 #include "System/Input.h"
-#include"Scene/SceneGameOver.h"
-#include"Scene/SceneClear.h"
-#include"Scene/SceneManager.h"
+#include "Scene/SceneGameOver.h"
+#include "Scene/SceneClear.h"
+#include "Scene/SceneManager.h"
 #include "Collision.h"
 #include "./LightModels/LightManager.h"
 #include "./Aircon/AirconManager.h"
@@ -38,18 +38,18 @@ void SceneGame::Initialize()
 	i_CameraController = std::make_unique<FPCameraController>();
 
 	player = std::make_shared<Player>(DirectX::XMFLOAT3(1, 0, -23)); ///< プレイヤー初期化
-	enemy = std::make_shared<Enemy>(player, stage); ///< 敵初期化
-  metar = std::make_shared<Metar>();
-	player->SetEnemy(enemy); ///< プレイヤーが敵をバインド
+	enemy = std::make_shared<Enemy>(player, stage);                  ///< 敵初期化
+    metar = std::make_shared<Metar>();
+	player->SetEnemy(enemy);                                         ///< プレイヤーが敵をバインド
 
 	//ミニマップスプライト初期化
 	minimap = new MiniMap();
-	timer = 0.0f; // タイマー初期化
+	timer = 0.0f;      // タイマー初期化
 	transTimer = 0.0f; // シーン遷移タイマー初期化
 	reminingTime = 180.0f;
 
 	selectTrans = SelectTrans::GameOver; // シーン遷移選択初期化
-	sceneTrans = false; // シーン遷移フラグ初期化
+	sceneTrans = false;                  // シーン遷移フラグ初期化
 
 	// shadowMap
 	ID3D11Device* device = Graphics::Instance().GetDevice();
@@ -70,21 +70,16 @@ void SceneGame::Initialize()
 
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_walk", enemy->GetPosition());
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
-	//Audio3DSystem::Instance().SetEmitterPositionByTag("aircon", enemy->GetPosition());
-
-
 
 	// 3Dオーディオシステムの再生開始
-	//Audio3DSystem::Instance().UpdateEmitters(elapsed);
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
-
 
 	/// 当たり判定エディターの初期化
 	CollisionEditor::Instance().Initialize();
 
 	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
-	batteryManager::Instance().SetPlayer_and_Enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
+	batteryManager::Instance().SetPlayer_and_Enemy(player, enemy);
 	batteryManager::Instance().start();
 
   um.CreateUI("./Data/Sprite/doorUI.png", "Door_Active");
@@ -106,7 +101,6 @@ void SceneGame::Initialize()
 	um.GetUIs().at(2)->GetSpriteData().color = { 0,0,0,0 };
 	um.GetUIs().at(2)->GetSpriteData().isVisible = true;
 
-
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
 		tutorial_Flug = true;
@@ -126,7 +120,6 @@ void SceneGame::Initialize()
 			tutorial[11] = std::make_unique<Sprite>("Data/Sprite/dialog/12.png");
 			tutorial[12] = std::make_unique<Sprite>("Data/Sprite/dialog/next_navi.png");
 			tutorial[13] = std::make_unique<Sprite>("Data/Sprite/dialog/aisle.png");
-
 		}
 	}
 }
@@ -148,10 +141,10 @@ void SceneGame::Finalize()
 		delete minimap;
 		minimap = nullptr;
 	}
-	Audio3DSystem::Instance().StopByTag("atmosphere_noise"); // 音声停止
-	Audio3DSystem::Instance().StopByTag("electrical_noise"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("atmosphere_noise");
+	Audio3DSystem::Instance().StopByTag("electrical_noise");
 
-	Audio3DSystem::Instance().StopByTag("aircon"); // 音声停止
+	Audio3DSystem::Instance().StopByTag("aircon");
 	Audio3DSystem::Instance().StopByTag("enemy_run");
 	Audio3DSystem::Instance().StopByTag("enemy_walk");
 
@@ -184,20 +177,6 @@ void SceneGame::Update(float elapsedTime)
 			/// exit関数はメモリリークが大量発生する可能性があるのでこの方法にする
 			SceneManager::instance().SetIsExit(true);
 		}
-		//if (zKey)
-		//{
-		//	nextScene = new Game_Over(--life_number);
-		//	sceneTrans = true;
-		//	transTimer = 0.0f;
-		//	selectTrans = SelectTrans::GameOver; // ゲームオーバーシーンに遷移
-		//}
-		//if (rKey)
-		//{
-		//	nextScene = new Game_Clear;
-		//	sceneTrans = true;
-		//	transTimer = 0.0f;
-		//	selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
-		//}
 		if (enemy->GetIsDead())
 		{
 			if (life_number == 0)
@@ -243,7 +222,7 @@ void SceneGame::Update(float elapsedTime)
 		{
 			SceneManager::instance().ChangeScene(nextScene);
 			nextScene = nullptr; // 多重遷移防止
-			sceneTrans = false; // シーン遷移フラグをリセット
+			sceneTrans = false;  // シーン遷移フラグをリセット
 		}
 	}
 
@@ -304,10 +283,9 @@ void SceneGame::Render()
 		0.1f,
 		1000.0f);
 
-
 	/// 描画用コンテキストの準備
 	RenderContext rc;
-	rc.deviceContext = dc; ///< デバイスコンテキスト
+	rc.deviceContext = dc;                      ///< デバイスコンテキスト
 	rc.renderState = graphics.GetRenderState(); ///< レンダーステート
 
 	//カメラパラメータ設定
@@ -320,11 +298,12 @@ void SceneGame::Render()
 		Camera& camera = Camera::Instance();
 
 		// ライトの位置から見た視線行列を生成
-		DirectX::XMVECTOR LightPosition = DirectX::XMLoadFloat3(&lightDirection); // TODO : pointLightにするときはここを変更
+		DirectX::XMVECTOR LightPosition = DirectX::XMLoadFloat3(&lightDirection);
 		LightPosition = DirectX::XMVectorScale(LightPosition, -50);
 		DirectX::XMMATRIX V = DirectX::XMMatrixLookAtLH(LightPosition,
-			DirectX::XMVectorSet(camera.GetFocus().x, camera.GetFocus().y, camera.GetFocus().z, 1.0f), // (ToT)
+			DirectX::XMVectorSet(camera.GetFocus().x, camera.GetFocus().y, camera.GetFocus().z, 1.0f),
 			DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+
 		// シャドウマップに描画したい範囲の射影行列を生成
 		DirectX::XMMATRIX P = DirectX::XMMatrixOrthographicLH(SHADOWMAP_DRAWRECT, SHADOWMAP_DRAWRECT,
 			0.1f, 200.0f);
@@ -350,6 +329,7 @@ void SceneGame::Render()
 
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 0.5f, 0.5f, 1, 1);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->activate(dc);
+
 	// 3Dモデル描画
 	{
 		//ステージ描画
@@ -372,7 +352,6 @@ void SceneGame::Render()
 	// 3Dデバッグ描画
 	{
 		//player->RenderDebug(rc, shapeRenderer, { 1,2,1 }, { 1,1,1,1 }, DEBUG_MODE::BOX | DEBUG_MODE::CAPSULE);
-
 	}
 
 
@@ -385,8 +364,6 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-		//minimap->Render(player->GetPosition());   
-
 		auto easeOutSine = [](float x) -> float
 			{
 				return sin((x * DirectX::XM_PI) / 2);
@@ -533,19 +510,12 @@ void SceneGame::Render()
 			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
 
-
-
 		Graphics::Instance().bit_block_transfer->blit(
 			dc,
 			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
-
-
 		);
-
-
-
 	}
-	else//player
+	else
 	{
 		// BLOOM
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->clear(dc);
@@ -596,9 +566,6 @@ void SceneGame::Render()
 			//タイマー表示なし
 			Graphics::Instance().bit_block_transfer->blit(dc,
 				Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::BreathShake)].Get());
-
-
-
 		}
 
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->deactivate(dc);
@@ -626,8 +593,6 @@ void SceneGame::Render()
 		//minimap->Render(player->GetPosition());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->deactivate(dc);
 
-
-
 		//crt
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
@@ -652,13 +617,9 @@ void SceneGame::Render()
 
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
 
-
-
 		Graphics::Instance().bit_block_transfer->blit(
 			dc,
 			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
-
-
 		);
 
 	}
@@ -866,7 +827,6 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// カメラモードの変更 (DEBUG モードのみ)
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
-			//i_CameraController = std::make_unique<FreeCameraController>();
 			i_CameraController = std::make_unique<LightDebugCameraController>();
 		}
 #endif
@@ -1009,9 +969,9 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		}
 		break;
 	case 8:
-		batteryManager::Instance().addBattery({ 1,0,-18 });//プレイヤーの見える位置にバッテリーを置く
-		batteryManager::Instance().addBattery({ -3,0,-23 });//プレイヤーの見える位置にバッテリーを置く
-		batteryManager::Instance().addBattery({ 5,0,-23 });//プレイヤーの見える位置にバッテリーを置く
+		batteryManager::Instance().addBattery({ 1,0,-18 });     //プレイヤーの見える位置にバッテリーを置く
+		batteryManager::Instance().addBattery({ -3,0,-23 });    //プレイヤーの見える位置にバッテリーを置く
+		batteryManager::Instance().addBattery({ 5,0,-23 });     //プレイヤーの見える位置にバッテリーを置く
 		tutorialTimer = 0;
 		tutorial_Step++;
 		break;
@@ -1104,7 +1064,6 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 					player->SetEnableOpenGate(true);
 
 					um.GetUIs().at(0)->GetSpriteData().isVisible = true;
-					//um.GetUIs().at(1)->GetSpriteData().isVisible = false;
 
 					if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)
 					{
@@ -1119,7 +1078,7 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 			}
 		}
 		else {
-			//um.GetUIs().at(0)->GetSpriteData().isVisible = false;
+			um.GetUIs().at(0)->GetSpriteData().isVisible = false;
 			um.GetUIs().at(1)->GetSpriteData().isVisible = false;
 		}
 	}
