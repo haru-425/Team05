@@ -13,6 +13,7 @@
 #include "System/UI.h"
 #include "System/UiManager.h"
 #include "3DAudio/3DAudio.h"
+#include "System/AudioSource.h"
 
 //タイトルシーン
 class SceneTitle :public Scene
@@ -81,6 +82,7 @@ private:
 	std::vector<std::unique_ptr<UI>> ui;
 	UIManager um;
 	bool isVolumeSliderActive = false;
+	int oldSelect = -1;
 
 	/// シェーダ関連
 	// ==============================
@@ -130,4 +132,9 @@ private:
 	float GraphicsScenetime = 0; //gameタイマー
 
 	bool isStartGame = false;
+
+	// ==============================
+    // 音響関連定数
+    // ==============================
+	AudioSource* selectSE = nullptr;
 };

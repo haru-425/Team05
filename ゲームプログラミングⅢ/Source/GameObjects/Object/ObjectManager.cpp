@@ -76,7 +76,7 @@ void ObjectManager::Initialize()
 	objects[static_cast<int>(ObjectLavel::TV_B)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -10.5f,1.5f,2.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }, DirectX::XMFLOAT3{ defaultScale, defaultScale, defaultScale }));
 
 	objects[static_cast<int>(ObjectLavel::Robot_Arm)].clear();
-	objects[static_cast<int>(ObjectLavel::Robot_Arm)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 13.0f,0,-10.0f }, DirectX::XMFLOAT3{ 0, 0, 0 }, DirectX::XMFLOAT3{ 0.013f, 0.013f, 0.013f }));
+	objects[static_cast<int>(ObjectLavel::Robot_Arm)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ 13.0f,0,-10.0f }, DirectX::XMFLOAT3{ 0, 0, 0 }, DirectX::XMFLOAT3{ 0.017f, 0.017f, 0.017f }));
 	objects[static_cast<int>(ObjectLavel::Robot_Arm)].push_back(std::make_unique<Object>(DirectX::XMFLOAT3{ -8.0f,0,-14.5f }, DirectX::XMFLOAT3{ 0, DirectX::XMConvertToRadians(180), 0 }, DirectX::XMFLOAT3{ 0.017f, 0.017f, 0.017f }));
 
 }

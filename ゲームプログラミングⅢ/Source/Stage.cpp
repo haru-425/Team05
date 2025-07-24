@@ -385,6 +385,7 @@ void Stage::DestinationPointSet()
 
 	wayPoint[43]->AddEdge(wayPoint[52].get());
 
+	wayPoint[44]->AddEdge(wayPoint[52].get());
 	wayPoint[44]->AddEdge(wayPoint[53].get());
 	wayPoint[44]->AddEdge(wayPoint[54].get());
 

@@ -29,7 +29,7 @@ Framework::Framework(HWND hWnd)
 	SettingsManager::Instance().Load();
 
 	// オーディオ初期化
-	Audio::Instance().Instance();
+	Audio::Instance().Initialize();
 
 	hDC = GetDC(hWnd);
 
@@ -59,14 +59,20 @@ Framework::~Framework()
 
 	ReleaseDC(hWnd, hDC);
 
-	Audio::Instance().Finalize();
-
 	ResourceManager::Instance().Clear();
+
+	Audio::Instance().Finalize();
 }
 
 // 更新処理
 void Framework::Update(float elapsedTime)
 {
+	static int count = 0;
+#ifndef _DEBUG
+	if(count == 1)
+		Graphics::Instance().StylizeWindow(Graphics::Instance().GetScreenMode());
+#endif
+
 	// インプット更新処理
 	Input::Instance().Update();
 
@@ -77,11 +83,15 @@ void Framework::Update(float elapsedTime)
 	//sceneGame.Update(elapsedTime);
 	SceneManager::instance().Update(elapsedTime);
 
+#ifdef _DEBUG
 	GamePad& input = Input::Instance().GetGamePad();
 	if ((input.GetButtonDown() & GamePad::F2))
 	{
 		Graphics::Instance().StylizeWindow(!Graphics::Instance().GetScreenMode());
 	}
+#endif
+
+	count++;
 }
 float elapsed = 0;
 // 描画処理
@@ -147,7 +157,7 @@ void Framework::CalculateFrameStats()
 		float mspf = 1000.0f / fps;
 		std::ostringstream outs;
 		outs.precision(6);
-		outs << "FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)";
+		outs << "Rubot FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)";
 		SetWindowTextA(hWnd, outs.str().c_str());
 
 		// Reset for next average.

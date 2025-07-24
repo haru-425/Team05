@@ -33,7 +33,10 @@ protected:
     // É|Å[ÉYâÊñ Ç©Ç«Ç§Ç©
     bool isPause = false;
 
+
+
 private:
     bool ready = false;
+
 
 };

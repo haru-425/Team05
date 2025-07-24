@@ -145,6 +145,7 @@
     <ClInclude Include="Source\LightDebugCameraController.h" />
     <ClInclude Include="Source\GameObjects\LightModels\LightManager.h" />
     <ClInclude Include="Source\Math\Collision.h" />
+    <ClInclude Include="Source\metar.h" />
     <ClInclude Include="Source\Math\Easing.h" />
     <ClInclude Include="Source\MiniMap.h" />
     <ClInclude Include="Source\Projectile.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="Source\GameObjects\LightModels\LightManager.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Math\Collision.cpp" />
+    <ClCompile Include="Source\metar.cpp" />
     <ClCompile Include="Source\MiniMap.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />
     <ClCompile Include="Source\ProjectileHoming.cpp" />

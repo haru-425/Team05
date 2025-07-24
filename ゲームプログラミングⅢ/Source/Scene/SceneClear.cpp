@@ -3,6 +3,12 @@
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "SceneTitle.h"
+
+#include "System/Audio.h"
+#include "System/Input.h"
+
+#include "3DAudio/3DAudio.h"
+
 void Game_Clear::Initialize()
 {
 	s_rank = new Sprite("Data/Sprite/rank.png");
@@ -15,6 +21,12 @@ void Game_Clear::Initialize()
 	//RankSystem::Instance().SetRank(1, 1, 3);
 	result = RankSystem::Instance().GetRank();
 	angle = 0;
+
+	// SEの読み込み
+	selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
+
+	Audio3DSystem::Instance().PlayByTag("electrical_noise");
+
 }
 
 void Game_Clear::Finalize()
@@ -45,15 +57,26 @@ void Game_Clear::Finalize()
 
 
 	timer = 0;
+	Audio3DSystem::Instance().StopByTag("electrical_noise"); // 音声停止
 
+	if (selectSE != nullptr)
+	{
+		selectSE->Stop();
+		delete selectSE;
+		selectSE = nullptr;
+	}
 }
 
 void Game_Clear::Update(float elapsedTime)
 {
+	Mouse& mouse = Input::Instance().GetMouse();
 
-	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	selectSE->SetVolume(0.5f);
+
+	if(mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
 		GameCleartime = 120.0f;
+		selectSE->Play(false);
 	}
 	if (GameCleartime >= 120.0f) {
 		if (!sceneTrans)
@@ -62,8 +85,6 @@ void Game_Clear::Update(float elapsedTime)
 			nextScene = new SceneTitle;
 			sceneTrans = true;
 			transTimer = 0.0f;
-
-
 		}
 		else
 		{
@@ -82,6 +103,14 @@ void Game_Clear::Update(float elapsedTime)
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
 	GameCleartime += elapsedTime;
 	angle += 0.1f;
+	Audio3DSystem::Instance().UpdateListener(
+		{ 0.0f, 0.0f, 0.0f }, // リスナーの位置
+		{ 0.0f, 0.0f, 1.0f }, // リスナーの向き
+		{ 0.0f, 1.0f, 0.0f }  // リスナーの上方向
+	);
+	Audio3DSystem::Instance().SetEmitterPositionByTag("electrical_noise", { 0.0f, 0.0f, 0.0f }); // エミッターの位置を更新
+	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
+
 }
 
 void Game_Clear::Render()

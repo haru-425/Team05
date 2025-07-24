@@ -4,17 +4,18 @@
 #include "Enemy/Enemy.h"
 #include "System/AnimationController.h"
 #include "System/LoadTextures.h"
+#include "System/AudioSource.h"
 
-// ƒeƒXƒg—p‚Ìƒ‚ƒfƒ‹‚¾‚Á‚½‚è‚ğØ‚è‘Ö‚¦‚é‚æ‚¤
+// ãƒ†ã‚¹ãƒˆç”¨ã®ãƒ¢ãƒ‡ãƒ«ã ã£ãŸã‚Šã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹ã‚ˆã†
 //#define TEST
 
-// ƒvƒŒƒCƒ„[ƒpƒ‰ƒ[ƒ^İ’è
-static constexpr float maxHijackTime        = 50; // ƒnƒCƒWƒƒƒbƒN‚ÌÅ‘åŠÔ
-static constexpr int hijackCost             = 5;   // ƒnƒCƒWƒƒƒbƒNƒRƒXƒg
-static constexpr int hijackCostPerSec       = 5;   // ˆê•b‚²‚Æ‚ÌƒnƒCƒWƒƒƒbƒNƒRƒXƒg
-static constexpr int hijackRecoveryPerSec   = 3;   // ˆê•b‚²‚Æ‚ÌƒnƒCƒWƒƒƒbƒNƒRƒXƒg‚Ì‰ñ•œ—Ê
-static constexpr float maxSpeed             = 3.0f; // ƒvƒŒƒCƒ„[‚ÌÅ‚‘¬“x
-static float acceleration                   = 1.1f; // ‰Á‘¬“x
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿è¨­å®š
+static constexpr float maxHijackTime        = 50; // ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã®æœ€å¤§æ™‚é–“
+static constexpr int hijackCost             = 5;   // ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã‚³ã‚¹ãƒˆ
+static constexpr int hijackCostPerSec       = 5;   // ä¸€ç§’ã”ã¨ã®ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã‚³ã‚¹ãƒˆ
+static constexpr int hijackRecoveryPerSec   = 3;   // ä¸€ç§’ã”ã¨ã®ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã‚³ã‚¹ãƒˆã®å›å¾©é‡
+static constexpr float maxSpeed             = 3.0f; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æœ€é«˜é€Ÿåº¦
+static float acceleration                   = 1.1f; // åŠ é€Ÿåº¦
 
 static enum class AnimationState
 {
@@ -27,15 +28,15 @@ public:
     Player(const DirectX::XMFLOAT3& position = {0,0,0});
     ~Player();
 
-    // XVˆ—
+    // æ›´æ–°å‡¦ç†
     void Update(float dt) override;
 
-    // •`‰æˆ—
+    // æç”»å‡¦ç†
     void Render(const RenderContext& rc, ModelRenderer* renderer) override;
 
     void DrawDebug() override;
 
-    // “G‚ğƒoƒCƒ“ƒh
+    // æ•µã‚’ãƒã‚¤ãƒ³ãƒ‰
     void SetEnemy(std::shared_ptr<Enemy> enemy) { enemyRef = enemy; }
 
     bool GetUseCam() const { return useCam; }
@@ -44,7 +45,7 @@ public:
 
     DirectX::XMFLOAT3 GetDirection() const { return saveDirection; }
 
-    /// €–S‰‰o—pƒtƒ‰ƒO‚ÌƒQƒbƒ^[
+    /// æ­»äº¡æ¼”å‡ºç”¨ãƒ•ãƒ©ã‚°ã®ã‚²ãƒƒã‚¿ãƒ¼
     bool GetIsEvent() const { return isEvent; }
 
     float GetPitch() const {    return pitch;}
@@ -59,7 +60,11 @@ public:
 
     void SetEnableOpenGate(bool flag) { enableOpenGate = flag; }
 
-    bool GetIsDeath() const { return isDeath; } ///< ƒvƒŒƒCƒ„[‚ª€–S‚µ‚½‚©‚Ç‚¤‚©‚Ì”»’è
+    bool GetIsDeath() const { return isDeath; } ///< ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæ­»äº¡ã—ãŸã‹ã©ã†ã‹ã®åˆ¤å®š
+
+    float GetenableHijackTime(){ return enableHijackTime;}
+
+    void DeleteSounds();
 
 private:
     void Move(float dt);
@@ -70,34 +75,39 @@ private:
 
     void UpdateAnimation(float dt);
 
-    void DeathState(float dt); ///< €–S‰‰o—p
+    void DeathState(float dt); ///< æ­»äº¡æ¼”å‡ºç”¨
+
 
 private:
     std::shared_ptr<Model> model;
-    std::shared_ptr<Enemy> enemyRef = nullptr; // “G—p
+    std::shared_ptr<Enemy> enemyRef = nullptr; // æ•µç”¨
 
-    float accel         = 0.0f; // ‰Á‘¬“x
-    float speed         = 0.0f;  // ƒvƒŒƒCƒ„[ˆÚ“®‘¬“x
-    bool useCam         = false; // true : “G‹“_ ,false : ƒvƒŒƒCƒ„[‹“_
-    bool isChange       = false; // ƒJƒƒ‰‚ğ•Ï‚¦‚½‚©‚Ç‚¤‚©
-    bool isHijack       = false; // “G‚Ì‹ŠE‚ğƒnƒCƒWƒƒƒbƒN‚µ‚½‚Ì‚© ‘½•ªg‚Á‚Ä‚È‚¢
-    bool enableHijack   = false; // ƒnƒCƒWƒƒƒbƒN‚Å‚«‚é‚Ì‚©
-    bool isEvent        = false; // €–S‰‰oƒtƒ‰ƒO
+    float accel         = 0.0f; // åŠ é€Ÿåº¦
+    float speed         = 0.0f;  // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç§»å‹•é€Ÿåº¦
+    bool useCam         = false; // true : æ•µè¦–ç‚¹ ,false : ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è¦–ç‚¹
+    bool isChange       = false; // ã‚«ãƒ¡ãƒ©ã‚’å¤‰ãˆãŸã‹ã©ã†ã‹
+    bool isHijack       = false; // æ•µã®è¦–ç•Œã‚’ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã—ãŸã®ã‹ å¤šåˆ†ä½¿ã£ã¦ãªã„
+    bool enableHijack   = false; // ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯ã§ãã‚‹ã®ã‹
+    bool isEvent        = false; // æ­»äº¡æ¼”å‡ºãƒ•ãƒ©ã‚°
 
-    float enableHijackTime; // ƒnƒCƒWƒƒƒbƒNŠÔ
-    float hijackSpeed = 0.0f;  // ‹ŠEƒWƒƒƒbƒN‚ÌŠÔ‚ğŒ¸‚ç‚·‘¬“x
+    float enableHijackTime; // ãƒã‚¤ã‚¸ãƒ£ãƒƒã‚¯æ™‚é–“
+    float hijackSpeed = 0.0f;  // è¦–ç•Œã‚¸ãƒ£ãƒƒã‚¯ã®æ™‚é–“ã‚’æ¸›ã‚‰ã™é€Ÿåº¦
 
     float pitch;
     float yaw;
-    float angleX; ///< €–S‰‰o—p   
-    float angleY; ///< €–S‰‰o—p   
+    float angleX; ///< æ­»äº¡æ¼”å‡ºç”¨   
+    float angleY; ///< æ­»äº¡æ¼”å‡ºç”¨   
 
-    AnimationController animationController; // ƒAƒjƒ[ƒVƒ‡ƒ“
+    AnimationController animationController; // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
     AnimationState state = AnimationState::MOVE;
 
-    std::unique_ptr<LoadTextures> textures;  // ƒeƒNƒXƒ`ƒƒ
+    std::unique_ptr<LoadTextures> textures;  // ãƒ†ã‚¯ã‚¹ãƒãƒ£
 
-    bool enableOpenGate = false; ///< ƒhƒA‚ğ‚­‚®‚ê‚é‚©‚Ç‚¤‚© ‚±‚Ìƒtƒ‰ƒO‚ªfalse‚Ìê‡ƒJƒƒ‰‚ÌØ‚è‘Ö‚¦‰Â”\Atrue‚Ìê‡‚ÍƒJƒƒ‰Ø‚è‘Ö‚¦•s‰Â
+    bool enableOpenGate = false; ///< ãƒ‰ã‚¢ã‚’ããã‚Œã‚‹ã‹ã©ã†ã‹ ã“ã®ãƒ•ãƒ©ã‚°ãŒfalseã®å ´åˆã‚«ãƒ¡ãƒ©ã®åˆ‡ã‚Šæ›¿ãˆå¯èƒ½ã€trueã®å ´åˆã¯ã‚«ãƒ¡ãƒ©åˆ‡ã‚Šæ›¿ãˆä¸å¯
     bool isDeath = false;
+
+    // ã‚«ãƒ¡ãƒ©åˆ‡ã‚Šæ›¿ãˆã®SE
+    AudioSource* changeCameraInSE = nullptr;
+    AudioSource* changeCameraKeepSE = nullptr;
 };
 

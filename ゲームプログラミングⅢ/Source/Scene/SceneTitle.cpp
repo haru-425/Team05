@@ -11,9 +11,12 @@
 #include "System/difficulty.h"
 #include "Camera/CameraController/SceneCameraController.h"
 #include "System/SettingsManager.h"
+#include "System/Audio.h"
 #include <algorithm>
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
+
+#define MAX_LIFE 3
 
 /// データをロードしてUIの表示を合わせるため
 static bool isStart = false;
@@ -99,6 +102,9 @@ void SceneTitle::Initialize()
 	um.CreateUI("./Data/Sprite/gameMode.png", "Hard");
 	um.CreateUI("./Data/Sprite/gameMode.png", "Info");
 
+	isVolumeSliderActive = false; 
+	oldSelect = -1;
+
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	// リスナーの初期位置と向きを設定
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
@@ -109,6 +115,9 @@ void SceneTitle::Initialize()
 	//Audio3DSystem::Instance().UpdateEmitters();
 	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
 	Audio3DSystem::Instance().PlayByTag("aircon");
+
+	// SE読み込み
+	selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
 }
 
 //終了化
@@ -124,6 +133,14 @@ void SceneTitle::Finalize()
 
 	Audio3DSystem::Instance().StopByTag("atmosphere_noise"); // 音声停止
 	Audio3DSystem::Instance().StopByTag("aircon"); // 音声停止
+
+	// SEの終了化
+	if (selectSE != nullptr)
+	{
+		selectSE->Stop();
+		delete selectSE;
+		selectSE = nullptr;
+	}
 }
 
 //更新処理
@@ -158,43 +175,43 @@ void SceneTitle::Update(float elapsedTime)
 	{
 		if (isStartGame)
 		{
-			nextScene = new SceneGame;
+			nextScene = new SceneGame(MAX_LIFE);
 			sceneTrans = true;
 			TitleSignalTimer = 0.0f; // タイマー再スタート
 
 			reminingTime = 300.f;
 		}
-		else if (fKey)
-		{
-			nextScene = new fujimoto;
-			sceneTrans = true;
+		//else if (fKey)
+		//{
+		//	nextScene = new fujimoto;
+		//	sceneTrans = true;
 
-			reminingTime = 300.f;
-			TitleSignalTimer = 0.0f;
-		}
-		else if (mKey)
-		{
-			nextScene = new SceneMattsu;
-			sceneTrans = true;
-			TitleSignalTimer = 0.0f;
+		//	reminingTime = 300.f;
+		//	TitleSignalTimer = 0.0f;
+		//}
+		//else if (mKey)
+		//{
+		//	nextScene = new SceneMattsu;
+		//	sceneTrans = true;
+		//	TitleSignalTimer = 0.0f;
 
-			reminingTime = 300.f;
-		}
-		else if (gKey)
-		{
-			nextScene = new SceneGraphics;
-			sceneTrans = true;
-			TitleSignalTimer = 0.0f;
+		//	reminingTime = 300.f;
+		//}
+		//else if (gKey)
+		//{
+		//	nextScene = new SceneGraphics;
+		//	sceneTrans = true;
+		//	TitleSignalTimer = 0.0f;
 
-			reminingTime = 300.f;
-		}
-		else if (pKey) {
-			nextScene = new SceneGame;
-			sceneTrans = true;
-			TitleSignalTimer = 0.0f;
+		//	reminingTime = 300.f;
+		//}
+		//else if (pKey) {
+		//	nextScene = new SceneGame;
+		//	sceneTrans = true;
+		//	TitleSignalTimer = 0.0f;
 
-			reminingTime = 300.f;
-		}
+		//	reminingTime = 300.f;
+		//}
 	}
 	else
 	{
@@ -223,6 +240,8 @@ void SceneTitle::Update(float elapsedTime)
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
 	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
+
+	selectSE->SetVolume(0.5f);
 }
 
 
@@ -414,7 +433,6 @@ void SceneTitle::DrawGUI()
 
 	Graphics::Instance().DebugGUI();
 
-
 	LightManager::Instance().DebugGUI();
 
 	/// UI更新処理
@@ -520,15 +538,22 @@ void SceneTitle::UpdateUI()
 	um.Update(mousePos);
 
 #if 1
+
 	/// ゲーム、設定、終了の三項目の選択を快適にするため
 	if (!um.GetUIs().at(0)->GetIsHit() && !um.GetUIs().at(1)->GetIsHit() && !um.GetUIs().at(3)->GetIsHit())
 	{
 		if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 		{
-			if (selectOptions)
+			if (selectOptions) {
 				selectOptions = false;
-			else if (selectStart)
+				oldSelect = -1;
+				selectSE->Play(false);
+			}
+			else if (selectStart) {
 				selectStart = false;
+				oldSelect = -1;
+				selectSE->Play(false);
+			}
 		}
 	}
 #endif
@@ -574,8 +599,6 @@ void SceneTitle::UpdateUI()
 			ui->GetSpriteData().color = { 1, 1, 1, 1 } : ui->GetSpriteData().color = { 0.660f, 0.660f, 0.660f, 1 };
 	}
 
-
-
 	if (!(mouse.GetButton() & mouse.BTN_LEFT))
 	{
 		previousDow = false;
@@ -591,10 +614,15 @@ void SceneTitle::UpdateUI()
 			if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 			{
 				selectStart = true;
+
 				if (selectOptions)
 					selectOptions = !selectOptions;
-
+				if (oldSelect != 0 || selectSE->IsPlaying()) {
+					selectSE->Play(false);
+					oldSelect = 0;
+				}
 				//isStartGame = true;
+
 			}
 
 			break;
@@ -602,8 +630,13 @@ void SceneTitle::UpdateUI()
 			if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 			{
 				selectOptions = true;
+
 				if (selectStart)
 					selectStart = !selectStart;
+				if (oldSelect != 1 || selectSE->IsPlaying()) {
+					oldSelect = 1;
+					selectSE->Play(false);
+				}
 			}
 			break;
 		case 2: ///< id 2は終了
@@ -690,6 +723,7 @@ void SceneTitle::UpdateUI()
 				sm.SetGameMode(GameMode::Tutorial);
 				Difficulty::Instance().SetDifficulty(Difficulty::mode::tutorial);
 				isStartGame = true;
+				selectSE->Play(false);
 			}
 
 			um.GetUIs().at(32)->GetSpriteData().texturePos.y = 441;
@@ -702,6 +736,7 @@ void SceneTitle::UpdateUI()
 				sm.SetGameMode(GameMode::Noraml);
 				Difficulty::Instance().SetDifficulty(Difficulty::mode::normal);
 				isStartGame = true;
+				selectSE->Play(false);
 			}
 
 			um.GetUIs().at(32)->GetSpriteData().texturePos.y = 539;
@@ -714,6 +749,7 @@ void SceneTitle::UpdateUI()
 				sm.SetGameMode(GameMode::Hard);
 				Difficulty::Instance().SetDifficulty(Difficulty::mode::hard);
 				isStartGame = true;
+				selectSE->Play(false);
 			}
 
 			um.GetUIs().at(32)->GetSpriteData().texturePos.y = 610;
@@ -927,12 +963,6 @@ void SceneTitle::UpdateUI()
 				um.GetUIs().at(27)->GetSpriteData().texturePos.x = 30 + 25 * 9;
 		}
 	}
-
-	ImGui::Begin("test");
-	char buffer[256];
-	sprintf_s(buffer, "testValue %d", sensitivity);
-	ImGui::Text(buffer);
-	ImGui::End();
 
 	if (isStart)isStart = false;
 

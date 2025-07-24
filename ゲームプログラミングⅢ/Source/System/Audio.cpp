@@ -1,5 +1,6 @@
 #include "System/Misc.h"
 #include "System/Audio.h"
+#include <iostream>
 
 // ‰Šú‰»
 void Audio::Initialize()
