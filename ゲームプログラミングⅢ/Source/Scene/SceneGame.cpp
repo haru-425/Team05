@@ -39,7 +39,7 @@ void SceneGame::Initialize()
 
 	player = std::make_shared<Player>(DirectX::XMFLOAT3(1, 0, -23)); ///< プレイヤー初期化
 	enemy = std::make_shared<Enemy>(player, stage); ///< 敵初期化
-  metar = std::make_shared<Metar>();
+	metar = std::make_shared<Metar>();
 	player->SetEnemy(enemy); ///< プレイヤーが敵をバインド
 
 	//ミニマップスプライト初期化
@@ -156,6 +156,11 @@ void SceneGame::Finalize()
 	Audio3DSystem::Instance().StopByTag("enemy_walk");
 
 	um.Clear();
+
+	batteryManager::Instance().BindClear();
+
+	player.reset();
+	enemy.reset();
 }
 
 // 更新処理
