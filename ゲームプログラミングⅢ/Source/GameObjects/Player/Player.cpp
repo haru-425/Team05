@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include <algorithm>
 #include "Math/Easing.h"
+#include "System/CollisionEditor.h"
 
 static bool hit = false;
 static float time = 0;
@@ -50,7 +51,6 @@ Player::Player(const DirectX::XMFLOAT3& position)
 /// デストラクタ
 Player::~Player()
 {
-
 }
 
 /// 更新処理
@@ -67,6 +67,7 @@ void Player::Update(float dt)
 	/// カメラを切り替えたときの処理、フラグを更新してる
 	ChangeCamera();
 
+	// �v���C���[�ړ�����
 	Move(dt);
 
 	if (isEvent) ///< Move() の中でフラグの切り替えをしてる
@@ -85,10 +86,10 @@ void Player::Update(float dt)
 /// 描画処理
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-  /// テクスチャのセット
+	/// テクスチャのセット
 	textures->Set(rc);
 
-    /// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
+	/// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
 	/// プレイヤーを描画するとどうしても、モデルとカメラが被ってしまうので、
 	/// 敵視点の時のみの描画にする
 	if (model && useCam)
@@ -210,21 +211,51 @@ void Player::Move(float dt)
 	}
 	saveDirection = forward;
 
-#if 1
 	speed += accel * dt;
-#else
-	if (Input::Instance().GetMouse().GetButton() & Mouse::BTN_RIGHT)
-		speed = 3;
-	else
-		speed = 0;
-#endif
 	speed = DirectX::XMMin(speed, maxSpeed);
 	//speed = DirectX::XMMax(speed, 0.0f);
 
+	//position.x += speed * forward.x * dt;
+	//position.z += speed * forward.z * dt;
+
+	// ---------- 壁との当たり判定と押し出し処理 ----------
+	DirectX::XMFLOAT3 outPos = {};
+	DirectX::XMFLOAT3 pushDir = {};
+
+	float adjustedSpeed = speed;
+
+	if (CollisionEditor::Instance().Collision(position, radius, outPos, pushDir))
+	{
+		DirectX::XMVECTOR moveDirVec = DirectX::XMLoadFloat3(&forward);
+		DirectX::XMVECTOR pushDirVec = DirectX::XMLoadFloat3(&pushDir);
+
+		float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(moveDirVec, pushDirVec));
+
+		if (dot < 0.0f) // 移動方向と押し出し方向が逆なら押し出す
+		{
+			float slowFactor = 1.0f - fabsf(dot); // 壁との角度に応じて減速
+			adjustedSpeed *= slowFactor;
+
+
+			DirectX::XMVECTOR currentPos = DirectX::XMLoadFloat3(&position);
+			DirectX::XMVECTOR targetPos = DirectX::XMLoadFloat3(&outPos);
+
+			// 速度に応じて補間係数を調整（滑らかに）
+			float lerpFactor = DirectX::XMMin(0.8f, speed / maxSpeed);
+			DirectX::XMVECTOR smoothedPos = DirectX::XMVectorLerp(currentPos, targetPos, lerpFactor);
+
+			DirectX::XMStoreFloat3(&position, smoothedPos);
+		}
+	}
+
 	if (!inGate) ///< ゲートに入ったらプレイヤーは移動しない
 	{
-		position.x += speed * forward.x * dt;
-		position.z += speed * forward.z * dt;
+		//position.x += speed * forward.x * dt;
+		//position.z += speed * forward.z * dt;
+
+		// 減衰後の速度で移動
+		position.x += adjustedSpeed * forward.x * dt;
+		position.z += adjustedSpeed * forward.z * dt;
 	}
 
 	// 角度を求める
@@ -259,16 +290,17 @@ void Player::ChangeCamera()
 
 	Mouse& mouse = Input::Instance().GetMouse();
 
-	if (isChange)isChange = false;
+	if (isChange)
+		isChange = false;
 	if (isHijack)isHijack = false;
 
-	// カメラ切り替え
-	if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
+	// �E�N���b�N�Ő؂�ւ�
+	if (mouse.GetButtonDown() & Mouse::BTN_RIGHT && enableHijack)
 	{
 		if (useCam)
-			isChange = true; // 敵→プレイヤー
+			isChange = true; // �؂�ւ�����
 		else {
-			isHijack = true; // プレイヤーがカメラを持ってハイジャックしたか
+			isHijack = true; // �n�C�W���b�N�J�n
 			changeCameraInSE->Play(false);
 		}
 

@@ -46,7 +46,7 @@ void SceneGame::Initialize()
 	minimap = new MiniMap();
 	timer = 0.0f; // タイマー初期化
 	transTimer = 0.0f; // シーン遷移タイマー初期化
-	reminingTime = 300.0f;
+	reminingTime = 180.0f;
 
 	selectTrans = SelectTrans::GameOver; // シーン遷移選択初期化
 	sceneTrans = false; // シーン遷移フラグ初期化
@@ -87,14 +87,30 @@ void SceneGame::Initialize()
 	batteryManager::Instance().SetPlayer_and_Enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
 	batteryManager::Instance().start();
 
+  um.CreateUI("./Data/Sprite/doorUI.png", "Door_Active");
+	um.GetUIs().at(0)->GetSpriteData().spritePos = { 0,0,1 };
+	um.GetUIs().at(0)->GetSpriteData().color = { 1,1,1,1 };
+	um.GetUIs().at(0)->GetSpriteData().spriteSize = { 1280,720 };
+	um.GetUIs().at(0)->GetSpriteData().textureSize = { 1280,720 };
+	um.GetUIs().at(0)->GetSpriteData().isVisible = false;
+
+	um.CreateUI("./Data/Sprite/doorUI_used.png", "Door_Passed");
+	um.GetUIs().at(1)->GetSpriteData().spritePos = { 0,0,1 };
+	um.GetUIs().at(1)->GetSpriteData().color = { 1,1,1,1 };
+	um.GetUIs().at(1)->GetSpriteData().spriteSize = { 1280,720 };
+	um.GetUIs().at(1)->GetSpriteData().textureSize = { 1280,720 };
+	um.GetUIs().at(1)->GetSpriteData().isVisible = false;
+
+
   um.CreateUI("./Data/Sprite/back.png", "Fade");
-	um.GetUIs().at(0)->GetSpriteData().color = { 0,0,0,0 };
-	um.GetUIs().at(0)->GetSpriteData().isVisible = true;
+	um.GetUIs().at(2)->GetSpriteData().color = { 0,0,0,0 };
+	um.GetUIs().at(2)->GetSpriteData().isVisible = true;
+
 
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
 		tutorial_Flug = true;
-		reminingTime=120.0f;
+		reminingTime = 120.0f;
 		{
 			tutorial[0] = std::make_unique<Sprite>("Data/Sprite/dialog/01.png");
 			tutorial[1] = std::make_unique<Sprite>("Data/Sprite/dialog/02.png");
@@ -109,6 +125,8 @@ void SceneGame::Initialize()
 			tutorial[10] = std::make_unique<Sprite>("Data/Sprite/dialog/11.png");
 			tutorial[11] = std::make_unique<Sprite>("Data/Sprite/dialog/12.png");
 			tutorial[12] = std::make_unique<Sprite>("Data/Sprite/dialog/next_navi.png");
+			tutorial[13] = std::make_unique<Sprite>("Data/Sprite/dialog/aisle.png");
+
 		}
 	}
 }
@@ -214,27 +232,29 @@ void SceneGame::Update(float elapsedTime)
 
 	timer += elapsedTime;
 	reminingTime -= elapsedTime;
-	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
-	////ゲームオーバーに強制遷移
-	//if (GetAsyncKeyState('Z') & 0x8000)
-	//{
-	//	// Zキーが押されているときに実行される
-	//	SceneManager::instance().ChangeScene(new Game_Over);
-	//}
-
-  /// チュートリアル処理
-  if (tutorial_Flug)
+	/// チュートリアル処理
+	if (tutorial_Flug)
 	{
 		stage->Update(elapsedTime);
 		minimap->Update(player->GetPosition());
 		TutorialUpdate(elapsedTime);
 		metar->update(player->GetenableHijackTime());
+		UpdateCamera(elapsedTime);
+		Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 		return;
 	}
+
+
+	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
+
+	Collision(); ///< 当たり判定 
+
   
 	stage->Update(elapsedTime);						///< ステージ更新処理
-	player->Update(elapsedTime);					///< プレイヤー更新処理
+	if (!fadeStart) {
+		player->Update(elapsedTime);					///< プレイヤー更新処理
+	}
 	enemy->Update(elapsedTime);						///< 敵更新処理
 	minimap->Update(player->GetPosition());	        ///< ミニマップ更新処理
 	batteryManager::Instance().Update(elapsedTime); ///< バッテリー更新処理
@@ -242,7 +262,6 @@ void SceneGame::Update(float elapsedTime)
 	metar->update(player->GetenableHijackTime());   ///< 画面左のハイジャック時間メータの更新処理 
 	UpdateOneWay(elapsedTime);                      ///< 一方通行処理
 
-	Collision(); ///< 当たり判定 
 
 	player->UpdateTransform(); ///< プレイヤーの行列更新処理
 
@@ -344,12 +363,14 @@ void SceneGame::Render()
 	/// 当たり判定の更新
 	Collision();
 
-	player->UpdateTransform();
+	if (!fadeStart) {
+		player->UpdateTransform();
+	}
 
 	// 2Dスプライト描画
 	{
-		//minimap->Render(player->GetPosition());
-    
+		//minimap->Render(player->GetPosition());   
+
 		auto easeOutSine = [](float x) -> float
 			{
 				return sin((x * DirectX::XM_PI) / 2);
@@ -360,57 +381,58 @@ void SceneGame::Render()
 			bool next_navi_vision = false;
 			switch (tutorial_Step)
 			{
-			case 16:
+			case 17:
 				next_navi_vision = true;
 				//「(現在を付け足す)現在、敵の活動時間は残り2分。頑張って逃げましょう！」
 				tutorial[11]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 15:
+			case 16:
 				next_navi_vision = true;
 				//「【残り時間】最後に制限時間です。この秒数が...」
 				tutorial[10]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 14:
+			case 15:
 				//残り時間が表示
 				break;
-			case 13:
+			case 14:
 				next_navi_vision = true;
 				//「さてと、後は時間まで逃げるだけですね。」
 				tutorial[9]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 12:
+			case 13:
 				next_navi_vision = true;
 				//「【プレイヤー専用通路】（これだけ扉の画像のある説明用の画像を表示して説明）壁沿いにある、緑色のライトが...」
 				tutorial[8]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				tutorial[13]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 11:
+			case 12:
 				next_navi_vision = true;
 				//「【バッテリー】このように敵は巡回中に、バッテリーを...」
 				tutorial[7]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 10:
+			case 11:
 				next_navi_vision = true;
 				//「これは敵が落としていったバッテリー...」
 				tutorial[6]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 6:
-				next_navi_vision = true;
-				//「操作方法】マウスで視点を...」
-				tutorial[5]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 5:
+			case 7:
 				next_navi_vision = true;
 				//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
 				tutorial[4]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 4:
+			case 6:
 				next_navi_vision = true;
 				//「少し、ゲージを消費してしまいましたね。」
 				tutorial[3]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 2:
+			case 3:
 				//「【操作方法】右クリックで敵の視点を...」
 				tutorial[2]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 2:
+				next_navi_vision = true;
+				//「操作方法】マウスで視点を...」
+				tutorial[5]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 1:
 				next_navi_vision = true;
@@ -418,7 +440,7 @@ void SceneGame::Render()
 				tutorial[1]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 0:
-				next_navi_vision=true;
+				next_navi_vision = true;
 				//「…起動完了。 」
 				tutorial[0]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
@@ -466,7 +488,7 @@ void SceneGame::Render()
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
 
-		if (!tutorial_Flug || tutorial_Step >= 14)
+		if (!tutorial_Flug || tutorial_Step >= 15)
 		{
 
 			Graphics::Instance().bit_block_transfer->blit(dc,
@@ -528,18 +550,26 @@ void SceneGame::Render()
 		}
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
 
+		//temporalNoise	
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
+
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
 
 		//Timer
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Timer)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Timer)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->deactivate(dc);
 
 		//BreathShake
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->activate(dc);
-		if (!tutorial_Flug || tutorial_Step >= 14)
+		if (!tutorial_Flug || tutorial_Step >= 15)
 		{
 			//タイマー表示あり
 			Graphics::Instance().bit_block_transfer->blit(dc,
@@ -617,8 +647,12 @@ void SceneGame::Render()
 
 	}
 #endif
-		//CollisionEditor::Instance().Render(rc, shapeRenderer);
-		um.Render(rc);
+#ifdef _DEBUG
+	CollisionEditor::Instance().Render(rc, shapeRenderer);
+
+#endif // DEBUG
+
+	um.Render(rc);
 }
 
 // GUI描画
@@ -687,12 +721,13 @@ void SceneGame::PlayerVsStage()
 {
 	// ---------- 壁との当たり判定 ----------
 	/// 当たり判定処理はEditorと分離するべき
-	DirectX::XMFLOAT3 outPos = {};
-	if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
-		player->SetPosition(outPos);
+	//DirectX::XMFLOAT3 outPos = {};
+	//if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
+	//	player->SetPosition(outPos);
 
 	// ---------- 一方通行通路との当たり判定 ----------
 
+#if 0
 	/// ドア
 	DirectX::XMFLOAT3 rayS, rayE;
 	rayS = player->GetPosition();
@@ -724,6 +759,11 @@ void SceneGame::PlayerVsStage()
 			player->SetEnableOpenGate(flag);
 		}
 	}
+#else
+
+	CheckGateInteraction(player, stage, fadeStart);
+
+#endif
 }
 
 /**
@@ -810,7 +850,8 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// カメラモードの変更 (DEBUG モードのみ)
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
-			i_CameraController = std::make_unique<FreeCameraController>();
+			//i_CameraController = std::make_unique<FreeCameraController>();
+			i_CameraController = std::make_unique<LightDebugCameraController>();
 		}
 #endif
 	}
@@ -840,7 +881,7 @@ void SceneGame::UpdateOneWay(float elapsedTime)
 		}
 		float alpha = fadeTime / totalFadeTime;
 
-		um.GetUIs().at(0)->GetSpriteData().color.w = alpha;
+		um.GetUIs().at(2)->GetSpriteData().color.w = alpha;
 
 		if (alpha >= 1)
 		{
@@ -907,17 +948,17 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 
 	switch (tutorial_Step)
 	{
-	case 17:
+	case 18:
 		tutorial_Flug = false;
 		//オートランやらなんやらはここで初期化
 		break;
-	case 16:
+	case 17:
 		//「(現在を付け足す)現在、敵の活動時間は残り2分。頑張って逃げましょう！」
 		break;
-	case 15:
+	case 16:
 		//「【残り時間】最後に制限時間です。この秒数が...」
-		break; 
-	case 14:
+		break;
+	case 15:
 		//残り時間表示
 		tutorialTimer += elapsedTime;
 		if (tutorialTimer >= 2.0f)
@@ -926,21 +967,23 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 			tutorialTimer = 0;
 		}
 		break;
-	case 13:
+	case 14:
 		//「さてと、後は時間まで逃げるだけですね。」
 		break;
-	case 12:
+	case 13:
 		//「【プレイヤー専用通路】（これだけ扉の画像のある説明用の画像を表示して説明）壁沿いにある、緑色のライトが...」
+		batteryManager::Instance().deleteBattery({ -3,0,-23 });
+		batteryManager::Instance().deleteBattery({ 5,0,-23 });
 		break;
-	case 11:
+	case 12:
 		//「【バッテリー】このように敵は巡回中に、バッテリーを...」
 		break;
-	case 10:
+	case 11:
 		//「これは敵が落としていったバッテリー...」
 		break;
-	case 9:
+	case 10:
 		tutorial_Step--;
-	case 8:
+	case 9:
 		batteryManager::Instance().Update(elapsedTime);
 		tutorialTimer += elapsedTime;
 		if (tutorialTimer >= 2.0f)
@@ -949,33 +992,42 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 			tutorialTimer = 0;
 		}
 		break;
-	case 7:
-		batteryManager::Instance().addBattery({ 0,0,0 });//プレイヤーの見える位置にバッテリーを置く
+	case 8:
+		batteryManager::Instance().addBattery({ 1,0,-18 });//プレイヤーの見える位置にバッテリーを置く
+		batteryManager::Instance().addBattery({ -3,0,-23 });//プレイヤーの見える位置にバッテリーを置く
+		batteryManager::Instance().addBattery({ 5,0,-23 });//プレイヤーの見える位置にバッテリーを置く
 		tutorialTimer = 0;
 		tutorial_Step++;
 		break;
-	case 6:
-		//「【操作方法】マウスで視点を...」
-		break;
-	case 5:
+	case 7:
 		//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
 		break;
-	case 4:
+	case 6:
 		//「少し、ゲージを消費してしまいましたね。」
 		break;
-	case 3:
+	case 5:
+		player->ChangeCamera();
+		tutorial_Step++;
+		break;
+	case 4:
 		tutorial_Step--;
-	case 2:
+	case 3:
 		//「【操作方法】右クリックで敵の視点を...」
 		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_RIGHT)
 		{
 			tutorial_Click_Count++;
 		}
+		player->ChangeCamera();
+		player->UpdateHijack(elapsedTime);
 		if (tutorial_Click_Count >= 2)//右クリックが二回押されたら
 		{
 			tutorial_Step += 2;
 		}
 		metar->update(player->GetenableHijackTime());
+		break;
+
+	case 2:
+		//「【操作方法】マウスで視点を...」
 		break;
 	case 1:
 		//「【マップ】あなたの現在位置は、中央の印で...」
@@ -985,5 +1037,78 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		break;
 	default:
 		break;
+	}
+}
+
+
+bool SceneGame::IsPlayerFacingDoor(const DirectX::XMFLOAT3& playerPos, const DirectX::XMFLOAT3& playerDir, const DirectX::XMFLOAT3& doorPos, float threshold = 0.7f)
+{
+	DirectX::XMFLOAT3 toDoor = {
+		doorPos.x - playerPos.x,
+		doorPos.y - playerPos.y,
+		doorPos.z - playerPos.z
+	};
+
+	DirectX::XMVECTOR toDoorVec = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&toDoor));
+	DirectX::XMVECTOR playerDirVec = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&playerDir));
+
+	float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(toDoorVec, playerDirVec));
+	return dot > threshold;
+}
+
+void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stage, bool& fadeStart)
+{
+	DirectX::XMFLOAT3 playerPos = player->GetPosition();
+	DirectX::XMFLOAT3 playerDir = player->GetDirection();
+	bool canOpenGate = false;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		DirectX::XMFLOAT3 gatePos = {
+			stage->GetGateWorld(i).m[3][0],
+			stage->GetGateWorld(i).m[3][1],
+			stage->GetGateWorld(i).m[3][2]
+		};
+
+		DirectX::XMFLOAT3 hitPos;
+		if (Collision::IntersectSphereVsSphere(playerPos, player->GetRadius(), gatePos, 0.05f, hitPos))
+		{
+
+			if (IsPlayerFacingDoor(playerPos, playerDir, gatePos))
+			{
+				if (stage->GetGatePassed(i))
+				{
+					// 使用済みの扉に向いている → 使用済みUI表示
+					um.GetUIs().at(0)->GetSpriteData().isVisible = false;
+					um.GetUIs().at(1)->GetSpriteData().isVisible = true;
+				}
+				else
+				{
+					// 未使用の扉に向いている → 通常UI表示
+					player->SetEnableOpenGate(true);
+
+					um.GetUIs().at(0)->GetSpriteData().isVisible = true;
+					um.GetUIs().at(1)->GetSpriteData().isVisible = false;
+
+					if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)
+					{
+						stage->SetGatePassed(i, true);
+						fadeStart = true;
+						selectDoorIndex = i;
+					}
+
+					canOpenGate = true;
+				}
+			}
+		}
+		else {
+			um.GetUIs().at(0)->GetSpriteData().isVisible = false;
+			um.GetUIs().at(1)->GetSpriteData().isVisible = false;
+		}
+	}
+	// UI非表示
+	if (!canOpenGate)
+	{
+		player->SetEnableOpenGate(false);
 	}
 }

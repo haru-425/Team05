@@ -131,7 +131,7 @@ float4 main(VS_OUT pin) : SV_TARGET
        
     float attenuationConst = 1.0f;
     float attenuationLinear = 0.1f;
-    float attenuationQuad = 0.01f;   
+    float attenuationQuad = 0.01f;
 
     // シャドウ適用
     color.rgb = ApplyShadowToObject(pin, color.rgb);
@@ -156,7 +156,7 @@ float4 main(VS_OUT pin) : SV_TARGET
         float fadeRange = pointLights[i].range - 5.0f;
         fadeRange = max(0, fadeRange);
         float fade = saturate(1.0f - (len - fadeRange) / pointLights[i].range);
-        attenuation *= fade;        
+        attenuation *= fade;
         
         LP /= len;
         
@@ -265,7 +265,7 @@ float4 main(VS_OUT pin) : SV_TARGET
         lineSpecular = max(0, lineSpecular);
     }
     
-    float lightInfluenceBoost = 1.0f; // ← 全体ブースト係数
+    float lightInfluenceBoost = 4.0f; // ← 全体ブースト係数
 
     float3 totalDiffuse = (pointDiffuse + lineDiffuse + torusDiffuse) * power * lightInfluenceBoost;
     float3 totalSpecular = (pointSpecular + lineSpecular + torusSpecular);
@@ -277,7 +277,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     color.rgb += color.rgb * totalDiffuse;
     color.rgb += totalSpecular;
     
-    color.rgb += emisive;    
+    color.rgb += emisive;
 
 #if 1
     // フォグ処理

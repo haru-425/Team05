@@ -59,6 +59,7 @@ public:
     }
 
     void SetEnableOpenGate(bool flag) { enableOpenGate = flag; }
+    bool IsEnableOpenGate() { return enableOpenGate; }
 
     bool GetIsDeath() const { return isDeath; } ///< プレイヤーが死亡したかどうかの判定
 
@@ -73,13 +74,13 @@ public:
         accel = 2;
     }
 
-private:
-    void Move(float dt);
-
     void ChangeCamera();
 
     void UpdateHijack(float dt);
 
+private:
+
+    void Move(float dt);
     void UpdateAnimation(float dt);
 
     void DeathState(float dt); ///< 死亡演出用

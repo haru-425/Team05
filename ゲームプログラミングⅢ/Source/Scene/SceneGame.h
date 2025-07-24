@@ -52,11 +52,14 @@ private:
 
 	void TutorialUpdate(float elapsedTime);
 
+	bool IsPlayerFacingDoor(const DirectX::XMFLOAT3& playerPos, const DirectX::XMFLOAT3& playerDir, const DirectX::XMFLOAT3& doorPos, float threshold);
+
+	void CheckGateInteraction(std::shared_ptr<Player> player, Stage* stage, bool& fadeStart);
+
 private:
 	Stage* stage = nullptr;
 
 	std::unique_ptr<ICameraController> i_CameraController = nullptr;
-	//std::shared_ptr<Player> player;
 	std::shared_ptr<Player> player;
 	std::shared_ptr<Enemy> enemy;
 	std::shared_ptr<Metar> metar;
@@ -133,7 +136,7 @@ private:
 	// ======================================
 	// チュ－トリアルのスプライト配列
 	// ======================================
-	std::unique_ptr<Sprite> tutorial[13];
+	std::unique_ptr<Sprite> tutorial[14];
 
 	UIManager um;
 

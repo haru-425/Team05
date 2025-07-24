@@ -1,5 +1,14 @@
 #include "Collision.h"
 #include <DirectXCollision.h>
+
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
+
 #include <algorithm>
 #include <cmath>
 
@@ -126,13 +135,23 @@ bool Collision::RayCast(
 	const ModelResource* resource = model->GetResource();
 	for (const ModelResource::Mesh& mesh : resource->GetMeshes())
 	{
-		// メッシュのワールド行列を求める
-		const Model::Node& node = model->GetNodes().at(mesh.nodeIndex);
-		DirectX::XMMATRIX GlobalTransform = DirectX::XMLoadFloat4x4(&node.globalTransform);
-		DirectX::XMMATRIX WorldTransform = DirectX::XMMatrixMultiply(GlobalTransform, ParentWorldTransform);
+		//// メッシュのワールド行列を求める
+		//const Model::Node& node = model->GetNodes().at(mesh.nodeIndex);
+		//DirectX::XMMATRIX GlobalTransform = DirectX::XMLoadFloat4x4(&node.globalTransform);
+		//DirectX::XMMATRIX WorldTransform = DirectX::XMMatrixMultiply(GlobalTransform, ParentWorldTransform);
+
+        const Model::Node& node = model->GetNodes().at(mesh.nodeIndex);
+        if (mesh.nodeIndex >= model->GetNodes().size()) continue;
+
+        DirectX::XMMATRIX GlobalTransform = DirectX::XMLoadFloat4x4(&node.globalTransform);
+        DirectX::XMMATRIX WorldTransform = DirectX::XMMatrixMultiply(GlobalTransform, ParentWorldTransform);
+
+        DirectX::XMVECTOR det;
+        DirectX::XMMATRIX InverseWorldTransform = DirectX::XMMatrixInverse(&det, WorldTransform);
+        if (DirectX::XMVectorGetX(det) == 0.0f) continue;
 
 		// レイをメッシュのローカル空間に変換する
-		DirectX::XMMATRIX InverseWorldTransform = DirectX::XMMatrixInverse(nullptr, WorldTransform);
+		//DirectX::XMMATRIX InverseWorldTransform = DirectX::XMMatrixInverse(nullptr, WorldTransform);
 		DirectX::XMVECTOR LocalRayStart = DirectX::XMVector3Transform(WorldRayStart, InverseWorldTransform);
 		DirectX::XMVECTOR LocalRayEnd = DirectX::XMVector3Transform(WorldRayEnd, InverseWorldTransform);
 		DirectX::XMVECTOR LocalRayVec = DirectX::XMVectorSubtract(LocalRayEnd, LocalRayStart);
@@ -245,4 +264,38 @@ bool Collision::AABBVsSphere(const DirectX::XMFLOAT3& boxMin, const DirectX::XMF
     }
 
     return false; // 衝突してない
+}
+
+
+
+bool Collision::AABBVsSphere(const DirectX::XMFLOAT3& min, const DirectX::XMFLOAT3& max,
+    const DirectX::XMFLOAT3& sphereCenter, float sphereRadius,
+    DirectX::XMFLOAT3& outPos, DirectX::XMFLOAT3& pushDir)
+{
+    // 最近接点を求める
+    DirectX::XMFLOAT3 closestPoint = {
+        std::max(min.x, std::min(sphereCenter.x, max.x)),
+        std::max(min.y, std::min(sphereCenter.y, max.y)),
+        std::max(min.z, std::min(sphereCenter.z, max.z))
+    };
+
+    // ベクトルと距離
+    DirectX::XMVECTOR centerVec = DirectX::XMLoadFloat3(&sphereCenter);
+    DirectX::XMVECTOR closestVec = DirectX::XMLoadFloat3(&closestPoint);
+    DirectX::XMVECTOR dirVec = DirectX::XMVectorSubtract(centerVec, closestVec);
+    float dist = DirectX::XMVectorGetX(DirectX::XMVector3Length(dirVec));
+
+    if (dist < sphereRadius)
+    {
+        // 法線（押し出し方向）
+        DirectX::XMVECTOR normal = DirectX::XMVector3Normalize(dirVec);
+        DirectX::XMVECTOR pushVec = DirectX::XMVectorScale(normal, sphereRadius - dist);
+        DirectX::XMVECTOR newPos = DirectX::XMVectorAdd(centerVec, pushVec);
+
+        DirectX::XMStoreFloat3(&outPos, newPos);
+        DirectX::XMStoreFloat3(&pushDir, normal);
+        return true;
+    }
+
+    return false;
 }
