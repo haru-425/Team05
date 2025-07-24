@@ -88,7 +88,7 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
   /// テクスチャのセット
 	textures->Set(rc);
 
-　/// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
+    /// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
 	/// プレイヤーを描画するとどうしても、モデルとカメラが被ってしまうので、
 	/// 敵視点の時のみの描画にする
 	if (model && useCam)
@@ -140,6 +140,7 @@ void Player::DeleteSounds()
 void Player::Move(float dt)
 {
 	if (!hit && isHit)///< やりかたは汚いけど、一度ヒットしたらそれ以降はヒット判定にするために書く hit はPlayerコンストラクタの上でグローバルとしておいてる
+	{
 		accel = 0;
 		hit = isHit;
 	}
