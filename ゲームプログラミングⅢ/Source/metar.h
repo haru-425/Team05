@@ -16,5 +16,6 @@ public:
 	void render();
 private:
 	Sprite* metar;
+	Sprite* frame;
 	float gage = 100;
 };

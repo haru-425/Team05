@@ -3,11 +3,13 @@
 Metar::Metar()
 {
 	metar = new Sprite("Data/Sprite/metar2.png");
+	frame = new Sprite("Data/Sprite/metarFrame.png");
 }
 
 Metar::~Metar()
 {
 	delete metar;
+	delete frame;
 }
 
 void Metar::update(float gage)
@@ -26,5 +28,6 @@ void Metar::render()
 	rc.deviceContext = dc;
 	rc.renderState = graphics.GetRenderState();
 
-	metar->Render(rc, 30, 100, 0, 30, this->gage * 5.0f, 0, 1, 0, 0, 1);
+	metar->Render(rc, 30, 100, 0, 30, this->gage * 5.0f, 0, 0.1f, 0.1f, 10, 0.5f);
+	frame->Render(rc, 30, 100, 0, 40, 250.0f, 0, 0, 0, 10, 1);
 }
