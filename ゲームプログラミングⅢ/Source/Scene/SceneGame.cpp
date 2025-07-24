@@ -37,10 +37,10 @@ void SceneGame::Initialize()
 	//カメラコントローラー初期化
 	i_CameraController = std::make_unique<FPCameraController>();
 
-	player = std::make_shared<Player>();
-	enemy = std::make_shared<Enemy>(player, stage);
-	metar = std::make_shared<Metar>();
-	player->SetEnemy(enemy);
+	player = std::make_shared<Player>(DirectX::XMFLOAT3(1, 0, -23)); ///< プレイヤー初期化
+	enemy = std::make_shared<Enemy>(player, stage); ///< 敵初期化
+  metar = std::make_shared<Metar>();
+	player->SetEnemy(enemy); ///< プレイヤーが敵をバインド
 
 	//ミニマップスプライト初期化
 	minimap = new MiniMap();
@@ -87,6 +87,9 @@ void SceneGame::Initialize()
 	batteryManager::Instance().SetPlayer_and_Enemy(player, enemy); // バッテリーマネージャーにプレイヤーと敵を設定
 	batteryManager::Instance().start();
 
+  um.CreateUI("./Data/Sprite/back.png", "Fade");
+	um.GetUIs().at(0)->GetSpriteData().color = { 0,0,0,0 };
+	um.GetUIs().at(0)->GetSpriteData().isVisible = true;
 
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
@@ -133,6 +136,8 @@ void SceneGame::Finalize()
 	Audio3DSystem::Instance().StopByTag("aircon"); // 音声停止
 	Audio3DSystem::Instance().StopByTag("enemy_run");
 	Audio3DSystem::Instance().StopByTag("enemy_walk");
+
+	um.Clear();
 }
 
 // 更新処理
@@ -212,7 +217,8 @@ void SceneGame::Update(float elapsedTime)
 	//	SceneManager::instance().ChangeScene(new Game_Over);
 	//}
 
-	if (tutorial_Flug)
+  /// チュートリアル処理
+  if (tutorial_Flug)
 	{
 		stage->Update(elapsedTime);
 		minimap->Update(player->GetPosition());
@@ -220,46 +226,19 @@ void SceneGame::Update(float elapsedTime)
 		metar->update(player->GetenableHijackTime());
 		return;
 	}
+  
+	stage->Update(elapsedTime);						          ///< ステージ更新処理
+	player->Update(elapsedTime);					          ///< プレイヤー更新処理
+	enemy->Update(elapsedTime);						          ///< 敵更新処理
+	minimap->Update(player->GetPosition());	        ///< ミニマップ更新処理
+	batteryManager::Instance().Update(elapsedTime); ///< バッテリー更新処理
+	UpdateCamera(elapsedTime);                      ///< カメラ更新処理
+  metar->update(player->GetenableHijackTime());   ///< 画面左のハイジャック時間メータの更新処理 
+  UpdateOneWay(elapsedTime);                      ///< 一方通行処理
 
-	//ステージ更新処理
-	stage->Update(elapsedTime);
-	player->Update(elapsedTime);
-	enemy->Update(elapsedTime);
-	minimap->Update(player->GetPosition());
-	batteryManager::Instance().Update(elapsedTime);
+	Collision(); ///< 当たり判定 
 
-	//// 一人称用カメラ
-	//if (typeid(*i_CameraController) == typeid(FPCameraController))
-	//{
-	//	POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
-	//	ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
-	//	DirectX::XMFLOAT3 cameraPos = player->GetPosition();
-	//	cameraPos.y = player->GetViewPoint();
-	//	i_CameraController->SetCameraPos(cameraPos);
-	//	i_CameraController->Update(elapsedTime);
-	//	SetCursorPos(screenPoint.x, screenPoint.y);
-
-	//	if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
-	//	{
-	//		i_CameraController = std::make_unique<LightDebugCameraController>();
-	//	}
-	//}
-	//// フリーカメラ
-	//else
-	//{
-	//	if (gamePad.GetButton() & GamePad::CTRL && gamePad.GetButton() & GamePad::BTN_X)
-	//	{
-	//		i_CameraController = std::make_unique<FPCameraController>();
-	//	}
-	//}
-	UpdateCamera(elapsedTime);
-
-	//Graphics::Instance().UpdateConstantBuffer(timer, transTimer);
-
-	Collision();
-
-	player->UpdateTransform();
-	metar->update(player->GetenableHijackTime());
+	player->UpdateTransform(); ///< プレイヤーの行列更新処理
 
 	LightManager::Instance().Update();
 	ObjectManager::Instance().Update(elapsedTime);
@@ -364,6 +343,7 @@ void SceneGame::Render()
 	// 2Dスプライト描画
 	{
 		//minimap->Render(player->GetPosition());
+    
 		auto easeOutSine = [](float x) -> float
 			{
 				return sin((x * DirectX::XM_PI) / 2);
@@ -442,7 +422,6 @@ void SceneGame::Render()
 				tutorial[12]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, easeOutSine(button_effect_timer) + 0.5f);
 			}
 		}
-
 	}
 
 	shadow->Release(dc);
@@ -632,7 +611,8 @@ void SceneGame::Render()
 
 	}
 #endif
-	//CollisionEditor::Instance().Render(rc, shapeRenderer);
+		//CollisionEditor::Instance().Render(rc, shapeRenderer);
+		um.Render(rc);
 }
 
 // GUI描画
@@ -684,14 +664,14 @@ void SceneGame::DrawGUI()
 	player->DrawDebug();
 
 	CollisionEditor::Instance().DrawDebug();
+
+	um.DrawDebug();
 }
 
 void SceneGame::Collision()
 {
-	//PlayerVsStage();
-	DirectX::XMFLOAT3 outPos = {};
-	if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
-		player->SetPosition(outPos);
+	/// プレイヤーとステージとの当たり判定
+	PlayerVsStage();
 
 	/// プレイヤーと敵との当たり判定
 	PlayerVsEnemy();
@@ -699,58 +679,44 @@ void SceneGame::Collision()
 
 void SceneGame::PlayerVsStage()
 {
-	using namespace DirectX;
+	// ---------- 壁との当たり判定 ----------
+	/// 当たり判定処理はEditorと分離するべき
+	DirectX::XMFLOAT3 outPos = {};
+	if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
+		player->SetPosition(outPos);
 
-	const XMFLOAT3 playerPos = player->GetPosition();
-	const XMFLOAT3 playerDir = player->GetDirection();
-	XMFLOAT3 playerRight;
-	const XMFLOAT3 up = { 0,1,0 };
-	XMStoreFloat3(&playerRight, XMVector3Cross(XMLoadFloat3(&up), XMLoadFloat3(&playerDir)));
+	// ---------- 一方通行通路との当たり判定 ----------
 
+	/// ドア
+	DirectX::XMFLOAT3 rayS, rayE;
+	rayS = player->GetPosition();
+	DirectX::XMFLOAT3 playerDir = player->GetDirection();
+	DirectX::XMVECTOR Dir = DirectX::XMLoadFloat3(&playerDir);
+	Dir = DirectX::XMVectorScale(Dir, 1.5f);
+	DirectX::XMStoreFloat3(&rayE, Dir);
 
-	const XMFLOAT3 rayStart = { playerPos.x, playerPos.y, playerPos.z };
-	const XMFLOAT3 rayEndF = { playerPos.x + playerDir.x, playerPos.y, playerPos.z + playerDir.z };
-	const XMFLOAT3 rayEndR = { playerPos.x + playerRight.x, playerPos.y, playerPos.z + playerRight.z };
-
-	DirectX::XMFLOAT3 hitPosition, hitNormal;
-	if (Collision::RayCast(rayStart, rayEndF, stage->GetCollisionMatrix(), stage->GetCollisionMesh(), hitPosition, hitNormal))
+	bool flag = false;
+	DirectX::XMFLOAT3 hitPos, hitN;
+	for (int i = 0; i < 3; ++i)
 	{
-		XMVECTOR P = XMLoadFloat3(&hitPosition);
-		XMVECTOR E = XMLoadFloat3(&rayEndF);
-		XMVECTOR PE = XMVectorSubtract(E, P);
+		DirectX::XMFLOAT3 stagePos = { stage->GetGateWorld(i).m[3][0], stage->GetGateWorld(i).m[3][1], stage->GetGateWorld(i).m[3][2] };
+		stagePos.y += 0.5;
+		if (Collision::IntersectSphereVsSphere(player->GetPosition(), player->GetRadius(), stagePos, 0.05, hitPos))
+		{
+			if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT && !stage->GetGatePassed(i))
+			{
+				stage->SetGatePassed(i, true);
+				fadeStart = true;
+				selectDoorIndex = i;
+			}
 
-		// 三角関数で終点から壁までの長さを求める
-		XMVECTOR N = XMLoadFloat3(&hitNormal);
-		// PEの終点にNベクトルを持ってくる
-		// 正規化したNとPEで内積
-		XMVECTOR NegatePE = XMVectorNegate(PE); // このままPEとAで内積するとおかしくなっちゃうからPEの逆ベクトルを求める
-		N = XMVector3Normalize(N);
-		XMVECTOR A = XMVector3Dot(NegatePE, N); // 射影長を求める
-		//XMVECTOR A = XMVector3Dot(XMVectorNegate(PE), N);
-
-		// 壁までの長さを少しだけ長くなるように補正する
-		float a = XMVectorGetX(A) + 0.01f;
-
-		// 壁刷りのベクトルを求める
-		A = XMVectorScale(N, a);
-		XMVECTOR R = XMVectorAdd(PE, A);
-		//XMVECTOR R = XMVectorAdd(PE, XMVectorScale(N, a));
-		//XMVECTOR R = XMVector3Dot(XMVectorNegate(PE), N);
-
-		// 壁刷り後の位置を求める
-		XMVECTOR Q = XMVectorAdd(P, R);
-		XMFLOAT3 q;
-		XMStoreFloat3(&q, Q);
-
-		XMFLOAT3 playerPos = player->GetPosition();
-#if 1
-		playerPos.x = q.x - playerDir.x;
-		playerPos.z = q.z - playerDir.z;
-#else
-		playerPos.x = q.x;
-		playerPos.z = q.z;
-#endif
-		player->SetPosition(playerPos);
+			flag = true;
+			player->SetEnableOpenGate(flag);
+		}
+		else if (!flag)
+		{
+			player->SetEnableOpenGate(flag);
+		}
 	}
 }
 
@@ -782,16 +748,6 @@ void SceneGame::PlayerVsEnemy()
 }
 
 /**
-* @brief プレイヤーとドアの判定
-*/
-void SceneGame::PlayerVsDoor()
-{
-	float p;
-	DirectX::XMFLOAT3 pPos = player->GetPosition();
-	//if(Collision::IntersectSphereVsSphere())
-}
-
-/**
 * @brief カメラの更新処理
 *
 * プレイヤー視点カメラから敵視点カメラに切り換えるやつ
@@ -812,9 +768,9 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// プレイヤー視点
 		if (!useCamera)
 		{
-			cameraPos = player->GetPosition();
+    	cameraPos = player->GetPosition();
 			cameraPos.y = player->GetViewPoint();
-			if (!player->GetIsEvent())
+			if(!player->GetIsEvent())
 			{
 				cameraPos = player->GetPosition();
 				cameraPos.y = player->GetViewPoint();
@@ -859,6 +815,40 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
 			i_CameraController = std::make_unique<FPCameraController>();
+		}
+	}
+}
+
+/// 一方通行処理
+void SceneGame::UpdateOneWay(float elapsedTime)
+{
+	/// 一方通行の通路を通った時のフェードインフェードアウトの処理
+	if (fadeStart)
+	{
+		static bool flag = false;
+		if (!flag)
+			fadeTime += elapsedTime;
+		else
+		{
+			fadeTime -= elapsedTime;
+		}
+		float alpha = fadeTime / totalFadeTime;
+
+		um.GetUIs().at(0)->GetSpriteData().color.w = alpha;
+
+		if (alpha >= 1)
+		{
+			flag = true;
+		}
+		else if (alpha <= 1 && alpha > 0.9)
+		{
+			DirectX::XMFLOAT3 exitPos = stage->GetExitPos(selectDoorIndex);
+			player->SetPosition(exitPos);
+		}
+		else if (alpha < 0 && flag)
+		{
+			flag = false;
+			fadeStart = false;
 		}
 	}
 }

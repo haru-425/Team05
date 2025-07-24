@@ -13,6 +13,7 @@
 #include"Metar.h"
 
 #include "System/ShadowCaster.h"
+#include "System/UiManager.h"
 
 extern float reminingTime;
 // ゲームシーン
@@ -45,9 +46,9 @@ private:
 
 	void PlayerVsEnemy();
 
-	void PlayerVsDoor(); ///< ドアとの当たり判定
-
 	void UpdateCamera(float elapsedTime);
+
+	void UpdateOneWay(float elapsedTime);
 
 	void TutorialUpdate(float elapsedTime);
 
@@ -134,5 +135,10 @@ private:
 	// ======================================
 	std::unique_ptr<Sprite> tutorial[13];
 
+	UIManager um;
 
+	float fadeTime;
+	bool fadeStart;
+	const float totalFadeTime = 0.5;
+	int selectDoorIndex = -1;
 };
