@@ -207,7 +207,9 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	timer += elapsedTime;
+#ifdef DEBUG
 	reminingTime -= elapsedTime;
+#endif
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	////ゲームオーバーに強制遷移
@@ -611,7 +613,11 @@ void SceneGame::Render()
 
 	}
 #endif
-		//CollisionEditor::Instance().Render(rc, shapeRenderer);
+#ifndef DEBUG
+		CollisionEditor::Instance().Render(rc, shapeRenderer);
+
+#endif // DEBUG
+
 		um.Render(rc);
 }
 
@@ -681,9 +687,31 @@ void SceneGame::PlayerVsStage()
 {
 	// ---------- 壁との当たり判定 ----------
 	/// 当たり判定処理はEditorと分離するべき
-	DirectX::XMFLOAT3 outPos = {};
-	if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
-		player->SetPosition(outPos);
+	//DirectX::XMFLOAT3 outPos = {};
+	//if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos))
+	//	player->SetPosition(outPos);
+
+	//DirectX::XMFLOAT3 outPos = {};
+	//DirectX::XMFLOAT3 pushDir = {}; // 押し出し方向（法線）
+
+
+	//if (CollisionEditor::Instance().Collision(player->GetPosition(), player->GetRadius(), outPos, pushDir)) {
+	//	// 押し出し方向を正規化
+	//	DirectX::XMVECTOR pushVec = DirectX::XMLoadFloat3(&pushDir);
+	//	pushVec = DirectX::XMVector3Normalize(pushVec);
+
+	//	// 押し出し距離を調整（例：距離を可変にする）
+	//	const float pushDistance = 0.05f; // 小さめにしてがたつきを軽減
+
+	//	DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&outPos);
+	//	DirectX::XMVECTOR finalPos = DirectX::XMVectorAdd(posVec, DirectX::XMVectorScale(pushVec, pushDistance));
+
+	//	DirectX::XMFLOAT3 newPos;
+	//	DirectX::XMStoreFloat3(&newPos, finalPos);
+	//	player->SetPosition(newPos);
+	//}
+
+
 
 	// ---------- 一方通行通路との当たり判定 ----------
 
@@ -804,7 +832,8 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// カメラモードの変更 (DEBUG モードのみ)
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
-			i_CameraController = std::make_unique<FreeCameraController>();
+			//i_CameraController = std::make_unique<FreeCameraController>();
+			i_CameraController = std::make_unique<LightDebugCameraController>();
 		}
 #endif
 	}

@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include <algorithm>
 #include "Math/Easing.h"
+#include "System/CollisionEditor.h"
 
 static bool hit = false;
 static float time = 0;
@@ -190,8 +191,42 @@ void Player::Move(float dt)
 #endif
 	speed = DirectX::XMMin(speed, maxSpeed);
 	speed = DirectX::XMMax(speed, 0.0f);
-	position.x += speed * forward.x * dt;
-	position.z += speed * forward.z * dt;
+	//position.x += speed * forward.x * dt;
+	//position.z += speed * forward.z * dt;
+
+	// ---------- 壁との当たり判定と押し出し処理 ----------
+	DirectX::XMFLOAT3 outPos = {};
+	DirectX::XMFLOAT3 pushDir = {};
+
+	float adjustedSpeed = speed;
+
+	if (CollisionEditor::Instance().Collision(position, radius, outPos, pushDir))
+	{
+		DirectX::XMVECTOR moveDirVec = DirectX::XMLoadFloat3(&forward);
+		DirectX::XMVECTOR pushDirVec = DirectX::XMLoadFloat3(&pushDir);
+
+		float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(moveDirVec, pushDirVec));
+
+		if (dot < 0.0f) // 移動方向と押し出し方向が逆なら押し出す
+		{
+			float slowFactor = 1.0f - fabsf(dot); // 壁との角度に応じて減速
+			adjustedSpeed *= slowFactor;
+
+
+			DirectX::XMVECTOR currentPos = DirectX::XMLoadFloat3(&position);
+			DirectX::XMVECTOR targetPos = DirectX::XMLoadFloat3(&outPos);
+
+			// 速度に応じて補間係数を調整（滑らかに）
+			float lerpFactor = DirectX::XMMin(0.8f, speed / maxSpeed);
+			DirectX::XMVECTOR smoothedPos = DirectX::XMVectorLerp(currentPos, targetPos, lerpFactor);
+
+			DirectX::XMStoreFloat3(&position, smoothedPos);
+		}
+	}
+
+	// 減衰後の速度で移動
+	position.x += adjustedSpeed * forward.x * dt;
+	position.z += adjustedSpeed * forward.z * dt;
 
 	// 角度を求める
 	{

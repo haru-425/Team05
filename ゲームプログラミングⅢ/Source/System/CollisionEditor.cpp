@@ -113,6 +113,113 @@ bool CollisionEditor::Collision(const DirectX::XMFLOAT3& targetPosition, float r
     return flag;
 }
 
+
+bool CollisionEditor::Collision(const DirectX::XMFLOAT3& targetPosition, float range, DirectX::XMFLOAT3& outPos, DirectX::XMFLOAT3& pushDir)
+{
+#if 0
+    bool flag = false;
+    DirectX::XMVECTOR totalPush = DirectX::XMVectorZero();
+    DirectX::XMVECTOR totalPos = DirectX::XMLoadFloat3(&targetPosition);
+    int hitCount = 0;
+
+    for (auto& box : volumes)
+    {
+        DirectX::XMFLOAT3 size = box.size;
+        DirectX::XMFLOAT3 position = box.position;
+        DirectX::XMFLOAT3 minPos = { position.x - size.x / 2, position.y / 2 - size.y, position.z - size.z / 2 };
+        DirectX::XMFLOAT3 maxPos = { position.x + size.x / 2, position.y / 2 + size.y, position.z + size.z / 2 };
+
+        DirectX::XMFLOAT3 tempOutPos;
+        DirectX::XMFLOAT3 tempPushDir;
+
+        if (Collision::AABBVsSphere(minPos, maxPos, targetPosition, range, tempOutPos, tempPushDir))
+        {
+            DirectX::XMVECTOR pushVec = DirectX::XMLoadFloat3(&tempPushDir);
+            totalPush = DirectX::XMVectorAdd(totalPush, pushVec);
+            hitCount++;
+            flag = true;
+        }
+    }
+
+    if (flag && hitCount > 0)
+    {
+        // 合成された押し出し方向を正規化
+        DirectX::XMVECTOR normalizedPush = DirectX::XMVector3Normalize(totalPush);
+
+        // 押し出し距離（例：0.1f）
+        const float pushDistance = 0.1f;
+        DirectX::XMVECTOR finalPos = DirectX::XMVectorAdd(totalPos, DirectX::XMVectorScale(normalizedPush, pushDistance));
+
+        DirectX::XMStoreFloat3(&outPos, finalPos);
+        DirectX::XMStoreFloat3(&pushDir, normalizedPush);
+    }
+    else
+    {
+        outPos = targetPosition;
+        pushDir = { 0.0f, 0.0f, 0.0f };
+    }
+
+    return flag;
+#else
+
+
+    bool flag = false;
+    float maxDepth = 0.0f;
+    DirectX::XMVECTOR bestPush = DirectX::XMVectorZero();
+    DirectX::XMVECTOR bestPos = DirectX::XMLoadFloat3(&targetPosition);
+
+    for (auto& box : volumes)
+    {
+        DirectX::XMFLOAT3 size = box.size;
+        DirectX::XMFLOAT3 position = box.position;
+        DirectX::XMFLOAT3 minPos = { position.x - size.x / 2, position.y / 2 - size.y, position.z - size.z / 2 };
+        DirectX::XMFLOAT3 maxPos = { position.x + size.x / 2, position.y / 2 + size.y, position.z + size.z / 2 };
+
+        DirectX::XMFLOAT3 tempOutPos;
+        DirectX::XMFLOAT3 tempPushDir;
+
+        if (Collision::AABBVsSphere(minPos, maxPos, targetPosition, range, tempOutPos, tempPushDir))
+        {
+            DirectX::XMVECTOR centerVec = DirectX::XMLoadFloat3(&targetPosition);
+            DirectX::XMVECTOR outVec = DirectX::XMLoadFloat3(&tempOutPos);
+            float depth = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(outVec, centerVec)));
+
+            if (depth > maxDepth)
+            {
+                maxDepth = depth;
+                bestPush = DirectX::XMLoadFloat3(&tempPushDir);
+                bestPos = outVec;
+                flag = true;
+            }
+        }
+    }
+
+    if (flag)
+    {
+        // 押し出し方向を正規化
+        DirectX::XMVECTOR normalizedPush = DirectX::XMVector3Normalize(bestPush);
+
+        // 押し出し位置を補間して滑らかにする
+        DirectX::XMVECTOR currentPos = DirectX::XMLoadFloat3(&targetPosition);
+        DirectX::XMVECTOR smoothedPos = DirectX::XMVectorLerp(currentPos, bestPos, 0.5f); // 補間係数は調整可能
+
+        DirectX::XMStoreFloat3(&outPos, smoothedPos);
+        DirectX::XMStoreFloat3(&pushDir, normalizedPush);
+    }
+    else
+    {
+        outPos = targetPosition;
+        pushDir = { 0.0f, 0.0f, 0.0f };
+    }
+
+    return flag;
+
+
+#endif
+}
+
+
+
 /**
 * @brief
 */
