@@ -12,48 +12,39 @@ static constexpr float totalTime = 1;
 /// コンストラクタ
 Player::Player(const DirectX::XMFLOAT3& position)
 {
-#ifdef TEST
-	// �e�X�g�p�A�j���[�V�������f���̓ǂݍ���// プレイヤーモデル
-	model = std::make_shared<Model>("./Data/Model/Test/test_walk_animation_model.mdl");
-	t_position.x += 0.2f;
-	t_position.z += 0.5f;
-	t_position.y = 1.15f;
-	t_scale = { 0.025,0.025,0.025 };
-#else
-	// �{�ԗp�v���C���[���f���̓ǂݍ���
+	/// プレイヤーモデル
 	model = std::make_unique<Model>("./Data/Model/Player/player_mesh.mdl");
 
 	/// プレイヤーのパラメータ初期設定
 	{
-		position = { 1,0,-24 };
-		scale = { 0.015, 0.015, 0.015 };
-		viewPoint = 1.5;           // ���_�̍���// カメラの視点用
-		radius = 0.6;              // �v���C���[�̔��a�i�����蔻��p�j//当たり判定用半径
-		enableHijackTime = maxHijackTime;   // �n�C�W���b�N�\�ȍő厞��//敵の視点をハイジャックできる時間の初期化
-		acceleration = 1.1f;
-		deceleration = 1.2f;
-		hit = false;
-		time = 0;
+		this->position = position;				  ///< ポジション
+		scale = { 0.015, 0.015, 0.015 };    ///< スケール
+		viewPoint = 1.5;                    ///< カメラの視点用
+		radius = 0.6;                       ///< 当たり判定用半径
+		enableHijackTime = maxHijackTime;   ///< 敵の視点をハイジャックできる時間の初期化
+		acceleration = 1.1f;                ///< 加速度
+		deceleration = 1.2f;                ///< 減速度
+		hit = false;                        ///< 死亡演出用(グローバル変数)
+		time = 0;                           ///< 死亡演出用(グローバル変数) 
 	}
 
-  /// アニメーション関係の設定(今回はアニメーションはなし)
-  {
-      animationController.SetModel(model);
-      animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
-      animationController.SetAnimationSecondScale(1.0f);
-  }
+	/// アニメーション関係の設定(今回はアニメーションはなし)
+	{
+		animationController.SetModel(model);
+		animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
+		animationController.SetAnimationSecondScale(1.0f);
+	}
 
-  /// テクスチャの読み込み
-  textures = std::make_unique<LoadTextures>();
-  textures->LoadNormal("Data/Model/Player/Texture/player_mtl_Normal_DirectX.png");
-  textures->LoadMetalness("Data/Model/Player/Texture/player_mtl_Metallic.png");
-  textures->LoadEmisive("Data/Model/Player/Texture/player_mtl_Emissive.png");
-  textures->LoadOcclusion("Data/Model/Player/Texture/player_mtl_Opacity.png");
+	/// テクスチャの読み込み
+	textures = std::make_unique<LoadTextures>();
+	textures->LoadNormal("Data/Model/Player/Texture/player_mtl_Normal_DirectX.png");
+	textures->LoadMetalness("Data/Model/Player/Texture/player_mtl_Metallic.png");
+	textures->LoadEmisive("Data/Model/Player/Texture/player_mtl_Emissive.png");
+	textures->LoadOcclusion("Data/Model/Player/Texture/player_mtl_Opacity.png");
 
-
-  /// SEの読み込み
-  changeCameraInSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
-  changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
+	/// SEの読み込み
+	changeCameraInSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
+	changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
 }
 
 /// デストラクタ
@@ -64,10 +55,9 @@ Player::~Player()
 /// 更新処理
 void Player::Update(float dt)
 {
-	// �n�C�W���b�N�֘A�̍X�V����
+	/// ハイジャックの時間処理
 	UpdateHijack(dt);
 
-	// �J�����p��SE�̉��ʒ���
 	if (changeCameraInSE->IsPlaying())
 		changeCameraInSE->SetVolume(0.5f);
 
@@ -94,10 +84,10 @@ void Player::Update(float dt)
 /// 描画処理
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-  /// テクスチャのセット
+	/// テクスチャのセット
 	textures->Set(rc);
 
-    /// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
+	/// モデルがあるときかつ、プレイヤーが敵カメラを使っている場合
 	/// プレイヤーを描画するとどうしても、モデルとカメラが被ってしまうので、
 	/// 敵視点の時のみの描画にする
 	if (model && useCam)
@@ -188,14 +178,8 @@ void Player::Move(float dt)
 		forward.z /= len;
 	}
 	saveDirection = forward;
-#if 1
+
 	speed += accel * dt;
-#else
-	if (Input::Instance().GetMouse().GetButton() & Mouse::BTN_RIGHT)
-		speed = 3;
-	else
-		speed = 0;
-#endif
 	speed = DirectX::XMMin(speed, maxSpeed);
 	speed = DirectX::XMMax(speed, 0.0f);
 
@@ -272,10 +256,10 @@ void Player::UpdateHijack(float dt)
 	if (enableHijackTime < 8.0f && !useCam)
 		enableHijack = false;
 
-// 視界変更に一定数のゲージの減り
+	// 視界変更に一定数のゲージの減り
 	if (isHijack)
 	{
-    // 一定数のゲージ消費
+		// 一定数のゲージ消費
 		enableHijackTime -= hijackCost;
 	}
 
@@ -290,13 +274,13 @@ void Player::UpdateHijack(float dt)
 		if (changeCameraKeepSE->IsPlaying()) {
 			changeCameraKeepSE->Stop();
 		}
-    // ハイジャックできる時間がハイジャックできる最大時間より小さい場合
+		// ハイジャックできる時間がハイジャックできる最大時間より小さい場合
 		if (maxHijackTime > enableHijackTime)
 		{
-      // ゲージの回復
+			// ゲージの回復
 			enableHijackTime += hijackRecoveryPerSec * dt;
 
-      // ゲージの制限
+			// ゲージの制限
 			if (enableHijackTime > maxHijackTime)
 				enableHijackTime = maxHijackTime;
 		}
@@ -337,7 +321,7 @@ void Player::DeathState(float dt)
 	pitch = asinf(y);        // 上下の向き
 	yaw = atan2f(x, z);      // 左右の向き
 
-	  // 角度を求める
+	// 角度を求める
 	{
 		DirectX::XMVECTOR Dot, Cross;
 		DirectX::XMFLOAT3 crossVector;

@@ -78,9 +78,6 @@ public:
     void UpdateHijack(float dt);
 
 private:
-    void Move(float dt);
-
-private:
 
     void Move(float dt);
     void UpdateAnimation(float dt);
