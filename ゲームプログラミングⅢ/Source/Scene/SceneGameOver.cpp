@@ -12,7 +12,7 @@ void Game_Over::Initialize()
 {
 
 	GameOver = new Sprite("Data/Sprite/GameOver.png");
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < life_number ; i++)
 	{
 		life[i] = new Life(life_number);
 	}
@@ -44,8 +44,8 @@ void Game_Over::Finalize()
 
 	timer = 0;
 
-	//残機を減らす
-	life_number--;
+	////残機を減らす
+	//life_number--;
 
 }
 
@@ -53,7 +53,7 @@ void Game_Over::Update(float elapsedTime)
 {
 	life[life_number - 1]->SetFlag(true);
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < life_number; i++)
 	{
 		life[i]->Update(elapsedTime);
 	}
@@ -70,7 +70,7 @@ void Game_Over::Update(float elapsedTime)
 		if (!sceneTrans)
 		{
 
-			nextScene = new SceneGame(life_number);
+			nextScene = new SceneGame(--life_number);
 			sceneTrans = true;
 			transTimer = 0.0f;
 			selectTrans = SelectTrans::Game; // ゲームオーバーシーンに遷移
