@@ -322,6 +322,7 @@ void Player::ChangeCamera()
 		}
 
 		useCam = !useCam;
+		hijackedElapsedTime = 0;
 	}
 
 	// ゲージがなくなると強制的に戻す
@@ -355,6 +356,11 @@ void Player::UpdateHijack(float dt)
 	{
 		enableHijackTime -= hijackCostPerSec * dt;
 		changeCameraKeepSE->Play(true);
+		hijackedElapsedTime += dt;
+		if (hijackedElapsedTime> hijack_risc_time)
+		{
+			enemyRef.get()->remote_sensing(position);
+		}
 	}
 	else // 視界がプレイヤーの場合
 	{
