@@ -73,12 +73,12 @@ public:
         accel = 2;
     }
 
-private:
-    void Move(float dt);
-
     void ChangeCamera();
 
     void UpdateHijack(float dt);
+
+private:
+    void Move(float dt);
 
 private:
 
