@@ -312,7 +312,7 @@ void Player::ChangeCamera()
 	if (isHijack)isHijack = false;
 
 	// �E�N���b�N�Ő؂�ւ�
-	if (mouse.GetButtonDown() & Mouse::BTN_RIGHT && enableHijack)
+	if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
 	{
 		if (useCam)
 			isChange = true; // �؂�ւ�����
