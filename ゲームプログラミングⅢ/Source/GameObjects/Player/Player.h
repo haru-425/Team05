@@ -66,6 +66,13 @@ public:
 
     void DeleteSounds();
 
+    void SetInGate(bool inGate) { this->inGate = inGate; }
+
+    void ResetSpeed() { 
+        speed = 0; 
+        accel = 2;
+    }
+
 private:
     void Move(float dt);
 
@@ -105,6 +112,7 @@ private:
 
     bool enableOpenGate = false; ///< ドアをくぐれるかどうか このフラグがfalseの場合カメラの切り替え可能、trueの場合はカメラ切り替え不可
     bool isDeath = false;
+    bool inGate = false;
 
     // カメラ切り替えのSE
     AudioSource* changeCameraInSE = nullptr;

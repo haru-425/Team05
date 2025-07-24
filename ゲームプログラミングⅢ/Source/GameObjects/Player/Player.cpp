@@ -190,8 +190,12 @@ void Player::Move(float dt)
 #endif
 	speed = DirectX::XMMin(speed, maxSpeed);
 	speed = DirectX::XMMax(speed, 0.0f);
-	position.x += speed * forward.x * dt;
-	position.z += speed * forward.z * dt;
+
+	if (!inGate) ///< ゲートに入ったらプレイヤーは移動しない
+	{
+		position.x += speed * forward.x * dt;
+		position.z += speed * forward.z * dt;
+	}
 
 	// 角度を求める
 	{

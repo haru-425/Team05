@@ -227,14 +227,14 @@ void SceneGame::Update(float elapsedTime)
 		return;
 	}
   
-	stage->Update(elapsedTime);						          ///< ステージ更新処理
-	player->Update(elapsedTime);					          ///< プレイヤー更新処理
-	enemy->Update(elapsedTime);						          ///< 敵更新処理
+	stage->Update(elapsedTime);						///< ステージ更新処理
+	player->Update(elapsedTime);					///< プレイヤー更新処理
+	enemy->Update(elapsedTime);						///< 敵更新処理
 	minimap->Update(player->GetPosition());	        ///< ミニマップ更新処理
 	batteryManager::Instance().Update(elapsedTime); ///< バッテリー更新処理
 	UpdateCamera(elapsedTime);                      ///< カメラ更新処理
-  metar->update(player->GetenableHijackTime());   ///< 画面左のハイジャック時間メータの更新処理 
-  UpdateOneWay(elapsedTime);                      ///< 一方通行処理
+	metar->update(player->GetenableHijackTime());   ///< 画面左のハイジャック時間メータの更新処理 
+	UpdateOneWay(elapsedTime);                      ///< 一方通行処理
 
 	Collision(); ///< 当たり判定 
 
@@ -700,7 +700,7 @@ void SceneGame::PlayerVsStage()
 	for (int i = 0; i < 3; ++i)
 	{
 		DirectX::XMFLOAT3 stagePos = { stage->GetGateWorld(i).m[3][0], stage->GetGateWorld(i).m[3][1], stage->GetGateWorld(i).m[3][2] };
-		stagePos.y += 0.5;
+		//stagePos.y += 0.5;
 		if (Collision::IntersectSphereVsSphere(player->GetPosition(), player->GetRadius(), stagePos, 0.05, hitPos))
 		{
 			if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT && !stage->GetGatePassed(i))
@@ -825,7 +825,7 @@ void SceneGame::UpdateOneWay(float elapsedTime)
 	/// 一方通行の通路を通った時のフェードインフェードアウトの処理
 	if (fadeStart)
 	{
-		static bool flag = false;
+		static bool flag = false; /// falseでフェードイン trueでフェードアウト		
 		if (!flag)
 			fadeTime += elapsedTime;
 		else
@@ -844,11 +844,14 @@ void SceneGame::UpdateOneWay(float elapsedTime)
 		{
 			DirectX::XMFLOAT3 exitPos = stage->GetExitPos(selectDoorIndex);
 			player->SetPosition(exitPos);
+			player->SetInGate(true);
+			player->ResetSpeed();
 		}
 		else if (alpha < 0 && flag)
 		{
 			flag = false;
 			fadeStart = false;
+			player->SetInGate(false);
 		}
 	}
 }
