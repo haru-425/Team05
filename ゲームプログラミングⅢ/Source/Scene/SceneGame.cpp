@@ -231,7 +231,6 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	timer += elapsedTime;
-	reminingTime -= elapsedTime;
 
 	/// チュートリアル処理
 	if (tutorial_Flug)
@@ -245,7 +244,7 @@ void SceneGame::Update(float elapsedTime)
 		return;
 	}
 
-
+	reminingTime -= elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	Collision(); ///< 当たり判定 
