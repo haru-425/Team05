@@ -283,6 +283,7 @@ void Enemy::Update(float elapsedTime)
 		if (((loocking && playerdist < lockonRange) || (loocking && playerdist < searchRange)))
 		{
 			state = State::detection;
+			JageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), DirectX::XMLoadFloat3(&position)));
 			Animationplay();
 		}
 		break;
