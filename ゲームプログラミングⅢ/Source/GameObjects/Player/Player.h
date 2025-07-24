@@ -84,6 +84,7 @@ private:
 
     void DeathState(float dt); ///< 死亡演出用
 
+    float CalcAngle(); ///< 角度計算用
 
 private:
     std::shared_ptr<Model> model;
@@ -113,9 +114,12 @@ private:
     bool enableOpenGate = false; ///< ドアをくぐれるかどうか このフラグがfalseの場合カメラの切り替え可能、trueの場合はカメラ切り替え不可
     bool isDeath = false;
     bool inGate = false;
+    bool enemyIsFront = false;
 
     // カメラ切り替えのSE
     AudioSource* changeCameraInSE = nullptr;
     AudioSource* changeCameraKeepSE = nullptr;
+
+    bool deathStart = false;
 };
 

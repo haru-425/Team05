@@ -279,6 +279,7 @@ void Enemy::Update(float elapsedTime)
 		if (animationcontroller.GetEndAnimation())
 		{
 			//SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
+			isDead = true;
 			batteryManager::Instance().stop();
 			batteryManager::Instance().ClearBattery();
 		}
