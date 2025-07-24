@@ -51,7 +51,7 @@ void Game_Over::Finalize()
 
 void Game_Over::Update(float elapsedTime)
 {
-	life[life_number]->SetFlag(true);
+	life[life_number - 1]->SetFlag(true);
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -111,7 +111,7 @@ void Game_Over::Render()
 	rc.renderState = graphics.GetRenderState();
 	GameOver->Render(rc, 100, 100, 0, 1095, 316, 0, 1, 1, 1, 1);
 
-	for (int i = 0; i < life_number + 1; i++)
+	for (int i = 0; i < life_number; i++)
 	{
 		if (life[i] != nullptr)
 		{
@@ -140,7 +140,7 @@ void Game_Over::Render()
 
 
 		//ƒmƒCƒY‚Ì‰e‹¿‚ðŽó‚¯‚È‚¢‚à‚Ì‚Í‚±‚±
-		for (int i = 0; i < life_number + 1; i++)
+		for (int i = 0; i < life_number  + 1; i++)
 		{
 			if (life[i] != nullptr)
 			{
