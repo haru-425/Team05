@@ -23,9 +23,7 @@ void Game_Clear::Initialize()
 	result = RankSystem::Instance().GetRank();
 	angle = 0;
 
-	GameSettings setting = SettingsManager::Instance().GetGameSettings();
 	selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
-	selectSE->SetVolume(0.5f * setting.seVolume);
 
 	Audio3DSystem::Instance().PlayByTag("electrical_noise");
 }
@@ -70,6 +68,9 @@ void Game_Clear::Finalize()
 
 void Game_Clear::Update(float elapsedTime)
 {
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
+	selectSE->SetVolume(0.5f * setting.seVolume);
+
 	Mouse& mouse = Input::Instance().GetMouse();
 
 	if(mouse.GetButtonDown() & Mouse::BTN_LEFT)

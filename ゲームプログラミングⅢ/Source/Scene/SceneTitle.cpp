@@ -117,9 +117,7 @@ void SceneTitle::Initialize()
 	Audio3DSystem::Instance().PlayByTag("aircon");
 
 	// SE読み込み
-	GameSettings setting = SettingsManager::Instance().GetGameSettings();
 	selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
-	selectSE->SetVolume(0.5f * setting.seVolume);
 }
 
 //終了化
@@ -149,6 +147,9 @@ void SceneTitle::Finalize()
 void SceneTitle::Update(float elapsedTime)
 {
 	Mouse& mouse = Input::Instance().GetMouse();
+
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
+	selectSE->SetVolume(0.5f * setting.seVolume);
 
 	bool isChangeScene = false;
 	/// マウス左クリックでメインシーンに遷移

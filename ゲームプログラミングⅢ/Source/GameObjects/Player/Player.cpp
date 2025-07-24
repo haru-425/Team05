@@ -45,11 +45,8 @@ Player::Player(const DirectX::XMFLOAT3& position)
 	textures->LoadOcclusion("Data/Model/Player/Texture/player_mtl_Opacity.png");
 
 	/// SEの読み込み
-	GameSettings setting = SettingsManager::Instance().GetGameSettings();
 	changeCameraInSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
-	changeCameraInSE->SetVolume(0.5f * setting.seVolume);
 	changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
-	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume);
 
 	if (Difficulty::Instance().GetDifficulty() == 2)
 	{
@@ -74,6 +71,11 @@ void Player::Update(float dt)
 
 	/// カメラ切り替え処理(実際のカメラの切り替えはSceneでやってる)
 	/// カメラを切り替えたときの処理、フラグを更新してる
+	 
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
+	changeCameraInSE->SetVolume(0.5f * setting.seVolume);
+	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume);
+
 	ChangeCamera();
 
 	// �v���C���[�ړ�����
