@@ -34,7 +34,7 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 	this->animationcontroller.SetModel(model);
 	this->animationcontroller.SetAnimationPlaying(true);
 	scale.x = scale.y = scale.z = 0.013f; // スケール設定（非常に小さい）
-	radius = 0.5f;                        // 衝突用の半径
+	radius = 1.5f;                        // 衝突用の半径
 
 	viewPoint = 1.5f;                     // 目線の高さ
 
@@ -117,6 +117,15 @@ void Enemy::Update(float elapsedTime)
 
 	if (playerdist<attackRange && state != State::Attack)
 	{
+		moveSpeed = 0;
+		state = State::Attack;
+		Animationplay();
+		return;
+	}
+
+	if (isHit && state != State::Attack)
+	{
+		moveSpeed = 0;
 		state = State::Attack;
 		Animationplay();
 		return;
@@ -468,6 +477,7 @@ void Enemy::Animationplay()
 		// atan2 で Y軸回転角を計算（Zが前、Xが右の座標系）
 		angle.y = std::atan2(dx, dz);
 		animationcontroller.PlayAnimation("attack", false);
+		animationcontroller.SetAnimationSecondScale(3);
 	}
 	switch (direction)
 	{

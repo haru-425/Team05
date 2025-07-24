@@ -122,5 +122,7 @@ private:
     AudioSource* changeCameraKeepSE = nullptr;
 
     bool deathStart = false;
+
+    int deathType = -1; // 0 前 1 後ろ
 };
 

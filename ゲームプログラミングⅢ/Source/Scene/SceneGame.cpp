@@ -648,7 +648,7 @@ void SceneGame::Render()
 	}
 #endif
 #ifdef _DEBUG
-	CollisionEditor::Instance().Render(rc, shapeRenderer);
+	//CollisionEditor::Instance().Render(rc, shapeRenderer);
 
 #endif // DEBUG
 
@@ -814,7 +814,7 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// プレイヤー視点
 		if (!useCamera)
 		{
-    	cameraPos = player->GetPosition();
+    		cameraPos = player->GetPosition();
 			cameraPos.y = player->GetViewPoint();
 			if(!player->GetIsEvent())
 			{

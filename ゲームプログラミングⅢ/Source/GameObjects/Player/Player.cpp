@@ -10,6 +10,7 @@
 static bool hit = false;
 static float time = 0;
 static constexpr float totalTime = 1;
+static bool staticIsDeathStart = false;
 /// コンストラクタ
 Player::Player(const DirectX::XMFLOAT3& position)
 {
@@ -27,6 +28,7 @@ Player::Player(const DirectX::XMFLOAT3& position)
 		deceleration = 5.0f;                ///< 減速度
 		hit = false;                        ///< 死亡演出用(グローバル変数)
 		time = 0;                           ///< 死亡演出用(グローバル変数) 
+		staticIsDeathStart = false;			///< 死亡演出用(グローバル変数	)
 	}
 
 	/// アニメーション関係の設定(今回はアニメーションはなし)
@@ -68,10 +70,11 @@ void Player::Update(float dt)
 	ChangeCamera();
 
 	// �v���C���[�ړ�����
-	Move(dt);
 
 	if (isEvent) ///< Move() の中でフラグの切り替えをしてる
 		DeathState(dt);
+	else
+		Move(dt);
 
 	/// 行列更新処理
 	UpdateTransform();
@@ -120,18 +123,18 @@ void Player::DrawDebug()
 
 		ImGui::Checkbox("enableOpenDoor", &enableOpenGate);
 
-		float radian = CalcAngle();
-		std::string text2;
-		if (radian < 0.78 && radian > -0.78)text2 = "front";
-		else if (radian < 2.3 && radian >= 0.78)text2 = "right";
-		else text2 = "???";
-		ImGui::Text(text2.c_str());
-		ImGui::SameLine();
-		ImGui::InputFloat("radian", &radian);
-		DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&world);
-		DirectX::XMVECTOR Forward = DirectX::XMVector3Normalize(M.r[2]);
-		DirectX::XMFLOAT3 forward; DirectX::XMStoreFloat3(&forward, Forward);
-		ImGui::InputFloat3("forward", &forward.x);
+		//float radian = CalcAngle();
+		//std::string text2;
+		//if (radian < 0.78 && radian > -0.78)text2 = "front";
+		//else if (radian < 2.3 && radian >= 0.78)text2 = "right";
+		//else text2 = "???";
+		//ImGui::Text(text2.c_str());
+		//ImGui::SameLine();
+		//ImGui::InputFloat("radian", &radian);
+		//DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&world);
+		//DirectX::XMVECTOR Forward = DirectX::XMVector3Normalize(M.r[2]);
+		//DirectX::XMFLOAT3 forward; DirectX::XMStoreFloat3(&forward, Forward);
+		//ImGui::InputFloat3("forward", &forward.x);
 	}
 	ImGui::End();
 }
@@ -163,9 +166,11 @@ void Player::Move(float dt)
 	/// 敵と接触した場合はだんだん速度を落として演出に入る
 	if ((CalcAngle() < 0.78 && CalcAngle() > -0.78) && hit)
 	{
+		isEvent = true;
+		deathType = 0;
 		if (!deathStart)
 		{
-			speed = -8;
+			speed = -4.5;
 			deathStart = !deathStart;
 		}
 
@@ -179,12 +184,13 @@ void Player::Move(float dt)
 	}
 	else if (hit)
 	{
+		deathType = 1;
 		if (speed > 0)
 			accel -= deceleration * dt;
 		else
 			isEvent = true;
 	}
-	else
+	else /// 死んでない時
 	{
 		/// 加速処理
 		accel += acceleration * dt;
@@ -369,18 +375,45 @@ void Player::DeathState(float dt)
 {
 	time += dt; ///< 演出用に使うタイマー(グローバル変数)
 
-	static bool isStart = false;
+	static float staticViewPoint = viewPoint;
+	if (deathType == 0) ///< 前
+	{
+		viewPoint = Easing::OutBack(time, totalTime, 0.8f, 0.3f, staticViewPoint);
+		if (viewPoint >= 0.4 && pitch < 60* 0.01745f)
+			pitch += 50 * 0.01745f * dt;
+
+		if (speed < 0)
+			accel += 1.5f;
+		else
+		{
+			speed = 0;
+			accel = 0;
+		}
+
+		speed += accel * dt;
+		position.x += speed * saveDirection.x * dt;
+		position.z += speed * saveDirection.z * dt;
+	}
+	else if (deathType == 1) ///< 後ろ
+	{
+		viewPoint = Easing::OutBack(time, totalTime, 0.8f, 0.1f, staticViewPoint);
+	}
+
+	
 	static float radian;
-	if(!isStart)
+	if (!staticIsDeathStart)
+	{
 		radian = CalcAngle();
+		angle.x = 0;
+	}
 
 	time = DirectX::XMMin(time, totalTime);
 	static float angleX = angle.x;
 	static float angleY = angle.y;
 
 	angle.y = Easing::OutBack(time, totalTime, 0.8f, radian + angleY, angleY);
-	angle.x = Easing::OutBack(time, totalTime, 0.8f, 0.0f, angleX);
-	isStart = true;
+	//angle.x = Easing::OutBack(time, totalTime, 0.8f, 0.0f, angleX);
+	staticIsDeathStart = true;
 }
 
 /// 角度計算用
