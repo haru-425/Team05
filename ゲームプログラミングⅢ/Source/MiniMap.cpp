@@ -44,8 +44,8 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 	//2Dスプライト描画
 	{
 
-	/*	float screenWidth = static_cast<float>(1280);
-		float screenHeight = static_cast<float>(720);*/
+		/*	float screenWidth = static_cast<float>(1280);
+			float screenHeight = static_cast<float>(720);*/
 
 		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
 		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
@@ -88,7 +88,7 @@ void MiniMap::Render(DirectX::XMFLOAT3 playerPosition)
 		icon->Render(rc,
 			spriteWidth / 2.0f, iconPosition.y, 0, iconWidth, iconHeight,
 			DirectX::XMConvertToDegrees(angle),
-			0, 0, 1, 1);
+			1, 1, 1, 1);
 
 		//ring->Render(rc, 500, 500, 0, 632, 632, 0, 0, 632, 632, 0, 1, 1, 1, 1);
 		//metar->Render(rc, 500, 500, 0, 448, 447, 0, 1, 1, 1, 1);

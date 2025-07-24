@@ -91,7 +91,7 @@ void SceneGame::Initialize()
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
 		tutorial_Flug = true;
-		reminingTime=120.0f;
+		reminingTime = 120.0f;
 		{
 			tutorial[0] = std::make_unique<Sprite>("Data/Sprite/dialog/01.png");
 			tutorial[1] = std::make_unique<Sprite>("Data/Sprite/dialog/02.png");
@@ -432,7 +432,7 @@ void SceneGame::Render()
 				tutorial[1]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 0:
-				next_navi_vision=true;
+				next_navi_vision = true;
 				//「…起動完了。 」
 				tutorial[0]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
@@ -543,12 +543,20 @@ void SceneGame::Render()
 		}
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
 
+		//temporalNoise	
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
+
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
 
 		//Timer
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BloomFinal)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Timer)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Timer)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Timer)]->deactivate(dc);
 
 		//BreathShake
@@ -917,7 +925,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		break;
 	case 15:
 		//「【残り時間】最後に制限時間です。この秒数が...」
-		break; 
+		break;
 	case 14:
 		//残り時間表示
 		tutorialTimer += elapsedTime;
