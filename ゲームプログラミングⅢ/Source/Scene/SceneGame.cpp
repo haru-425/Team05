@@ -401,22 +401,22 @@ void SceneGame::Render()
 				break;
 			case 7:
 				next_navi_vision = true;
-				//「操作方法】マウスで視点を...」
-				tutorial[5]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 6:
-				next_navi_vision = true;
 				//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
 				tutorial[4]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 5:
+			case 6:
 				next_navi_vision = true;
 				//「少し、ゲージを消費してしまいましたね。」
 				tutorial[3]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
-			case 2:
+			case 3:
 				//「【操作方法】右クリックで敵の視点を...」
 				tutorial[2]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+				break;
+			case 2:
+				next_navi_vision = true;
+				//「操作方法】マウスで視点を...」
+				tutorial[5]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 				break;
 			case 1:
 				next_navi_vision = true;
@@ -990,21 +990,18 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		tutorial_Step++;
 		break;
 	case 7:
-		//「【操作方法】マウスで視点を...」
-		break;
-	case 6:
 		//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
 		break;
-	case 5:
+	case 6:
 		//「少し、ゲージを消費してしまいましたね。」
 		break;
-	case 4:
+	case 5:
 		player->ChangeCamera();
 		tutorial_Step++;
 		break;
-	case 3:
+	case 4:
 		tutorial_Step--;
-	case 2:
+	case 3:
 		//「【操作方法】右クリックで敵の視点を...」
 		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_RIGHT)
 		{
@@ -1017,6 +1014,10 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 			tutorial_Step += 2;
 		}
 		metar->update(player->GetenableHijackTime());
+		break;
+
+	case 2:
+		//「【操作方法】マウスで視点を...」
 		break;
 	case 1:
 		//「【マップ】あなたの現在位置は、中央の印で...」
