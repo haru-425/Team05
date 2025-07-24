@@ -12,7 +12,7 @@
 /// 通常移動速度
 #define USUAL_SPEED 1.05f
 /// プレイヤー追跡時の移動速度
-#define TRACKING_SPEED 4.0f
+#define TRACKING_SPEED 5.0f
 /// 気配を感じたときの移動速度
 #define FEELING_SPEED 3.0f
 
