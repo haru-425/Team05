@@ -78,6 +78,7 @@ void SceneGame::Initialize()
 	/// 当たり判定エディターの初期化
 	CollisionEditor::Instance().Initialize();
 
+	batteryManager::Instance().ClearBattery();
 	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
 	batteryManager::Instance().SetPlayer_and_Enemy(player, enemy);
 	batteryManager::Instance().start();

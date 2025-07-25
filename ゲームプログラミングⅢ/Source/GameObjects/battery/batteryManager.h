@@ -106,7 +106,12 @@ public:
 
 	void SetPlayer_and_Enemy(std::shared_ptr<Player> players, std::shared_ptr<Enemy> enemys) { player = players; enemy = enemys; };
 
-	void ClearBattery() { hasBattery.clear(); }
+	void ClearBattery() {
+		if (!hasBattery.empty())
+		{
+			hasBattery.clear();
+		}
+	}
 	void ResetPlayer_Get_Batterry() { player_Get_Batterry = 0; };
 	int getMAXBattery()
 	{
