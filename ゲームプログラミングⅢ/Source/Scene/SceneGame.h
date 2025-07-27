@@ -65,6 +65,8 @@ private:
 	std::shared_ptr<Metar> metar;
 	MiniMap* minimap = nullptr;
 	bool tutorial_Flug = false;
+	//TODO
+	//static bool tutorial_Flug2 = false;
 	int tutorial_Step = 0;
 	float tutorialTimer = 0.0f;
 	int tutorial_Click_Count = 0;

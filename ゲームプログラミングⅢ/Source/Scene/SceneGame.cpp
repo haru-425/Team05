@@ -102,7 +102,8 @@ void SceneGame::Initialize()
 	um.GetUIs().at(2)->GetSpriteData().color = { 0,0,0,0 };
 	um.GetUIs().at(2)->GetSpriteData().isVisible = true;
 
-	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
+	//TODO
+	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial /*&& tutorial_Flug2*/)
 	{
 		tutorial_Flug = true;
 		reminingTime = 120.0f;
@@ -197,6 +198,7 @@ void SceneGame::Update(float elapsedTime)
 					batteryManager::Instance().getMAXBattery(),
 					life_number); // タイムアップでSランク
 				batteryManager::Instance().ResetPlayer_Get_Batterry();
+				batteryManager::Instance().ResetMax_Batterry();
 			}
 			else
 			{
@@ -204,6 +206,7 @@ void SceneGame::Update(float elapsedTime)
 				sceneTrans = true;
 				transTimer = 1.7f;
 			}
+			batteryManager::Instance().ClearBattery();
 		}
 
 		if (reminingTime <= 0.0f)
@@ -218,6 +221,8 @@ void SceneGame::Update(float elapsedTime)
 				batteryManager::Instance().getMAXBattery(),
 				life_number); // タイムアップでSランク
 			batteryManager::Instance().ResetPlayer_Get_Batterry();
+			batteryManager::Instance().ClearBattery();
+			batteryManager::Instance().ResetMax_Batterry();
 		}
 	}
 	else
@@ -234,8 +239,9 @@ void SceneGame::Update(float elapsedTime)
 
 	timer += elapsedTime;
 
+	//TODO
 	/// チュートリアル処理
-	if (tutorial_Flug)
+	if (tutorial_Flug /*&& tutorial_Flug2*/)
 	{
 		stage->Update(elapsedTime);
 		minimap->Update(player->GetPosition());
@@ -370,85 +376,7 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-		auto easeOutSine = [](float x) -> float
-		{
-			return sin((x * DirectX::XM_PI) / 2);
-		};
-
-		if (tutorial_Flug)
-		{
-			bool next_navi_vision = false;
-			switch (tutorial_Step)
-			{
-			case 17:
-				next_navi_vision = true;
-				//「(現在を付け足す)現在、敵の活動時間は残り2分。頑張って逃げましょう！」
-				tutorial[11]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 16:
-				next_navi_vision = true;
-				//「【残り時間】最後に制限時間です。この秒数が...」
-				tutorial[10]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 15:
-				//残り時間が表示
-				break;
-			case 14:
-				next_navi_vision = true;
-				//「さてと、後は時間まで逃げるだけですね。」
-				tutorial[9]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 13:
-				next_navi_vision = true;
-				//「【プレイヤー専用通路】（これだけ扉の画像のある説明用の画像を表示して説明）壁沿いにある、緑色のライトが...」
-				tutorial[8]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				tutorial[13]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 12:
-				next_navi_vision = true;
-				//「【バッテリー】このように敵は巡回中に、バッテリーを...」
-				tutorial[7]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 11:
-				next_navi_vision = true;
-				//「これは敵が落としていったバッテリー...」
-				tutorial[6]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 7:
-				next_navi_vision = true;
-				//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
-				tutorial[4]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 6:
-				next_navi_vision = true;
-				//「少し、ゲージを消費してしまいましたね。」
-				tutorial[3]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 3:
-				//「【操作方法】右クリックで敵の視点を...」
-				tutorial[2]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 2:
-				next_navi_vision = true;
-				//「操作方法】マウスで視点を...」
-				tutorial[5]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 1:
-				next_navi_vision = true;
-				//「【マップ】あなたの現在位置は、中央の印で...」
-				tutorial[1]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			case 0:
-				next_navi_vision = true;
-				//「…起動完了。 」
-				tutorial[0]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
-				break;
-			}
-			if (next_navi_vision)
-			{
-				tutorial[12]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, easeOutSine(button_effect_timer) + 0.5f);
-			}
-		}
+		
 	}
 
 	shadow->Release(dc);
@@ -628,6 +556,85 @@ void SceneGame::Render()
 			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
 		);
 
+	}
+	auto easeOutSine = [](float x) -> float
+		{
+			return sin((x * DirectX::XM_PI) / 2);
+		};
+	//TODO
+	if (tutorial_Flug /* && tutorial_Flug2*/)
+	{
+		bool next_navi_vision = false;
+		switch (tutorial_Step)
+		{
+		case 17:
+			next_navi_vision = true;
+			//「(現在を付け足す)現在、敵の活動時間は残り2分。頑張って逃げましょう！」
+			tutorial[11]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 16:
+			next_navi_vision = true;
+			//「【残り時間】最後に制限時間です。この秒数が...」
+			tutorial[10]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 15:
+			//残り時間が表示
+			break;
+		case 14:
+			next_navi_vision = true;
+			//「さてと、後は時間まで逃げるだけですね。」
+			tutorial[9]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 13:
+			next_navi_vision = true;
+			//「【プレイヤー専用通路】（これだけ扉の画像のある説明用の画像を表示して説明）壁沿いにある、緑色のライトが...」
+			tutorial[8]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			tutorial[13]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 12:
+			next_navi_vision = true;
+			//「【バッテリー】このように敵は巡回中に、バッテリーを...」
+			tutorial[7]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 11:
+			next_navi_vision = true;
+			//「これは敵が落としていったバッテリー...」
+			tutorial[6]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 7:
+			next_navi_vision = true;
+			//「【エネルギーゲージ】敵の視点を見るには、エネルギーを...」
+			tutorial[4]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 6:
+			next_navi_vision = true;
+			//「少し、ゲージを消費してしまいましたね。」
+			tutorial[3]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 3:
+			//「【操作方法】右クリックで敵の視点を...」
+			tutorial[2]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 2:
+			next_navi_vision = true;
+			//「操作方法】マウスで視点を...」
+			tutorial[5]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 1:
+			next_navi_vision = true;
+			//「【マップ】あなたの現在位置は、中央の印で...」
+			tutorial[1]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		case 0:
+			next_navi_vision = true;
+			//「…起動完了。 」
+			tutorial[0]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			break;
+		}
+		if (next_navi_vision)
+		{
+			tutorial[12]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, easeOutSine(button_effect_timer) + 0.5f);
+		}
 	}
 #endif
 #ifdef _DEBUG
@@ -932,6 +939,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 	{
 	case 18:
 		tutorial_Flug = false;
+		Difficulty::Instance().SetDifficulty(Difficulty::normal);
 		//オートランやらなんやらはここで初期化
 		break;
 	case 17:

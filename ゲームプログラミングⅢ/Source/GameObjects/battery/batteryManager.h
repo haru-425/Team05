@@ -113,6 +113,9 @@ public:
 		}
 	}
 	void ResetPlayer_Get_Batterry() { player_Get_Batterry = 0; };
+
+	void ResetMax_Batterry() { game_Max_Batterry = 0; };
+
 	int getMAXBattery()
 	{
 
@@ -150,6 +153,5 @@ private:
 
 	bool dropFlag = true;
 
-	//std::unique_ptr<AudioSource> getSE;
 	AudioSource* getSE;
 };
