@@ -18,6 +18,7 @@
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 float reminingTime = 300.0f;
+bool SceneGame::tutorial_Flug2 = false;
 
 // 初期化
 void SceneGame::Initialize()
@@ -103,10 +104,11 @@ void SceneGame::Initialize()
 	um.GetUIs().at(2)->GetSpriteData().isVisible = true;
 
 	//TODO
-	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial /*&& tutorial_Flug2*/)
+	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial )
 	{
 		tutorial_Flug = true;
 		reminingTime = 120.0f;
+		if (!tutorial_Flug2)
 		{
 			tutorial[0] = std::make_unique<Sprite>("Data/Sprite/dialog/01.png");
 			tutorial[1] = std::make_unique<Sprite>("Data/Sprite/dialog/02.png");
@@ -122,6 +124,10 @@ void SceneGame::Initialize()
 			tutorial[11] = std::make_unique<Sprite>("Data/Sprite/dialog/12.png");
 			tutorial[12] = std::make_unique<Sprite>("Data/Sprite/dialog/next_navi.png");
 			tutorial[13] = std::make_unique<Sprite>("Data/Sprite/dialog/aisle.png");
+		}
+		else
+		{
+			tutorial_Step = 18;
 		}
 	}
 }
@@ -241,7 +247,7 @@ void SceneGame::Update(float elapsedTime)
 
 	//TODO
 	/// チュートリアル処理
-	if (tutorial_Flug /*&& tutorial_Flug2*/)
+	if (tutorial_Flug && !tutorial_Flug2)
 	{
 		stage->Update(elapsedTime);
 		minimap->Update(player->GetPosition());
@@ -562,7 +568,7 @@ void SceneGame::Render()
 			return sin((x * DirectX::XM_PI) / 2);
 		};
 	//TODO
-	if (tutorial_Flug /* && tutorial_Flug2*/)
+	if (tutorial_Flug  && !tutorial_Flug2)
 	{
 		bool next_navi_vision = false;
 		switch (tutorial_Step)
@@ -938,8 +944,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 	switch (tutorial_Step)
 	{
 	case 18:
-		tutorial_Flug = false;
-		Difficulty::Instance().SetDifficulty(Difficulty::normal);
+		tutorial_Flug2 = true;
 		//オートランやらなんやらはここで初期化
 		break;
 	case 17:
