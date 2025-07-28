@@ -104,7 +104,7 @@ void SceneGame::Initialize()
 	um.GetUIs().at(2)->GetSpriteData().isVisible = true;
 
 	//TODO
-	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial )
+	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
 		tutorial_Flug = true;
 		reminingTime = 120.0f;
@@ -382,7 +382,7 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-		
+
 	}
 
 	shadow->Release(dc);
@@ -457,16 +457,27 @@ void SceneGame::Render()
 	}
 	else
 	{
+		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RedPulseAlert]->clear(dc);
+		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RedPulseAlert]->activate(dc);
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::RedPulseAlert].Get());
+		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RedPulseAlert]->deactivate(dc);
 		// BLOOM
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->clear(dc);
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
 		Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get());
-
-		ID3D11ShaderResourceView* shader_resource_views[] =
+		ID3D11ShaderResourceView* shader_resource_views[2];
+		if (enemy->Get_Tracking())//trueで追われている
 		{
-			Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get(),
-			Graphics::Instance().bloomer->shader_resource_view(),
-		};
+			shader_resource_views[0] = Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RedPulseAlert]->shader_resource_views[0].Get();
+			shader_resource_views[1] = Graphics::Instance().bloomer->shader_resource_view();
+
+		}
+		else {
+			shader_resource_views[0] = Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get();
+			shader_resource_views[1] = Graphics::Instance().bloomer->shader_resource_view();
+		}
+
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
 
 		minimap->Render(player->GetPosition());
@@ -568,7 +579,7 @@ void SceneGame::Render()
 			return sin((x * DirectX::XM_PI) / 2);
 		};
 	//TODO
-	if (tutorial_Flug  && !tutorial_Flug2)
+	if (tutorial_Flug && !tutorial_Flug2)
 	{
 		bool next_navi_vision = false;
 		switch (tutorial_Step)

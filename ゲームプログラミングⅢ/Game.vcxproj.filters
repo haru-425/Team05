@@ -41,6 +41,7 @@
     <FxCompile Include="Shader\WardenGazePS.hlsl" />
     <FxCompile Include="Shader\LightFlickerPS.hlsl" />
     <FxCompile Include="Shader\TimerPS.hlsl" />
+    <FxCompile Include="Shader\RedPulseAlertPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp" />
