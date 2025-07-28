@@ -104,6 +104,8 @@ public:
 
     void remote_sensing(DirectX::XMFLOAT3 pos);
 
+    bool Get_Tracking() const { return isTrackingPlayer; }
+
 private:
     /**
      * @brief 経路の再構成を行う（補正用）
