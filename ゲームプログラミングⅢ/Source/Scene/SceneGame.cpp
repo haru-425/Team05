@@ -104,7 +104,7 @@ void SceneGame::Initialize()
 	um.GetUIs().at(2)->GetSpriteData().color = { 0,0,0,0 };
 	um.GetUIs().at(2)->GetSpriteData().isVisible = true;
 
-	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial )
+	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
 		tutorial_Flug = true;
 		reminingTime = 120.0f;
@@ -287,7 +287,7 @@ void SceneGame::Update(float elapsedTime)
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
 
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
-	EnemyUI::Instance().Update(elapsedTime, player->GetPosition(), enemy->Get_Tracking());
+	EnemyUI::Instance().Update(elapsedTime, player->GetPosition(), enemy->Get_Loocking());
 }
 
 // 描画処理
@@ -582,7 +582,7 @@ void SceneGame::Render()
 			return sin((x * DirectX::XM_PI) / 2);
 		};
 
-	if (tutorial_Flug  && !tutorial_Flug2)
+	if (tutorial_Flug && !tutorial_Flug2)
 	{
 		bool next_navi_vision = false;
 		switch (tutorial_Step)

@@ -4,6 +4,7 @@
 #include "System/RenderContext.h"
 #include "Camera/Camera.h"
 #include "System/Graphics.h"
+#include <random>
 
 using namespace DirectX;
 
@@ -65,11 +66,20 @@ public:
 			delete ui[i];
 		}
 	}
-
+	XMFLOAT2 GetRandomScreenPos() {
+		static std::random_device rd;
+		static std::mt19937 gen(rd());
+		std::uniform_real_distribution<float> distX(0.0f, static_cast<float>(Graphics::Instance().GetScreenWidth()));
+		std::uniform_real_distribution<float> distY(0.0f, static_cast<float>(Graphics::Instance().GetScreenHeight()));
+		return XMFLOAT2(distX(gen), distY(gen));
+	}
 	void Update(float elapsedTime, const XMFLOAT3& playerWorldPos, bool playerDetected) {
+		static float timer = 0.0f;
+		static XMFLOAT2 randomTarget = GetRandomScreenPos();
+		timer += elapsedTime;
+
 		XMFLOAT2 targetPos;
-		if (playerDetected)
-		{
+		if (playerDetected) {
 			targetPos = WorldToScreen(
 				playerWorldPos,
 				Camera::Instance().GetView(),
@@ -77,16 +87,17 @@ public:
 				Graphics::Instance().GetScreenWidth(),
 				Graphics::Instance().GetScreenHeight()
 			);
+			timer = 0.0f; // ターゲットをリセット
 		}
-		else
-		{
-			targetPos = XMFLOAT2(
-				Graphics::Instance().GetScreenWidth() / 2.f,
-				Graphics::Instance().GetScreenHeight() / 2.f
-			);
+		else {
+			if (timer >= 1.0f) { // 1秒ごとにランダムに切り替え
+				randomTarget = GetRandomScreenPos();
+				timer = 0.0f;
+			}
+			targetPos = randomTarget;
 		}
 
-		// 先頭クロスヘア：プレイヤーに直接追従
+		// 先頭クロスヘア：プレイヤーまたはランダム位置に追従
 		{
 			float speed = std::clamp(6.0f * elapsedTime, 0.0f, 1.0f);
 			XMVECTOR current = XMLoadFloat2(&uiPos[0]);
@@ -97,7 +108,7 @@ public:
 
 		// 後続クロスヘア：ひとつ前に追従
 		for (int i = 1; i < 3; ++i) {
-			float rawSpeed = 20.0f - i * 2.0f;  // 減衰速度
+			float rawSpeed = 20.0f - i * 2.0f;
 			float followSpeed = std::clamp(rawSpeed * elapsedTime, 0.0f, 1.0f);
 
 			XMVECTOR current = XMLoadFloat2(&uiPos[i]);
@@ -106,7 +117,6 @@ public:
 			XMStoreFloat2(&uiPos[i], result);
 		}
 	}
-
 
 	void Render(const RenderContext& rc) {
 		for (int i = 0; i < 3; ++i) {
