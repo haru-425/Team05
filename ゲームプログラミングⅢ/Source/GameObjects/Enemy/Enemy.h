@@ -10,11 +10,11 @@
 #include <memory>
 
 /// 通常移動速度
-#define USUAL_SPEED 2.01f
+#define USUAL_SPEED 1.05f
 /// プレイヤー追跡時の移動速度
-#define TRACKING_SPEED 10.0f
+#define TRACKING_SPEED 5.0f
 /// 気配を感じたときの移動速度
-#define FEELING_SPEED 6.0f
+#define FEELING_SPEED 3.0f
 
 #define EASY_SR 5.0f
 #define NORMAL_AND_HARD_SR 10.0f
@@ -105,6 +105,8 @@ public:
     void remote_sensing(DirectX::XMFLOAT3 pos);
 
     bool Get_Tracking() const { return isTrackingPlayer; }
+
+    bool Get_Loocking() const { return loocking; } 
 
 private:
     /**
