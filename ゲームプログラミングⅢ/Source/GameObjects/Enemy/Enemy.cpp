@@ -115,7 +115,7 @@ void Enemy::Update(float elapsedTime)
 		DirectX::XMVector3Length(
 			DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
 
-	if (playerdist < attackRange && state != State::Attack)
+	/*if (playerdist < attackRange && state != State::Attack)
 	{
 		moveSpeed = 0;
 		state = State::Attack; 
@@ -123,7 +123,7 @@ void Enemy::Update(float elapsedTime)
 		Audio3DSystem::Instance().StopByTag("enemy_walk");
 		Animationplay();
 		return;
-	}
+	}*/
 
 	if (isHit && state != State::Attack)
 	{
@@ -194,12 +194,11 @@ void Enemy::Update(float elapsedTime)
 
 	// メルセンヌツイスタ（高性能な乱数生成器）にシードを与える
 	std::mt19937 gen(rd());
-	if (state != State::Roaming)
+	/*if (state != State::Roaming)
 	{
-
 		Audio3DSystem::Instance().StopByTag("enemy_run");
 		Audio3DSystem::Instance().StopByTag("enemy_walk");
-	}
+	}*/
 	// 敵の状態に応じて処理を分岐
 	switch (state)
 	{
@@ -219,6 +218,8 @@ void Enemy::Update(float elapsedTime)
 
 	case State::Idle:
 	{
+		Audio3DSystem::Instance().StopByTag("enemy_run");
+		Audio3DSystem::Instance().StopByTag("enemy_walk");
 		std::uniform_int_distribution<> dist(0, MAX_WAY_POINT - 1);
 		int value = dist(gen);
 
@@ -434,6 +435,13 @@ void Enemy::refinePath(int start, int current)
 	// 経路を waypoint 座標に変換して route に格納
 	for (auto i : stage->path)
 	{
+		if (!route.empty())
+		{
+			if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&stage->wayPoint[i]->position), DirectX::XMLoadFloat3(&route.back())))) < 0.3f)
+			{
+				continue;
+			}
+		}
 		this->Addroute(stage->wayPoint[i]->position);
 	}
 }
@@ -481,6 +489,13 @@ void Enemy::JageDirection(DirectX::XMVECTOR dir)
 	olddirection = direction;
 	DirectX::XMFLOAT3 dirf;
 	DirectX::XMStoreFloat3(&dirf, dir);
+
+	//TODO
+	/*if (dirf.x > 0.1f && dirf.z > 0.1f)
+	{
+
+	}*/
+
 	if (dirf.x > 0.1f && dirf.z < dirf.x)
 	{
 		direction = Direction::E;

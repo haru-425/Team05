@@ -103,7 +103,6 @@ void SceneGame::Initialize()
 	um.GetUIs().at(2)->GetSpriteData().color = { 0,0,0,0 };
 	um.GetUIs().at(2)->GetSpriteData().isVisible = true;
 
-	//TODO
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial )
 	{
 		tutorial_Flug = true;
@@ -245,7 +244,6 @@ void SceneGame::Update(float elapsedTime)
 
 	timer += elapsedTime;
 
-	//TODO
 	/// チュートリアル処理
 	if (tutorial_Flug && !tutorial_Flug2)
 	{
@@ -567,7 +565,7 @@ void SceneGame::Render()
 		{
 			return sin((x * DirectX::XM_PI) / 2);
 		};
-	//TODO
+
 	if (tutorial_Flug  && !tutorial_Flug2)
 	{
 		bool next_navi_vision = false;
