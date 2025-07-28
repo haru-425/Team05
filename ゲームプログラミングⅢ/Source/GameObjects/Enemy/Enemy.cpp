@@ -127,6 +127,7 @@ void Enemy::Update(float elapsedTime)
 	{
 		moveSpeed = 0;
 		state = State::Attack;
+		batteryManager::Instance().stop();
 		Animationplay();
 		return;
 	}
@@ -306,7 +307,6 @@ void Enemy::Update(float elapsedTime)
 			Audio3DSystem::Instance().StopByTag("enemy_run");
 			Audio3DSystem::Instance().StopByTag("enemy_walk");
 
-			batteryManager::Instance().stop();
 			batteryManager::Instance().ClearBattery();
 			moveSpeed = 0;
 		}
