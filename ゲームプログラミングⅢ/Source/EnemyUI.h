@@ -127,8 +127,8 @@ public:
 				(uiPos[i].x - (160 - i * 20) / 2.f) * scaleX,
 				(uiPos[i].y - (160 - i * 20) / 2.f) * scaleY,
 				0.0f,
-				160 - i * 20,
-				160 - i * 20,
+				(160 - i * 20) * scaleX,
+				(160 - i * 20) * scaleY,
 				0,
 				1.0f, 1.0f, 1.0f, 1.0f
 			);

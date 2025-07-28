@@ -102,7 +102,7 @@ void SceneTitle::Initialize()
 	um.CreateUI("./Data/Sprite/gameMode.png", "Hard");
 	um.CreateUI("./Data/Sprite/gameMode.png", "Info");
 
-	isVolumeSliderActive = false; 
+	isVolumeSliderActive = false;
 	oldSelect = -1;
 
 	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
