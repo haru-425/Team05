@@ -70,7 +70,7 @@ public:
 		static std::random_device rd;
 		static std::mt19937 gen(rd());
 		std::uniform_real_distribution<float> distX(0.0f, static_cast<float>(Graphics::Instance().GetScreenWidth()));
-		std::uniform_real_distribution<float> distY(0.0f, static_cast<float>(Graphics::Instance().GetScreenHeight()));
+		std::uniform_real_distribution<float> distY(static_cast<float>(Graphics::Instance().GetScreenHeight() / 4.f), static_cast<float>(Graphics::Instance().GetScreenHeight() / 4.f * 3));
 		return XMFLOAT2(distX(gen), distY(gen));
 	}
 	void Update(float elapsedTime, const XMFLOAT3& playerWorldPos, bool playerDetected) {
