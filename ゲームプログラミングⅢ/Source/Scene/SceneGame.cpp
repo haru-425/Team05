@@ -12,6 +12,7 @@
 #include "./Object/ObjectManager.h"
 #include "System/CollisionEditor.h"
 #include "GameObjects/battery/batteryManager.h"
+#include "EnemyUI.h"
 
 #include <imgui.h>
 
@@ -129,6 +130,7 @@ void SceneGame::Initialize()
 			tutorial_Step = 18;
 		}
 	}
+	EnemyUI::Instance().Initialize(); ///< 敵のUI初期化
 }
 
 // 終了化
@@ -161,6 +163,7 @@ void SceneGame::Finalize()
 
 	player.reset();
 	enemy.reset();
+	EnemyUI::Instance().Finalize();
 }
 
 // 更新処理
@@ -284,6 +287,7 @@ void SceneGame::Update(float elapsedTime)
 	Audio3DSystem::Instance().SetEmitterPositionByTag("enemy_run", enemy->GetPosition());
 
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
+	EnemyUI::Instance().Update(elapsedTime, player->GetPosition(), enemy->Get_Tracking());
 }
 
 // 描画処理
@@ -406,6 +410,7 @@ void SceneGame::Render()
 		if (!tutorial_Flug || tutorial_Step >= 4)
 		{
 			metar->render();
+			EnemyUI::Instance().Render(rc);
 		}
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
 

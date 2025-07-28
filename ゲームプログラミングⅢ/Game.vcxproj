@@ -114,6 +114,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\3DAudio\3dAudio.h" />
+    <ClInclude Include="Source\EnemyUI.h" />
     <ClInclude Include="Source\GameObjects\Aircon\AirconManager.h" />
     <ClInclude Include="Source\GameObjects\Aircon\Aircon.h" />
     <ClInclude Include="External\imgui-docking\imconfig.h" />

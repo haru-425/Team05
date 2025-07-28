@@ -217,6 +217,7 @@
     <ClInclude Include="Source\metar.h" />
     <ClInclude Include="Source\Math\Easing.h" />
     <ClInclude Include="Source\System\CollisionEditor.h" />
+    <ClInclude Include="Source\EnemyUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
