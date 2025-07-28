@@ -119,11 +119,13 @@ public:
 	}
 
 	void Render(const RenderContext& rc) {
+		float scaleX = Graphics::Instance().GetWindowScaleFactor().x;
+		float scaleY = Graphics::Instance().GetWindowScaleFactor().y;
 		for (int i = 0; i < 3; ++i) {
 			ui[i]->Render(
 				rc,
-				uiPos[i].x - (160 - i * 20) / 2.f,
-				uiPos[i].y - (160 - i * 20) / 2.f,
+				(uiPos[i].x - (160 - i * 20) / 2.f) * scaleX,
+				(uiPos[i].y - (160 - i * 20) / 2.f) * scaleY,
 				0.0f,
 				160 - i * 20,
 				160 - i * 20,
