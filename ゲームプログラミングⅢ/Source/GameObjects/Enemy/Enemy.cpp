@@ -115,10 +115,12 @@ void Enemy::Update(float elapsedTime)
 		DirectX::XMVector3Length(
 			DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
 
-	if (playerdist<attackRange && state != State::Attack)
+	if (playerdist < attackRange && state != State::Attack)
 	{
 		moveSpeed = 0;
-		state = State::Attack;
+		state = State::Attack; 
+		Audio3DSystem::Instance().StopByTag("enemy_run");
+		Audio3DSystem::Instance().StopByTag("enemy_walk");
 		Animationplay();
 		return;
 	}
@@ -128,6 +130,8 @@ void Enemy::Update(float elapsedTime)
 		moveSpeed = 0;
 		state = State::Attack;
 		batteryManager::Instance().stop();
+		Audio3DSystem::Instance().StopByTag("enemy_run");
+		Audio3DSystem::Instance().StopByTag("enemy_walk");
 		Animationplay();
 		return;
 	}
@@ -304,9 +308,6 @@ void Enemy::Update(float elapsedTime)
 			//SceneManager::instance().ChangeScene(new SceneLoading(new Game_Over));
 			isDead = true;
 
-			Audio3DSystem::Instance().StopByTag("enemy_run");
-			Audio3DSystem::Instance().StopByTag("enemy_walk");
-
 			batteryManager::Instance().ClearBattery();
 			moveSpeed = 0;
 		}
@@ -385,6 +386,7 @@ void Enemy::Updatemovement(float elapsedTime)
 	{
 		return;
 	}
+
 
 	// ターゲット地点に近づいたら次の目的地へ
 	float distance = DirectX::XMVectorGetX(DirectX::XMVector3Length(dir));
