@@ -1073,7 +1073,7 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 		if (Collision::IntersectSphereVsSphere(playerPos, player->GetRadius(), gatePos, 0.05f, hitPos))
 		{
 
-			if (IsPlayerFacingDoor(playerPos, playerDir, gatePos))
+			if (IsPlayerFacingDoor(playerPos, playerDir, gatePos) && !player->GetUseCam())
 			{
 				if (stage->GetGatePassed(i))
 				{
@@ -1087,7 +1087,6 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 					player->SetEnableOpenGate(true);
 
 					um.GetUIs().at(0)->GetSpriteData().isVisible = true;
-					//um.GetUIs().at(1)->GetSpriteData().isVisible = false;
 
 					if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)
 					{

@@ -233,7 +233,7 @@ void Player::Move(float dt)
 	DirectX::XMFLOAT3 outPos = {};
 	DirectX::XMFLOAT3 pushDir = {};
 
-	float adjustedSpeed = speed;
+	//float adjustedSpeed = speed;
 
 	if (CollisionEditor::Instance().Collision(position, radius, outPos, pushDir))
 	{
@@ -244,9 +244,8 @@ void Player::Move(float dt)
 
 		if (dot < 0.0f) // 移動方向と押し出し方向が逆なら押し出す
 		{
-			float slowFactor = 1.0f - fabsf(dot); // 壁との角度に応じて減速
-			adjustedSpeed *= slowFactor;
-
+			//float slowFactor = 1.0f - fabsf(dot); // 壁との角度に応じて減速
+			//adjustedSpeed *= slowFactor;
 
 			DirectX::XMVECTOR currentPos = DirectX::XMLoadFloat3(&position);
 			DirectX::XMVECTOR targetPos = DirectX::XMLoadFloat3(&outPos);
@@ -261,12 +260,12 @@ void Player::Move(float dt)
 
 	if (!inGate) ///< ゲートに入ったらプレイヤーは移動しない
 	{
-		//position.x += speed * forward.x * dt;
-		//position.z += speed * forward.z * dt;
+		position.x += speed * forward.x * dt;
+		position.z += speed * forward.z * dt;
 
 		// 減衰後の速度で移動
-		position.x += adjustedSpeed * forward.x * dt;
-		position.z += adjustedSpeed * forward.z * dt;
+		//position.x += adjustedSpeed * forward.x * dt;
+		//position.z += adjustedSpeed * forward.z * dt;
 	}
 
 	// 角度を求める
