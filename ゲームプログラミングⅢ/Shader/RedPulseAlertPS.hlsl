@@ -40,14 +40,14 @@ float4 main(VS_OUT pin) : SV_Target
     float dist = distance(uv, center);
 
     // 明滅の強さ（周辺が強く、時間で点滅）
-    float flash = smoothstep(0.4, 0.9, dist) * abs(sin(iTime * 5.0));
+    float flash = smoothstep(0.2, 0.9, dist) * abs(sin(iTime * 5.0));
 
     // 赤色のフラッシュを加算
     //float4 baseColor = float4(0.0, 0.0, 0.0, 1.0); // 背景を黒とする例
     float4 redFlash = float4(flash, 0.0, 0.0, 1.0);
 
-    return sceneColor + redFlash;
-
+    //return sceneColor + redFlash;
+    return float4(lerp(sceneColor.rgb, redFlash.rgb, flash), 1);
 
     //return sceneColor; // 色を強調
 
