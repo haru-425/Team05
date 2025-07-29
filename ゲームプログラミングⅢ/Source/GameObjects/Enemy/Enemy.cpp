@@ -191,14 +191,6 @@ void Enemy::Update(float elapsedTime)
 	int current, start;
 	// ハードウェア由来のランダムシードを取得
 	std::random_device rd;
-
-	// メルセンヌツイスタ（高性能な乱数生成器）にシードを与える
-	std::mt19937 gen(rd());
-	/*if (state != State::Roaming)
-	{
-		Audio3DSystem::Instance().StopByTag("enemy_run");
-		Audio3DSystem::Instance().StopByTag("enemy_walk");
-	}*/
 	// 敵の状態に応じて処理を分岐
 	switch (state)
 	{
@@ -220,7 +212,10 @@ void Enemy::Update(float elapsedTime)
 	{
 		Audio3DSystem::Instance().StopByTag("enemy_run");
 		Audio3DSystem::Instance().StopByTag("enemy_walk");
-		std::uniform_int_distribution<> dist(0, MAX_WAY_POINT - 1);
+
+		// メルセンヌツイスタ（高性能な乱数生成器）にシードを与える
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<int> dist(0, MAX_WAY_POINT - 1);
 		int value = dist(gen);
 
 		// ランダムな目標地点を設定し経路探索
@@ -494,6 +489,32 @@ void Enemy::JageDirection(DirectX::XMVECTOR dir)
 	if (dirf.x > 0.1f && dirf.z > 0.1f)
 	{
 		int x = 10;
+		while (true)
+		{
+			stage->path.clear();
+			route.clear();
+			currentTargetIndex = 0;
+
+			Start::Instance().SetPosition(this->position);
+			SearchAI::Instance().DijkstraSearch(stage);
+
+			int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+			int start = stage->NearWayPointIndex(Start::Instance().GetPosition());
+
+			refinePath(start, current); // 経路を作成
+
+			DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&position);
+			DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&route[currentTargetIndex]);
+			DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(targetVec, posVec);
+
+			DirectX::XMVECTOR dirNorm = DirectX::XMVector3Normalize(dir);
+			DirectX::XMVECTOR moveVec = DirectX::XMVectorScale(dirNorm, moveSpeed);
+			DirectX::XMStoreFloat3(&dirf, dir);
+			if (dirf.x < 0.2f && dirf.z < 0.2f)
+			{
+				break;
+			}
+		}
 	}
 
 	if (dirf.x > 0.1f && dirf.z < dirf.x)
