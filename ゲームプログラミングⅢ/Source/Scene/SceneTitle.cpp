@@ -612,6 +612,7 @@ void SceneTitle::UpdateUI()
 		switch (id)
 		{
 		case 0: ///< id 0はゲーム開始
+
 			if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 			{
 				selectStart = true;
