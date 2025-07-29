@@ -114,6 +114,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\3DAudio\3dAudio.h" />
+    <ClInclude Include="Source\EnemyUI.h" />
     <ClInclude Include="Source\GameObjects\Aircon\AirconManager.h" />
     <ClInclude Include="Source\GameObjects\Aircon\Aircon.h" />
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -408,6 +409,10 @@
     <FxCompile Include="Shader\NoSignalFinalePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\RedPulseAlertPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\ShapeRendererPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

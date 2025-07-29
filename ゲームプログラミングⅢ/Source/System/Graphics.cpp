@@ -211,6 +211,9 @@ GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/WardenGazePS.cso", 
 GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/NoiseChangePS.cso", pixel_shaders[int(PPShaderType::NoiseChange)].ReleaseAndGetAddressOf());
 GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/LightFlickerPS.cso", pixel_shaders[int(PPShaderType::LightFlicker)].ReleaseAndGetAddressOf());
 GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TimerPS.cso", pixel_shaders[int(PPShaderType::Timer)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/RedPulseAlertPS.cso", pixel_shaders[int(PPShaderType::RedPulseAlert)].ReleaseAndGetAddressOf());
+
+
 
 
 
