@@ -73,7 +73,7 @@ void Game_Clear::Update(float elapsedTime)
 
 	Mouse& mouse = Input::Instance().GetMouse();
 
-	if(mouse.GetButtonDown() & Mouse::BTN_LEFT)
+	if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
 		GameCleartime = 120.0f;
 		selectSE->Play(false);
@@ -322,30 +322,30 @@ void Game_Clear::Render()
 	//}
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->deactivate(dc);
 
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Glitch)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->deactivate(dc);
 	//crt
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::GameOver)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
 
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->clear(dc);
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->activate(dc);
-	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::Glitch)].Get());
-	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->deactivate(dc);
 
 	//crt
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->deactivate(dc);
 	//crt
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
 
 	//crt
