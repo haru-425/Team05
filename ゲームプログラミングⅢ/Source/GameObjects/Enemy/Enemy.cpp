@@ -42,7 +42,7 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 	Goal::Instance().SetPosition(stage->GetIndexWayPoint(61));
 
 	Start::Instance().SetPosition(this->position);
-	SearchAI::Instance().DijkstraSearch(stage);
+	SearchAI::Instance().freeSearch(stage);
 
 	int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
 	int start = stage->NearWayPointIndex(this->position);
@@ -148,7 +148,7 @@ void Enemy::Update(float elapsedTime)
 
 			Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
 			Start::Instance().SetPosition(this->position);
-			SearchAI::Instance().DijkstraSearch(stage);
+			SearchAI::Instance().trackingSearch(stage);
 
 			int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
 			int start = stage->NearWayPointIndex(this->position);
@@ -179,7 +179,7 @@ void Enemy::Update(float elapsedTime)
 			Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
 			if (!route.empty())
 				Start::Instance().SetPosition(route.back());
-			SearchAI::Instance().DijkstraSearch(stage);
+			SearchAI::Instance().trackingSearch(stage);
 
 			int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
 			int start = stage->NearWayPointIndex(Start::Instance().GetPosition());
@@ -242,7 +242,7 @@ void Enemy::Update(float elapsedTime)
 
 #if 1
 		Start::Instance().SetPosition(this->position);
-		SearchAI::Instance().DijkstraSearch(stage);
+		SearchAI::Instance().freeSearch(stage);
 
 		current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
 		start = stage->NearWayPointIndex(this->GetPosition());
@@ -388,7 +388,13 @@ void Enemy::Updatemovement(float elapsedTime)
 	float distance = DirectX::XMVectorGetX(DirectX::XMVector3Length(dir));
 	if (distance < 0.1f)
 	{
+		int from = stage->NearWayPointIndex(route[currentTargetIndex]);
 		currentTargetIndex++;
+		if (currentTargetIndex < route.size())
+		{
+			int to = stage->NearWayPointIndex(route[currentTargetIndex]);
+			stage->AddEdgecost(from, to);
+		}
 		if (currentTargetIndex < route.size())
 		{
 			targetPosition = route[currentTargetIndex];
@@ -452,7 +458,7 @@ void Enemy::remote_sensing(DirectX::XMFLOAT3 pos)
 
 		Goal::Instance().SetPosition(pos);
 		Start::Instance().SetPosition(this->position);
-		SearchAI::Instance().DijkstraSearch(stage);
+		SearchAI::Instance().trackingSearch(stage);
 
 		int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
 		int start = stage->NearWayPointIndex(this->position);
@@ -468,7 +474,7 @@ void Enemy::remote_sensing(DirectX::XMFLOAT3 pos)
 		Goal::Instance().SetPosition(pos);
 		if (!route.empty())
 			Start::Instance().SetPosition(route.back());
-		SearchAI::Instance().DijkstraSearch(stage);
+		SearchAI::Instance().trackingSearch(stage);
 
 		int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
 		int start = stage->NearWayPointIndex(Start::Instance().GetPosition());
@@ -489,32 +495,32 @@ void Enemy::JageDirection(DirectX::XMVECTOR dir)
 	if (dirf.x > 0.1f && dirf.z > 0.1f)
 	{
 		int x = 10;
-		while (true)
-		{
-			stage->path.clear();
-			route.clear();
-			currentTargetIndex = 0;
+		//while (true)
+		//{
+		//	stage->path.clear();
+		//	route.clear();
+		//	currentTargetIndex = 0;
 
-			Start::Instance().SetPosition(this->position);
-			SearchAI::Instance().DijkstraSearch(stage);
+		//	Start::Instance().SetPosition(this->position);
+		//	SearchAI::Instance().trackingSearch(stage);
 
-			int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
-			int start = stage->NearWayPointIndex(Start::Instance().GetPosition());
+		//	int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+		//	int start = stage->NearWayPointIndex(Start::Instance().GetPosition());
 
-			refinePath(start, current); // 経路を作成
+		//	refinePath(start, current); // 経路を作成
 
-			DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&position);
-			DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&route[currentTargetIndex]);
-			DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(targetVec, posVec);
+		//	DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&position);
+		//	DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&route[currentTargetIndex]);
+		//	DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(targetVec, posVec);
 
-			DirectX::XMVECTOR dirNorm = DirectX::XMVector3Normalize(dir);
-			DirectX::XMVECTOR moveVec = DirectX::XMVectorScale(dirNorm, moveSpeed);
-			DirectX::XMStoreFloat3(&dirf, dir);
-			if (dirf.x < 0.2f && dirf.z < 0.2f)
-			{
-				break;
-			}
-		}
+		//	DirectX::XMVECTOR dirNorm = DirectX::XMVector3Normalize(dir);
+		//	DirectX::XMVECTOR moveVec = DirectX::XMVectorScale(dirNorm, moveSpeed);
+		//	DirectX::XMStoreFloat3(&dirf, dir);
+		//	if (dirf.x < 0.2f && dirf.z < 0.2f)
+		//	{
+		//		break;
+		//	}
+		//}
 	}
 
 	if (dirf.x > 0.1f && dirf.z < dirf.x)

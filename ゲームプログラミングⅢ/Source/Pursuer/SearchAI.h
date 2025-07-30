@@ -24,7 +24,8 @@ public:
 	}
 
 	// DijkstraSearch(ダイクストラサーチ)
-	bool DijkstraSearch(Stage* stage, bool heuristicFlg = false);
+	bool trackingSearch(Stage* stage, bool heuristicFlg = false);
+	bool freeSearch(Stage* stage, bool heuristicFlg = false);
 	// Dijkstraで使用するコスト計算関数
 	Edge* searchMinCostEdge(std::vector<Edge*>& FNR, Stage* stage, bool heuristicFlg);
 	// A*で使用する見積コスト計算関数
@@ -35,12 +36,9 @@ public:
 
 	//答えルートのエッジをを記憶するワーク
 	std::vector<int> findRoot;
-	// 探索したデータを表示
-	//void SearchRender(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection, Stage06* stage);
-	//void AddSerchArrow(Stage06* stage);
 	void SearchClear(Stage* stage);
-	//float AddAnswerArrow(Stage06* stage);
-	//void GoldenPathSpawn(Stage06* stage, DirectX::XMFLOAT3 startPosition);
 
+private:
+	bool tracking = false;
 };
 

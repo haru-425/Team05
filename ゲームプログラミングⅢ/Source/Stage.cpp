@@ -498,3 +498,23 @@ int Stage::NearWayPointIndex(DirectX::XMFLOAT3 target)
 
 	return index;
 }
+
+void Stage::AddEdgecost(int from, int to)
+{
+	for (auto edge : wayPoint[from].get()->edges)
+	{
+		if (edge->destinationPoint == to)
+		{
+			edge->cost += 3.0f;
+			break;
+		}
+	}
+	for (auto edge : wayPoint[to].get()->edges)
+	{
+		if (edge->destinationPoint == from)
+		{
+			edge->cost += 3.0f;
+			break;
+		}
+	}
+}

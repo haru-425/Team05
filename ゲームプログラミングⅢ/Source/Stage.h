@@ -66,6 +66,8 @@ public:
     // Ú‘±æƒ|ƒCƒ“ƒg‚ğİ’è
     void DestinationPointSet();
 
+    void AddEdgecost(int from, int to);
+
     std::shared_ptr<WayPoint> wayPoint[MAX_WAY_POINT];
     std::vector<int> path;
 

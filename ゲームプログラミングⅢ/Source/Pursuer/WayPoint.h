@@ -36,8 +36,9 @@ public:
         edge->originPoint = pointNo;
         edge->destinationPoint = destination->pointNo;
         DirectX::XMVECTOR cost = DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&destination->position), DirectX::XMLoadFloat3(&this->position)));
-        edge->cost = DirectX::XMVectorGetX(cost);
-        edge->cost += custum_pluss_cost;
+        edge->defaultcost = DirectX::XMVectorGetX(cost);
+        edge->defaultcost += custum_pluss_cost;
+        edge->cost = edge->defaultcost;
         for (auto inedge : destination->edges)
         {
             if (inedge->destinationPoint == this->pointNo)
@@ -49,5 +50,4 @@ public:
         edges.push_back(edge);
         destination->AddEdge(this);
     }
-
 };

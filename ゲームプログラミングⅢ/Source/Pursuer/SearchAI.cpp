@@ -12,8 +12,93 @@ SearchAI::~SearchAI()
 	searchEdge.clear();
 }
 
-bool SearchAI::DijkstraSearch(Stage* stage, bool heuristicFlg)
+bool SearchAI::trackingSearch(Stage* stage, bool heuristicFlg)
 {
+	tracking = true;
+	// 過去の探索データをクリア
+	SearchClear(stage);
+
+	//エッジ型データのフロンティアツリーを作成
+	std::vector<Edge*> frontier;
+
+	//スタートIDをoriginPoint ゴールIDをdistnationPointに持つダミーエッジを作成
+	Edge* edge = debug_new Edge();
+
+	//ダミーエッジは接続元と接続先は開始地点にしておく。
+	edge->destinationPoint = stage->NearWayPointIndex(Start::Instance().GetPosition());
+	edge->originPoint = edge->destinationPoint;
+	// コスト0を指定(折り返しでスタート地点に戻らないようにするため)
+	stage->wayPoint[edge->originPoint]->costFromStart = 0.0f;
+	//前準備としてダミーエッジデータをセット
+	Edge* nowEdge = edge;
+
+	// DijkstraSseachアルゴリズム
+	while (true)
+	{
+		//サーチしたEdgeの記録(実行結果の表示用）
+		findRoot[nowEdge->destinationPoint] = nowEdge->originPoint;
+
+		//デバッグ用
+		int x = stage->NearWayPointIndex((Goal::Instance().GetPosition()));
+
+		//もし、次のnowEdgeのdistnationNodeがゴールだったらtrueでreturnする。
+		if (nowEdge->destinationPoint == stage->NearWayPointIndex((Goal::Instance().GetPosition())))
+		{
+			delete edge;
+			return true;
+		}
+
+		//nowEdgeの先のノードを取得する。(今いるノード)
+		WayPoint* wayPoint = stage->wayPoint[nowEdge->destinationPoint].get();
+
+		//nowEdgeの先のノードに登録してある８本のエッジをサーチするループ
+		for (auto edge : wayPoint->edges) {
+
+			Edge* nextEdge = edge;
+
+			// サーチするエッジが有効のとき
+			if (nextEdge->destinationPoint >= 0 && nextEdge->destinationPoint < 400) {
+
+				//進み先のノード
+				WayPoint* nextPoint = stage->wayPoint[nextEdge->destinationPoint].get();
+
+				// 進み先のノードまでのコストを計算
+				float newCost = stage->wayPoint[nowEdge->destinationPoint]->costFromStart + nextEdge->defaultcost;
+
+				// 進み先のコストがまだ計算されていないか、新しいコストの方が低ければ
+				// フロンティアツリーに登録
+				// (計算されていないときコストには-1.0が入っている)
+				if (nextPoint->costFromStart < 0 || nextPoint->costFromStart > newCost)
+				{
+					nextPoint->costFromStart = newCost;
+					frontier.push_back(nextEdge);
+				}
+
+			}
+
+		}
+
+		nowEdge = searchMinCostEdge(frontier, stage, heuristicFlg);
+		if (nowEdge == nullptr)
+		{
+			delete nowEdge;
+			return false;
+		}
+		if (nowEdge->destinationPoint == 0)
+		{
+			nowEdge = searchMinCostEdge(frontier, stage, heuristicFlg);
+		}
+	}
+
+	//何も見つからなければfalse;
+	delete nowEdge;
+	return false;
+}
+
+
+bool SearchAI::freeSearch(Stage* stage, bool heuristicFlg)
+{
+	tracking = false;
 	// 過去の探索データをクリア
 	SearchClear(stage);
 
@@ -94,6 +179,7 @@ bool SearchAI::DijkstraSearch(Stage* stage, bool heuristicFlg)
 	return false;
 }
 
+
 Edge* SearchAI::searchMinCostEdge(std::vector<Edge*>& frontier, Stage* stage, bool heuristicFlg)
 {
 	Edge* answer = nullptr;//答えの入れ物
@@ -107,7 +193,14 @@ Edge* SearchAI::searchMinCostEdge(std::vector<Edge*>& frontier, Stage* stage, bo
 		// コスト計算
 		// totalCostに接続元の「スタート位置からのコスト」（costFromStart）＋ エッジ自体が持つコスト（cost）を入れる
 		float totalCost = 0;
-		totalCost = stage->wayPoint[edge->originPoint]->costFromStart + edge->cost;
+		if (tracking)
+		{
+			totalCost = stage->wayPoint[edge->originPoint]->costFromStart + edge->defaultcost;
+		}
+		else
+		{
+			totalCost = stage->wayPoint[edge->originPoint]->costFromStart + edge->cost;
+		}
 
 		// コスト取り出し
 		//接続先の「スタート位置からのコスト」をfrontCostに取り出す(まだ登録されていないなら０となる)
