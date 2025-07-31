@@ -490,10 +490,11 @@ void Enemy::JageDirection(DirectX::XMVECTOR dir)
 	DirectX::XMFLOAT3 dirf;
 	DirectX::XMStoreFloat3(&dirf, dir);
 
-	//TODO
-	if (dirf.x > 0.1f && dirf.z > 0.1f)
-	{
-		int x = 10;
+	if (std::abs(dirf.x) > std::abs(dirf.z)) {
+		dirf.z = 0;
+	}
+	else {
+		dirf.x = 0;
 	}
 
 	if (std::abs(dirf.x) > std::abs(dirf.z)) {
