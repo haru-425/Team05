@@ -1,5 +1,6 @@
 #include"Stage.h"
 #include <imgui.h>
+#include <random>
 
 //コンストラクタ
 Stage::Stage()
@@ -29,8 +30,8 @@ Stage::Stage()
 	// プレイヤー専用通路のモデル
 	{
 		// すり替え用モデルデータの読み込み
-		gateModelData[0]= std::make_shared<Model>("Data/Model/Stage/Map/Door/door_green.mdl");
-		gateModelData[1]= std::make_shared<Model>("Data/Model/Stage/Map/Door/door_red.mdl");
+		gateModelData[0] = std::make_shared<Model>("Data/Model/Stage/Map/Door/door_green.mdl");
+		gateModelData[1] = std::make_shared<Model>("Data/Model/Stage/Map/Door/door_red.mdl");
 
 		// データの初期化
 		gateElements[0].position = { -7.5f,0,12.0f };
@@ -100,7 +101,7 @@ Stage::Stage()
 		textures[static_cast<int>(ModelLavel::Door)]->LoadRoughness("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Roughness.1001.png");
 		textures[static_cast<int>(ModelLavel::Door)]->LoadMetalness("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Metalness.1001.png");
 		textures[static_cast<int>(ModelLavel::Door)]->LoadEmisive("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Emissive.1001.png");
-		textures[static_cast<int>(ModelLavel::Door)]->LoadOcclusion("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Opacity.1001.png");		
+		textures[static_cast<int>(ModelLavel::Door)]->LoadOcclusion("Data/Model/Stage/Map/Door/Door_mtl/Door_mtl_Opacity.1001.png");
 	}
 
 
@@ -139,6 +140,15 @@ void Stage::Update(float elapsedTime)
 		}
 		if (p.hasPassed) {
 			p.model = gateModelData[1];
+		}
+	}
+
+	player_NearPoint.clear();
+
+	for (auto& p : wayPoint) {
+		float distance = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&player_pos), DirectX::XMLoadFloat3(&p.get()->position))));
+		if (distance < PLAYER_NEAR_DISTANCE) {
+			player_NearPoint.push_back(p.get()->pointNo);
 		}
 	}
 }
@@ -517,4 +527,23 @@ void Stage::AddEdgecost(int from, int to)
 			break;
 		}
 	}
+}
+
+int Stage::randomPoint()
+{
+	// ハードウェア由来のランダムシードを取得
+	std::random_device rd;
+
+	// メルセンヌツイスタ（高性能な乱数生成器）にシードを与える
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> dist(0, player_NearPoint.size() + 1);
+	int value = dist(gen);
+	if (player_NearPoint.size() <= value)
+	{
+		std::uniform_int_distribution<int> dist2(0, MAX_WAY_POINT);
+		value = dist(gen);
+		return value;
+	}
+
+	return player_NearPoint[value];
 }

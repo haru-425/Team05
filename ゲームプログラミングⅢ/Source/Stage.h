@@ -10,6 +10,8 @@
 #include <wrl.h>
 
 #define MAX_WAY_POINT 87
+#define PLAYER_NEAR_DISTANCE 20.0f
+
 
 //ステージ
 class Stage
@@ -68,6 +70,10 @@ public:
 
     void AddEdgecost(int from, int to);
 
+    int randomPoint();
+
+	void SetPlayerPos(DirectX::XMFLOAT3 pos) { player_pos = pos; }
+
     std::shared_ptr<WayPoint> wayPoint[MAX_WAY_POINT];
     std::vector<int> path;
 
@@ -89,6 +95,7 @@ private:
         0,0,0,1
     };
 
+    
     static const int MODEL_MAX = 6;
 
     std::unique_ptr<Model> model[MODEL_MAX] = {};
@@ -99,4 +106,7 @@ private:
 
     std::unique_ptr<Model> collisionMesh;
     DirectX::XMFLOAT4X4 collisionMeshMatrix;
+
+    DirectX::XMFLOAT3 player_pos;
+    std::vector<int> player_NearPoint;
 };

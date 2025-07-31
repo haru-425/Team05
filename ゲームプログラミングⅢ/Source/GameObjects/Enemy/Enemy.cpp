@@ -1,7 +1,6 @@
 ﻿#include "Enemy.h"
 #include <cmath>
 #include <iostream>
-#include <random>
 #include "Pursuer/ObjectBase.h"
 #include "Pursuer/SearchAI.h"
 #include "Player/player.h"
@@ -189,8 +188,7 @@ void Enemy::Update(float elapsedTime)
 	}
 
 	int current, start;
-	// ハードウェア由来のランダムシードを取得
-	std::random_device rd;
+	
 	// 敵の状態に応じて処理を分岐
 	switch (state)
 	{
@@ -213,20 +211,15 @@ void Enemy::Update(float elapsedTime)
 		Audio3DSystem::Instance().StopByTag("enemy_run");
 		Audio3DSystem::Instance().StopByTag("enemy_walk");
 
-		// メルセンヌツイスタ（高性能な乱数生成器）にシードを与える
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<int> dist(0, MAX_WAY_POINT - 1);
-		int value = dist(gen);
-
 		// ランダムな目標地点を設定し経路探索
-		Goal::Instance().SetPosition(stage->GetIndexWayPoint(value + 1));
+		Goal::Instance().SetPosition(stage->GetIndexWayPoint(stage->randomPoint()));
 
 #if 0
 		//（デバッグ：Tキー）
 		if (GetAsyncKeyState('T') & 0x8000)
 		{
 			Start::Instance().SetPosition(this->position);
-			SearchAI::Instance().DijkstraSearch(stage);
+			SearchAI::Instance().freeSearch(stage);
 
 			int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
 			int start = stage->NearWayPointIndex(this->GetPosition());
@@ -235,12 +228,14 @@ void Enemy::Update(float elapsedTime)
 				break;
 
 			refinePath(start, current);
+			if (!route.empty())
+			{
+				targetPosition = route[0];
+			}
 			state = State::Roaming;
 			Animationplay();
 		}
-#endif
-
-#if 1
+#else
 		Start::Instance().SetPosition(this->position);
 		SearchAI::Instance().freeSearch(stage);
 
@@ -412,10 +407,6 @@ void Enemy::Updatemovement(float elapsedTime)
 		JageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec));
 		state = State::turn;
 		Animationplay();
-		/* if (stage->NearWayPointIndex(targetPosition) == 12 || stage->NearWayPointIndex(targetPosition) == 21)
-		 {
-			 int x = 19;
-		 }*/
 	}
 }
 
@@ -495,32 +486,6 @@ void Enemy::JageDirection(DirectX::XMVECTOR dir)
 	if (dirf.x > 0.1f && dirf.z > 0.1f)
 	{
 		int x = 10;
-		//while (true)
-		//{
-		//	stage->path.clear();
-		//	route.clear();
-		//	currentTargetIndex = 0;
-
-		//	Start::Instance().SetPosition(this->position);
-		//	SearchAI::Instance().trackingSearch(stage);
-
-		//	int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
-		//	int start = stage->NearWayPointIndex(Start::Instance().GetPosition());
-
-		//	refinePath(start, current); // 経路を作成
-
-		//	DirectX::XMVECTOR posVec = DirectX::XMLoadFloat3(&position);
-		//	DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&route[currentTargetIndex]);
-		//	DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(targetVec, posVec);
-
-		//	DirectX::XMVECTOR dirNorm = DirectX::XMVector3Normalize(dir);
-		//	DirectX::XMVECTOR moveVec = DirectX::XMVectorScale(dirNorm, moveSpeed);
-		//	DirectX::XMStoreFloat3(&dirf, dir);
-		//	if (dirf.x < 0.2f && dirf.z < 0.2f)
-		//	{
-		//		break;
-		//	}
-		//}
 	}
 
 	if (dirf.x > 0.1f && dirf.z < dirf.x)
