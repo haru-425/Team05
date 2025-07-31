@@ -200,7 +200,7 @@ float4 main(float4 pos : SV_Position, float2 uv : TEXCOORD) : SV_Target
     float4 textColor = float4(0, 1, 0, 1);
 
     // ‡¬Fcol ‚ª 1 ‚Ì‚Æ‚«‚Í”’A0 ‚È‚ç”wŒi
-    float4 color = lerp(background, textColor, col);
+    float3 color = lerp(background.rgb, textColor.rgb, col);
 
-    return color;
+    return float4(color, 1);
 }

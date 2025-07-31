@@ -104,6 +104,12 @@ void UI::GetSelectedUI(const DirectX::XMFLOAT2& mousePos)
 {
     DirectX::XMFLOAT2 scaleFactor = Graphics::Instance().GetWindowScaleFactor();
 
+    if (!sprData.isVisible)
+    {
+        isHit = false; 
+        return;
+    }
+
     if ((sprData.spritePos.x * scaleFactor.x <= mousePos.x && sprData.spritePos.x * scaleFactor.x + sprData.spriteSize.x * scaleFactor.x >= mousePos.x) &&
         (sprData.spritePos.y * scaleFactor.y <= mousePos.y && sprData.spritePos.y * scaleFactor.y + sprData.spriteSize.y * scaleFactor.y >= mousePos.y))
     {

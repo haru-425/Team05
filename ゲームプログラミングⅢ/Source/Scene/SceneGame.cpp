@@ -1083,7 +1083,7 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 		if (Collision::IntersectSphereVsSphere(playerPos, player->GetRadius(), gatePos, 0.05f, hitPos))
 		{
 
-			if (IsPlayerFacingDoor(playerPos, playerDir, gatePos))
+			if (IsPlayerFacingDoor(playerPos, playerDir, gatePos) && !player->GetUseCam())
 			{
 				if (stage->GetGatePassed(i))
 				{

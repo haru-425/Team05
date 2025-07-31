@@ -34,9 +34,7 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 	this->animationcontroller.SetAnimationPlaying(true);
 	scale.x = scale.y = scale.z = 0.013f; // スケール設定（非常に小さい）
 	radius = 1.5f;                        // 衝突用の半径
-
 	viewPoint = 1.5f;                     // 目線の高さ
-
 	position = stage->GetIndexWayPoint(33);      // 初期位置
 	Goal::Instance().SetPosition(stage->GetIndexWayPoint(61));
 
@@ -136,7 +134,7 @@ void Enemy::Update(float elapsedTime)
 	}
 
 	// プレイヤーが見えているか近づいているなら
-	if (((loocking && playerdist < lockonRange) || (loocking && playerdist < searchRange)) && state != State::miss)
+	if (((loocking && playerdist < lockonRange) || (playerdist < searchRange)) && state != State::miss)
 	{
 		if (!isTrackingPlayer)
 		{
@@ -155,14 +153,14 @@ void Enemy::Update(float elapsedTime)
 			refinePath(start, current); // 経路を作成
 			isReverseTraced = false;
 			// ステート遷移
-			if (loocking && playerdist < lockonRange)
-			{
-				state = State::detection;
-				Animationplay();
-			}
-			else if (playerdist < searchRange)
+			if (playerdist < searchRange)
 			{
 				state = State::feeling;
+				Animationplay();
+			}
+			else if (loocking && playerdist < lockonRange)
+			{
+				state = State::detection;
 				Animationplay();
 			}
 			if (!route.empty())
@@ -367,7 +365,18 @@ void Enemy::Updatemovement(float elapsedTime)
 		nearTarget = false;
 	}
 	DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(targetVec, posVec);
-
+	DirectX::XMFLOAT3 dirf;
+	DirectX::XMStoreFloat3(&dirf, dir);
+	if (!nearTarget)
+	{
+		if (std::abs(dirf.x) > std::abs(dirf.z)) {
+			dirf.z = 0;
+		}
+		else {
+			dirf.x = 0;
+		}
+	}
+	dir = DirectX::XMLoadFloat3(&dirf);
 	DirectX::XMVECTOR dirNorm = DirectX::XMVector3Normalize(dir);
 	DirectX::XMVECTOR moveVec = DirectX::XMVectorScale(dirNorm, moveSpeed * elapsedTime);
 	posVec = DirectX::XMVectorAdd(posVec, moveVec);
@@ -377,7 +386,6 @@ void Enemy::Updatemovement(float elapsedTime)
 	{
 		return;
 	}
-
 
 	// ターゲット地点に近づいたら次の目的地へ
 	float distance = DirectX::XMVectorGetX(DirectX::XMVector3Length(dir));
@@ -488,21 +496,11 @@ void Enemy::JageDirection(DirectX::XMVECTOR dir)
 		int x = 10;
 	}
 
-	if (dirf.x > 0.1f && dirf.z < dirf.x)
-	{
-		direction = Direction::E;
+	if (std::abs(dirf.x) > std::abs(dirf.z)) {
+		direction = (dirf.x > 0) ? Direction::E : Direction::W;
 	}
-	else if (dirf.x < -0.1f && dirf.z > dirf.x)
-	{
-		direction = Direction::W;
-	}
-	else if (dirf.z > 0.1f && dirf.z > dirf.x)
-	{
-		direction = Direction::N;
-	}
-	else if (dirf.z < -0.1f && dirf.z < dirf.x)
-	{
-		direction = Direction::S;
+	else {
+		direction = (dirf.z > 0) ? Direction::N : Direction::S;
 	}
 	return;
 }
