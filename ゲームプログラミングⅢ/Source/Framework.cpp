@@ -1,6 +1,7 @@
 #include <memory>
 #include <sstream>
 #include <imgui.h>
+#include <Windows.h>
 
 #include "Framework.h"
 #include "System/Input.h"
@@ -17,6 +18,7 @@
 #include "stdio.h"
 #include "System/ResourceManager.h"
 #include "System/Input.h"
+#include "System/CursorManager.h"
 
 // ‚’¼“¯ŠúŠÔŠuİ’è
 static const int syncInterval = 1;
@@ -92,6 +94,8 @@ void Framework::Update(float elapsedTime)
 #endif
 
 	count++;
+	CursorManager::Instance().SetActiveWindow(GetForegroundWindow() == hWnd);
+
 }
 float elapsed = 0;
 // •`‰æˆ—

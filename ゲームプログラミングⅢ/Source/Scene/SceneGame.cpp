@@ -13,6 +13,7 @@
 #include "System/CollisionEditor.h"
 #include "GameObjects/battery/batteryManager.h"
 #include "EnemyUI.h"
+#include "System/CursorManager.h"
 
 #include <imgui.h>
 
@@ -182,6 +183,14 @@ void SceneGame::Update(float elapsedTime)
 	bool buttonPressed = (anyButton & gamePad.GetButton()) != 0;
 	bool zKey = GetAsyncKeyState('Z') & 0x8000;
 	bool rKey = GetAsyncKeyState('R') & 0x8000;
+	if (isPaused)
+	{
+		if (CursorManager::Instance().GetIsActiveWindow())
+		{
+			isPaused = false;
+		}
+		return;
+	}
 
 	// フラグがまだ立っていない場合に入力検出
 	if (!sceneTrans)
@@ -857,13 +866,24 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		/// UseEnemyCam とは使用用途が違うので注意
 		i_CameraController->SetIsChange(player->GetIsChange());
 		i_CameraController->Update(elapsedTime);
-		SetCursorPos(screenPoint.x, screenPoint.y);
+
 
 #ifdef _DEBUG
+		SetCursorPos(screenPoint.x, screenPoint.y);
 		/// カメラモードの変更 (DEBUG モードのみ)
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
 		{
 			i_CameraController = std::make_unique<LightDebugCameraController>();
+		}
+#else
+		if (CursorManager::Instance().GetIsActiveWindow())
+		{
+			SetCursorPos(screenPoint.x, screenPoint.y);
+			isPaused = false;
+		}
+		else
+		{
+			isPaused = true;
 		}
 #endif
 	}
