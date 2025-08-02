@@ -112,16 +112,6 @@ void Enemy::Update(float elapsedTime)
 		DirectX::XMVector3Length(
 			DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
 
-	/*if (playerdist < attackRange && state != State::Attack)
-	{
-		moveSpeed = 0;
-		state = State::Attack; 
-		Audio3DSystem::Instance().StopByTag("enemy_run");
-		Audio3DSystem::Instance().StopByTag("enemy_walk");
-		Animationplay();
-		return;
-	}*/
-
 	if (isHit && state != State::Attack)
 	{
 		moveSpeed = 0;
@@ -132,11 +122,6 @@ void Enemy::Update(float elapsedTime)
 		Animationplay();
 		return;
 	}
-
-	/*auto checkVisibility = [](DirectX::XMVECTOR v1, DirectX::XMVECTOR v2) -> bool
-		{
-			
-		};*/
 
 	DirectX::XMVECTOR Forward;
 	for (int i = 0; i < model->GetNodes().size(); i++)
@@ -156,9 +141,9 @@ void Enemy::Update(float elapsedTime)
 	
 	float angle = acosf(XMVectorGetX(XMVector3Dot(v1v, v2v))) / 0.01745f;
 
-	char buf[256];
+	/*char buf[256];
 	sprintf_s(buf, sizeof(buf), "angle%f\n", angle);
-	OutputDebugStringA(buf);
+	OutputDebugStringA(buf);*/
 
 	// プレイヤーが見えているか近づいているなら
 	if ((((loocking && playerdist < lockonRange) && acosf(XMVectorGetX(XMVector3Dot(v1v, v2v)) / 0.01745f) <= 45.0f) || (playerdist < searchRange)) && state != State::miss)
