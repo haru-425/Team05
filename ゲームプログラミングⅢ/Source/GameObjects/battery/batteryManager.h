@@ -89,7 +89,7 @@ public:
 	{
 		for (auto it = hasBattery.begin(); it != hasBattery.end();)
 		{
-			if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&it->getPos()), DirectX::XMLoadFloat3(&pos)))) < 0.5f)
+			if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&it->getPos()), DirectX::XMLoadFloat3(&pos)))) < 1.0f)
 			{
 				getSE->Play(false);
 				it = hasBattery.erase(it);

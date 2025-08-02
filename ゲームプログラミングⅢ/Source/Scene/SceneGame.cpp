@@ -107,7 +107,7 @@ void SceneGame::Initialize()
 	if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
 	{
 		tutorial_Flug = true;
-		reminingTime = 120.0f;
+		reminingTime = 60.0f;
 		if (!tutorial_Flug2)
 		{
 			tutorial[0] = std::make_unique<Sprite>("Data/Sprite/dialog/01.png");
@@ -124,6 +124,7 @@ void SceneGame::Initialize()
 			tutorial[11] = std::make_unique<Sprite>("Data/Sprite/dialog/12.png");
 			tutorial[12] = std::make_unique<Sprite>("Data/Sprite/dialog/next_navi.png");
 			tutorial[13] = std::make_unique<Sprite>("Data/Sprite/dialog/aisle.png");
+			tutorial[14] = std::make_unique<Sprite>("Data/Sprite/dialog/map.png");
 		}
 		else
 		{
@@ -259,13 +260,14 @@ void SceneGame::Update(float elapsedTime)
 		return;
 	}
 
-	reminingTime -= elapsedTime;
+	//reminingTime -= elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	Collision(); ///< 当たり判定
 
 
 	stage->Update(elapsedTime);						///< ステージ更新処理
+	stage->SetPlayerPos(player->GetPosition());
 	if (!fadeStart) {
 		player->Update(elapsedTime);					///< プレイヤー更新処理
 	}
@@ -644,6 +646,7 @@ void SceneGame::Render()
 			next_navi_vision = true;
 			//「【マップ】あなたの現在位置は、中央の印で...」
 			tutorial[1]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
+			tutorial[14]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 			break;
 		case 0:
 			next_navi_vision = true;

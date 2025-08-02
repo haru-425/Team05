@@ -133,8 +133,35 @@ void Enemy::Update(float elapsedTime)
 		return;
 	}
 
+	/*auto checkVisibility = [](DirectX::XMVECTOR v1, DirectX::XMVECTOR v2) -> bool
+		{
+			
+		};*/
+
+	DirectX::XMVECTOR Forward;
+	for (int i = 0; i < model->GetNodes().size(); i++)
+	{
+		if (std::strcmp(model->GetNodes().at(i).name, "head_end_FK") == 0)
+		{
+			DirectX::XMFLOAT4X4 transform = model->GetNodes().at(i).globalTransform;
+			DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&transform);
+			Forward = M.r[2];
+		}
+	}
+
+	DirectX::XMVECTOR v1v = DirectX::XMVector3Normalize(Forward);
+	DirectX::XMVECTOR v2v =DirectX::XMVector3Normalize((DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
+
+	//bool c = acosf(XMVectorGetX(XMVector3Dot(v1v, v2v)) / 0.01745f) <= 45.0f;
+	
+	float angle = acosf(XMVectorGetX(XMVector3Dot(v1v, v2v))) / 0.01745f;
+
+	char buf[256];
+	sprintf_s(buf, sizeof(buf), "angle%f\n", angle);
+	OutputDebugStringA(buf);
+
 	// プレイヤーが見えているか近づいているなら
-	if (((loocking && playerdist < lockonRange) || (playerdist < searchRange)) && state != State::miss)
+	if ((((loocking && playerdist < lockonRange) && acosf(XMVectorGetX(XMVector3Dot(v1v, v2v)) / 0.01745f) <= 45.0f) || (playerdist < searchRange)) && state != State::miss)
 	{
 		if (!isTrackingPlayer)
 		{
@@ -162,12 +189,12 @@ void Enemy::Update(float elapsedTime)
 			{
 				state = State::detection;
 				Animationplay();
+				isTrackingPlayer = true;
 			}
 			if (!route.empty())
 			{
 				targetPosition = route[0];
 			}
-			isTrackingPlayer = true;
 		}
 		else
 		{

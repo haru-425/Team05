@@ -13,8 +13,8 @@
 // プレイヤーパラメータ設定
 static constexpr float maxHijackTime        = 50; // ハイジャックの最大時間
 static constexpr int hijackCost             = 5;   // ハイジャックコスト
-static constexpr int hijackCostPerSec       = 5;   // 一秒ごとのハイジャックコスト
-static constexpr float maxSpeed             = 4.5f; // プレイヤーの最高速度
+static constexpr int hijackCostPerSec       = 0;   // 一秒ごとのハイジャックコスト
+static constexpr float maxSpeed             = (3.0f * 1.4f); // プレイヤーの最高速度
 static float acceleration                   = 1.1f; // 加速度
 static constexpr float hijack_risc_time     = 5.0f; // ハイジャックしていて、プレイヤーの位置がばれるまでの時間
 
