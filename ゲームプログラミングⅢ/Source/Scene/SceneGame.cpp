@@ -185,16 +185,29 @@ void SceneGame::Update(float elapsedTime)
 	bool zKey = GetAsyncKeyState('Z') & 0x8000;
 	bool rKey = GetAsyncKeyState('R') & 0x8000;
 
-	//別のウインドウに移動した時のポーズ処理
-	if (isPaused)
+	//ポーズ処理
+	if (auto_Pause_Flug || player_Pause_Flug)
 	{
-		//ゲームのウィンドウがアクティブ状態になったらポーズをやめる
+		//ゲームのウィンドウがアクティブ状態になったらautoPauseFlugをfalseに
 		if (CursorManager::Instance().GetIsActiveWindow())
 		{
-			isPaused = false;
+			auto_Pause_Flug = false;
 		}
+		//Rキーを押したらautoPauseFlugをfalseに(プレイヤーがポーズ状態にしたフラグを解除)
+		if (GetAsyncKeyState('R') & 0x8000)
+		{
+			player_Pause_Flug = false;
+		}
+		
 		return;
 	}
+
+	// Pキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
+	if (GetAsyncKeyState('P') & 0x8000)
+	{
+		player_Pause_Flug = true;
+	}
+
 
 	// フラグがまだ立っていない場合に入力検出
 	if (!sceneTrans)
@@ -274,7 +287,7 @@ void SceneGame::Update(float elapsedTime)
 		return;
 	}
 
-	//reminingTime -= elapsedTime;
+	reminingTime -= elapsedTime;
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	Collision(); ///< 当たり判定
@@ -875,11 +888,11 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		if (CursorManager::Instance().GetIsActiveWindow())
 		{
 			SetCursorPos(screenPoint.x, screenPoint.y);
-			isPaused = false;
+			auto_Pause_Flug = false;
 		}
 		else
 		{
-			isPaused = true;
+			auto_Pause_Flug = true;
 		}
 
 #ifdef _DEBUG
