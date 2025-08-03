@@ -885,16 +885,19 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		i_CameraController->SetIsChange(player->GetIsChange());
 		i_CameraController->Update(elapsedTime);
 
+		// ウィンドウがアクティブであるかをチェック
 		if (CursorManager::Instance().GetIsActiveWindow())
 		{
+			// ウィンドウがアクティブなら、マウスカーソルの位置を画面中央に固定
 			SetCursorPos(screenPoint.x, screenPoint.y);
+			// 自動ポーズフラグをオフ（ポーズ解除状態）
 			auto_Pause_Flug = false;
 		}
 		else
 		{
+			// ウィンドウが非アクティブ（＝フォーカスが外れている）ならポーズする
 			auto_Pause_Flug = true;
 		}
-
 #ifdef _DEBUG
 		/// カメラモードの変更 (DEBUG モードのみ)
 		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
