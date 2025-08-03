@@ -1,6 +1,9 @@
 #pragma once
 #include "RenderContext.h"
 #include "Sprite.h"
+#include "Input.h"
+
+#define CURSOR_VISION 1
 
 class CursorManager
 {
@@ -16,12 +19,21 @@ public:
 
 	}
 
-	void Render(const RenderContext& rc)
+	void Render()
 	{
-#if 0
+		ID3D11DeviceContext* dc = Graphics::Instance().GetDeviceContext();
+		Graphics& graphics = Graphics::Instance();
+		RenderState* renderState = graphics.GetRenderState();
 
+		//•`‰æ€”õ
+		RenderContext rc;
+		rc.deviceContext = dc;
+		rc.renderState = graphics.GetRenderState();
 
-#endif // 1
+		if (isVisibleCursor && isActiveWindow)
+		{
+			Cursor->Render(rc, Input::Instance().GetMouse().GetPositionX() / Graphics::Instance().GetWindowScaleFactor().x, Input::Instance().GetMouse().GetPositionY() / Graphics::Instance().GetWindowScaleFactor().y, 0, 25, 40, 0, 0, 558, 846, 0, 1, 1, 1, 1);
+		}
 
 	}
 
@@ -33,10 +45,9 @@ public:
 			while (ShowCursor(true) < 0)
 			{
 				
-				int a =ShowCursor(true);
+				ShowCursor(true);
 			}
 		}
-#if 1
 		else if (isActiveWindow && ShowCursor(false) > -1)
 		{
 			ShowCursor(false);
@@ -45,16 +56,20 @@ public:
 				ShowCursor(false);
 			}
 		}
-#endif
 	}
 
 	bool GetIsActiveWindow() {return isActiveWindow;}
+
+	void SetCursorVisible(bool isVisible) { isVisibleCursor = isVisible; }
+
+	void SetCursor() { Cursor = std::make_unique<Sprite>("Data/Sprite/dummy_cursor.png"); }
 
 private:
 	CursorManager() {}
 	~CursorManager() {}
 
 	bool isActiveWindow;
-	bool isVisibleCursor;
+	bool isVisibleCursor=true;
+	std::unique_ptr<Sprite> Cursor;
 
 };

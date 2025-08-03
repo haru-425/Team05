@@ -132,6 +132,7 @@ void SceneGame::Initialize()
 			tutorial_Step = 18;
 		}
 	}
+	CursorManager::Instance().SetCursorVisible(false);
 	EnemyUI::Instance().Initialize(); ///< 敵のUI初期化
 }
 
@@ -183,8 +184,11 @@ void SceneGame::Update(float elapsedTime)
 	bool buttonPressed = (anyButton & gamePad.GetButton()) != 0;
 	bool zKey = GetAsyncKeyState('Z') & 0x8000;
 	bool rKey = GetAsyncKeyState('R') & 0x8000;
+
+	//別のウインドウに移動した時のポーズ処理
 	if (isPaused)
 	{
+		//ゲームのウィンドウがアクティブ状態になったらポーズをやめる
 		if (CursorManager::Instance().GetIsActiveWindow())
 		{
 			isPaused = false;
@@ -217,6 +221,7 @@ void SceneGame::Update(float elapsedTime)
 					life_number); // タイムアップでSランク
 				batteryManager::Instance().ResetPlayer_Get_Batterry();
 				batteryManager::Instance().ResetMax_Batterry();
+				CursorManager::Instance().SetCursorVisible(true);
 			}
 			else
 			{
@@ -867,15 +872,6 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		i_CameraController->SetIsChange(player->GetIsChange());
 		i_CameraController->Update(elapsedTime);
 
-
-#ifdef _DEBUG
-		SetCursorPos(screenPoint.x, screenPoint.y);
-		/// カメラモードの変更 (DEBUG モードのみ)
-		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
-		{
-			i_CameraController = std::make_unique<LightDebugCameraController>();
-		}
-#else
 		if (CursorManager::Instance().GetIsActiveWindow())
 		{
 			SetCursorPos(screenPoint.x, screenPoint.y);
@@ -884,6 +880,13 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		else
 		{
 			isPaused = true;
+		}
+
+#ifdef _DEBUG
+		/// カメラモードの変更 (DEBUG モードのみ)
+		if (gamepad.GetButton() & GamePad::CTRL && gamepad.GetButtonDown() & GamePad::BTN_X)
+		{
+			i_CameraController = std::make_unique<LightDebugCameraController>();
 		}
 #endif
 	}

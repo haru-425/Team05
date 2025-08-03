@@ -47,6 +47,8 @@ Framework::Framework(HWND hWnd)
 	// シーン初期化
 	//SceneManager::instance().ChangeScene(new SceneTitle);
 	SceneManager::instance().ChangeScene(new SceneLogo(new SceneTitle));
+
+	CursorManager::Instance().SetCursor();
 }
 
 // デストラクタ
@@ -111,6 +113,8 @@ void Framework::Render(float elapsedTime)
 
 	// シーン描画処理
 	SceneManager::instance().Render();
+
+	CursorManager::Instance().Render();
 
 	// シーンGUI描画処理
 #if defined _DEBUG
