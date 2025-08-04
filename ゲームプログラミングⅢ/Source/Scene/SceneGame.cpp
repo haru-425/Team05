@@ -186,17 +186,12 @@ void SceneGame::Update(float elapsedTime)
 	bool rKey = GetAsyncKeyState('R') & 0x8000;
 
 	//ポーズ処理
-	if (auto_Pause_Flug || player_Pause_Flug)
+	if (pause_Flug)
 	{
-		//ゲームのウィンドウがアクティブ状態になったらautoPauseFlugをfalseに
-		if (CursorManager::Instance().GetIsActiveWindow())
-		{
-			auto_Pause_Flug = false;
-		}
 		//Rキーを押したらautoPauseFlugをfalseに(プレイヤーがポーズ状態にしたフラグを解除)
 		if (GetAsyncKeyState('R') & 0x8000)
 		{
-			player_Pause_Flug = false;
+			pause_Flug = false;
 		}
 		
 		return;
@@ -205,7 +200,7 @@ void SceneGame::Update(float elapsedTime)
 	// Pキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
 	if (GetAsyncKeyState('P') & 0x8000)
 	{
-		player_Pause_Flug = true;
+		pause_Flug = true;
 	}
 
 
@@ -890,13 +885,11 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		{
 			// ウィンドウがアクティブなら、マウスカーソルの位置を画面中央に固定
 			SetCursorPos(screenPoint.x, screenPoint.y);
-			// 自動ポーズフラグをオフ（ポーズ解除状態）
-			auto_Pause_Flug = false;
 		}
 		else
 		{
 			// ウィンドウが非アクティブ（＝フォーカスが外れている）ならポーズする
-			auto_Pause_Flug = true;
+			pause_Flug = true;
 		}
 #ifdef _DEBUG
 		/// カメラモードの変更 (DEBUG モードのみ)

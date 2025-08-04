@@ -69,8 +69,7 @@ private:
 	int tutorial_Step = 0;
 	float tutorialTimer = 0.0f;
 	int tutorial_Click_Count = 0;
-	bool auto_Pause_Flug = false;
-	bool player_Pause_Flug = false;
+	bool pause_Flug = false;
 	float button_effect_timer = 0;
 	float button_effect = 0.5f;
 	float timer = 0.0f; // タイマー

@@ -76,9 +76,12 @@ void Framework::Update(float elapsedTime)
 	if (count == 1)
 		Graphics::Instance().StylizeWindow(Graphics::Instance().GetScreenMode());
 #endif
-
-	// インプット更新処理
-	Input::Instance().Update();
+	CursorManager::Instance().SetActiveWindow(GetForegroundWindow() == hWnd);
+	if (CursorManager::Instance().GetIsActiveWindow())
+	{
+		// インプット更新処理
+		Input::Instance().Update();
+	}
 
 	// IMGUIフレーム開始処理
 	ImGuiRenderer::NewFrame();
@@ -96,8 +99,6 @@ void Framework::Update(float elapsedTime)
 #endif
 
 	count++;
-	CursorManager::Instance().SetActiveWindow(GetForegroundWindow() == hWnd);
-
 }
 float elapsed = 0;
 // 描画処理
