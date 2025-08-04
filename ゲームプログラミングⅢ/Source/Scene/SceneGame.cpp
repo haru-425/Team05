@@ -193,7 +193,9 @@ void SceneGame::Update(float elapsedTime)
 		{
 			pause_Flug = false;
 		}
-		
+		//ポーズ状態の処理はココ！
+
+
 		return;
 	}
 
