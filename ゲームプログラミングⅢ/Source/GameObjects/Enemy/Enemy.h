@@ -153,6 +153,7 @@ private:
     /// 探索用のフラグ等
     bool loocking;                                         ///< 見ているかどうか
     bool isTrackingPlayer = false;                         ///< プレイヤーを追跡中か
+    bool isPlayerInView = false;
     bool isReverseTraced = false;                          ///< プレイヤーを逆探知した後かどうか
     float hitdist;                                         ///< 衝突までの距離
     float searchRange = 10.0f;                             ///< プレイヤー探索範囲
