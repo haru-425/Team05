@@ -137,11 +137,6 @@ void Enemy::Update(float elapsedTime)
 	DirectX::XMVECTOR v1v = DirectX::XMVector3Normalize(Forward);
 	DirectX::XMVECTOR v2v = DirectX::XMVector3Normalize((DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
 
-	float angle = acosf(XMVectorGetX(XMVector3Dot(v1v, v2v))) / 0.01745f;
-
-	char buf[256];
-	sprintf_s(buf, sizeof(buf), "angle%f\n", angle);
-	OutputDebugStringA(buf);
 
 
 	if (playerdist < searchRange && !isTrackingPlayer && !isPlayerInView)
@@ -165,8 +160,13 @@ void Enemy::Update(float elapsedTime)
 		isTrackingPlayer = true;
 	}
 
+	float angle = acosf(XMVectorGetX(XMVector3Dot(v1v, v2v))) / 0.01745f;
+
+	char buf[256];
+	sprintf_s(buf, sizeof(buf), "angle%f\n", angle);
+	OutputDebugStringA(buf);
 	// プレイヤーが見えているか近づいているなら
-	if ((loocking && playerdist < lockonRange) && acosf(XMVectorGetX(XMVector3Dot(v1v, v2v)) / 0.01745f) <= 45.0f)
+	if ((loocking && playerdist < lockonRange) && angle <= 45.0f)
 	{
 		isReverseTraced = false;
 
@@ -189,6 +189,11 @@ void Enemy::Update(float elapsedTime)
 			state = State::detection;
 			Animationplay();
 			isPlayerInView = true;
+
+			if (!route.empty())
+			{
+				targetPosition = route[0];
+			}
 		}
 		else
 		{
@@ -203,11 +208,6 @@ void Enemy::Update(float elapsedTime)
 			int start = stage->NearWayPointIndex(Start::Instance().GetPosition());
 
 			refinePath(start, current);
-		}
-
-		if (!route.empty())
-		{
-			targetPosition = route[0];
 		}
 
 	}
@@ -400,7 +400,7 @@ void Enemy::Updatemovement(float elapsedTime)
 	DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(targetVec, posVec);
 	DirectX::XMFLOAT3 dirf;
 	DirectX::XMStoreFloat3(&dirf, dir);
-	if (!nearTarget)
+	if (!nearTarget && std::abs(dirf.x) > 0.2f && std::abs(dirf.z) > 0.2f)
 	{
 		if (std::abs(dirf.x) > std::abs(dirf.z)) {
 			dirf.z = 0;
@@ -437,7 +437,7 @@ void Enemy::Updatemovement(float elapsedTime)
 			float measurement = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), posVec)));
 			while (measurement < 0.1f && currentTargetIndex <= route.size())
 			{
-				currentTargetIndex++;
+				if (measurement < 0.1f) currentTargetIndex++;
 			}
 		}
 		if (currentTargetIndex >= route.size())
@@ -769,14 +769,20 @@ void Enemy::SetDifficulty()
 	}
 }
 
-// デバッグ描画（未実装）
+// デバッグ描画
 void Enemy::DrawDebug()
 {
 	ImGui::Begin("Enemy Info");
 
 	// positionを表示
-	ImGui::Text("Position: X=%d", this->state);
-	ImGui::DragFloat2("cameraShakeScale", &cameraShakeScale.x);
+	ImGui::Text("Position: X=%f,Y=%f", this->position.x,this->position.y);
+	//ImGui::DragFloat2("cameraShakeScale", &cameraShakeScale.x);
+	ImGui::Text("state: %c", this->state);
+	ImGui::Text("currentTargetIndex: %d", this->currentTargetIndex);
+	/*if (route.size() > currentTargetIndex)
+	{
+		ImGui::Text("current_ruto_pos: %f,%f", this->route[currentTargetIndex].x, this->route[currentTargetIndex].y);
+	}*/
 	ImGui::End();
 }
 
