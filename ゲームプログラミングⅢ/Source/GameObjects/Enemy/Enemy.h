@@ -1,4 +1,5 @@
 #pragma once
+
 #include "GameObject.h"
 #include <memory>
 #include <DirectXCollision.h>
@@ -7,174 +8,162 @@
 #include "./System/AnimationController.h"
 #include "System/LoadTextures.h"
 #include "System/difficulty.h"
-#include <memory>
 
-/// 通常移動速度
-#define USUAL_SPEED (1.05f*1.8f)
-/// プレイヤー追跡時の移動速度
-#define TRACKING_SPEED (5.0f*1.8f)
-/// 気配を感じたときの移動速度
-#define FEELING_SPEED (3.0f*1.8f)
+#define USUAL_SPEED (1.05f * 1.8f)        // 通常移動速度
+#define TRACKING_SPEED (5.0f * 1.8f)      // プレイヤー追跡時の速度
+#define FEELING_SPEED (3.0f * 1.8f)       // 気配を感じたときの速度
 
-#define EASY_SR 5.0f
-#define NORMAL_AND_HARD_SR 10.0f
+#define EASY_SR 5.0f                      // イージーの探索距離（短）
+#define NORMAL_AND_HARD_SR 10.0f         // ノーマル・ハードの探索距離（短）
 
-#define EASY_LR 15.0f
-#define NORMAL_AND_HARD_LR 30.0f
+#define EASY_LR 15.0f                     // イージーの視認距離（長）
+#define NORMAL_AND_HARD_LR 40.0f         // ノーマル・ハードの視認距離（長）
 
 class Player;
 
-/**
- * @brief 敵キャラクターを表すクラス
- *
- * プレイヤーの追跡や経路移動、視界検出などの処理を管理する。
- */
+// 敵キャラクタークラス（プレイヤー検知・追跡・経路移動などを扱う）
 class Enemy : public GameObject
 {
 public:
-    /// デフォルトコンストラクタ
     Enemy() {}
 
-    /**
-     * @brief プレイヤー参照とステージ参照を渡して初期化するコンストラクタ
-     * @param playerRef プレイヤーへの共有参照
-     * @param stage ステージへのポインタ
-     */
+    // コンストラクタ：プレイヤーとステージの参照を受け取る
     Enemy(std::shared_ptr<Player> playerRef, Stage* stage);
 
-    /// デストラクタ
     ~Enemy();
 
-    /**
-     * @brief 更新処理
-     * @param dt 経過時間（秒）
-     */
+    // 更新処理（各状態に応じた処理）
     void Update(float dt) override;
 
-    /**
-     * @brief モデルの描画
-     * @param rc 描画コンテキスト
-     * @param renderer モデルレンダラー
-     */
+    // モデルの描画
     void Render(const RenderContext& rc, ModelRenderer* renderer);
 
-    /**
-     * @brief プレイヤー参照を設定する
-     * @param player プレイヤーの共有参照
-     */
+    // プレイヤー参照を外部からセット
     void SetPlayer(std::shared_ptr<Player> player) { playerRef = player; }
 
-    /**
-    * @brief 敵の難易度を設定する
-    */
+    // 敵の難易度に応じて各種パラメータ調整
     void SetDifficulty();
 
-    /**
-     * @brief 経路に新しいポイントを追加する
-     * @param pos 追加するワールド座標
-     */
+    // 経路ポイントを追加（移動先登録）
     void Addroute(DirectX::XMFLOAT3 pos) { route.push_back(pos); }
 
-    /**
-     * @brief 移動処理を更新する
-     * @param elapsedTime 経過時間（秒）
-     */
+    // 巡回・追跡などの移動処理
     void Updatemovement(float elapsedTime);
 
-    /// デバッグ用の可視化処理
+    // デバッグ描画（未実装）
     void DrawDebug() override;
 
-    /// 現在の座標を取得する
+    // 現在のワールド座標
     DirectX::XMFLOAT3 GetPosition() const { return position; }
 
-    /// 現在のピッチ角を取得する
+    // 向いているピッチ（上下）
     float GetPitch() const { return pitch; }
 
-    /// 現在のヨー角を取得する
+    // 向いているヨー（左右）
     float GetYaw() const { return yaw; }
 
+    // 指定方向を向く補助関数
     void JageDirection(DirectX::XMVECTOR dir);
 
+    // アニメーション更新処理
     void Animationplay();
 
-    /// 現在向かっている経路ポイントのインデックス（デバッグ用）
+    // 現在の経路インデックス（何番目のポイントに向かっているか）
     int GetindexWayPoint() const { return static_cast<int>(currentTargetIndex); }
 
+    // 敵が死亡しているかどうか
     bool GetIsDead() const { return isDead; }
 
+    // 感知（音や気配）処理：指定位置に対して感知反応する
     void remote_sensing(DirectX::XMFLOAT3 pos);
 
+    // プレイヤーを追跡中か
     bool Get_Tracking() const { return isTrackingPlayer; }
 
-    bool Get_isPlayerInView() const { return isPlayerInView; } // isPlayerInView
+    // プレイヤーが視界内にいるか
+    bool Get_isPlayerInView() const { return isPlayerInView; }
 
-    bool Get_Loocking() const { return loocking; } 
+    // 敵が「注視している」状態か（ターゲットを見ている）
+    bool Get_Loocking() const { return loocking; }
 
 private:
-    /**
-     * @brief 経路の再構成を行う（補正用）
-     * @param start 開始インデックス
-     * @param current 現在インデックス
-     */
+    // 経路再構築（現在地点からゴールまでを逆順にたどって正順にする）
     void refinePath(int start, int current);
 
-private:
-    /**
-     * @brief 敵の状態を示す列挙型
-     */
+    // 状態（AIによる振る舞い切り替え）
     enum class State
     {
-        Idle,       ///< 待機状態
-        Roaming,    ///< 巡回中
-        detection,  ///< プレイヤー発見
-        feeling,    ///< 気配感知
-        miss,       ///< 見失い
-        turn,       ///< 回転
-        Attack,     ///< 攻撃
+        Idle,       // 待機
+        Roaming,    // 巡回（経路移動）
+        detection,  // 視認発見状態
+        feeling,    // 気配感知状態
+        miss,       // 見失い
+        turn,       // 方向転換中
+        Attack,     // 攻撃中
     };
 
-private:
-    std::shared_ptr<Model> model = nullptr;                ///< モデルデータ
-    std::shared_ptr<LoadTextures> textures;                /// テクスチャデータ
-    std::weak_ptr<Player> playerRef;                       ///< プレイヤーへの弱参照
-    Stage* stage;                                          ///< ステージへの参照
+    // モデル情報
+    std::shared_ptr<Model> model = nullptr;
 
-    State state = State::Roaming;                          ///< 現在の状態
-    std::vector<DirectX::XMFLOAT3> route;                  ///< 移動ルート
-    size_t currentTargetIndex = 0;                         ///< 現在向かっているポイントのインデックス
-    DirectX::XMFLOAT3 targetPosition = { 0, 0, 0 };        ///< 現在のターゲット座標
-    float attackRange = 2.0f;                              ///< 攻撃範囲
-    float moveSpeed = USUAL_SPEED;                         ///< 現在の移動速度
-    float turnSpeed = DirectX::XMConvertToRadians(360);    ///< 回転速度（ラジアン）
+    // テクスチャ（未使用？）
+    std::shared_ptr<LoadTextures> textures;
 
-    float stateTimer = 0.0f;                               ///< 状態遷移用のタイマー
+    // プレイヤー参照（弱参照で安全管理）
+    std::weak_ptr<Player> playerRef;
 
-    float pitch = 0;                                       ///< ピッチ角
-    float yaw = 0;                                         ///< ヨー角
+    // ステージ参照（ポインタ）
+    Stage* stage;
 
-    /// 探索用のフラグ等
-    bool loocking;                                         ///< 見ているかどうか
-    bool isTrackingPlayer = false;                         ///< プレイヤーを追跡中か
-    bool isPlayerInView = false;
-    bool isReverseTraced = false;                          ///< プレイヤーを逆探知した後かどうか
-    float hitdist;                                         ///< 衝突までの距離
-    float searchRange = 10.0f;                             ///< プレイヤー探索範囲
-    float lockonRange = 80.0f;                             ///< 直線でプレイヤーを見つけれる距離
+    // 現在の状態
+    State state = State::Roaming;
 
-    //アニメーション管理フラグ・変数
+    // 経路（Waypointによるパス）
+    std::vector<DirectX::XMFLOAT3> route;
+
+    // 現在向かっている経路ポイントのインデックス
+    size_t currentTargetIndex = 0;
+
+    // 現在のターゲット座標（移動先）
+    DirectX::XMFLOAT3 targetPosition = { 0, 0, 0 };
+
+    float attackRange = 2.0f;           // 攻撃可能な距離
+    float moveSpeed = USUAL_SPEED;      // 現在の移動速度
+    float turnSpeed = DirectX::XMConvertToRadians(360); // 回転速度（毎秒ラジアン）
+
+    float stateTimer = 0.0f;           // 状態維持タイマー（一定時間後に状態遷移）
+
+    float pitch = 0;                   // ピッチ角（上下視線）
+    float yaw = 0;                     // ヨー角（左右視線）
+
+    // 感知・追跡関連フラグ
+    bool loocking = false;            // ターゲットを注視中か
+    bool isTrackingPlayer = false;    // プレイヤーを追跡しているか
+    bool isPlayerInView = false;      // 視界にプレイヤーがいるか
+    bool isReverseTraced = false;     // 逆探知中（プレイヤーの位置を察知後の補足）
+    float hitdist = 0.0f;             // プレイヤーとの距離（衝突用）
+
+    // 探索関連
+    float searchRange = 10.0f;        // 探索範囲（感知距離）
+    float lockonRange = 30.0f;        // 視認距離（ロックオンできる距離）
+
+    // アニメーション制御
     AnimationController animationcontroller;
     float animation_Timer = 0.0f;
+
+    // 敵の向き（北南東西）
     enum Direction
     {
-        N,
-        S,
-        W,
-        E,
+        N, // 北
+        S, // 南
+        W, // 西
+        E  // 東
     };
     Direction direction = Direction::N;
     Direction olddirection = direction;
 
+    // カメラシェイク（攻撃時などに揺らす処理用）
     DirectX::XMFLOAT2 cameraShakeScale = { 0.01f, 0.01f };
 
+    // 敵が死亡済みかどうか
     bool isDead = false;
 };
