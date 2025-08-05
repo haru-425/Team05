@@ -1,16 +1,17 @@
 #include "FullScreenQuad.hlsli"
 // 入力テクスチャとサンプラ
-Texture2D InputTexture : register(t0);
+Texture2D InputTexture : register(t10);
 SamplerState InputSampler : register(s0);
 
 // パラメータ
-cbuffer RadialBlurParams : register(b0)
+cbuffer RadialBlurParams : register(b9)
 {
     float2 Center; // 中心座標（UV空間、例：float2(0.5, 0.5)）
     float BlurStrength; // ブラーの強さ（例：0.2）
     int SampleCount; // サンプル数（例：16）
     float FalloffPower; // フォールオフ指数（例：2.0）
     float2 DirectionBias; // 方向バイアス（例：float2(1.0, 0.5)）
+    float padding; // パディング
 };
 
 float4 main(VS_OUT pin) : SV_TARGET

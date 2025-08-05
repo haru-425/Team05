@@ -128,11 +128,22 @@ private:
 		float flickerChance; // ちらつきが起こる確率（例：0.05）
 	};
 	LightFlickerCBuffer lightFlickerCBuffer = { 40.0f, 0.4f,0.5f,0.1f };
+	struct RadialBlurCBuffer
+	{
+		DirectX::XMFLOAT2 Center; // 中心座標（UV空間、例：float2(0.5, 0.5)）
+		float BlurStrength; // ブラーの強さ（例：0.2）
+		int SampleCount; // サンプル数（例：16）
+		float FalloffPower; // フォールオフ指数（例：2.0）
+		DirectX::XMFLOAT2 DirectionBias; // 方向バイアス（例：float2(1.0, 0.5)）
+		float padding; // パディング
+	};
+	RadialBlurCBuffer radialBlurCBuffer = { {0.5f, 0.5f}, 0.2f, 16, 2.0f, {1.0f, 1.0f}, 0.0f };
 	enum class ConstantBufferType
 	{
 		TimeCBuffer,
 		ScreenSizeCBuffer,
 		LightFlickerCBuffer,
+		RadialBlurCBuffer,
 		Count
 	};
 	Microsoft::WRL::ComPtr<ID3D11Buffer> cbuffer[int(ConstantBufferType::Count)];
@@ -161,6 +172,7 @@ public:
 		LightFlicker,
 		Timer,
 		RedPulseAlert,
+		RadialBlur,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
@@ -170,7 +182,19 @@ public:
 	// BLOOM
 	std::unique_ptr<bloom> bloomer;
 
-
+	void setRadialBlurCBuffer(
+		const DirectX::XMFLOAT2& center = { 0.5f, 0.5f },
+		float blurStrength = 0.2f,
+		int sampleCount = 16,
+		float falloffPower = 2.0f,
+		const DirectX::XMFLOAT2& directionBias = { 1.0f, 1.0f }
+	) {
+		radialBlurCBuffer.Center = center;
+		radialBlurCBuffer.BlurStrength = blurStrength;
+		radialBlurCBuffer.SampleCount = sampleCount;
+		radialBlurCBuffer.FalloffPower = falloffPower;
+		radialBlurCBuffer.DirectionBias = directionBias;
+	}
 	void UpdateConstantBuffer(float Time, float signalTime = 0, float remaininngTime = 0) {
 		TimeCBuffer timeCBuffer;
 		timeCBuffer.time = Time;
@@ -192,12 +216,46 @@ public:
 		immediateContext->UpdateSubresource(cbuffer[int(ConstantBufferType::LightFlickerCBuffer)].Get(), 0, 0, &lightFlickerCBuffer, 0, 0);
 		immediateContext->PSSetConstantBuffers(13, 1, cbuffer[int(ConstantBufferType::LightFlickerCBuffer)].GetAddressOf());
 		immediateContext->VSSetConstantBuffers(13, 1, cbuffer[int(ConstantBufferType::LightFlickerCBuffer)].GetAddressOf());
+		// ラジアルブラーの定数バッファを更新
+		immediateContext->UpdateSubresource(cbuffer[int(ConstantBufferType::RadialBlurCBuffer)].Get(), 0, 0, &radialBlurCBuffer, 0, 0);
+		immediateContext->PSSetConstantBuffers(9, 1, cbuffer[int(ConstantBufferType::RadialBlurCBuffer)].GetAddressOf());
+
 
 
 
 
 	}
+	void ShowRadialBlurCBufferUI()
+	{
+		RadialBlurCBuffer* buffer = &radialBlurCBuffer;
 
+		// 中心座標（UV空間）
+		float center[2] = { buffer->Center.x, buffer->Center.y };
+		if (ImGui::SliderFloat2("Center (UV)", center, 0.0f, 1.0f))
+		{
+			buffer->Center.x = center[0];
+			buffer->Center.y = center[1];
+		}
+
+		// ブラーの強さ
+		ImGui::SliderFloat("Blur Strength", &buffer->BlurStrength, 0.0f, 1.0f);
+
+		// サンプル数
+		ImGui::SliderInt("Sample Count", &buffer->SampleCount, 1, 64);
+
+		// フォールオフ指数
+		ImGui::SliderFloat("Falloff Power", &buffer->FalloffPower, 0.1f, 10.0f);
+
+		// 方向バイアス
+		float dirBias[2] = { buffer->DirectionBias.x, buffer->DirectionBias.y };
+		if (ImGui::SliderFloat2("Direction Bias", dirBias, -2.0f, 2.0f))
+		{
+			buffer->DirectionBias.x = dirBias[0];
+			buffer->DirectionBias.y = dirBias[1];
+		}
+
+		// padding は使用されないので表示しない
+	}
 	void DebugGUI()
 	{
 		if (ImGui::TreeNode("Bloom"))
@@ -207,6 +265,11 @@ public:
 			ImGui::SliderFloat("bloom_extraction_threshold", &bloomer->bloom_extraction_threshold, +0.0f, +5.0f);
 			ImGui::SliderFloat("bloom_intensity", &bloomer->bloom_intensity, +0.0f, +5.0f);
 
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Radial Blur"))
+		{
+			ShowRadialBlurCBufferUI();
 			ImGui::TreePop();
 		}
 	}

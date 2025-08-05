@@ -421,15 +421,33 @@ void SceneGame::Render()
 	if (player->GetUseCam())
 	{
 		//enemy
+		if (enemy->Get_isPlayerInView()) {
+			Graphics::Instance().setRadialBlurCBuffer({ 0.5,0.5 }, 0.3f, 64);
 
-	// BLOOM
+		}
+		else if (enemy->Get_Tracking()) {
+			Graphics::Instance().setRadialBlurCBuffer({ 0.5,0.5 }, 0.4f, 64);
+		}
+		else {
+			Graphics::Instance().setRadialBlurCBuffer({ 0.5,0.5 }, 0.0f);
+		}
+		Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
+		//RadialBlur
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->activate(dc);
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::RadialBlur)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->deactivate(dc);
+
+
+		// BLOOM
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->clear(dc);
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
-		Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get());
+		Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RadialBlur]->shader_resource_views[0].Get());
 
 		ID3D11ShaderResourceView* shader_resource_views[] =
 		{
-			Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get(),
+			Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RadialBlur]->shader_resource_views[0].Get(),
 			Graphics::Instance().bloomer->shader_resource_view(),
 		};
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
@@ -486,15 +504,24 @@ void SceneGame::Render()
 	}
 	else
 	{
+		//RadialBlur
+		Graphics::Instance().setRadialBlurCBuffer({ 0.5,0.5 }, 0.0f);
+		Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->activate(dc);
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::RadialBlur)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->deactivate(dc);
+
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RedPulseAlert]->clear(dc);
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RedPulseAlert]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::RedPulseAlert].Get());
+			Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RadialBlur]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::RedPulseAlert].Get());
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RedPulseAlert]->deactivate(dc);
 		// BLOOM
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->clear(dc);
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
-		Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get());
+		Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RadialBlur]->shader_resource_views[0].Get());
 		ID3D11ShaderResourceView* shader_resource_views[2];
 		if (enemy->Get_isPlayerInView())//trueで追われている
 		{
@@ -503,7 +530,7 @@ void SceneGame::Render()
 
 		}
 		else {
-			shader_resource_views[0] = Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get();
+			shader_resource_views[0] = Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RadialBlur]->shader_resource_views[0].Get();
 			shader_resource_views[1] = Graphics::Instance().bloomer->shader_resource_view();
 		}
 
@@ -603,6 +630,7 @@ void SceneGame::Render()
 		);
 
 	}
+
 	auto easeOutSine = [](float x) -> float
 		{
 			return sin((x * DirectX::XM_PI) / 2);

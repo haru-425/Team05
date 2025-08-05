@@ -181,6 +181,13 @@ bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 bufferDesc.MiscFlags = 0;
 hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::LightFlickerCBuffer)].ReleaseAndGetAddressOf());
 _ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+// ラジアルブラーの定数バッファ
+bufferDesc.ByteWidth = static_cast<UINT>(sizeof(RadialBlurCBuffer));
+bufferDesc.StructureByteStride = sizeof(RadialBlurCBuffer);
+bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+hr = device->CreateBuffer(&bufferDesc, nullptr, cbuffer[int(ConstantBufferType::RadialBlurCBuffer)].ReleaseAndGetAddressOf());
+_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
 
 //framebufferの生成
@@ -212,6 +219,7 @@ GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/NoiseChangePS.cso",
 GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/LightFlickerPS.cso", pixel_shaders[int(PPShaderType::LightFlicker)].ReleaseAndGetAddressOf());
 GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TimerPS.cso", pixel_shaders[int(PPShaderType::Timer)].ReleaseAndGetAddressOf());
 GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/RedPulseAlertPS.cso", pixel_shaders[int(PPShaderType::RedPulseAlert)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/RadialBlur.cso", pixel_shaders[int(PPShaderType::RadialBlur)].ReleaseAndGetAddressOf());
 
 
 
