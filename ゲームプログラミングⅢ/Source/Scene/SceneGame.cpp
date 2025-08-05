@@ -426,7 +426,7 @@ void SceneGame::Render()
 
 		}
 		else if (enemy->Get_Tracking()) {
-			Graphics::Instance().setRadialBlurCBuffer({ 0.5,0.5 }, 0.4f, 64);
+			Graphics::Instance().setRadialBlurCBuffer({ 0.5,0.5 }, 0.2f, 64);
 		}
 		else {
 			Graphics::Instance().setRadialBlurCBuffer({ 0.5,0.5 }, 0.0f);
