@@ -55,7 +55,7 @@ void SceneTitle::Initialize()
 	//for (int i = 0; i < 7; ++i)
 	//{
 	//    uiSprits.emplace_back(std::make_unique<Sprite>("./Data/Sprite/image.png"));
-	//} 
+	//}
 	//for (int i = 0; i < 1; ++i)
 	//{
 	//    ui.emplace_back(std::make_unique<UI>("./Data/Sprite/image.png"));
@@ -352,6 +352,7 @@ void SceneTitle::Render()
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VHS)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->deactivate(dc);
 	//RadialBlur
+	Graphics::Instance().setRadialBlurCBuffer({ 0.5,0.5 }, 0.0f);
 
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->activate(dc);
