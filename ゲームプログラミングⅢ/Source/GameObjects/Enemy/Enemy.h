@@ -159,7 +159,7 @@ private:
     bool isReverseTraced = false;                          ///< プレイヤーを逆探知した後かどうか
     float hitdist;                                         ///< 衝突までの距離
     float searchRange = 10.0f;                             ///< プレイヤー探索範囲
-    float lockonRange = 30.0f;                             ///< 直線でプレイヤーを見つけれる距離
+    float lockonRange = 80.0f;                             ///< 直線でプレイヤーを見つけれる距離
 
     //アニメーション管理フラグ・変数
     AnimationController animationcontroller;
