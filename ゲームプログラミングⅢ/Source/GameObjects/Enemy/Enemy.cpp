@@ -193,6 +193,7 @@ void Enemy::Update(float elapsedTime)
 			if (!route.empty())
 			{
 				targetPosition = route[0];
+				JageDirection(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&targetPosition), DirectX::XMLoadFloat3(&this->position)));
 			}
 		}
 		else
@@ -307,10 +308,10 @@ void Enemy::Update(float elapsedTime)
 
 	case State::miss:
 
+		isTrackingPlayer = false;
+		isPlayerInView = false;
 		if (animationcontroller.GetEndAnimation())
 		{
-			isTrackingPlayer = false;
-			isPlayerInView = false;
 			moveSpeed = USUAL_SPEED; // 通常速度に戻す
 			state = State::Idle;
 			Animationplay();

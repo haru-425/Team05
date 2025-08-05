@@ -132,7 +132,6 @@ void SceneGame::Initialize()
 			tutorial_Step = 18;
 		}
 	}
-	CursorManager::Instance().SetCursorVisible(false);
 	EnemyUI::Instance().Initialize(); ///< 敵のUI初期化
 }
 
@@ -192,6 +191,7 @@ void SceneGame::Update(float elapsedTime)
 		if (GetAsyncKeyState('R') & 0x8000)
 		{
 			pause_Flug = false;
+			CursorManager::Instance().SetCursorVisible(false);
 		}
 		//ポーズ状態の処理はココ！
 
@@ -203,6 +203,7 @@ void SceneGame::Update(float elapsedTime)
 	if (GetAsyncKeyState('P') & 0x8000)
 	{
 		pause_Flug = true;
+		CursorManager::Instance().SetCursorVisible(true);
 	}
 
 

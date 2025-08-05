@@ -12,6 +12,7 @@
 #include "Camera/CameraController/SceneCameraController.h"
 #include "System/SettingsManager.h"
 #include "System/Audio.h"
+#include "System/CursorManager.h"
 #include <algorithm>
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
@@ -183,6 +184,8 @@ void SceneTitle::Update(float elapsedTime)
 			TitleSignalTimer = 0.0f; // タイマー再スタート
 
 			reminingTime = 300.f;
+
+			CursorManager::Instance().SetCursorVisible(false);
 		}
 		//else if (fKey)
 		//{
