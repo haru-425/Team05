@@ -496,7 +496,7 @@ void SceneGame::Render()
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
 		Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::screenquad]->shader_resource_views[0].Get());
 		ID3D11ShaderResourceView* shader_resource_views[2];
-		if (enemy->Get_Tracking())//trueで追われている
+		if (enemy->Get_isPlayerInView())//trueで追われている
 		{
 			shader_resource_views[0] = Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RedPulseAlert]->shader_resource_views[0].Get();
 			shader_resource_views[1] = Graphics::Instance().bloomer->shader_resource_view();

@@ -136,14 +136,12 @@ void Enemy::Update(float elapsedTime)
 
 	DirectX::XMVECTOR v1v = DirectX::XMVector3Normalize(Forward);
 	DirectX::XMVECTOR v2v =DirectX::XMVector3Normalize((DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
-
-	//bool c = acosf(XMVectorGetX(XMVector3Dot(v1v, v2v)) / 0.01745f) <= 45.0f;
 	
 	float angle = acosf(XMVectorGetX(XMVector3Dot(v1v, v2v))) / 0.01745f;
 
-	/*char buf[256];
-	sprintf_s(buf, sizeof(buf), "angle%f\n", angle);
-	OutputDebugStringA(buf);*/
+	//char buf[256];
+	//sprintf_s(buf, sizeof(buf), "angle%f\n", angle);
+	//OutputDebugStringA(buf);
 
 	// プレイヤーが見えているか近づいているなら
 	if ((((loocking && playerdist < lockonRange) && acosf(XMVectorGetX(XMVector3Dot(v1v, v2v)) / 0.01745f) <= 45.0f) || (playerdist < searchRange)) && state != State::miss)

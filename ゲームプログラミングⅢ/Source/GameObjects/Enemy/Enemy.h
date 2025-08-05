@@ -106,6 +106,8 @@ public:
 
     bool Get_Tracking() const { return isTrackingPlayer; }
 
+    bool Get_isPlayerInView() const { return isPlayerInView; } // isPlayerInView
+
     bool Get_Loocking() const { return loocking; } 
 
 private:
