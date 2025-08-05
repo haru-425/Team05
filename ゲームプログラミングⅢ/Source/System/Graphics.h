@@ -173,6 +173,7 @@ public:
 		Timer,
 		RedPulseAlert,
 		RadialBlur,
+		VHS,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];
@@ -229,32 +230,43 @@ public:
 	{
 		RadialBlurCBuffer* buffer = &radialBlurCBuffer;
 
-		// 中心座標（UV空間）
+		// リセットボタン
+		if (ImGui::Button("Reset to Default"))
+		{
+			buffer->Center = { 0.5f, 0.5f };
+			buffer->BlurStrength = 0.2f;
+			buffer->SampleCount = 16;
+			buffer->FalloffPower = 2.0f;
+			buffer->DirectionBias = { 1.0f, 1.0f };
+			buffer->padding = 0.0f;
+		}
+
+		// Center（UV空間）
 		float center[2] = { buffer->Center.x, buffer->Center.y };
-		if (ImGui::SliderFloat2("Center (UV)", center, 0.0f, 1.0f))
+		if (ImGui::DragFloat2("Center (UV 0.0 - 1.0)", center, 0.01f, 0.0f, 1.0f, "%.4f"))
 		{
 			buffer->Center.x = center[0];
 			buffer->Center.y = center[1];
 		}
 
-		// ブラーの強さ
-		ImGui::SliderFloat("Blur Strength", &buffer->BlurStrength, 0.0f, 1.0f);
+		// Blur Strength
+		ImGui::DragFloat("Blur Strength", &buffer->BlurStrength, 0.01f, 0.0f, 1.0f, "%.4f");
 
-		// サンプル数
-		ImGui::SliderInt("Sample Count", &buffer->SampleCount, 1, 64);
+		// Sample Count
+		ImGui::DragInt("Sample Count", &buffer->SampleCount, 1, 1, 128);
+		if (buffer->SampleCount < 1) buffer->SampleCount = 1;
 
-		// フォールオフ指数
-		ImGui::SliderFloat("Falloff Power", &buffer->FalloffPower, 0.1f, 10.0f);
+		// Falloff Power
+		ImGui::DragFloat("Falloff Power", &buffer->FalloffPower, 0.1f, 0.0f, 10.0f, "%.4f");
+		if (buffer->FalloffPower < 0.0f) buffer->FalloffPower = 0.0f;
 
-		// 方向バイアス
+		// Direction Bias
 		float dirBias[2] = { buffer->DirectionBias.x, buffer->DirectionBias.y };
-		if (ImGui::SliderFloat2("Direction Bias", dirBias, -2.0f, 2.0f))
+		if (ImGui::DragFloat2("Direction Bias (>= 1.0)", dirBias, 0.01f, 1.0f, 10.0f, "%.4f"))
 		{
-			buffer->DirectionBias.x = dirBias[0];
-			buffer->DirectionBias.y = dirBias[1];
+			buffer->DirectionBias.x = max(1.0f, dirBias[0]);
+			buffer->DirectionBias.y = max(1.0f, dirBias[1]);
 		}
-
-		// padding は使用されないので表示しない
 	}
 	void DebugGUI()
 	{

@@ -43,6 +43,7 @@
     <FxCompile Include="Shader\TimerPS.hlsl" />
     <FxCompile Include="Shader\RedPulseAlertPS.hlsl" />
     <FxCompile Include="Shader\RadialBlur.hlsl" />
+    <FxCompile Include="Shader\VHSPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp" />

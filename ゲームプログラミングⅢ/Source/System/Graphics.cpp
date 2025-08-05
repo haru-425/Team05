@@ -220,6 +220,7 @@ GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/LightFlickerPS.cso"
 GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/TimerPS.cso", pixel_shaders[int(PPShaderType::Timer)].ReleaseAndGetAddressOf());
 GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/RedPulseAlertPS.cso", pixel_shaders[int(PPShaderType::RedPulseAlert)].ReleaseAndGetAddressOf());
 GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/RadialBlur.cso", pixel_shaders[int(PPShaderType::RadialBlur)].ReleaseAndGetAddressOf());
+GpuResourceUtils::LoadPixelShader(device.Get(), "Data/Shader/VHSPS.cso", pixel_shaders[int(PPShaderType::VHS)].ReleaseAndGetAddressOf());
 
 
 

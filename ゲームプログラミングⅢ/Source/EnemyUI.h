@@ -119,8 +119,8 @@ public:
 	}
 
 	void Render(const RenderContext& rc) {
-		float scaleX = Graphics::Instance().GetWindowScaleFactor().x;
-		float scaleY = Graphics::Instance().GetWindowScaleFactor().y;
+		float scaleX = Graphics::Instance().GetWindowScaleFactor().x * 0.5F;
+		float scaleY = Graphics::Instance().GetWindowScaleFactor().y * 0.5F;
 		for (int i = 0; i < 3; ++i) {
 			ui[i]->Render(
 				rc,
