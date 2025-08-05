@@ -102,7 +102,7 @@ void Enemy::Update(float elapsedTime)
 	DirectX::XMFLOAT3 hitpos, n;
 	//bool a = Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n);      //(デバッグ用)
 	loocking = !(Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n));
-	
+
 	// ヒット位置とプレイヤー位置との距離を比較
 	float hitdist = DirectX::XMVectorGetX(
 		DirectX::XMVector3Length(
@@ -135,65 +135,60 @@ void Enemy::Update(float elapsedTime)
 	}
 
 	DirectX::XMVECTOR v1v = DirectX::XMVector3Normalize(Forward);
-	DirectX::XMVECTOR v2v =DirectX::XMVector3Normalize((DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
-	
+	DirectX::XMVECTOR v2v = DirectX::XMVector3Normalize((DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition()), DirectX::XMLoadFloat3(&this->GetPosition()))));
+
 	float angle = acosf(XMVectorGetX(XMVector3Dot(v1v, v2v))) / 0.01745f;
 
-	//char buf[256];
-	//sprintf_s(buf, sizeof(buf), "angle%f\n", angle);
-	//OutputDebugStringA(buf);
+	char buf[256];
+	sprintf_s(buf, sizeof(buf), "angle%f\n", angle);
+	OutputDebugStringA(buf);
+
+
+	if (playerdist < searchRange && !isTrackingPlayer && !isPlayerInView)
+	{
+		// 経路をリセットし、新たに探索開始
+		stage->path.clear();
+		route.clear();
+		currentTargetIndex = 0;
+
+		Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
+		Start::Instance().SetPosition(this->position);
+		SearchAI::Instance().trackingSearch(stage);
+
+		int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+		int start = stage->NearWayPointIndex(this->position);
+
+		refinePath(start, current); // 経路を作成
+
+		state = State::feeling;
+		Animationplay();
+		isTrackingPlayer = true;
+	}
 
 	// プレイヤーが見えているか近づいているなら
-	if ((((loocking && playerdist < lockonRange) && acosf(XMVectorGetX(XMVector3Dot(v1v, v2v)) / 0.01745f) <= 45.0f) || (playerdist < searchRange)) && state != State::miss)
+	if ((loocking && playerdist < lockonRange) && acosf(XMVectorGetX(XMVector3Dot(v1v, v2v)) / 0.01745f) <= 45.0f)
 	{
-		if (!isTrackingPlayer)
+		isReverseTraced = false;
+
+		if (loocking && playerdist < lockonRange && !isPlayerInView)
 		{
-			isReverseTraced = false;
-			// ステート遷移
-			if (playerdist < searchRange && !isPlayerInView)
-			{
-				// 経路をリセットし、新たに探索開始
-				stage->path.clear();
-				route.clear();
-				currentTargetIndex = 0;
+			// 経路をリセットし、新たに探索開始
+			stage->path.clear();
+			route.clear();
+			currentTargetIndex = 0;
 
-				Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
-				Start::Instance().SetPosition(this->position);
-				SearchAI::Instance().trackingSearch(stage);
+			Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
+			Start::Instance().SetPosition(this->position);
+			SearchAI::Instance().trackingSearch(stage);
 
-				int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
-				int start = stage->NearWayPointIndex(this->position);
+			int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+			int start = stage->NearWayPointIndex(this->position);
 
-				refinePath(start, current); // 経路を作成
+			refinePath(start, current); // 経路を作成
 
-				state = State::feeling;
-				Animationplay();
-				isTrackingPlayer = true;
-			}
-			else if (loocking && playerdist < lockonRange)
-			{
-				// 経路をリセットし、新たに探索開始
-				stage->path.clear();
-				route.clear();
-				currentTargetIndex = 0;
-
-				Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
-				Start::Instance().SetPosition(this->position);
-				SearchAI::Instance().trackingSearch(stage);
-
-				int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
-				int start = stage->NearWayPointIndex(this->position);
-
-				refinePath(start, current); // 経路を作成
-
-				state = State::detection;
-				Animationplay();
-				isPlayerInView = true;
-			}
-			if (!route.empty())
-			{
-				targetPosition = route[0];
-			}
+			state = State::detection;
+			Animationplay();
+			isPlayerInView = true;
 		}
 		else
 		{
@@ -209,10 +204,21 @@ void Enemy::Update(float elapsedTime)
 
 			refinePath(start, current);
 		}
+
+		if (!route.empty())
+		{
+			targetPosition = route[0];
+		}
+
+	}
+
+	if (loocking)
+	{
+		int x = 19;
 	}
 
 	int current, start;
-	
+
 	// 敵の状態に応じて処理を分岐
 	switch (state)
 	{
