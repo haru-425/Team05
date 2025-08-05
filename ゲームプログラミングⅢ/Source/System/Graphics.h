@@ -130,14 +130,31 @@ private:
 	LightFlickerCBuffer lightFlickerCBuffer = { 40.0f, 0.4f,0.5f,0.1f };
 	struct RadialBlurCBuffer
 	{
-		DirectX::XMFLOAT2 Center; // 中心座標（UV空間、例：float2(0.5, 0.5)）
-		float BlurStrength; // ブラーの強さ（例：0.2）
-		int SampleCount; // サンプル数（例：16）
-		float FalloffPower; // フォールオフ指数（例：2.0）
-		DirectX::XMFLOAT2 DirectionBias; // 方向バイアス（例：float2(1.0, 0.5)）
-		float padding; // パディング
+		DirectX::XMFLOAT2 Center; // ブラー中心（UV）
+		float BlurStrength; // ブラーの強さ
+		int SampleCount; // サンプル数
+
+		float FalloffPower; // フォールオフ強度（指数）
+		DirectX::XMFLOAT2 DirectionBias; // 方向バイアス
+		float OffsetStrength; // サンプル開始点を中心からずらす量（0?1）
+
+		float CenterFeather; // 中心ぼかし軽減（0?1）
+		float BlendAmount; // 元画像との混合比（0?1）向バイアス（例：float2(1.0, 0.5)）
+		float padding[2]; // パディング
 	};
-	RadialBlurCBuffer radialBlurCBuffer = { {0.5f, 0.5f}, 0.2f, 16, 2.0f, {1.0f, 1.0f}, 0.0f };
+
+	RadialBlurCBuffer radialBlurCBuffer =
+	{
+		{ 0.5f, 0.5f }, // Center
+		0.2f, // BlurStrength
+		16, // SampleCount
+		2.0f, // FalloffPower
+		{ 1.0f, 1.0f }, // DirectionBias
+		0.0f, // OffsetStrength
+		1.0f, // CenterFeather
+		1.0f, // BlendAmount
+		{ 0.0f, 0.0f } // padding
+	};
 	enum class ConstantBufferType
 	{
 		TimeCBuffer,
@@ -230,43 +247,48 @@ public:
 	{
 		RadialBlurCBuffer* buffer = &radialBlurCBuffer;
 
-		// リセットボタン
+
+		// デフォルト値（必要なら外部から受け取るように拡張可）
+		const RadialBlurCBuffer defaultValues = {
+			{0.5f, 0.5f},  // Center
+			0.2f,          // BlurStrength
+			16,            // SampleCount
+			2.0f,          // FalloffPower
+			{1.0f, 1.0f},  // DirectionBias
+			0.0f,          // OffsetStrength
+			0.0f,          // CenterFeather
+			1.0f,          // BlendAmount
+			{0.0f, 0.0f}   // padding
+		};
+
 		if (ImGui::Button("Reset to Default"))
 		{
-			buffer->Center = { 0.5f, 0.5f };
-			buffer->BlurStrength = 0.2f;
-			buffer->SampleCount = 16;
-			buffer->FalloffPower = 2.0f;
-			buffer->DirectionBias = { 1.0f, 1.0f };
-			buffer->padding = 0.0f;
+			*buffer = defaultValues;
 		}
 
-		// Center（UV空間）
+		// Center (UV)
 		float center[2] = { buffer->Center.x, buffer->Center.y };
-		if (ImGui::DragFloat2("Center (UV 0.0 - 1.0)", center, 0.01f, 0.0f, 1.0f, "%.4f"))
+		if (ImGui::DragFloat2("Center (UV)", center, 0.01f, 0.0f, 1.0f, "%.4f"))
 		{
-			buffer->Center.x = center[0];
-			buffer->Center.y = center[1];
+			buffer->Center = { center[0], center[1] };
 		}
 
-		// Blur Strength
 		ImGui::DragFloat("Blur Strength", &buffer->BlurStrength, 0.01f, 0.0f, 1.0f, "%.4f");
-
-		// Sample Count
 		ImGui::DragInt("Sample Count", &buffer->SampleCount, 1, 1, 128);
-		if (buffer->SampleCount < 1) buffer->SampleCount = 1;
 
-		// Falloff Power
-		ImGui::DragFloat("Falloff Power", &buffer->FalloffPower, 0.1f, 0.0f, 10.0f, "%.4f");
-		if (buffer->FalloffPower < 0.0f) buffer->FalloffPower = 0.0f;
+		ImGui::DragFloat("Falloff Power", &buffer->FalloffPower, 0.05f, 0.0f, 10.0f, "%.4f");
 
-		// Direction Bias
 		float dirBias[2] = { buffer->DirectionBias.x, buffer->DirectionBias.y };
-		if (ImGui::DragFloat2("Direction Bias (>= 1.0)", dirBias, 0.01f, 1.0f, 10.0f, "%.4f"))
+		if (ImGui::DragFloat2("Direction Bias (min 1.0)", dirBias, 0.01f, 1.0f, 10.0f, "%.4f"))
 		{
+			// 強制的に 1.0 以上に制限
 			buffer->DirectionBias.x = max(1.0f, dirBias[0]);
 			buffer->DirectionBias.y = max(1.0f, dirBias[1]);
 		}
+
+		ImGui::DragFloat("Offset Strength", &buffer->OffsetStrength, 0.01f, 0.0f, 1.0f, "%.4f");
+		ImGui::DragFloat("Center Feather", &buffer->CenterFeather, 0.01f, 0.0f, 1.0f, "%.4f");
+		ImGui::DragFloat("Blend Amount", &buffer->BlendAmount, 0.01f, 0.0f, 1.0f, "%.4f");
 	}
 	void DebugGUI()
 	{

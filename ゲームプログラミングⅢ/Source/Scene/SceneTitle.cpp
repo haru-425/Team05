@@ -354,13 +354,20 @@ void SceneTitle::Render()
 	Graphics::Instance().bit_block_transfer->blit(dc,
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VHS)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->deactivate(dc);
+	//RadialBlur
+
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::RadialBlur)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->deactivate(dc);
 
 
 	//TEMPORAL NOISE
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
 	//LaightFlicker
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::LightFlicker)]->clear(dc);
