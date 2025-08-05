@@ -173,6 +173,7 @@ public:
 		Timer,
 		RedPulseAlert,
 		RadialBlur,
+		VHS,
 		Count
 	};
 	std::unique_ptr<framebuffer> framebuffers[int(PPShaderType::Count)];

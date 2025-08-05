@@ -345,12 +345,19 @@ void SceneTitle::Render()
 	//グリッジを掛けない場合はここ
 
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->deactivate(dc);
+	//VHS
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->clear(dc);
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->activate(dc);
+	Graphics::Instance().bit_block_transfer->blit(dc,
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VHS)].Get());
+	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->deactivate(dc);
+
 
 	//TEMPORAL NOISE
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->clear(dc);
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->activate(dc);
 	Graphics::Instance().bit_block_transfer->blit(dc,
-		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::Glitch)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TemporalNoise)].Get());
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->deactivate(dc);
 	//LaightFlicker
 	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::LightFlicker)]->clear(dc);
