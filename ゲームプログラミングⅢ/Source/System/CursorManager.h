@@ -39,12 +39,17 @@ public:
 
 	void SetActiveWindow(bool isActive) {
 		isActiveWindow = isActive; 
+
+
+#if _DEBUG
+
+#else
 		if (!isActiveWindow && ShowCursor(true) < 1)
 		{
 			ShowCursor(true);
 			while (ShowCursor(true) < 0)
 			{
-				
+
 				ShowCursor(true);
 			}
 		}
@@ -56,6 +61,7 @@ public:
 				ShowCursor(false);
 			}
 		}
+#endif
 	}
 
 	bool GetIsActiveWindow() {return isActiveWindow;}
