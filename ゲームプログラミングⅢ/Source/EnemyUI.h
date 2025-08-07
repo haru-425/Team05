@@ -124,11 +124,11 @@ public:
 		for (int i = 0; i < 3; ++i) {
 			ui[i]->Render(
 				rc,
-				(uiPos[i].x - (160 /*- i * 20*/) * scaleX / 2.f),
-				(uiPos[i].y - (160 /*- i * 20*/) * scaleY / 2.f),
+				(uiPos[i].x - (160 / 2 /*- i * 20*/) /** scaleX */ / 2.f),
+				(uiPos[i].y - (160 / 2 /*- i * 20*/) /** scaleY*/ / 2.f),
 				0.0f,
-				(160 /*- i * 20*/) * scaleX,
-				(160 /*- i * 20*/) * scaleY,
+				(160 /*- i * 20*/) / 2 /** scaleX*/,
+				(160 /*- i * 20*/) / 2/* * scaleY*/,
 				0,
 				1.0f, 1.0f, 1.0f, 1.0f
 			);
