@@ -149,6 +149,7 @@
     <ClInclude Include="Source\metar.h" />
     <ClInclude Include="Source\Math\Easing.h" />
     <ClInclude Include="Source\MiniMap.h" />
+    <ClInclude Include="Source\PlayerUI.h" />
     <ClInclude Include="Source\Projectile.h" />
     <ClInclude Include="Source\ProjectileHoming.h" />
     <ClInclude Include="Source\ProjectileManager.h" />

@@ -21,7 +21,7 @@ class SceneGame :public Scene
 {
 public:
 	SceneGame() {}
-	SceneGame(int Life):life_number(Life){}
+	SceneGame(int Life) :life_number(Life) {}
 	~SceneGame() override {}
 
 	// 初期化
@@ -64,6 +64,7 @@ private:
 	std::shared_ptr<Player> player;
 	std::shared_ptr<Enemy> enemy;
 	std::shared_ptr<Metar> metar;
+
 	MiniMap* minimap = nullptr;
 	bool tutorial_Flug = false;
 	int tutorial_Step = 0;

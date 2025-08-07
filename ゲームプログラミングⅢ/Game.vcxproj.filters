@@ -221,6 +221,7 @@
     <ClInclude Include="Source\System\CollisionEditor.h" />
     <ClInclude Include="Source\EnemyUI.h" />
     <ClInclude Include="Source\System\CursorManager.h" />
+    <ClInclude Include="Source\PlayerUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />

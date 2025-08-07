@@ -13,6 +13,7 @@
 #include "System/CollisionEditor.h"
 #include "GameObjects/battery/batteryManager.h"
 #include "EnemyUI.h"
+#include "PlayerUI.h"
 #include "System/CursorManager.h"
 
 #include <imgui.h>
@@ -133,6 +134,7 @@ void SceneGame::Initialize()
 		}
 	}
 	EnemyUI::Instance().Initialize(); ///< 敵のUI初期化
+	PlayerUI::Instance().Initialize();
 }
 
 // 終了化
@@ -166,6 +168,7 @@ void SceneGame::Finalize()
 	player.reset();
 	enemy.reset();
 	EnemyUI::Instance().Finalize();
+	PlayerUI::Instance().Finalize();
 }
 
 // 更新処理
@@ -538,6 +541,7 @@ void SceneGame::Render()
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
 
 		minimap->Render(player->GetPosition());
+		PlayerUI::Instance().Render(rc);
 		if (!tutorial_Flug || tutorial_Step >= 4)
 		{
 			metar->render();
@@ -633,9 +637,9 @@ void SceneGame::Render()
 	}
 
 	auto easeOutSine = [](float x) -> float
-		{
-			return sin((x * DirectX::XM_PI) / 2);
-		};
+	{
+		return sin((x * DirectX::XM_PI) / 2);
+	};
 
 	if (tutorial_Flug && !tutorial_Flug2)
 	{
