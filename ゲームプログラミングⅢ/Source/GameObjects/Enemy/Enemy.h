@@ -85,6 +85,8 @@ public:
 
     // 敵が「注視している」状態か（ターゲットを見ている）
     bool Get_Loocking() const { return loocking; }
+    //ポーズ状態から復帰するときのサウンド処理
+    void play_Enemy_Sound();
 
 private:
     // 経路再構築（現在地点からゴールまでを逆順にたどって正順にする）
