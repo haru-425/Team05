@@ -770,6 +770,27 @@ void Enemy::SetDifficulty()
 	}
 }
 
+void Enemy::play_Enemy_Sound()
+{
+	switch (state)
+	{
+	case Enemy::State::Roaming:
+		if (isReverseTraced)
+		{
+			Audio3DSystem::Instance().PlayByTag("enemy_run");
+		}
+		else
+		{
+			Audio3DSystem::Instance().StopByTag("enemy_walk");
+		}
+		break;
+	case Enemy::State::Attack:
+		break;
+	default:
+		break;
+	}
+}
+
 // デバッグ描画
 void Enemy::DrawDebug()
 {
