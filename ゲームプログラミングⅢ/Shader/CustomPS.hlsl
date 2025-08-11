@@ -233,34 +233,38 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 lineDiffuse = 0, lineSpecular = 0;
     for (i = 0; i < 47; ++i)
     {
-        for (int s = 0; s < 4; ++s)
-        {
-            float t = s / 3.0f;
-            float3 pointOnLine = lerp(lineLights[i].start.xyz, lineLights[i].end.xyz, t);
-             
-            float3 LP = normalize(pointOnLine - pin.position.xyz);
-            float len = length(pointOnLine - pin.position.xyz);
-           
-            // 物理ベース減衰
-            float attenuation = 1.0f / (attenuationConst + attenuationLinear * len + attenuationQuad * len * len);
-            
-            // フェードアウト（範囲外でも滑らかに減衰）
-            float fadeRange = lineLights[i].range - 5.0f;
-            fadeRange = max(0, fadeRange);
-            float fade = saturate(1.0f - (len - fadeRange) / lineLights[i].range);
-            attenuation *= fade;
 
+        float3 A = lineLights[i].start.xyz;
+        float3 B = lineLights[i].end.xyz;
+        float3 P = pin.position.xyz;
+
+        // 最近接点の計算
+        float3 AB = B - A;
+        float3 AP = P - A;
+        float t = saturate(dot(AP, AB) / dot(AB, AB)); // 線分上に制限
+        float3 Q = A + t * AB; // 最近接点
+
+        // ライト方向と距離
+        float3 LP = Q - P;
+        float len = length(LP);
+        LP = normalize(LP);
+
+        // 減衰とフェード
+        float attenuation = 1.0f / (attenuationConst + attenuationLinear * len + attenuationQuad * len * len);
+        float fadeRange = max(0, lineLights[i].range - 5.0f);
+        float fade = saturate(1.0f - (len - fadeRange) / lineLights[i].range);
+        attenuation *= fade;
              
-            float3 H = normalize(V + LP);
-            float NdotL = saturate(dot(N, LP));
-            float NdotV = saturate(dot(N, V));
-            float NdotH = saturate(dot(N, H));
-            float VdotH = saturate(dot(V, H));
+        float3 H = normalize(V + LP);
+        float NdotL = saturate(dot(N, LP));
+        float NdotV = saturate(dot(N, V));
+        float NdotH = saturate(dot(N, H));
+        float VdotH = saturate(dot(V, H));
             
              
-            lineDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * attenuation * lineLights[i].color.rgb;
-            lineSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * attenuation * lineLights[i].color.rgb;
-        }
+        lineDiffuse += DiffuseBRDF(VdotH, F0, kd.rgb) * attenuation * lineLights[i].color.rgb;
+        lineSpecular += SpecularBRDF(NdotV, NdotL, NdotH, VdotH, F0, roughness) * attenuation * lineLights[i].color.rgb;
+
         lineDiffuse = max(0, lineDiffuse);
         lineSpecular = max(0, lineSpecular);
     }
