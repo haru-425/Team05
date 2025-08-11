@@ -51,15 +51,25 @@ public:
 			// カーソル画像を現在のマウス座標位置に描画
 			Cursor->Render(
 				rc,
-				Input::Instance().GetMouse().GetPositionX() / Graphics::Instance().GetWindowScaleFactor().x,
-				Input::Instance().GetMouse().GetPositionY() / Graphics::Instance().GetWindowScaleFactor().y,
-				0,     // Z値（深度）
-				25, 40,// 描画サイズ（幅・高さ）
-				0, 0,  // UV座標（始点）
-				558, 846, // UVサイズ（元画像からの切り出しサイズ）
-				0,      // 回転角
-				1, 1, 1, 1 // 色（RGBA）＝不透明白
+				(Input::Instance().GetMouse().GetPositionX() / Graphics::Instance().GetWindowScaleFactor().x - (40 / 2 /*- i * 20*/) /** scaleX */ / 2.f),
+				(Input::Instance().GetMouse().GetPositionY() / Graphics::Instance().GetWindowScaleFactor().y - (40 / 2 /*- i * 20*/) /** scaleY*/ / 2.f),
+				0.0f,
+				(40 /*- i * 20*/) / 2 /** scaleX*/,
+				(40 /*- i * 20*/) / 2/* * scaleY*/,
+				0,
+				1.0f, 1.0f, 1.0f, 1.0f
 			);
+			//Cursor->Render(
+			//	rc,
+			//	Input::Instance().GetMouse().GetPositionX() / Graphics::Instance().GetWindowScaleFactor().x,
+			//	Input::Instance().GetMouse().GetPositionY() / Graphics::Instance().GetWindowScaleFactor().y,
+			//	0,     // Z値（深度）
+			//	25, 40,// 描画サイズ（幅・高さ）
+			//	0, 0,  // UV座標（始点）
+			//	558, 846, // UVサイズ（元画像からの切り出しサイズ）
+			//	0,      // 回転角
+			//	1, 1, 1, 1 // 色（RGBA）＝不透明白
+			//);
 		}
 	}
 

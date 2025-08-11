@@ -13,6 +13,7 @@
 #include "System/CollisionEditor.h"
 #include "GameObjects/battery/batteryManager.h"
 #include "EnemyUI.h"
+#include "PlayerUI.h"
 #include "System/CursorManager.h"
 #include "PauseSystem.h"
 
@@ -136,6 +137,7 @@ void SceneGame::Initialize()
 		}
 	}
 	EnemyUI::Instance().Initialize(); ///< 敵のUI初期化
+	PlayerUI::Instance().Initialize();
 }
 
 // 終了化
@@ -170,6 +172,7 @@ void SceneGame::Finalize()
 	player.reset();
 	enemy.reset();
 	EnemyUI::Instance().Finalize();
+	PlayerUI::Instance().Finalize();
 }
 
 // 更新処理
@@ -497,13 +500,19 @@ void SceneGame::Render()
 			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::FilmGrainDust)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->deactivate(dc);
 
+		//VHS
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->activate(dc);
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VHS)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->deactivate(dc);
 
 		//crt
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
 
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
 
 		Graphics::Instance().bit_block_transfer->blit(
@@ -527,6 +536,7 @@ void SceneGame::Render()
 		Graphics::Instance().bit_block_transfer->blit(dc,
 			Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RadialBlur]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::RedPulseAlert].Get());
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RedPulseAlert]->deactivate(dc);
+
 		// BLOOM
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->clear(dc);
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
@@ -545,7 +555,10 @@ void SceneGame::Render()
 
 		Graphics::Instance().bit_block_transfer->blit(dc, shader_resource_views, 10, 2, Graphics::Instance().pixel_shaders[(int)Graphics::PPShaderType::BloomFinal].Get());
 
+
+
 		minimap->Render(player->GetPosition());
+		PlayerUI::Instance().Render(rc);
 		if (!tutorial_Flug || tutorial_Step >= 4)
 		{
 			metar->render();
@@ -596,19 +609,26 @@ void SceneGame::Render()
 			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::BreathShake)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->deactivate(dc);
 
+		//VHS
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->activate(dc);
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VHS)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->deactivate(dc);
+
 
 		//FadeToBlack
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoSignalFinale)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoSignalFinale)].Get());
 
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->deactivate(dc);
 		//TVNoiseFade
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TVNoiseFade)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TVNoiseFade)].Get());
 		//minimap->Render(player->GetPosition());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->deactivate(dc);
 
@@ -644,9 +664,9 @@ void SceneGame::Render()
 	}
 
 	auto easeOutSine = [](float x) -> float
-		{
-			return sin((x * DirectX::XM_PI) / 2);
-		};
+	{
+		return sin((x * DirectX::XM_PI) / 2);
+	};
 
 	if (tutorial_Flug && !tutorial_Flug2)
 	{
