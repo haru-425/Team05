@@ -155,6 +155,7 @@ void GamePad::Update()
         if (GetAsyncKeyState(VK_LMENU) & 0x8000)	newButtonState |= LALT;
         if (GetAsyncKeyState(VK_RETURN) & 0x8000)	newButtonState |= RETURN;
         if (GetAsyncKeyState(VK_F2) & 0x8000)	newButtonState |= F2;
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)	newButtonState |= OPTION;
 
 #if 1
         if (newButtonState & BTN_UP)    ly = 1.0f;

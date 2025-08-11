@@ -237,7 +237,7 @@ LRESULT CALLBACK Framework::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LP
 		break;
 	case WM_KEYDOWN:
 #ifdef _DEBUG
-		if (wParam == VK_ESCAPE) PostMessage(hWnd, WM_CLOSE, 0, 0);
+		//if (wParam == VK_ESCAPE) PostMessage(hWnd, WM_CLOSE, 0, 0);
 #endif
 		break;
 	case WM_ENTERSIZEMOVE:

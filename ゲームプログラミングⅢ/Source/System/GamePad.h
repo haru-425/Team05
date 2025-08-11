@@ -26,6 +26,7 @@ public:
 	static const GamePadButton LALT	= (1 << 17);
 	static const GamePadButton RETURN	= (1 << 18);
 	static const GamePadButton F2	= (1 << 19);
+	static const GamePadButton OPTION	= (1 << 20);
 
 public:
 	GamePad() {}

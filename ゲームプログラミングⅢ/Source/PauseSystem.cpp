@@ -1,17 +1,18 @@
 #include "PauseSystem.h"
 #include "System/SettingsManager.h"
 #include "System/Input.h"
+#include "System/Audio.h"
+
+#include <array>
+#include <stdexcept>
+#include <algorithm>
+#include <imgui.h>
 
 #include "Scene/SceneManager.h"
 #include "System/Graphics.h"
 #include "SceneLoading.h"
 #include "SceneGame.h"
 #include "SceneTitle.h"
-
-#include <array>
-#include <stdexcept>
-#include <algorithm>
-#include <imgui.h>
 
 void PauseSystem::Initialize()
 {
@@ -71,15 +72,29 @@ void PauseSystem::Initialize()
 	um.GetUIs().at(16)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.masterVolume) - SLIDER_WIDTH;
 	um.GetUIs().at(21)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.bgmVolume) - SLIDER_WIDTH;
 	um.GetUIs().at(26)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.seVolume) - SLIDER_WIDTH;
+
+	/// SE読み込み
+	selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
 }
 
 void PauseSystem::Finalize()
 {
 	um.Clear();
+
+	// SEの終了化
+	if (selectSE != nullptr)
+	{
+		selectSE->Stop();
+		delete selectSE;
+		selectSE = nullptr;
+	}
 }
 
 void PauseSystem::Update(float elapsedTime)
 {
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
+	selectSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
+
 	static bool selectOptions = true;
 	static bool selectStart = false;
 	static bool previousDow = false;
@@ -90,8 +105,6 @@ void PauseSystem::Update(float elapsedTime)
 	//// optionを選択した状態から始める
 	selectOptions = true;
 	selectStart = false;
-	//previousDow = false;
-	//lastSelectID = -1;
 
 	Mouse& mouse = Input::Instance().GetMouse();
 	SceneManager& sm = SceneManager::instance();
@@ -165,10 +178,10 @@ void PauseSystem::Update(float elapsedTime)
 
 				if (selectOptions)
 					selectOptions = !selectOptions;
-				//if (oldSelect != 0 || selectSE->IsPlaying()) {
-				//	selectSE->Play(false);
-				//	oldSelect = 0;
-				//}
+				if (oldSelect != 0 || selectSE->IsPlaying()) {
+					selectSE->Play(false);
+					oldSelect = 0;
+				}
 
 				SceneGame::SetPause(false);
 				break;
@@ -181,10 +194,10 @@ void PauseSystem::Update(float elapsedTime)
 
 				if (selectStart)
 					selectStart = !selectStart;
-				//if (oldSelect != 1 || selectSE->IsPlaying()) {
-				//	oldSelect = 1;
-				//	selectSE->Play(false);
-				//}
+				if (oldSelect != 1 || selectSE->IsPlaying()) {
+					oldSelect = 1;
+					selectSE->Play(false);
+				}
 
 				break;
 			}
@@ -259,7 +272,6 @@ void PauseSystem::Update(float elapsedTime)
 	SetVolumeTexturePosition(22, bgmVolume, 25);
 	SetVolumeTexturePosition(27, seVolume, 25);
 
-	GameSettings setting = SettingsManager::Instance().GetGameSettings();
 	/// 設定を変更した場合保存
 	{
 		setting.sensitivity = sensitivity * 0.01;

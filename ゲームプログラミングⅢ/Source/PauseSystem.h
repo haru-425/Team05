@@ -2,6 +2,7 @@
 
 #include "System/UI.h"
 #include "System/UiManager.h"
+#include "System/AudioSource.h"
 
 class PauseSystem
 {
@@ -25,8 +26,6 @@ public:
 
     void SetVolumeTexturePosition(int startID, int volume, float texWidght);
 
-
-
 private:
     /// UIスプライト関連
     struct UIParameter
@@ -42,6 +41,7 @@ private:
         DirectX::XMFLOAT4 color = { 1,1,1,1 };
     };
 
+    /// UIの情報
     UIParameter uiParam[7] = {};
     std::vector<std::unique_ptr<Sprite>> uiSprits;
     std::vector<std::unique_ptr<UI>> ui;
@@ -58,4 +58,9 @@ private:
     int bgmVolume = 0; ///< bgm
     int seVolume = 0; ///< se
     bool isChangeSettings = false;
+
+    // ==============================
+    // 音響関連定数
+    // ==============================
+    AudioSource* selectSE = nullptr;
 };

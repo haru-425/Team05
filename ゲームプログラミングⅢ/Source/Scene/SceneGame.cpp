@@ -195,7 +195,7 @@ void SceneGame::Update(float elapsedTime)
 	if (pause_Flug)
 	{
 		//Rキーを押したらautoPauseFlugをfalseに(プレイヤーがポーズ状態にしたフラグを解除)
-		if (GetAsyncKeyState('R') & 0x8000)
+		if (gamePad.GetButtonDown() & GamePad::OPTION && pause_Flug)
 		{
 			pause_Flug = false;
 			CursorManager::Instance().SetCursorVisible(false);
@@ -206,8 +206,9 @@ void SceneGame::Update(float elapsedTime)
 		return;
 	}
 
-	// Pキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
-	if (GetAsyncKeyState('P') & 0x8000)
+	// ESCキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
+	//if (GetAsyncKeyState('P') & 0x8000)
+	if (gamePad.GetButtonDown() & GamePad::OPTION && !pause_Flug)
 	{
 		pause_Flug = true;
 		CursorManager::Instance().SetCursorVisible(true);
@@ -217,13 +218,13 @@ void SceneGame::Update(float elapsedTime)
 	// フラグがまだ立っていない場合に入力検出
 	if (!sceneTrans)
 	{
-		if (GetAsyncKeyState(VK_ESCAPE))
-		{
-			/// シーンマネージャーに終了することを伝えて、
-			/// Run 関数内で抜けるようにする
-			/// exit関数はメモリリークが大量発生する可能性があるのでこの方法にする
-			SceneManager::instance().SetIsExit(true);
-		}
+		//if (GetAsyncKeyState(VK_ESCAPE))
+		//{
+		//	/// シーンマネージャーに終了することを伝えて、
+		//	/// Run 関数内で抜けるようにする
+		//	/// exit関数はメモリリークが大量発生する可能性があるのでこの方法にする
+		//	SceneManager::instance().SetIsExit(true);
+		//}
 		if (enemy->GetIsDead())
 		{
 			if (life_number == 0)
@@ -558,11 +559,15 @@ void SceneGame::Render()
 
 
 		minimap->Render(player->GetPosition());
-		PlayerUI::Instance().Render(rc);
+		///	ポーズ中はプレイヤーの照準を非表示
+		if (!pause_Flug) {
+			PlayerUI::Instance().Render(rc);
+		}
 		if (!tutorial_Flug || tutorial_Step >= 4)
 		{
 			metar->render();
 		}
+		/// ポーズ中に表示するスプライト
 		if (pause_Flug) {
 			PauseSystem::Instance().Render(rc);
 		}
