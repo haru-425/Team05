@@ -14,6 +14,7 @@
 #include "GameObjects/battery/batteryManager.h"
 #include "EnemyUI.h"
 #include "System/CursorManager.h"
+#include "PauseSystem.h"
 
 #include <imgui.h>
 
@@ -85,6 +86,8 @@ void SceneGame::Initialize()
 	batteryManager::Instance().SetDifficulty(Difficulty::Instance().GetDifficulty());
 	batteryManager::Instance().SetPlayer_and_Enemy(player, enemy);
 	batteryManager::Instance().start();
+
+	PauseSystem::Instance().Initialize();
 
 	um.CreateUI("./Data/Sprite/doorUI.png", "Door_Active");
 	um.GetUIs().at(0)->GetSpriteData().spritePos = { 0,0,1 };
@@ -160,6 +163,7 @@ void SceneGame::Finalize()
 	Audio3DSystem::Instance().StopByTag("enemy_walk");
 
 	um.Clear();
+	PauseSystem::Instance().Finalize();
 
 	batteryManager::Instance().BindClear();
 
@@ -194,7 +198,7 @@ void SceneGame::Update(float elapsedTime)
 			CursorManager::Instance().SetCursorVisible(false);
 		}
 		//ポーズ状態の処理はココ！
-
+		PauseSystem::Instance().Update(elapsedTime);
 
 		return;
 	}
@@ -457,6 +461,10 @@ void SceneGame::Render()
 			metar->render();
 			EnemyUI::Instance().Render(rc);
 		}
+		if (pause_Flug) {
+			PauseSystem::Instance().Render(rc);
+		}
+
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
 
 		//Timer
@@ -541,6 +549,9 @@ void SceneGame::Render()
 		if (!tutorial_Flug || tutorial_Step >= 4)
 		{
 			metar->render();
+		}
+		if (pause_Flug) {
+			PauseSystem::Instance().Render(rc);
 		}
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->deactivate(dc);
 
@@ -719,6 +730,7 @@ void SceneGame::Render()
 #endif // DEBUG
 
 	um.Render(rc);
+
 }
 
 // GUI描画
@@ -772,6 +784,7 @@ void SceneGame::DrawGUI()
 	CollisionEditor::Instance().DrawDebug();
 
 	um.DrawDebug();
+	PauseSystem::Instance().DrawDebug();
 }
 
 void SceneGame::Collision()

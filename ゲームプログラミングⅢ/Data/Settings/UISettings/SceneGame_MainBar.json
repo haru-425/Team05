@@ -1,0 +1,27 @@
+{
+    "angle": 0.0,
+    "color": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+    ],
+    "isVisible": true,
+    "spritePos": [
+        1107.0,
+        311.0,
+        0.0
+    ],
+    "spriteSize": [
+        16.0,
+        54.0
+    ],
+    "texturePos": [
+        656.0,
+        56.0
+    ],
+    "textureSize": [
+        27.0,
+        78.0
+    ]
+}

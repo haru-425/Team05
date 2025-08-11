@@ -39,6 +39,8 @@ public:
 	// GUI描画
 	void DrawGUI()override;
 
+	static void SetPause(bool flg) { pause_Flug = flg; }
+
 private:
 	void Collision();
 
@@ -69,7 +71,7 @@ private:
 	int tutorial_Step = 0;
 	float tutorialTimer = 0.0f;
 	int tutorial_Click_Count = 0;
-	bool pause_Flug = false;
+	inline static bool pause_Flug = false;
 	float button_effect_timer = 0;
 	float button_effect = 0.5f;
 	float timer = 0.0f; // タイマー

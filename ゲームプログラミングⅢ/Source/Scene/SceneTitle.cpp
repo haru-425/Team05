@@ -515,11 +515,7 @@ static constexpr float BAR_MIN = 804;  ///< バーの始点
 static constexpr float BAR_MAX = 1173; ///< バーの終点
 static constexpr float BAR_WIDTH = BAR_MAX - BAR_MIN; ///< バーの長さ
 static constexpr float SLIDER_WIDTH = 16;   ///< スライダーの幅
-static int sensitivity = 0; ///< 感度
-static int mVolume = 0; ///< マスター
-static int bgmVolume = 0; ///< bgm
-static int seVolume = 0; ///< se
-static bool isChangeSettings = false;
+
 void SceneTitle::UpdateUI()
 {
 	static bool selectOptions = false;
@@ -989,15 +985,7 @@ void SceneTitle::UpdateUI()
 #if 1
 	/// 設定を変更した場合保存
 	GameSettings setting = SettingsManager::Instance().GetGameSettings();;
-	if (!selectOptions)
-	{
-		if (sensitivity * 0.01 != setting.sensitivity)isChangeSettings = true;
-		else if (mVolume * 0.01 != setting.masterVolume)isChangeSettings = true;
-		else if (bgmVolume * 0.01 != setting.bgmVolume)isChangeSettings = true;
-		else if (seVolume * 0.01 != setting.seVolume)isChangeSettings = true;
-	}
 
-	//if (isChangeSettings)
 	{
 		setting.sensitivity = sensitivity * 0.01;
 		setting.masterVolume = mVolume * 0.01;
@@ -1006,7 +994,6 @@ void SceneTitle::UpdateUI()
 
 		SettingsManager::Instance().SetGameSettings(setting);
 		//SettingsManager::Instance().Save();
-		isChangeSettings = false;
 	}
 	Audio3DSystem::Instance().masterVolume = setting.masterVolume;
 	Audio3DSystem::Instance().seVolume = setting.seVolume;

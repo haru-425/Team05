@@ -84,6 +84,11 @@ private:
 	bool isVolumeSliderActive = false;
 	int oldSelect = -1;
 
+	int sensitivity = 0; ///< 感度
+	int mVolume = 0; ///< マスター
+	int bgmVolume = 0; ///< bgm
+	int seVolume = 0; ///< se
+
 	/// シェーダ関連
 	// ==============================
 	// シャドウ関連定数

@@ -125,6 +125,7 @@
     <ClCompile Include="Source\GameObjects\Object\ObjectManager.cpp" />
     <ClCompile Include="Source\metar.cpp" />
     <ClCompile Include="Source\System\CollisionEditor.cpp" />
+    <ClCompile Include="Source\PauseSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -221,6 +222,7 @@
     <ClInclude Include="Source\System\CollisionEditor.h" />
     <ClInclude Include="Source\EnemyUI.h" />
     <ClInclude Include="Source\System\CursorManager.h" />
+    <ClInclude Include="Source\PauseSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
