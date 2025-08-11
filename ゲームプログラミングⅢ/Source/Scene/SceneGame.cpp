@@ -191,6 +191,9 @@ void SceneGame::Update(float elapsedTime)
 	bool zKey = GetAsyncKeyState('Z') & 0x8000;
 	bool rKey = GetAsyncKeyState('R') & 0x8000;
 
+	timer += elapsedTime;
+	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
+
 	//ポーズ処理
 	if (pause_Flug)
 	{
@@ -279,8 +282,6 @@ void SceneGame::Update(float elapsedTime)
 		}
 	}
 
-	timer += elapsedTime;
-
 	/// チュートリアル処理
 	if (tutorial_Flug && !tutorial_Flug2)
 	{
@@ -294,7 +295,6 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	reminingTime -= elapsedTime;
-	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	Collision(); ///< 当たり判定
 
