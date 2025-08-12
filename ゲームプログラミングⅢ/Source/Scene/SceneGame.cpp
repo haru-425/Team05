@@ -202,9 +202,11 @@ void SceneGame::Update(float elapsedTime)
 		{
 			pause_Flug = false;
 			CursorManager::Instance().SetCursorVisible(false);
+			enemy->play_Enemy_Sound();
 		}
 		//ポーズ状態の処理はココ！
 		PauseSystem::Instance().Update(elapsedTime);
+		Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 
 		return;
 	}
@@ -213,8 +215,12 @@ void SceneGame::Update(float elapsedTime)
 	//if (GetAsyncKeyState('P') & 0x8000)
 	if (gamePad.GetButtonDown() & GamePad::OPTION && !pause_Flug)
 	{
+		Audio3DSystem::Instance().StopByTag("enemy_run");
+		Audio3DSystem::Instance().StopByTag("enemy_walk");
 		pause_Flug = true;
 		CursorManager::Instance().SetCursorVisible(true);
+
+		return;
 	}
 
 
@@ -268,6 +274,7 @@ void SceneGame::Update(float elapsedTime)
 			batteryManager::Instance().ResetPlayer_Get_Batterry();
 			batteryManager::Instance().ClearBattery();
 			batteryManager::Instance().ResetMax_Batterry();
+			CursorManager::Instance().SetCursorVisible(true);
 		}
 	}
 	else
@@ -959,6 +966,8 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		{
 			// ウィンドウが非アクティブ（＝フォーカスが外れている）ならポーズする
 			pause_Flug = true;
+			Audio3DSystem::Instance().StopByTag("enemy_run");
+			Audio3DSystem::Instance().StopByTag("enemy_walk");
 		}
 #ifdef _DEBUG
 		/// カメラモードの変更 (DEBUG モードのみ)
