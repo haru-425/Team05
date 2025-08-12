@@ -274,6 +274,7 @@ void SceneGame::Update(float elapsedTime)
 			batteryManager::Instance().ResetPlayer_Get_Batterry();
 			batteryManager::Instance().ClearBattery();
 			batteryManager::Instance().ResetMax_Batterry();
+			CursorManager::Instance().SetCursorVisible(true);
 		}
 	}
 	else
