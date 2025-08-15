@@ -205,6 +205,7 @@ void PauseSystem::Update(float elapsedTime)
 		case 4: /// ƒ^ƒCƒgƒ‹‚É‘JˆÚ
 			if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 			{
+				SceneGame::SetPause(false);
 				SceneManager::instance().ChangeScene(new SceneLoading(new SceneTitle));
 				break;
 			}
