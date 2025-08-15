@@ -17,7 +17,7 @@
 #define NORMAL_AND_HARD_SR 10.0f         // ノーマル・ハードの探索距離（短）
 
 #define EASY_LR 15.0f                     // イージーの視認距離（長）
-#define NORMAL_AND_HARD_LR 40.0f         // ノーマル・ハードの視認距離（長）
+#define NORMAL_AND_HARD_LR 20.0f         // ノーマル・ハードの視認距離（長）
 
 class Player;
 
