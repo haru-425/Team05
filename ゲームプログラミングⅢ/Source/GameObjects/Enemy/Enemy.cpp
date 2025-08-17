@@ -103,6 +103,13 @@ void Enemy::Update(float elapsedTime)
 	//bool a = Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n);      //(デバッグ用)
 	loocking = !(Collision::RayCast(RayStart, RayGoal, stage->GetWorld(), stage->GetModel(), hitpos, n));
 
+	/*if (loocking)
+	{
+		char check[256];
+		sprintf_s(check, sizeof(check), "true\n");
+		OutputDebugStringA(check);
+	}*/
+
 	// ヒット位置とプレイヤー位置との距離を比較
 	float hitdist = DirectX::XMVectorGetX(
 		DirectX::XMVector3Length(
@@ -163,8 +170,9 @@ void Enemy::Update(float elapsedTime)
 	float angle = acosf(XMVectorGetX(XMVector3Dot(v1v, v2v))) / 0.01745f;
 
 	char buf[256];
-	sprintf_s(buf, sizeof(buf), "angle%f\n", angle);
-	OutputDebugStringA(buf);
+	/*sprintf_s(buf, sizeof(buf), "angle%f\n", angle);
+	OutputDebugStringA(buf);*/
+
 	// プレイヤーが見えているか近づいているなら
 	if ((loocking && playerdist < lockonRange) && angle <= 45.0f)
 	{
@@ -209,13 +217,13 @@ void Enemy::Update(float elapsedTime)
 			int start = stage->NearWayPointIndex(Start::Instance().GetPosition());
 
 			refinePath(start, current);
+
+
+			/*char checks[256];
+			sprintf_s(checks, sizeof(checks), "add\n");
+			OutputDebugStringA(checks);*/
 		}
 
-	}
-
-	if (loocking)
-	{
-		int x = 19;
 	}
 
 	int current, start;
@@ -288,6 +296,8 @@ void Enemy::Update(float elapsedTime)
 		break;
 	}
 	case State::detection:
+		Audio3DSystem::Instance().StopByTag("enemy_run");
+		Audio3DSystem::Instance().StopByTag("enemy_walk");
 		if (animationcontroller.GetEndAnimation())
 		{
 			moveSpeed = TRACKING_SPEED; // 追跡スピード
@@ -298,7 +308,8 @@ void Enemy::Update(float elapsedTime)
 		break;
 
 	case State::feeling:
-
+		Audio3DSystem::Instance().StopByTag("enemy_run");
+		Audio3DSystem::Instance().StopByTag("enemy_walk");
 		Audio3DSystem::Instance().PlayByTag("enemy_run");
 		moveSpeed = FEELING_SPEED; // 近距離反応スピード
 		state = State::Roaming;
@@ -349,7 +360,7 @@ void Enemy::Updatemovement(float elapsedTime)
 {
 	if (route.empty() || currentTargetIndex >= route.size())
 	{
-		if (isTrackingPlayer)
+		if (isTrackingPlayer || isPlayerInView || isReverseTraced)
 		{
 			// 追跡終了時の処理
 			state = State::miss;

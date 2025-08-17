@@ -14,6 +14,10 @@ SearchAI::~SearchAI()
 
 bool SearchAI::trackingSearch(Stage* stage, bool heuristicFlg)
 {
+	char checks[256];
+	sprintf_s(checks, sizeof(checks), "search\n");
+	OutputDebugStringA(checks);
+
 	tracking = true;
 	// 過去の探索データをクリア
 	SearchClear(stage);
