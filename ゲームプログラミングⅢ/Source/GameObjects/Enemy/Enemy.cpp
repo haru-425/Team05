@@ -237,10 +237,20 @@ void Enemy::Update(float elapsedTime)
 		break;
 
 	case State::turn:
+
+		Audio3DSystem::Instance().StopByTag("enemy_run");
+		Audio3DSystem::Instance().StopByTag("enemy_walk");
 		if (animationcontroller.GetEndAnimation())
 		{
 			state = State::Roaming;
-			Audio3DSystem::Instance().PlayByTag("enemy_walk");
+			if (isTrackingPlayer|| isPlayerInView)
+			{
+				Audio3DSystem::Instance().PlayByTag("enemy_walk");
+			}
+			else
+			{
+				Audio3DSystem::Instance().PlayByTag("enemy_walk");
+			}
 			Animationplay();
 		}
 		break;
@@ -296,7 +306,6 @@ void Enemy::Update(float elapsedTime)
 		break;
 	}
 	case State::detection:
-		Audio3DSystem::Instance().StopByTag("enemy_run");
 		Audio3DSystem::Instance().StopByTag("enemy_walk");
 		if (animationcontroller.GetEndAnimation())
 		{
@@ -308,7 +317,6 @@ void Enemy::Update(float elapsedTime)
 		break;
 
 	case State::feeling:
-		Audio3DSystem::Instance().StopByTag("enemy_run");
 		Audio3DSystem::Instance().StopByTag("enemy_walk");
 		Audio3DSystem::Instance().PlayByTag("enemy_run");
 		moveSpeed = FEELING_SPEED; // 近距離反応スピード
