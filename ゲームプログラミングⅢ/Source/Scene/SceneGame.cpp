@@ -236,28 +236,20 @@ void SceneGame::Update(float elapsedTime)
 		//}
 		if (enemy->GetIsDead())
 		{
-			if (life_number == 0)
-			{
-				nextScene = new Game_Clear;
-				sceneTrans = true;
-				transTimer = 0.0f;
-				selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
-				reminingTime = 0.0f;
-				RankSystem::Instance().SetRank(
-					batteryManager::Instance().getPlayerHasBattery(),
-					batteryManager::Instance().getMAXBattery(),
-					life_number); // タイムアップでSランク
-				batteryManager::Instance().ResetPlayer_Get_Batterry();
-				batteryManager::Instance().ResetMax_Batterry();
-				CursorManager::Instance().SetCursorVisible(true);
-			}
-			else
-			{
-				nextScene = new Game_Over(life_number);
-				sceneTrans = true;
-				transTimer = 1.7f;
-			}
+			nextScene = new Game_Clear;
+			sceneTrans = true;
+			transTimer = 0.0f;
+			selectTrans = SelectTrans::Clear;
+			RankSystem::Instance().SetRank(
+				batteryManager::Instance().getPlayerHasBattery(),
+				batteryManager::Instance().getMAXBattery(),
+				reminingTime); // タイムアップでSランク
+			batteryManager::Instance().ResetPlayer_Get_Batterry();
 			batteryManager::Instance().ClearBattery();
+			batteryManager::Instance().ResetMax_Batterry();
+			CursorManager::Instance().SetCursorVisible(true);
+			batteryManager::Instance().ClearBattery();
+			reminingTime = 0.0f;
 		}
 
 		if (reminingTime <= 0.0f)
@@ -265,16 +257,16 @@ void SceneGame::Update(float elapsedTime)
 			nextScene = new Game_Clear;
 			sceneTrans = true;
 			transTimer = 0.0f;
-			selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
-			reminingTime = 0.0f;
+			selectTrans = SelectTrans::Clear;
 			RankSystem::Instance().SetRank(
 				batteryManager::Instance().getPlayerHasBattery(),
 				batteryManager::Instance().getMAXBattery(),
-				life_number); // タイムアップでSランク
+				reminingTime); // タイムアップでSランク
 			batteryManager::Instance().ResetPlayer_Get_Batterry();
 			batteryManager::Instance().ClearBattery();
 			batteryManager::Instance().ResetMax_Batterry();
 			CursorManager::Instance().SetCursorVisible(true);
+			reminingTime = 0.0f;
 		}
 	}
 	else
