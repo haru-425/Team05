@@ -137,7 +137,6 @@ public:
 			{
 				getSE->Play(false);
 				player_Get_Battery.push_back(it->getType());
-				it = hasBattery.erase(it);
 				switch (it->getType())
 				{
 				case BatteryType::Normal:
@@ -149,6 +148,7 @@ public:
 				default:
 					break;
 				}
+				hasBattery.erase(it);
 				player->AddHijackTimer(battery_recovery);
 				break;
 			}
