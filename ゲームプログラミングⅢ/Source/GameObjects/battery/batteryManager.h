@@ -12,7 +12,8 @@
 #include <vector>
 
 #define BATTERY_REMAIN_MAX 9
-#define BATTERY_MAX 9
+#define BATTERY_NORMAL_MAX 9
+#define BATTERY_HARD_MAX 18
 #define BATTERY_DROP_NORML_INTERVAL 20.0f
 #define BATTERY_DROP_HARD_INTERVAL 10.0f
 #define NORML_RECOVERY 10.0f
@@ -57,14 +58,14 @@ public:
 
 		// Normal と High に振り分けてコピー
 		std::vector<BatteryType> normals, highs;
-		for (int i = 0; i < BATTERY_MAX; ++i) {
+		for (int i = 0; i < BATTERY_NORMAL_MAX; ++i) {
 			if (batteryOrder[i] == BatteryType::Normal) normals.push_back(batteryOrder[i]);
 			else highs.push_back(batteryOrder[i]);
 		}
 
 		// 配置し直し
-		for (int i = 0; i < BATTERY_MAX; ++i) {
-			double prob_high = static_cast<double>(i) / (BATTERY_MAX - 1); // 後ろに行くほどHigh確率UP
+		for (int i = 0; i < BATTERY_NORMAL_MAX; ++i) {
+			double prob_high = static_cast<double>(i) / (BATTERY_NORMAL_MAX - 1); // 後ろに行くほどHigh確率UP
 			std::uniform_real_distribution<> dist(0.0, 1.0);
 			bool pick_high = dist(gen) < prob_high;
 
@@ -97,7 +98,7 @@ public:
 		{
 			battery.Update(elapsedTime);
 		}
-		if (hasBattery.size() > BATTERY_MAX && !hasBattery.empty())
+		if (hasBattery.size() > BATTERY_NORMAL_MAX && !hasBattery.empty())
 		{
 			hasBattery.erase(hasBattery.begin());
 		}
@@ -184,11 +185,20 @@ public:
 		return player_Get_Score;
 	}
 
-	BatteryType getPlayerHasBattery(int i)
+	int getPlayerHasBattery(int i)
 	{
 		if (player_Get_Battery.size() <= i)
 		{
-			return Non;
+			return -1;
+		}
+
+		switch (player_Get_Battery[i])
+		{
+		case Non:return -1;
+		case Normal:return 0;
+		case High:return 1;
+		default:
+			break;
 		}
 		return player_Get_Battery[i];
 	}
@@ -202,7 +212,7 @@ private:
 	batteryManager() {}
 	~batteryManager() {}
 
-	BatteryType batteryOrder[BATTERY_MAX] = { Normal,Normal,Normal,Normal,Normal,Normal,High,High,High };
+	BatteryType batteryOrder[BATTERY_NORMAL_MAX] = { Normal,Normal,Normal,Normal,Normal,Normal,High,High,High };
 
 	std::vector<Battery> hasBattery;
 
