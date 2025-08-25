@@ -136,8 +136,8 @@ public:
 			if (DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&it->getPos()), DirectX::XMLoadFloat3(&pos)))) < 1.0f)
 			{
 				getSE->Play(false);
-				it = hasBattery.erase(it);
 				player_Get_Battery.push_back(it->getType());
+				it = hasBattery.erase(it);
 				switch (it->getType())
 				{
 				case BatteryType::Normal:
@@ -192,14 +192,6 @@ public:
 			return -1;
 		}
 
-		switch (player_Get_Battery[i])
-		{
-		case Non:return -1;
-		case Normal:return 0;
-		case High:return 1;
-		default:
-			break;
-		}
 		return player_Get_Battery[i];
 	}
 
