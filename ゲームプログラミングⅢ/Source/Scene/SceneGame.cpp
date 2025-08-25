@@ -16,6 +16,7 @@
 #include "PlayerUI.h"
 #include "System/CursorManager.h"
 #include "PauseSystem.h"
+#include "GameObjects/battery/BatteryScore.h"
 
 #include <imgui.h>
 
@@ -138,6 +139,7 @@ void SceneGame::Initialize()
 	}
 	EnemyUI::Instance().Initialize(); ///< 敵のUI初期化
 	PlayerUI::Instance().Initialize();
+	BatteryScore::Instance().Initialize();
 }
 
 // 終了化
@@ -561,6 +563,7 @@ void SceneGame::Render()
 		if (!tutorial_Flug || tutorial_Step >= 4)
 		{
 			metar->render();
+			BatteryScore::Instance().Render(rc);
 		}
 		/// ポーズ中に表示するスプライト
 		if (pause_Flug) {

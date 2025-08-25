@@ -185,11 +185,20 @@ public:
 		return player_Get_Score;
 	}
 
-	BatteryType getPlayerHasBattery(int i)
+	int getPlayerHasBattery(int i)
 	{
 		if (player_Get_Battery.size() <= i)
 		{
-			return Non;
+			return -1;
+		}
+
+		switch (player_Get_Battery[i])
+		{
+		case Non:return -1;
+		case Normal:return 0;
+		case High:return 1;
+		default:
+			break;
 		}
 		return player_Get_Battery[i];
 	}
