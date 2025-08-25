@@ -244,11 +244,10 @@ void SceneGame::Update(float elapsedTime)
 				selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
 				reminingTime = 0.0f;
 				RankSystem::Instance().SetRank(
-					batteryManager::Instance().getPlayerHasBattery(),
+					batteryManager::Instance().getScore(),
 					batteryManager::Instance().getMAXBattery(),
 					life_number); // タイムアップでSランク
-				batteryManager::Instance().ResetPlayer_Get_Batterry();
-				batteryManager::Instance().ResetMax_Batterry();
+				batteryManager::Instance().ClearBattery();
 				CursorManager::Instance().SetCursorVisible(true);
 			}
 			else
@@ -268,12 +267,10 @@ void SceneGame::Update(float elapsedTime)
 			selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
 			reminingTime = 0.0f;
 			RankSystem::Instance().SetRank(
-				batteryManager::Instance().getPlayerHasBattery(),
+				batteryManager::Instance().getScore(),
 				batteryManager::Instance().getMAXBattery(),
 				life_number); // タイムアップでSランク
-			batteryManager::Instance().ResetPlayer_Get_Batterry();
 			batteryManager::Instance().ClearBattery();
-			batteryManager::Instance().ResetMax_Batterry();
 			CursorManager::Instance().SetCursorVisible(true);
 		}
 	}
