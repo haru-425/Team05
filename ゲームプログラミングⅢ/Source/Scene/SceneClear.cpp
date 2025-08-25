@@ -250,7 +250,7 @@ void Game_Clear::Render()
 			0,
 			SMALL_SPRITE_SIZE * scaleX,
 			SMALL_SPRITE_SIZE * scaleY,
-			512.0f * (float)result.Death, 0, 512, 512,
+			512.0f * (float)result.Time, 0, 512, 512,
 			0, 1, 1, 1, 1
 		);
 

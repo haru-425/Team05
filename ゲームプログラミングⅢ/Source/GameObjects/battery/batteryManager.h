@@ -6,11 +6,13 @@
 #include "System/AudioSource.h"
 #include "System/Audio.h"
 #include "System/SettingsManager.h"
+#include <random>
 #include <chrono>
 #include <DirectXMath.h>
 #include <vector>
 
-#define BATTERY_MAX 10
+#define BATTERY_REMAIN_MAX 9
+#define BATTERY_MAX 9
 #define BATTERY_DROP_NORML_INTERVAL 20.0f
 #define BATTERY_DROP_HARD_INTERVAL 10.0f
 #define NORML_RECOVERY 10.0f
@@ -47,6 +49,47 @@ public:
 		getSE = Audio::Instance().LoadAudioSource("./Data/Sound/get.wav");
 	};
 
+	void shuffleBatteryOrder()
+	{
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+
+		// Normal と High に振り分けてコピー
+		std::vector<BatteryType> normals, highs;
+		for (int i = 0; i < BATTERY_MAX; ++i) {
+			if (batteryOrder[i] == BatteryType::Normal) normals.push_back(batteryOrder[i]);
+			else highs.push_back(batteryOrder[i]);
+		}
+
+		// 配置し直し
+		for (int i = 0; i < BATTERY_MAX; ++i) {
+			double prob_high = static_cast<double>(i) / (BATTERY_MAX - 1); // 後ろに行くほどHigh確率UP
+			std::uniform_real_distribution<> dist(0.0, 1.0);
+			bool pick_high = dist(gen) < prob_high;
+
+			if (pick_high && !highs.empty()) {
+				// High をランダムに取る
+				std::uniform_int_distribution<> d(0, highs.size() - 1);
+				int idx = d(gen);
+				batteryOrder[i] = highs[idx];
+				highs.erase(highs.begin() + idx);
+			}
+			else if (!normals.empty()) {
+				// Normal をランダムに取る
+				std::uniform_int_distribution<> d(0, normals.size() - 1);
+				int idx = d(gen);
+				batteryOrder[i] = normals[idx];
+				normals.erase(normals.begin() + idx);
+			}
+			else if (!highs.empty()) {
+				// Normal が尽きたら High を詰める
+				batteryOrder[i] = highs.back();
+				highs.pop_back();
+			}
+		}
+	}
+
 	void Update(float elapsedTime)
 	{
 		droptime += elapsedTime;
@@ -78,11 +121,11 @@ public:
 
 	void addBattery(DirectX::XMFLOAT3 pos)
 	{
-		hasBattery.push_back(battery());
+		hasBattery.push_back(Battery(batteryOrder[drop_Count]));
 		hasBattery.back().setPos(pos);
 		hasBattery.back().setModel(batterymodel);
 
-		game_Max_Batterry++;
+		drop_Count++;
 	}
 
 	void deleteBattery(DirectX::XMFLOAT3 pos)
@@ -93,7 +136,18 @@ public:
 			{
 				getSE->Play(false);
 				it = hasBattery.erase(it);
-				player_Get_Batterry++;
+				player_Get_Battery.push_back(it->getType());
+				switch (it->getType())
+				{
+				case BatteryType::Normal:
+					player_Get_Score += 10;
+					break;
+				case BatteryType::High:
+					player_Get_Score += 15;
+					break;
+				default:
+					break;
+				}
 				player->AddHijackTimer(battery_recovery);
 				break;
 			}
@@ -111,29 +165,48 @@ public:
 		{
 			hasBattery.clear();
 		}
+		if (!player_Get_Battery.empty())
+		{
+			player_Get_Battery.clear();
+		}
+		drop_Count = 0;
+		max_Score = 0;
+		player_Get_Score = 0;
+		droptime = 0;
 	}
-	void ResetPlayer_Get_Batterry() { player_Get_Batterry = 0; };
-
-	void ResetMax_Batterry() { game_Max_Batterry = 0; };
-
-	int getMAXBattery()
+	int getMax_Score()
 	{
-
-		return game_Max_Batterry;
+		return max_Score;
 	}
-	int getPlayerHasBattery()
+
+	int getScore()
 	{
-		return player_Get_Batterry;
+		return player_Get_Score;
+	}
+
+	BatteryType getPlayerHasBattery(int i)
+	{
+		if (player_Get_Battery.size() <= i)
+		{
+			return Non;
+		}
+		return player_Get_Battery[i];
 	}
 
 	void stop(){ dropFlag = false; }
 
 	void start(){ dropFlag = true; }
+
 private:
+
 	batteryManager() {}
 	~batteryManager() {}
 
-	std::vector<battery> hasBattery;
+	BatteryType batteryOrder[BATTERY_MAX] = { Normal,Normal,Normal,Normal,Normal,Normal,High,High,High };
+
+	std::vector<Battery> hasBattery;
+
+	std::vector<BatteryType> player_Get_Battery;
 
 	std::shared_ptr<Model> batterymodel = std::make_shared<Model>("Data/Model/battery_assets/battery_geo.mdl");
 
@@ -141,9 +214,11 @@ private:
 
 	std::shared_ptr<Enemy> enemy;
 
-	int player_Get_Batterry = 0;
+	int drop_Count = 0;
 
-	int game_Max_Batterry = 0;
+	int player_Get_Score = 0;
+
+	int max_Score = 0;
 
 	float battery_recovery = NORML_RECOVERY;
 

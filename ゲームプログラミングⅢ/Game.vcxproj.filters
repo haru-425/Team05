@@ -120,13 +120,11 @@
     <ClCompile Include="Source\GameObjects\TV\TV.cpp" />
     <ClCompile Include="Source\Scene\SceneClear.cpp" />
     <ClCompile Include="Source\GameObjects\battery\battery.cpp" />
-    <ClCompile Include="Source\RankSystem\RankSystem.cpp" />
     <ClCompile Include="Source\GameObjects\Object\Object.cpp" />
     <ClCompile Include="Source\GameObjects\Object\ObjectManager.cpp" />
     <ClCompile Include="Source\metar.cpp" />
     <ClCompile Include="Source\System\CollisionEditor.cpp" />
     <ClCompile Include="Source\PauseSystem.cpp" />
-    <ClCompile Include="Source\GameObjects\battery\BatteryScore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
@@ -225,7 +223,6 @@
     <ClInclude Include="Source\System\CursorManager.h" />
     <ClInclude Include="Source\PauseSystem.h" />
     <ClInclude Include="Source\PlayerUI.h" />
-    <ClInclude Include="Source\GameObjects\battery\BatteryScore.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />

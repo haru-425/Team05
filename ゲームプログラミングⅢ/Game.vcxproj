@@ -251,7 +251,6 @@
     <ClCompile Include="Source\GameObjects\Character.cpp" />
     <ClCompile Include="Source\Pursuer\ObjectBase.cpp" />
     <ClCompile Include="Source\Pursuer\SearchAI.cpp" />
-    <ClCompile Include="Source\RankSystem\RankSystem.cpp" />
     <ClCompile Include="Source\Scene\fujimoto.cpp" />
     <ClCompile Include="Source\Scene\SceneClear.cpp" />
     <ClCompile Include="Source\Scene\SceneGame.cpp" />
