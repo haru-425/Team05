@@ -27,10 +27,10 @@ public:
 private:
 	enum class batteryPattern
 	{
-		normal = 0,
+		normal  = 0,
 		spetial = 1,
 
-		none = -1,
+		none    = -1,
 	};
 
 	const int MAX_BATTERY = 10;

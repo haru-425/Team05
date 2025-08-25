@@ -1,10 +1,11 @@
 #include "BatteryScore.h"
+#include "batteryManager.h"
 
 void BatteryScore::Initialize()
 {
 	/// スプライトの読み込み
-	sprites[static_cast<int>(batteryPattern::normal)] = std::make_unique<Sprite>("Data/Sprite/battery_icon_normal.png");
-	sprites[static_cast<int>(batteryPattern::spetial)] = std::make_unique<Sprite>("Data/Sprite/battery_icon_high.png");
+	sprites[static_cast<int>(batteryPattern::normal)] = std::make_unique<Sprite>("Data/Sprite/battery_icon/battery_icon_normal.png");
+	sprites[static_cast<int>(batteryPattern::spetial)] = std::make_unique<Sprite>("Data/Sprite/battery_icon/battery_icon_high.png");
 }
 
 void BatteryScore::Finalize()
@@ -17,15 +18,15 @@ void BatteryScore::Update(float elapsedTime)
 }
 void BatteryScore::Render(RenderContext& rc)
 {
-	float size = 64;
+	float size = 40;
+	float posX = 50 + size;
+	float posY = 450;
 
 	for (int i = 0; i < MAX_BATTERY; ++i)
 	{
-		float posX = 1280 - size;
-		float posY = 600;
 
-		int pattern = 0;
-		/// int pattern = getPlayerHasBattery(i);
+		int pattern = -1;
+		//int pattern = batteryManager::getPlayerHasBattery(i);
 
 		if (pattern == -1) break;
 
@@ -42,6 +43,6 @@ void BatteryScore::Render(RenderContext& rc)
 			break;
 		}
 
-		posY -= (size + 20);
+		posY -= (size + 8);
 	}
 }
