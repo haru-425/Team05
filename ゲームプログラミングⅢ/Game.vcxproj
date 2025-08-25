@@ -113,6 +113,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\GameObjects\battery\BatteryScore.h" />
     <ClInclude Include="Source\PauseSystem.h" />
     <ClInclude Include="Source\3DAudio\3dAudio.h" />
     <ClInclude Include="Source\EnemyUI.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="Source\GameObjects\TV\TV.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\GameObjects\battery\BatteryScore.cpp" />
     <ClCompile Include="Source\PauseSystem.cpp" />
     <ClCompile Include="Source\3DAudio\3dAudio.cpp" />
     <ClCompile Include="Source\GameObjects\Aircon\AirconManager.cpp" />
