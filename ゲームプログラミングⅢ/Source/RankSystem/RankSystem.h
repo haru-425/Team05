@@ -16,7 +16,7 @@ private:
 public:
 	struct Rank {
 		RankCode Task;
-		RankCode Death;
+		RankCode Time;
 		RankCode Result;
 	};
 	Rank rank;
@@ -28,25 +28,30 @@ public:
 	}
 	RankSystem() {};
 	~RankSystem() {};
-	void SetRank(float task, float alltask, float life) {
-		float score = task / alltask;
-		if (score >= 80.f / 100.f) rank.Task = RankCode::S;
-		else if (score >= 50.f / 100.f) rank.Task = RankCode::A;
-		else if (score >= 20.f / 100.f) rank.Task = RankCode::B;
+	void SetRank(float score, float maxScore, float time) {
+		float score_ = score / maxScore;
+		if (score_ >= 80.f / 100.f) rank.Task = RankCode::S;
+		else if (score_ >= 50.f / 100.f) rank.Task = RankCode::A;
+		else if (score_ >= 20.f / 100.f) rank.Task = RankCode::B;
 		else  rank.Task = RankCode::C;
 
+		if (time >= 180.f) rank.Time = RankCode::S;
+		else if (time >= 120.f) rank.Time = RankCode::A;
+		else if (time >= 60.f) rank.Time = RankCode::B;
+		else  rank.Time = RankCode::C;
 
-		if (life == 3)rank.Death = RankCode::S;
-		else if (life == 2)rank.Death = RankCode::A;
-		else if (life == 1)rank.Death = RankCode::B;
-		else rank.Death = RankCode::C;
 
-		if (std::abs(float(rank.Task) - float(rank.Death)) == 1)
+		//if (life == 3)rank.Death = RankCode::S;
+		//else if (life == 2)rank.Death = RankCode::A;
+		//else if (life == 1)rank.Death = RankCode::B;
+		//else rank.Death = RankCode::C;
+
+		if (std::abs(float(rank.Task) - float(rank.Time)) == 1)
 		{
-			rank.Result = (float(rank.Task) > float(rank.Death)) ? rank.Task : rank.Death;
+			rank.Result = (float(rank.Task) > float(rank.Time)) ? rank.Task : rank.Time;
 		}
 		else {
-			float average = (float(rank.Task) + float(rank.Death)) / 2.0f;
+			float average = (float(rank.Task) + float(rank.Time)) / 2.0f;
 			int finalValue = static_cast<int>(std::ceil(average));
 			rank.Result = static_cast<RankCode>(finalValue);
 
