@@ -15,6 +15,7 @@
 
 enum BatteryType
 {
+	Non,
 	Normal,
 	High
 };

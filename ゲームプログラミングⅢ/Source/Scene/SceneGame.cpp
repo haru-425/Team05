@@ -241,12 +241,10 @@ void SceneGame::Update(float elapsedTime)
 			transTimer = 0.0f;
 			selectTrans = SelectTrans::Clear;
 			RankSystem::Instance().SetRank(
-				batteryManager::Instance().getPlayerHasBattery(),
-				batteryManager::Instance().getMAXBattery(),
+				batteryManager::Instance().getScore(),
+				batteryManager::Instance().getMax_Score(),
 				reminingTime); // タイムアップでSランク
-			batteryManager::Instance().ResetPlayer_Get_Batterry();
 			batteryManager::Instance().ClearBattery();
-			batteryManager::Instance().ResetMax_Batterry();
 			CursorManager::Instance().SetCursorVisible(true);
 			batteryManager::Instance().ClearBattery();
 			reminingTime = 0.0f;
@@ -260,9 +258,8 @@ void SceneGame::Update(float elapsedTime)
 			selectTrans = SelectTrans::Clear;
 			RankSystem::Instance().SetRank(
 				batteryManager::Instance().getScore(),
-				batteryManager::Instance().getMAXBattery(),
+				batteryManager::Instance().getMax_Score(),
 				reminingTime); // タイムアップでSランク
-			batteryManager::Instance().ResetPlayer_Get_Batterry();
 			batteryManager::Instance().ClearBattery();
 			CursorManager::Instance().SetCursorVisible(true);
 			reminingTime = 0.0f;

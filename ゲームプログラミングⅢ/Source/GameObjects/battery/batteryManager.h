@@ -165,23 +165,32 @@ public:
 		{
 			hasBattery.clear();
 		}
+		if (!player_Get_Battery.empty())
+		{
+			player_Get_Battery.clear();
+		}
 		drop_Count = 0;
 		max_Score = 0;
 		player_Get_Score = 0;
 		droptime = 0;
 	}
-	int getMAXBattery()
+	int getMax_Score()
 	{
 		return max_Score;
-	}
-	BatteryType getPlayerHasBattery(int i)
-	{
-		return player_Get_Battery[i];
 	}
 
 	int getScore()
 	{
 		return player_Get_Score;
+	}
+
+	BatteryType getPlayerHasBattery(int i)
+	{
+		if (player_Get_Battery.size() <= i)
+		{
+			return Non;
+		}
+		return player_Get_Battery[i];
 	}
 
 	void stop(){ dropFlag = false; }
