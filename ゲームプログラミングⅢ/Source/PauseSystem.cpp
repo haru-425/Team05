@@ -20,9 +20,9 @@ void PauseSystem::Initialize()
 	/// ゲーム選択
 	um.CreateUI("./Data/Sprite/back.png", "SceneGame_Back");
 	um.CreateUI("./Data/Sprite/GameTitleStrings.png", "SceneGame_TitleRogo");
-	um.CreateUI("./Data/Sprite/image.png", "SceneGame_Game");
+	um.CreateUI("./Data/Sprite/pause.png", "SceneGame_Game");
 	um.CreateUI("./Data/Sprite/image.png", "SceneGame_Option");
-	um.CreateUI("./Data/Sprite/image.png", "SceneGame_Exit");
+	um.CreateUI("./Data/Sprite/pause.png", "SceneGame_Exit");
 	/// オプション項目
 	um.CreateUI("./Data/Sprite/back.png", "SceneGame_OptionBack");
 	um.CreateUI("./Data/Sprite/image.png", "SceneGame_Sensitivity");
