@@ -22,11 +22,11 @@ void BatteryScore::Render(RenderContext& rc)
 	float posX = 50 + size;
 	float posY = 450;
 
-	for (int i = 0; i < MAX_BATTERY; ++i)
+	for (int i = 0; i < 64; ++i)
 	{
 
-		int pattern = -1;
-		//int pattern = batteryManager::getPlayerHasBattery(i);
+		//int pattern = -1;
+		int pattern = batteryManager::Instance().getPlayerHasBattery(i);
 
 		if (pattern == -1) break;
 

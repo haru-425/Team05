@@ -33,7 +33,6 @@ private:
 		none    = -1,
 	};
 
-	const int MAX_BATTERY = 10;
 	std::unique_ptr<Sprite> sprites[2];
 };
 

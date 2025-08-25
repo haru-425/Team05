@@ -563,7 +563,7 @@ void SceneGame::Render()
 		if (!tutorial_Flug || tutorial_Step >= 4)
 		{
 			metar->render();
-			BatteryScore::Instance().Render(rc);
+			//BatteryScore::Instance().Render(rc);
 		}
 		/// ポーズ中に表示するスプライト
 		if (pause_Flug) {
