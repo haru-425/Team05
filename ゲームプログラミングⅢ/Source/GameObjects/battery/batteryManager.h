@@ -124,8 +124,17 @@ public:
 	{
 		hasBattery.push_back(Battery(batteryOrder[drop_Count]));
 		hasBattery.back().setPos(pos);
-		hasBattery.back().setModel(batterymodel);
-
+		switch (batteryOrder[drop_Count])
+		{
+		case BatteryType::Normal:
+			hasBattery.back().setModel(normal_Battery_Model);
+			break;
+		case BatteryType::High:
+			hasBattery.back().setModel(hard_Battery_Model);
+			break;
+		default:
+			break;
+		}
 		drop_Count++;
 	}
 
@@ -210,7 +219,9 @@ private:
 
 	std::vector<BatteryType> player_Get_Battery;
 
-	std::shared_ptr<Model> batterymodel = std::make_shared<Model>("Data/Model/battery_assets/battery_geo.mdl");
+	std::shared_ptr<Model> hard_Battery_Model = std::make_shared<Model>("Data/Model/battery_assets/battery_geo.mdl");
+	std::shared_ptr<Model> normal_Battery_Model = std::make_shared<Model>("Data/Model/battery_assets/battery_normal.mdl");
+
 
 	std::shared_ptr<Player> player;
 
