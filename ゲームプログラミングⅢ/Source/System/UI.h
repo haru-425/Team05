@@ -2,6 +2,7 @@
 #include <memory>
 #include <string>
 
+#include "System/Input.h"
 #include "System/Sprite.h"
 #include "System/RenderContext.h"
 
@@ -31,6 +32,20 @@ public:
     SpriteData& GetSpriteData() { return sprData; }
 
     bool GetIsHit() const { return isHit; }
+
+    /**
+    * @brief スプライトのヒット判定を設定する関数
+    * 
+    * コントローラーが使用されている場合のみの反応にする
+    * UI をもともとコントローラーを使う前提で作ってなかったためにこうなっちゃった
+    */
+    void SetIsHit(bool isHit) 
+    {
+        if (Input::Instance().GetIsGamePadActive())
+        {
+            this->isHit = isHit;
+        }
+    }
 
     const std::string& GetSaveFilename() { return saveFilename.c_str(); }
 

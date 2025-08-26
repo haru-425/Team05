@@ -1,4 +1,5 @@
 #pragma once
+#include <DirectXMath.h>
 
 using GamePadButton = unsigned int;
 
@@ -65,6 +66,30 @@ public:
 	// 右トリガー入力状態の取得
 	float GetTriggerR() const { return triggerR; }
 
+	/**
+	* @brief コントローラー使用中か
+	* 
+	* この関数は接続されているかどうかを調べる関数
+	*/
+	bool GetUseController() const { return useController; }
+
+	/**
+	* @brief コントローラー振動機能
+	*/
+	void PlayVibration();
+
+	/**
+	* @brief コントローラーに入力反応があるか
+	* 
+	* 接続はされているけど、入力されているかを調べる関数
+	* ある特定のボタンだけの入力確認とかはめんどくさいんで作りません
+	*/
+	bool GetIsActive();
+
+public:
+	/// x : 左　y : 右
+	DirectX::XMFLOAT2 strength = { 0,0 };
+
 private:
 	GamePadButton		buttonState[2] = { 0 };
 	GamePadButton		buttonDown = 0;
@@ -76,4 +101,6 @@ private:
 	float				triggerL = 0.0f;
 	float				triggerR = 0.0f;
 	int					slot = 0;
+
+	bool useController = false;
 };

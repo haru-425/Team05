@@ -19,6 +19,7 @@
 #include "GameObjects/battery/BatteryScore.h"
 
 #include <imgui.h>
+#include <random>
 
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
@@ -200,7 +201,7 @@ void SceneGame::Update(float elapsedTime)
 	if (pause_Flug)
 	{
 		//Rキーを押したらautoPauseFlugをfalseに(プレイヤーがポーズ状態にしたフラグを解除)
-		if (gamePad.GetButtonDown() & GamePad::OPTION && pause_Flug)
+		if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && pause_Flug)
 		{
 			pause_Flug = false;
 			CursorManager::Instance().SetCursorVisible(false);
@@ -215,7 +216,7 @@ void SceneGame::Update(float elapsedTime)
 
 	// ESCキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
 	//if (GetAsyncKeyState('P') & 0x8000)
-	if (gamePad.GetButtonDown() & GamePad::OPTION && !pause_Flug)
+	if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && !pause_Flug)
 	{
 		Audio3DSystem::Instance().StopByTag("enemy_run");
 		Audio3DSystem::Instance().StopByTag("enemy_walk");
@@ -270,10 +271,10 @@ void SceneGame::Update(float elapsedTime)
 	else
 	{
 		// フラグが立っている間タイマーを加算し、1秒以上経ったらシーン切り替え
-		transTimer += elapsedTime;
+		//transTimer += elapsedTime;
 		if (transTimer >= 3.0f && nextScene != nullptr)
 		{
-			SceneManager::instance().ChangeScene(nextScene);
+			//SceneManager::instance().ChangeScene(nextScene);
 			nextScene = nullptr; // 多重遷移防止
 			sceneTrans = false;  // シーン遷移フラグをリセット
 		}
@@ -904,6 +905,24 @@ void SceneGame::UpdateCamera(float elapsedTime)
 {
 	GamePad& gamepad = Input::Instance().GetGamePad();
 
+	/// カメラの演出用
+	if (player->GetIsEvent())
+	{
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		float shakeMax = 25 * 0.01745f;
+		float shakeMin = -25 * 0.01745f;
+		std::uniform_real_distribution<float>dist(shakeMin, shakeMax);
+
+		float shakeTotalTime = 0.5f;
+		static float shakeTimer = shakeTotalTime;
+		shakeTimer -= elapsedTime;
+		shakeTimer = std::clamp(shakeTimer, 0.0f, shakeTotalTime);
+		float timeFactor = shakeTimer / shakeTotalTime;
+		float shakeScale = dist(gen) * timeFactor;
+		i_CameraController->SetAngleZ(shakeScale);
+	}
+
 	/// 一人称 (プレイヤー視点)
 	if (typeid(*i_CameraController) == typeid(FPCameraController))
 	{
@@ -926,8 +945,8 @@ void SceneGame::UpdateCamera(float elapsedTime)
 			else
 			{
 				i_CameraController->SetIsEvent(player->GetIsEvent());
-				i_CameraController->SetPitch(player->GetPitch());
-				i_CameraController->SetYaw(player->GetYaw());
+				i_CameraController->SetAngleX(player->GetPitch());
+				i_CameraController->SetAngleY(player->GetYaw());
 			}
 		}
 		/// 敵視点
@@ -936,8 +955,8 @@ void SceneGame::UpdateCamera(float elapsedTime)
 			/// 敵の視点に固定するために
 			cameraPos = enemy->GetPosition();
 			cameraPos.y = enemy->GetViewPoint();
-			i_CameraController->SetPitch(enemy->GetPitch());
-			i_CameraController->SetYaw(enemy->GetYaw());
+			i_CameraController->SetAngleX(enemy->GetPitch());
+			i_CameraController->SetAngleY(enemy->GetYaw());
 		}
 
 		i_CameraController->SetCameraPos(cameraPos);

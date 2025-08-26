@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <math.h>
 #include <Xinput.h>
+#include <algorithm>
 #include "System/GamePad.h"
 
 // 更新
@@ -16,6 +17,7 @@ void GamePad::Update()
     XINPUT_STATE xinputState;
     if (XInputGetState(slot, &xinputState) == ERROR_SUCCESS)
     {
+        useController = true;
         //XINPUT_CAPABILITIES caps;
         //XInputGetCapabilities(m_slot, XINPUT_FLAG_GAMEPAD, &caps);
         XINPUT_GAMEPAD& pad = xinputState.Gamepad;
@@ -60,6 +62,7 @@ void GamePad::Update()
     }
     else
     {
+        useController = false;
 #if 0
         // XInputで入力情報が取得出来なかった場合はWindowsAPIで取得する
         JOYINFOEX joyInfo;
@@ -189,4 +192,54 @@ void GamePad::Update()
         buttonDown = ~buttonState[1] & newButtonState;	// 押した瞬間
         buttonUp = ~newButtonState & buttonState[1];	// 離した瞬間
     }
+}
+
+/**
+* @brief コントローラーを振動させる関数
+* 
+* メンバの strength が0より値がデカい場合常に動く
+*/
+void GamePad::PlayVibration()
+{
+    /// Microsoft リファレンス
+    /// https://learn.microsoft.com/ja-jp/windows/win32/xinput/getting-started-with-xinput#setting-vibration-effects
+    
+    /// 振動の強さを0～1に変換
+    strength.x = std::clamp(strength.x, 0.0f, 1.0f);
+    strength.y = std::clamp(strength.y, 0.0f, 1.0f);
+
+    /// 0～1を0～65535に変換
+    strength.x *= 65535;
+    strength.y *= 65535;
+
+    XINPUT_VIBRATION vibration;
+    ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
+    vibration.wLeftMotorSpeed = strength.x;
+    vibration.wLeftMotorSpeed = strength.y;
+
+    /// 第一引数 : コントローラー番号 | 第二引数 : XINPUT_VIBRATION
+    XInputSetState(0, &vibration);
+}
+
+/**
+* @brief コントローラーに入力反応があるか
+*
+* 接続はされているけど、入力されているかを調べる関数
+*/
+bool GamePad::GetIsActive()
+{
+    bool isActive;
+    /// スティック入力があったか
+    isActive = fabsf(axisLx) || fabsf(axisLy) || fabsf(axisRx) || fabsf(axisRy);
+
+    if (!isActive)
+        isActive = (buttonState[0] > 0 || buttonState[1] > 0);
+
+//#define INPUT_DEBUG
+#if defined INPUT_DEBUG
+    if (isActive)
+        OutputDebugStringA("input!\n");
+#endif
+
+    return isActive;
 }

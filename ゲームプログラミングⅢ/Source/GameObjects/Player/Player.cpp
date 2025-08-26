@@ -16,13 +16,13 @@ static bool staticIsDeathStart = false;
 Player::Player(const DirectX::XMFLOAT3& position)
 {
 	/// プレイヤーモデル
-	model = std::make_unique<Model>("./Data/Model/Player/player_mesh.mdl");
+	model = std::make_unique<Model>("./Data/Model/Player/player_mesh2.mdl");
 
 	/// プレイヤーのパラメータ初期設定
 	{
 		this->position = position;				  ///< ポジション
 		scale = { 0.015, 0.015, 0.015 };    ///< スケール
-		viewPoint = 1.5;                    ///< カメラの視点用
+		//viewPoint = 1.5;                    ///< カメラの視点用
 		radius = 0.6;                       ///< 当たり判定用半径
 		enableHijackTime = maxHijackTime;   ///< 敵の視点をハイジャックできる時間の初期化
 		acceleration = 1.1f;                ///< 加速度
@@ -30,12 +30,17 @@ Player::Player(const DirectX::XMFLOAT3& position)
 		hit = false;                        ///< 死亡演出用(グローバル変数)
 		time = 0;                           ///< 死亡演出用(グローバル変数) 
 		staticIsDeathStart = false;			///< 死亡演出用(グローバル変数	)
+
+		firstEntry = false;
+		secondEntry = false;
+		eventTimer = 0;
+		eventStart = false;
 	}
 
 	/// アニメーション関係の設定(今回はアニメーションはなし)
 	{
 	    animationController.SetModel(model);
-	    animationController.PlayAnimation(static_cast<int>(AnimationState::MOVE), true);
+		animationController.PlayAnimation(static_cast<int>(AnimationState::POSE), false);
 	    animationController.SetAnimationSecondScale(1.0f);
 	}
 
@@ -69,23 +74,32 @@ Player::~Player()
 void Player::Update(float dt)
 {
 	/// ハイジャックの時間処理
-	UpdateHijack(dt);
-
 	/// カメラ切り替え処理(実際のカメラの切り替えはSceneでやってる)
 	/// カメラを切り替えたときの処理、フラグを更新してる
-	 
+	UpdateHijack(dt);
+
+	/// 目線の位置
+	for (Model::Node& node : model->GetNodes())
+	{
+		if (strcmp("eye_point", node.name) == 0)
+		{
+			viewPoint = node.translate.y * 0.015f;
+		}
+	}
 	GameSettings setting = SettingsManager::Instance().GetGameSettings();
 	changeCameraInSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
 	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
 
 	ChangeCamera();
 
-	// �v���C���[�ړ�����
-
 	if (isEvent) ///< Move() の中でフラグの切り替えをしてる
 		DeathState(dt);
 	else
+	{
 		Move(dt);
+		pitch = angle.x;
+		yaw = angle.y;
+	}
 
 	/// 行列更新処理
 	UpdateTransform();
@@ -133,7 +147,11 @@ void Player::DrawDebug()
 		ImGui::Checkbox("isHit", &isHit);
 
 		ImGui::Checkbox("enableOpenDoor", &enableOpenGate);
-
+		float animationLength = animationController.GetAnimationSeconds(static_cast<UINT>(0));
+		ImGui::InputFloat("animationLength", &animationLength);
+		ImGui::InputFloat("pitch", &pitch);
+		ImGui::InputFloat("yaw", &yaw);
+		ImGui::InputFloat3("angle", &angle.x);
 		//float radian = CalcAngle();
 		//std::string text2;
 		//if (radian < 0.78 && radian > -0.78)text2 = "front";
@@ -196,10 +214,12 @@ void Player::Move(float dt)
 	else if (hit)
 	{
 		deathType = 1;
-		if (speed > 0)
-			accel -= deceleration * dt;
-		else
-			isEvent = true;
+
+		// イベント開始
+		isEvent = true;
+
+		accel = 0;
+		speed -= 1 * dt;
 	}
 	else /// 死んでない時
 	{
@@ -266,8 +286,10 @@ void Player::Move(float dt)
 
 	if (!inGate) ///< ゲートに入ったらプレイヤーは移動しない
 	{
+#if 1 // TODO テスト
 		position.x += speed * forward.x * dt;
 		position.z += speed * forward.z * dt;
+#endif
 
 		// 減衰後の速度で移動
 		//position.x += adjustedSpeed * forward.x * dt;
@@ -390,14 +412,38 @@ void Player::UpdateAnimation(float dt)
 void Player::DeathState(float dt)
 {
 	time += dt; ///< 演出用に使うタイマー(グローバル変数)
+	time = std::clamp(time, 0.0f, 1.0f);
+	eventTimer = Easing::InSine(time, animationController.GetAnimationSeconds(0) * 0.5f);
 
-	static float staticViewPoint = viewPoint;
+	static float radian;
+	static float lastAngle = 0; // 演出！！！
+	static float eventYaw;
+
+	const float animationSecondScale = 1.5f;
 	if (deathType == 0) ///< 前
 	{
-		viewPoint = Easing::OutBack(time, totalTime, 0.8f, 0.3f, staticViewPoint);
-		if (viewPoint >= 0.4 && pitch < 60* 0.01745f)
-			pitch += 50 * 0.01745f * dt;
+		eventStart = true;
+		static float eventPitch = 0;
+		if (!firstEntry)
+		{
+			animationController.PlayAnimation("eye_point|back_deth_animation", false);
+			animationController.SetAnimationSecondScale(animationSecondScale);
+			firstEntry = true;
 
+			eventPitch = pitch;
+		}
+		
+		pitch = Easing::OutExp(eventTimer, animationController.GetAnimationSeconds(0) * 0.5f, -30.0f * 0.01745f, eventPitch);
+
+		angleTimer += dt;
+		angleTimer = std::clamp(angleTimer, 0.0f, 2.0f);
+		yaw = Easing::InQuint(angleTimer, 1.0f, radian + eventYaw, yaw);
+		if (!secondEntry)
+		{
+			radian = CalcAngle();
+			eventYaw = yaw; // イベント発生時のよー角
+			secondEntry = true;
+		}
 		if (speed < 0)
 			accel += 1.5f;
 		else
@@ -412,23 +458,48 @@ void Player::DeathState(float dt)
 	}
 	else if (deathType == 1) ///< 後ろ
 	{
-		viewPoint = Easing::OutBack(time, totalTime, 0.8f, 0.1f, staticViewPoint);
+		if (!firstEntry)
+		{
+			animationController.PlayAnimation("eye_point|back_deth_animation", false);
+			animationController.SetAnimationSecondScale(animationSecondScale);
+			firstEntry = true;
+		}
+
+		if (animationController.GetEndAnimation())
+		{
+			if (!secondEntry)
+			{
+				radian		= CalcAngle();
+				eventYaw	= yaw; // イベント発生時のよー角
+				secondEntry = true;
+			}
+
+			angleTimer += dt;
+			angleTimer = std::clamp(angleTimer, 0.0f, 2.0f);
+			yaw = Easing::InQuint(angleTimer, 2.0f, radian + eventYaw, yaw);
+			pitch = Easing::OutBack(angleTimer, 1.8f, 0.5f, -40.0f * 0.01745f, lastAngle);
+			if (angleTimer > 1.5f)
+				eventStart = true;
+		}
+		else
+		{
+			pitch = Easing::OutExp(eventTimer, animationController.GetAnimationSeconds(0) * 0.5f, 50 * 0.01745f, -70 * 0.01745f);
+			lastAngle = yaw;
+		}
+
+		if (speed > 0)
+			accel -= 1.5f;
+		else
+		{
+			speed = 0;
+			accel = 0;
+		}
+
+		speed += accel * dt;
+		position.x += speed * saveDirection.x * dt;
+		position.z += speed * saveDirection.z * dt;
 	}
 
-	
-	static float radian;
-	if (!staticIsDeathStart)
-	{
-		radian = CalcAngle();
-		angle.x = 0;
-	}
-
-	time = DirectX::XMMin(time, totalTime);
-	static float angleX = angle.x;
-	static float angleY = angle.y;
-
-	angle.y = Easing::OutBack(time, totalTime, 0.8f, radian + angleY, angleY);
-	//angle.x = Easing::OutBack(time, totalTime, 0.8f, 0.0f, angleX);
 	staticIsDeathStart = true;
 }
 
@@ -436,7 +507,7 @@ void Player::DeathState(float dt)
 float Player::CalcAngle()
 {
 	using namespace DirectX;
-	XMFLOAT3 enemyPos;
+	XMFLOAT3 enemyPos = {};
 	if (enemyRef)
 		enemyPos = enemyRef->GetPosition();
 
@@ -451,8 +522,8 @@ float Player::CalcAngle()
 		z = DirectX::XMVectorGetZ(Forward);
 		y = DirectX::XMVectorGetY(Forward);
 
-		pitch = asinf(y);        // 上下の向き
-		yaw = atan2f(x, z);      // 左右の向き
+		angle.x = asinf(y);        // 上下の向き
+		angle.y = atan2f(x, z);      // 左右の向き
 	}
 
 	XMVECTOR Dot = XMVector3Dot(DirectX::XMVector3Normalize(Forward), PlayerToEnemy);

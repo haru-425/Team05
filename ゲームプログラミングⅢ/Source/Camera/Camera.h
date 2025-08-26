@@ -23,7 +23,7 @@ public:
     void SetPerspectiveFov(float fovY, float aspect, float nearZ, float farZ);
 
     //ビュー行列取得
-    const DirectX::XMFLOAT4X4& GetView() const { return view; }
+    DirectX::XMFLOAT4X4& GetView() { return view; }
 
     //プロジェクション行列取得
     const DirectX::XMFLOAT4X4& GetProjection() const { return projection; }

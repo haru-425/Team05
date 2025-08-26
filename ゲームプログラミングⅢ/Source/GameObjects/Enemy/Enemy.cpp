@@ -34,6 +34,7 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 	this->animationcontroller.SetAnimationPlaying(true);
 	scale.x = scale.y = scale.z = 0.013f; // スケール設定（非常に小さい）
 	radius = 1.5f;                        // 衝突用の半径
+	radius = 1.7f;                        // 衝突用の半径
 	viewPoint = 1.5f;                     // 目線の高さ
 	position = stage->GetIndexWayPoint(33);      // 初期位置
 	Goal::Instance().SetPosition(stage->GetIndexWayPoint(61));
@@ -123,6 +124,8 @@ void Enemy::Update(float elapsedTime)
 	{
 		moveSpeed = 0;
 		state = State::Attack;
+
+
 		batteryManager::Instance().stop();
 		Audio3DSystem::Instance().StopByTag("enemy_run");
 		Audio3DSystem::Instance().StopByTag("enemy_walk");
@@ -568,7 +571,7 @@ void Enemy::Animationplay()
 		DirectX::XMVECTOR player = DirectX::XMLoadFloat3(&playerRef.lock()->GetPosition());
 
 		// 向きベクトル（プレイヤー → 敵）
-		DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(player, enemy);
+		DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(player, enemy));
 
 		// XZ 平面上で角度を求める
 		float dx = DirectX::XMVectorGetX(dir);
@@ -577,7 +580,14 @@ void Enemy::Animationplay()
 		// atan2 で Y軸回転角を計算（Zが前、Xが右の座標系）
 		angle.y = std::atan2(dx, dz);
 		animationcontroller.PlayAnimation("attack", false);
-		animationcontroller.SetAnimationSecondScale(3);
+		animationcontroller.SetAnimationSecondScale(1.0f);
+		angle.y += 6 * 0.01745f;
+
+		int deathState = playerRef.lock()->GetDeathState();
+		if(deathState == 0)
+			angle.x += 3 * 0.01745f;
+		else if(deathState == 1)
+			angle.x += 10 * 0.01745f;
 	}
 	switch (direction)
 	{

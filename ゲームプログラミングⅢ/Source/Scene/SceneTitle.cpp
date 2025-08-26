@@ -468,6 +468,8 @@ void SceneTitle::DrawGUI()
 	ImGui::Begin("mousePos");
 	ImGui::Text(buf1);
 	ImGui::Text(buf2);
+
+	ImGui::InputInt("selectNum", &selectNum);
 	ImGui::End();
 
 }
@@ -532,10 +534,10 @@ void SceneTitle::UpdateUI()
 		lastSelectID = -1;
 
 		GameSettings setting = SettingsManager::Instance().GetGameSettings();
-		sensitivity = setting.sensitivity * 100; ///< 感度
-		mVolume = setting.masterVolume * 100; ///< マスター
-		bgmVolume = setting.bgmVolume * 100; ///< BGM
-		seVolume = setting.seVolume * 100; ///< SE
+		sensitivity = setting.sensitivity * 100;	///< 感度
+		mVolume		= setting.masterVolume * 100;	///< マスター
+		bgmVolume	= setting.bgmVolume * 100;		///< BGM
+		seVolume	= setting.seVolume * 100;		///< SE
 
 		/// スライダーの位置を合わせる                     バーの端からバーの長さを設定値で割ったところがスライダーの位置
 		um.GetUIs().at(9)->GetSpriteData().spritePos.x = BAR_MIN + (BAR_WIDTH * setting.sensitivity) - SLIDER_WIDTH;
@@ -619,6 +621,145 @@ void SceneTitle::UpdateUI()
 		previousDow = false;
 		lastSelectID = -1;
 	}
+
+#pragma region コントローラーでの選択
+	GamePad& gamePad = Input::Instance().GetGamePad();
+	bool useController = Input::Instance().GetIsGamePadActive();
+
+	if (!selectOptions)
+	{
+		if (gamePad.GetButtonDown() == GamePad::BTN_DOWN) ++selectNum;
+		if (gamePad.GetButtonDown() == GamePad::BTN_UP) --selectNum;
+	}
+	else
+	{
+		/// UI の都合上仕方なく
+		if (gamePad.GetButtonDown() == GamePad::BTN_DOWN) selectNum +=5;
+		if (gamePad.GetButtonDown() == GamePad::BTN_UP) selectNum -= 5;
+	}
+
+	if (useController)
+	{
+		switch (selectNum)
+		{
+		case 0: /// ゲーム難易度選択
+			um.GetUIs().at(0)->SetIsHit(true);
+
+			if (gamePad.GetButtonDown() & GamePad::BTN_A)
+			{
+				if (selectOptions)
+					selectOptions = false;
+
+				selectStart = true;
+				selectNum = 29;
+			}
+
+			um.GetUIs().at(1)->SetIsHit(false);
+			um.GetUIs().at(2)->SetIsHit(false);
+			break;
+		case 1: /// 設定
+			um.GetUIs().at(1)->SetIsHit(true);
+			if (gamePad.GetButtonDown() & GamePad::BTN_A)
+			{
+				if (selectStart)
+					selectStart = false;
+
+				selectOptions = true;
+				selectNum = 9;
+			}
+
+			um.GetUIs().at(0)->SetIsHit(false);
+			um.GetUIs().at(2)->SetIsHit(false);
+			break;
+		case 2: /// ゲーム終了
+			um.GetUIs().at(2)->SetIsHit(true);
+
+			if (gamePad.GetButtonDown() & GamePad::BTN_A)
+				SceneManager::instance().SetIsExit(true);
+
+			um.GetUIs().at(0)->SetIsHit(false);
+			um.GetUIs().at(1)->SetIsHit(false);
+			break;
+		case 9: /// 感度
+			um.GetUIs().at(9)->SetIsHit(true);
+
+			um.GetUIs().at(14)->SetIsHit(false);
+			um.GetUIs().at(19)->SetIsHit(false);
+			um.GetUIs().at(24)->SetIsHit(false);
+			break;
+		case 14: /// マスター
+			um.GetUIs().at(14)->SetIsHit(true);
+
+			um.GetUIs().at(9)->SetIsHit(false);
+			um.GetUIs().at(19)->SetIsHit(false);
+			um.GetUIs().at(24)->SetIsHit(false);
+			break;
+		case 19: /// GBM
+			um.GetUIs().at(19)->SetIsHit(true);
+
+			um.GetUIs().at(9)->SetIsHit(false);
+			um.GetUIs().at(14)->SetIsHit(false);
+			um.GetUIs().at(24)->SetIsHit(false);
+			break;
+		case 24: /// SE
+			um.GetUIs().at(24)->SetIsHit(true);
+
+			um.GetUIs().at(9)->SetIsHit(false);
+			um.GetUIs().at(14)->SetIsHit(false);
+			um.GetUIs().at(19)->SetIsHit(false);
+			break;
+		case 29: /// チュートリアル
+			um.GetUIs().at(29)->SetIsHit(true);
+
+			um.GetUIs().at(30)->SetIsHit(false);
+			um.GetUIs().at(31)->SetIsHit(false);
+			break;
+		case 30: /// 普通
+			um.GetUIs().at(30)->SetIsHit(true);
+
+			um.GetUIs().at(29)->SetIsHit(false);
+			um.GetUIs().at(31)->SetIsHit(false);
+			break;
+		case 31: /// むずい
+			um.GetUIs().at(31)->SetIsHit(true);
+
+			um.GetUIs().at(29)->SetIsHit(false);
+			um.GetUIs().at(30)->SetIsHit(false);
+			break;
+		default:
+
+			/// ゲーム開始、設定、終了の三項目を選んでいる時
+			if (!selectStart && !selectOptions)
+			{
+				if (selectNum > 2)
+					selectNum = 0;
+				else if (selectNum < 0)
+					selectNum = 2;
+			}
+			else if (selectStart) /// ゲーム開始項目を選んでいる時
+			{
+				if (selectNum < 29)
+					selectNum = 31;
+				else if (selectNum > 31)
+					selectNum = 29;
+			}
+			else if (selectOptions) /// 設定項目を選んでいる時
+			{
+				if (selectNum < 9)
+					selectNum = 24;
+				else if (selectNum > 24)
+					selectNum = 9;
+			}
+			break;
+		} /// end switch
+	}
+	else
+	{
+		selectNum = -1;
+	}
+
+#pragma endregion 
+
 	for (auto& ui : um.GetHitAllUI())
 	{
 		int id = ui->GetID();
