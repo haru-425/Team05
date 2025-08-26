@@ -14,13 +14,15 @@
 static constexpr float maxHijackTime        = 50; // ハイジャックの最大時間
 static constexpr int hijackCost             = 5;   // ハイジャックコスト
 static constexpr int hijackCostPerSec       = 5;   // 一秒ごとのハイジャックコスト
-static constexpr float maxSpeed             = (3.0f * 1.4f); // プレイヤーの最高速度
+static constexpr float maxSpeed             = (3.0f * 1.2f); // プレイヤーの最高速度
 static float acceleration                   = 1.1f; // 加速度
 static constexpr float hijack_risc_time     = 5.0f; // ハイジャックしていて、プレイヤーの位置がばれるまでの時間
 
 static enum class AnimationState
 {
-    MOVE
+    POSE = 2,
+    F_DETH = 1,
+    B_DETH = 0,
 };
 
 class Player : public GameObject
@@ -79,6 +81,10 @@ public:
 
     void UpdateHijack(float dt);
 
+    bool GetEventStart() const { return eventStart; }
+
+    int GetDeathState() { return deathStart; }
+
 private:
 
     void Move(float dt);
@@ -109,7 +115,7 @@ private:
     float angleY; ///< 死亡演出用   
 
     AnimationController animationController; // アニメーション
-    AnimationState state = AnimationState::MOVE;
+    AnimationState state = AnimationState::POSE;
 
     std::unique_ptr<LoadTextures> textures;  // テクスチャ
 
@@ -128,5 +134,12 @@ private:
 
     int hijackRecoveryPerSec = 3;   // 一秒ごとのハイジャックコストの回復量
     float hijackedElapsedTime = 0;
+
+    /// 演出用の変数
+    bool firstEntry;    ///< 演出がはじまった時に使う
+    bool secondEntry;   ///< 演出がはじまった後の演出に使う
+    float eventTimer;   ///< 演出に使う時間 アニメーションをそのまま使うとびみょいから
+    float angleTimer;   ///< 角度が変わるのにイージングを使うため
+    bool eventStart;    ///< 敵演出開始フラグ
 };
 

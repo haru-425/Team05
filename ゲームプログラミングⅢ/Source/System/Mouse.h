@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Windows.h>
+#include <algorithm>
+#include <DirectXMath.h>
 
 using MouseButton = unsigned int;
 
@@ -57,6 +59,25 @@ public:
 
 	// スクリーン高さ取得
 	int GetScreenHeight() const { return screenHeight; }
+
+	/**
+	* @brief マウスが使われているか
+	* 
+	* マウスは常に反応するが、マウスが実際に使われているのかどうかを
+	* 調べる関数です
+	* 
+	* @return true : 使用中 | false : 未使用
+	*/
+	bool GetIsActive()
+	{
+		bool useMouse;
+		DirectX::XMINT2 currMousePos = { positionX[0], positionY[0] };
+		DirectX::XMINT2 prevMousePos = { positionX[1], positionY[1] };
+		DirectX::XMINT2 mouseDelta = { currMousePos.x - prevMousePos.x , currMousePos.y - prevMousePos.y };
+		useMouse = std::abs(mouseDelta.x) || std::abs(mouseDelta.y);
+
+		return useMouse;
+	}
 
 private:
 	MouseButton		buttonState[2] = { 0 };

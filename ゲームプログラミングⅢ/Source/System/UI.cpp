@@ -6,6 +6,7 @@
 
 #include "UI.h"
 #include "Graphics.h"
+#include "System/Input.h"
 using json = nlohmann::json;
 
 void to_json(json& j, const SpriteData& data)
@@ -102,6 +103,10 @@ void UI::DrawDebug()
 
 void UI::GetSelectedUI(const DirectX::XMFLOAT2& mousePos)
 {
+    /// コントローラーが使われている場合はヒット判定を取らないため
+    if (Input::Instance().GetIsGamePadActive())
+        return;
+
     DirectX::XMFLOAT2 scaleFactor = Graphics::Instance().GetWindowScaleFactor();
 
     if (!sprData.isVisible)

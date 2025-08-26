@@ -1,6 +1,7 @@
 #include "FPCameraController.h"
 #include "System/Input.h"
 #include <algorithm>
+#include <Xinput.h>
 #include <DirectXMath.h>
 #include "Camera/Camera.h"
 #include "imgui.h"
@@ -18,20 +19,46 @@ void FPCameraController::Update(float dt)
     static constexpr float MAX_PITCH = 89.9f * 0.01745f;
     float sensitivity = 0.005f * SettingsManager::Instance().GetGameSettings().sensitivity; // マウス感度
 
-    float mouseX = mouse.GetPositionX(), mouseY = mouse.GetPositionY(), screenW = mouse.GetScreenWidth(), screenH = mouse.GetScreenHeight();
+    float lStick = 0, rStick = 0;                           ///< コントローラー
+    float mouseX = 0, mouseY = 0, screenW = 0, screenH = 0; ///< マウス用
+
+    bool useController = gamePad.GetUseController();
+
+    /// コントローラー使用中
+    if (useController)
+    {
+        lStick = gamePad.GetAxisRX();
+        rStick = gamePad.GetAxisRY();
+    }
+    /// マウス
+    else
+    {
+        mouseX = mouse.GetPositionX();
+        mouseY = mouse.GetPositionY();
+        screenW = mouse.GetScreenWidth();
+        screenH = mouse.GetScreenHeight();
+    }
+    
+
     if (!useEnemyCam && !isEvent)
     {
-        yaw += (mouseX - screenW / 2) * sensitivity;
-        pitch += -(mouseY - screenH / 2) * sensitivity;
+        /// マウス
+        angle.y += (mouseX - screenW / 2) * sensitivity;
+        angle.x += (mouseY - screenH / 2) * sensitivity;
+
+        /// コントローラー
+        int correctionValue = 15; ///< 補正値
+        angle.y += lStick * sensitivity * correctionValue;
+        angle.x += rStick * sensitivity * correctionValue;
     }
     // 90度だとバグるので
-    pitch = std::clamp(pitch, -MAX_PITCH, MAX_PITCH);
+    angle.x = std::clamp(angle.x, -MAX_PITCH, MAX_PITCH);
 
     // カメラ切り替え時に保存しておいたptich, yawを使う
     if (isChange)
     {
-        pitch = savePitchYaw.x;
-        yaw = savePitchYaw.y;
+        angle.x = savePitchYaw.x;
+        angle.y = savePitchYaw.y;
     }
 
     // プレイヤーがカメラを使っている場合随時更新
@@ -41,17 +68,23 @@ void FPCameraController::Update(float dt)
         savePitchYaw.x = pitch;
         savePitchYaw.y = yaw;
     }
+    pitch = angle.x;
+    yaw = angle.y;
 
+    //DirectX::XMVECTOR forward = DirectX::XMVectorSet(
+    //    cosf(pitch) * sinf(yaw),
+    //    sinf(pitch),
+    //    cosf(pitch) * cosf(yaw),
+    //    0.0f
+    //);
 
-    DirectX::XMVECTOR forward = DirectX::XMVectorSet(
-        cosf(pitch) * sinf(yaw),
-        sinf(pitch),
-        cosf(pitch) * cosf(yaw),
-        0.0f
-    );
+    DirectX::XMVECTOR Forward = DirectX::XMVectorZero(), Up = DirectX::XMVectorZero();
+    DirectX::XMMATRIX RotMat = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
+    Forward = RotMat.r[2];
+    Up = RotMat.r[1];
 
     // 右方向（横移動用）
-    DirectX::XMVECTOR right = DirectX::XMVector3Cross(forward, DirectX::XMVectorSet(0, 1, 0, 0));
+    //DirectX::XMVECTOR right = DirectX::XMVector3Cross(forward, DirectX::XMVectorSet(0, 1, 0, 0));
 
     /* float speed = 10.0f * elapsedTime;
 
@@ -62,13 +95,14 @@ void FPCameraController::Update(float dt)
     */
 
     DirectX::XMVECTOR eye = DirectX::XMLoadFloat3(&cameraPos);
-    DirectX::XMVECTOR targetVec = DirectX::XMVectorAdd(eye, forward);
-    DirectX::XMVECTOR up = DirectX::XMVectorSet(0, 1, 0, 0);
+    DirectX::XMVECTOR targetVec = DirectX::XMVectorAdd(eye, Forward);
+    DirectX::XMFLOAT3 up;
+    DirectX::XMStoreFloat3(&up, Up);
 
-    DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(eye, targetVec, up);
+    DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(eye, targetVec, Up);
     DirectX::XMStoreFloat3(&target, targetVec);
     DirectX::XMStoreFloat3(&cameraPos, eye);
-    Camera::Instance().SetLookAt(cameraPos, target, DirectX::XMFLOAT3(0, 1, 0));
+    Camera::Instance().SetLookAt(cameraPos, target, up);
 }
 
 void FPCameraController::DebugGUI()

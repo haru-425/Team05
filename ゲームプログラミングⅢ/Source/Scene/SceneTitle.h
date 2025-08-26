@@ -142,4 +142,7 @@ private:
     // 音響関連定数
     // ==============================
 	AudioSource* selectSE = nullptr;
+
+	/// コントローラー用の変数
+	int selectNum = -1;
 };

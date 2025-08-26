@@ -31,7 +31,14 @@ public:
 	// ƒ}ƒEƒXŽæ“¾
 	Mouse& GetMouse() { return *mouse; }
 
+	bool GetIsActiveMouse() const { return isActiveMouse; }
+
+	bool GetIsGamePadActive() const { return isActiveGamePad; };
+
 private:
 	std::unique_ptr<GamePad>	gamePad;
 	std::unique_ptr<Mouse>		mouse;
+
+	inline static bool isActiveMouse = false;
+	inline static bool isActiveGamePad = false;
 };
