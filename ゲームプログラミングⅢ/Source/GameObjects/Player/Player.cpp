@@ -35,6 +35,7 @@ Player::Player(const DirectX::XMFLOAT3& position)
 		secondEntry = false;
 		eventTimer = 0;
 		eventStart = false;
+		isDeath = false;
 	}
 
 	/// アニメーション関係の設定(今回はアニメーションはなし)
@@ -429,6 +430,7 @@ void Player::DeathState(float dt)
 			animationController.PlayAnimation("eye_point|back_deth_animation", false);
 			animationController.SetAnimationSecondScale(animationSecondScale);
 			firstEntry = true;
+			speed = -maxSpeed;
 
 			eventPitch = pitch;
 		}
@@ -436,7 +438,7 @@ void Player::DeathState(float dt)
 		pitch = Easing::OutExp(eventTimer, animationController.GetAnimationSeconds(0) * 0.5f, -30.0f * 0.01745f, eventPitch);
 
 		angleTimer += dt;
-		angleTimer = std::clamp(angleTimer, 0.0f, 2.0f);
+		angleTimer = std::clamp(angleTimer, 0.0f, 3.0f);
 		yaw = Easing::InQuint(angleTimer, 1.0f, radian + eventYaw, yaw);
 		if (!secondEntry)
 		{
@@ -445,7 +447,7 @@ void Player::DeathState(float dt)
 			secondEntry = true;
 		}
 		if (speed < 0)
-			accel += 1.5f;
+			accel += 2.0f;
 		else
 		{
 			speed = 0;
@@ -455,6 +457,9 @@ void Player::DeathState(float dt)
 		speed += accel * dt;
 		position.x += speed * saveDirection.x * dt;
 		position.z += speed * saveDirection.z * dt;
+
+		if (angleTimer >= 3.0f)
+			isDeath = true;
 	}
 	else if (deathType == 1) ///< 後ろ
 	{
@@ -475,7 +480,7 @@ void Player::DeathState(float dt)
 			}
 
 			angleTimer += dt;
-			angleTimer = std::clamp(angleTimer, 0.0f, 2.0f);
+			angleTimer = std::clamp(angleTimer, 0.0f, 3.0f);
 			yaw = Easing::InQuint(angleTimer, 2.0f, radian + eventYaw, yaw);
 			pitch = Easing::OutBack(angleTimer, 1.8f, 0.5f, -40.0f * 0.01745f, lastAngle);
 			if (angleTimer > 1.5f)
@@ -498,6 +503,9 @@ void Player::DeathState(float dt)
 		speed += accel * dt;
 		position.x += speed * saveDirection.x * dt;
 		position.z += speed * saveDirection.z * dt;
+
+		if (angleTimer >= 2.0)
+			isDeath = true;
 	}
 
 	staticIsDeathStart = true;

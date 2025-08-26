@@ -237,7 +237,7 @@ void SceneGame::Update(float elapsedTime)
 		//	/// exit関数はメモリリークが大量発生する可能性があるのでこの方法にする
 		//	SceneManager::instance().SetIsExit(true);
 		//}
-		if (enemy->GetIsDead())
+		if (player->GetIsDeath())
 		{
 			nextScene = new Game_Clear;
 			sceneTrans = true;
@@ -271,10 +271,10 @@ void SceneGame::Update(float elapsedTime)
 	else
 	{
 		// フラグが立っている間タイマーを加算し、1秒以上経ったらシーン切り替え
-		//transTimer += elapsedTime;
+		transTimer += elapsedTime;
 		if (transTimer >= 3.0f && nextScene != nullptr)
 		{
-			//SceneManager::instance().ChangeScene(nextScene);
+			SceneManager::instance().ChangeScene(nextScene);
 			nextScene = nullptr; // 多重遷移防止
 			sceneTrans = false;  // シーン遷移フラグをリセット
 		}
