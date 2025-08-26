@@ -197,7 +197,7 @@ float4 main(float4 pos : SV_Position, float2 uv : TEXCOORD) : SV_Target
     //float4 background = texture_maps.Sample(sampler_states[0], uv);
 
     // 文字色（白）
-    float4 textColor = float4(0, 1, 0, 1);
+    float4 textColor = float4(1, 1, 1, 1);
 
     // 合成：col が 1 のときは白、0 なら背景
     float3 color = lerp(background.rgb, textColor.rgb, col);

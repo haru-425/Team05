@@ -12,15 +12,25 @@
 
 #define RATESPEED 5
 
-class battery:public GameObject
+
+enum BatteryType
+{
+	Non=-1,
+	Normal,
+	High
+};
+
+class Battery:public GameObject
 {
 public:
-	battery();
-	~battery();
+	Battery(BatteryType battery_type);
+	~Battery();
 	void Update(float elapsedTime) override;
 	void Render(const RenderContext& rc, ModelRenderer* renderer) override;
 
 	DirectX::XMFLOAT3 getPos() { return position; }
+
+	BatteryType getType() { return battery_type; }
 
 	void setPos(DirectX::XMFLOAT3 pos) { position = pos; }
 
@@ -41,4 +51,6 @@ private:
 
 	float offsets[3] = {0.0f, 0.0f, 0.0f};
 	DirectX::XMFLOAT3 offset = { 0.0f, 0.18f, 0.0f };
+
+	BatteryType battery_type;
 };

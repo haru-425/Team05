@@ -16,6 +16,7 @@
 #include "PlayerUI.h"
 #include "System/CursorManager.h"
 #include "PauseSystem.h"
+#include "GameObjects/battery/BatteryScore.h"
 
 #include <imgui.h>
 #include <random>
@@ -139,6 +140,7 @@ void SceneGame::Initialize()
 	}
 	EnemyUI::Instance().Initialize(); ///< 敵のUI初期化
 	PlayerUI::Instance().Initialize();
+	BatteryScore::Instance().Initialize();
 }
 
 // 終了化
@@ -237,28 +239,18 @@ void SceneGame::Update(float elapsedTime)
 		//}
 		if (enemy->GetIsDead())
 		{
-			if (life_number == 0)
-			{
-				nextScene = new Game_Clear;
-				sceneTrans = true;
-				transTimer = 0.0f;
-				selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
-				reminingTime = 0.0f;
-				RankSystem::Instance().SetRank(
-					batteryManager::Instance().getPlayerHasBattery(),
-					batteryManager::Instance().getMAXBattery(),
-					life_number); // タイムアップでSランク
-				batteryManager::Instance().ResetPlayer_Get_Batterry();
-				batteryManager::Instance().ResetMax_Batterry();
-				CursorManager::Instance().SetCursorVisible(true);
-			}
-			else
-			{
-				nextScene = new Game_Over(life_number);
-				sceneTrans = true;
-				transTimer = 1.7f;
-			}
+			nextScene = new Game_Clear;
+			sceneTrans = true;
+			transTimer = 0.0f;
+			selectTrans = SelectTrans::Clear;
+			RankSystem::Instance().SetRank(
+				batteryManager::Instance().getScore(),
+				batteryManager::Instance().getMax_Score(),
+				reminingTime); // タイムアップでSランク
 			batteryManager::Instance().ClearBattery();
+			CursorManager::Instance().SetCursorVisible(true);
+			batteryManager::Instance().ClearBattery();
+			reminingTime = 0.0f;
 		}
 
 		if (reminingTime <= 0.0f)
@@ -266,16 +258,14 @@ void SceneGame::Update(float elapsedTime)
 			nextScene = new Game_Clear;
 			sceneTrans = true;
 			transTimer = 0.0f;
-			selectTrans = SelectTrans::Clear; // ゲームオーバーシーンに遷移
-			reminingTime = 0.0f;
+			selectTrans = SelectTrans::Clear;
 			RankSystem::Instance().SetRank(
-				batteryManager::Instance().getPlayerHasBattery(),
-				batteryManager::Instance().getMAXBattery(),
-				life_number); // タイムアップでSランク
-			batteryManager::Instance().ResetPlayer_Get_Batterry();
+				batteryManager::Instance().getScore(),
+				batteryManager::Instance().getMax_Score(),
+				reminingTime); // タイムアップでSランク
 			batteryManager::Instance().ClearBattery();
-			batteryManager::Instance().ResetMax_Batterry();
 			CursorManager::Instance().SetCursorVisible(true);
+			reminingTime = 0.0f;
 		}
 	}
 	else
@@ -574,6 +564,7 @@ void SceneGame::Render()
 		if (!tutorial_Flug || tutorial_Step >= 4)
 		{
 			metar->render();
+			BatteryScore::Instance().Render(rc);
 		}
 		/// ポーズ中に表示するスプライト
 		if (pause_Flug) {
