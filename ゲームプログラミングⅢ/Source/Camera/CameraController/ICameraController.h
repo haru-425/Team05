@@ -17,6 +17,11 @@ public:
     void SetIsChange(bool isChange) { this->isChange = isChange; }
     void SetUseEnemyCam(bool useEnemyCam) { this->useEnemyCam = useEnemyCam; }
 
+    void SetAngle(DirectX::XMFLOAT3 angle) { this->angle = angle; }
+    void SetAngleX(float angleX) { this->angle.x = angleX; }
+    void SetAngleY(float angleY) { this->angle.y = angleY; }
+    void SetAngleZ(float angleZ) { this->angle.z = angleZ; }
+
     float GetPitch() const { return pitch; }
     float GetYaw() const { return yaw; }
 
@@ -36,6 +41,7 @@ protected:
     // ˆêlÌ
     float yaw = 0.0f;   // ¶‰E‰ñ“]
     float pitch = 0.0f; // ã‰º‰ñ“]
+    float roll = 0.0f;
 
     float fov = 0;
 

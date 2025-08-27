@@ -115,7 +115,10 @@ void Framework::Render(float elapsedTime)
 	// シーン描画処理
 	SceneManager::instance().Render();
 
-	CursorManager::Instance().Render();
+	if(Input::Instance().GetIsActiveMouse())
+	{
+		CursorManager::Instance().Render();
+	}
 
 	// シーンGUI描画処理
 #if defined _DEBUG

@@ -25,6 +25,9 @@ public:
 
     bool GetEndAnimation() const { return isEndAnimation; }
 
+    // アニメーションの時間を返す
+    float GetAnimationSeconds(UINT animationIndex) { return modelRef.lock()->GetResource()->GetAnimations().at(animationIndex).secondsLength; }
+
 private:
     std::weak_ptr<Model> modelRef;
 
