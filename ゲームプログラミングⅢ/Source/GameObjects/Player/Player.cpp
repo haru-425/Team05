@@ -64,6 +64,14 @@ Player::Player(const DirectX::XMFLOAT3& position)
 	{
 		hijackRecoveryPerSec = 3;
 	}
+
+	for (Model::Node& node : model->GetNodes())
+	{
+		if (strcmp("eye_point", node.name) == 0)
+		{
+			viewPoint = node.translate.y * 0.015f;
+		}
+	}
 }
 
 /// デストラクタ
