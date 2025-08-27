@@ -140,6 +140,7 @@ void SceneGame::Initialize()
 	EnemyUI::Instance().Initialize(); ///< 敵のUI初期化
 	PlayerUI::Instance().Initialize();
 	BatteryScore::Instance().Initialize();
+	batteryManager::Instance().shuffleBatteryOrder();
 }
 
 // 終了化

@@ -37,16 +37,23 @@ public:
 
 	void SetDifficulty(int diff)
 	{
-		if (Difficulty::Instance().GetDifficulty() == Difficulty::normal)
+		switch (Difficulty::Instance().GetDifficulty())
 		{
+		case Difficulty::tutorial:
+		case Difficulty::normal:
 			battery_recovery = NORML_RECOVERY;
 			drop_interval = BATTERY_DROP_NORML_INTERVAL;
-		}
-		else if (Difficulty::Instance().GetDifficulty() == Difficulty::hard)
-		{
+			max_Battery = BATTERY_NORMAL_MAX;
+			break;
+		case Difficulty::hard:
 			battery_recovery = HARD_RECOVERY;
 			drop_interval = BATTERY_DROP_HARD_INTERVAL;
+			max_Battery = BATTERY_HARD_MAX;
+			break;
+		default:
+			break;
 		}
+
 		getSE = Audio::Instance().LoadAudioSource("./Data/Sound/get.wav");
 	};
 
@@ -58,14 +65,34 @@ public:
 
 		// Normal と High に振り分けてコピー
 		std::vector<BatteryType> normals, highs;
-		for (int i = 0; i < BATTERY_NORMAL_MAX; ++i) {
-			if (batteryOrder[i] == BatteryType::Normal) normals.push_back(batteryOrder[i]);
-			else highs.push_back(batteryOrder[i]);
+		batteryOrder.reserve(max_Battery);     // メモリを先に確保しておく（無駄な再確保を防ぐ）
+
+		switch (Difficulty::Instance().GetDifficulty())
+		{
+		case Difficulty::tutorial:
+		case Difficulty::normal:
+			for (int i = 0; i < max_Battery; ++i) {
+				if (normal_Battery_Order[i] == BatteryType::Normal)
+					normals.push_back(normal_Battery_Order[i]);
+				else
+					highs.push_back(normal_Battery_Order[i]);
+			}
+			break;
+		case Difficulty::hard:
+			for (int i = 0; i < max_Battery; ++i) {
+				if (hard_Battery_Order[i] == BatteryType::Normal)
+					normals.push_back(hard_Battery_Order[i]);
+				else
+					highs.push_back(hard_Battery_Order[i]);
+			}
+			break;
+		default:
+			break;
 		}
 
 		// 配置し直し
-		for (int i = 0; i < BATTERY_NORMAL_MAX; ++i) {
-			double prob_high = static_cast<double>(i) / (BATTERY_NORMAL_MAX - 1); // 後ろに行くほどHigh確率UP
+		for (int i = 0; i < max_Battery; ++i) {
+			double prob_high = static_cast<double>(i) / (max_Battery - 1); // 後ろに行くほどHigh確率UP
 			std::uniform_real_distribution<> dist(0.0, 1.0);
 			bool pick_high = dist(gen) < prob_high;
 
@@ -73,19 +100,19 @@ public:
 				// High をランダムに取る
 				std::uniform_int_distribution<> d(0, highs.size() - 1);
 				int idx = d(gen);
-				batteryOrder[i] = highs[idx];
+				batteryOrder.push_back(highs[idx]);
 				highs.erase(highs.begin() + idx);
 			}
 			else if (!normals.empty()) {
 				// Normal をランダムに取る
 				std::uniform_int_distribution<> d(0, normals.size() - 1);
 				int idx = d(gen);
-				batteryOrder[i] = normals[idx];
+				batteryOrder.push_back(normals[idx]);
 				normals.erase(normals.begin() + idx);
 			}
 			else if (!highs.empty()) {
 				// Normal が尽きたら High を詰める
-				batteryOrder[i] = highs.back();
+				batteryOrder.push_back(highs.back());
 				highs.pop_back();
 			}
 		}
@@ -98,7 +125,7 @@ public:
 		{
 			battery.Update(elapsedTime);
 		}
-		if (hasBattery.size() > BATTERY_NORMAL_MAX && !hasBattery.empty())
+		if (hasBattery.size() > max_Battery && !hasBattery.empty())
 		{
 			hasBattery.erase(hasBattery.begin());
 		}
@@ -122,6 +149,10 @@ public:
 
 	void addBattery(DirectX::XMFLOAT3 pos)
 	{
+		if (drop_Count + 1 > max_Battery)
+		{
+			return;
+		}
 		hasBattery.push_back(Battery(batteryOrder[drop_Count]));
 		hasBattery.back().setPos(pos);
 		switch (batteryOrder[drop_Count])
@@ -152,7 +183,7 @@ public:
 					player_Get_Score += 10;
 					break;
 				case BatteryType::High:
-					player_Get_Score += 15;
+					player_Get_Score += 20;
 					break;
 				default:
 					break;
@@ -213,7 +244,10 @@ private:
 	batteryManager() {}
 	~batteryManager() {}
 
-	BatteryType batteryOrder[BATTERY_NORMAL_MAX] = { Normal,Normal,Normal,Normal,Normal,Normal,High,High,High };
+	BatteryType normal_Battery_Order[BATTERY_NORMAL_MAX] = { Normal,Normal,Normal,Normal,Normal,Normal,High,High,High };
+	BatteryType hard_Battery_Order[BATTERY_HARD_MAX] = { Normal,Normal,Normal,Normal,Normal,Normal,Normal,Normal,Normal,Normal,High,High,High,High,High,High,High,High };
+
+	std::vector<BatteryType> batteryOrder;
 
 	std::vector<Battery> hasBattery;
 
@@ -221,7 +255,6 @@ private:
 
 	std::shared_ptr<Model> hard_Battery_Model = std::make_shared<Model>("Data/Model/battery_assets/battery_geo.mdl");
 	std::shared_ptr<Model> normal_Battery_Model = std::make_shared<Model>("Data/Model/battery_assets/battery_normal.mdl");
-
 
 	std::shared_ptr<Player> player;
 
@@ -232,6 +265,8 @@ private:
 	int player_Get_Score = 0;
 
 	int max_Score = 0;
+
+	int max_Battery = 0;
 
 	float battery_recovery = NORML_RECOVERY;
 
