@@ -1105,8 +1105,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		break;
 	case 13:
 		//「【プレイヤー専用通路】（これだけ扉の画像のある説明用の画像を表示して説明）壁沿いにある、緑色のライトが...」
-		batteryManager::Instance().deleteBattery({ -3,0,-23 });
-		batteryManager::Instance().deleteBattery({ 5,0,-23 });
+		batteryManager::Instance().ClearBattery();
 		break;
 	case 12:
 		//「【バッテリー】このように敵は巡回中に、バッテリーを...」
