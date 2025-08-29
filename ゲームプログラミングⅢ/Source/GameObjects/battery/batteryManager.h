@@ -184,6 +184,7 @@ public:
 					break;
 				case BatteryType::High:
 					player_Get_Score += 20;
+					enemy->detectPlayerPosition();
 					break;
 				default:
 					break;
@@ -253,8 +254,8 @@ private:
 
 	std::vector<BatteryType> player_Get_Battery;
 
-	std::shared_ptr<Model> hard_Battery_Model = std::make_shared<Model>("Data/Model/battery_assets/battery_geo.mdl");
-	std::shared_ptr<Model> normal_Battery_Model = std::make_shared<Model>("Data/Model/battery_assets/battery_normal.mdl");
+	std::shared_ptr<Model> hard_Battery_Model = std::make_shared<Model>("Data/Model/battery_assets/battery_normal.mdl");
+	std::shared_ptr<Model> normal_Battery_Model = std::make_shared<Model>("Data/Model/battery_assets/battery_geo.mdl");
 
 	std::shared_ptr<Player> player;
 

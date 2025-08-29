@@ -88,6 +88,8 @@ public:
     //ポーズ状態から復帰するときのサウンド処理
     void play_Enemy_Sound();
 
+    void detectPlayerPosition();
+
 private:
     // 経路再構築（現在地点からゴールまでを逆順にたどって正順にする）
     void refinePath(int start, int current);

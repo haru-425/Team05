@@ -820,6 +820,27 @@ void Enemy::play_Enemy_Sound()
 	}
 }
 
+void Enemy::detectPlayerPosition()
+{
+	// 経路をリセットし、新たに探索開始
+	stage->path.clear();
+	route.clear();
+	currentTargetIndex = 0;
+
+	Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
+	Start::Instance().SetPosition(this->position);
+	SearchAI::Instance().trackingSearch(stage);
+
+	int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+	int start = stage->NearWayPointIndex(this->position);
+
+	refinePath(start, current); // 経路を作成
+
+	state = State::feeling;
+	Animationplay();
+	isTrackingPlayer = true;
+}
+
 // デバッグ描画
 void Enemy::DrawDebug()
 {
