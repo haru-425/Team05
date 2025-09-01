@@ -673,7 +673,7 @@ void SceneGame::Render()
 		return sin((x * DirectX::XM_PI) / 2);
 	};
 
-	if (tutorial_Flug && !tutorial_Flug2)
+	if (tutorial_Flug && !tutorial_Flug2 && !pause_Flug)
 	{
 		bool next_navi_vision = false;
 		switch (tutorial_Step)
