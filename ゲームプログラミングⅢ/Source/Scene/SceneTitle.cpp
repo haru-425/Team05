@@ -8,6 +8,8 @@
 #include"SceneGraphics.h"
 #include "Scene/SceneMattsu.h"
 #include "./LightModels/LightManager.h"
+#include "./Object/ObjectManager.h"
+#include "./Aircon/AirconManager.h"
 #include "System/difficulty.h"
 #include "Camera/CameraController/SceneCameraController.h"
 #include "System/SettingsManager.h"
@@ -25,100 +27,106 @@ static bool isStart = false;
 //初期化
 void SceneTitle::Initialize()
 {
-    //スプライト初期化
-    sprite = new Sprite("Data/Sprite/GameTitleStrings.png");
-    TitleTimer = 0.25f; // タイトル画面のタイマー初期化
-    TitleSignalTimer = 0.0f; // タイトル画面の信号タイマー初期化
-    sceneTrans = false; // シーン遷移フラグ初期化
+	//スプライト初期化
+	sprite = new Sprite("Data/Sprite/GameTitleStrings.png");
+	TitleTimer = 0.25f; // タイトル画面のタイマー初期化
+	TitleSignalTimer = 0.0f; // タイトル画面の信号タイマー初期化
+	sceneTrans = false; // シーン遷移フラグ初期化
 
-    isStart = true;
+	isStart = true;
 
-    /// ステージ初期化
-    {
-        /// モデル生成
-        model = std::make_unique<Stage>();
+	/// ステージ初期化
+	{
+		/// モデル生成
+		model = std::make_unique<Stage>();
 
-        /// 行列作成
-        DirectX::XMMATRIX M = DirectX::XMMatrixIdentity();
-        scale = { 0.01f, 0.01f, 0.01f };
-        DirectX::XMStoreFloat4x4(&world, M);
-        UpdateTransform();
-    }
+		/// 行列作成
+		DirectX::XMMATRIX M = DirectX::XMMatrixIdentity();
+		scale = { 0.01f, 0.01f, 0.01f };
+		DirectX::XMStoreFloat4x4(&world, M);
+		UpdateTransform();
+	}
 
-    i_cameraController = std::make_unique<SceneCameraController>();
+	i_cameraController = std::make_unique<SceneCameraController>();
 
-    // shadowMap
-    ID3D11Device* device = Graphics::Instance().GetDevice();
-    shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
+	// shadowMap
+	ID3D11Device* device = Graphics::Instance().GetDevice();
+	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
-    LightManager::Instance().Initialize();
+	// ライトの初期化
+	LightManager::Instance().Initialize();
 
-    //for (int i = 0; i < 7; ++i)
-    //{
-    //    uiSprits.emplace_back(std::make_unique<Sprite>("./Data/Sprite/image.png"));
-    //}
-    //for (int i = 0; i < 1; ++i)
-    //{
-    //    ui.emplace_back(std::make_unique<UI>("./Data/Sprite/image.png"));
-    //}
+	// エアコンの初期化
+	AirconManager::Instance().Initialize();
 
-    /// ゲーム選択
-    um.CreateUI("./Data/Sprite/image.png", "Game");
-    um.CreateUI("./Data/Sprite/image.png", "Option");
-    um.CreateUI("./Data/Sprite/image.png", "Exit");
-    /// オプション項目
-    um.CreateUI("./Data/Sprite/back.png", "OptionBack");
-    um.CreateUI("./Data/Sprite/image.png", "Sensitivity");
-    um.CreateUI("./Data/Sprite/volume.png", "Main");
-    um.CreateUI("./Data/Sprite/volume.png", "BGM");
-    um.CreateUI("./Data/Sprite/volume.png", "SE");
-    /// 感度
-    um.CreateUI("./Data/Sprite/image.png", "OptionBarBack");
-    um.CreateUI("./Data/Sprite/image.png", "OptionBar"); ///< 9
-    um.CreateUI("./Data/Sprite/numbers.png", "100");
-    um.CreateUI("./Data/Sprite/numbers.png", "10");
-    um.CreateUI("./Data/Sprite/numbers.png", "1");
-    /// マスター用バー
-    um.CreateUI("./Data/Sprite/image.png", "MainBarBack");
-    um.CreateUI("./Data/Sprite/image.png", "MainBar"); ///< 14
-    um.CreateUI("./Data/Sprite/numbers.png", "Main100");
-    um.CreateUI("./Data/Sprite/numbers.png", "Main10");
-    um.CreateUI("./Data/Sprite/numbers.png", "Main1");
-    /// BGM用バー
-    um.CreateUI("./Data/Sprite/image.png", "BGMBarBack");
-    um.CreateUI("./Data/Sprite/image.png", "BGMBar"); ///< 19
-    um.CreateUI("./Data/Sprite/numbers.png", "BGM100");
-    um.CreateUI("./Data/Sprite/numbers.png", "BGM10");
-    um.CreateUI("./Data/Sprite/numbers.png", "BGM1");
-    /// SE用バー
-    um.CreateUI("./Data/Sprite/image.png", "SEBarBack");
-    um.CreateUI("./Data/Sprite/image.png", "SEBar"); ///< 24
-    um.CreateUI("./Data/Sprite/numbers.png", "SE100");
-    um.CreateUI("./Data/Sprite/numbers.png", "SE10");
-    um.CreateUI("./Data/Sprite/numbers.png", "SE1");
-    /// ゲームモード選択
-    um.CreateUI("./Data/Sprite/gameMode.png", "GameMode");
-    um.CreateUI("./Data/Sprite/gameMode.png", "Tutorial");
-    um.CreateUI("./Data/Sprite/gameMode.png", "Normal");
-    um.CreateUI("./Data/Sprite/gameMode.png", "Hard");
-    um.CreateUI("./Data/Sprite/gameMode.png", "Info");
+	ObjectManager::Instance().Initialize();
 
-    isVolumeSliderActive = false;
-    oldSelect = -1;
+	//for (int i = 0; i < 7; ++i)
+	//{
+	//    uiSprits.emplace_back(std::make_unique<Sprite>("./Data/Sprite/image.png"));
+	//}
+	//for (int i = 0; i < 1; ++i)
+	//{
+	//    ui.emplace_back(std::make_unique<UI>("./Data/Sprite/image.png"));
+	//}
 
-    Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
-    // リスナーの初期位置と向きを設定
-    Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+	/// ゲーム選択
+	um.CreateUI("./Data/Sprite/image.png", "Game");
+	um.CreateUI("./Data/Sprite/image.png", "Option");
+	um.CreateUI("./Data/Sprite/image.png", "Exit");
+	/// オプション項目
+	um.CreateUI("./Data/Sprite/back.png", "OptionBack");
+	um.CreateUI("./Data/Sprite/image.png", "Sensitivity");
+	um.CreateUI("./Data/Sprite/volume.png", "Main");
+	um.CreateUI("./Data/Sprite/volume.png", "BGM");
+	um.CreateUI("./Data/Sprite/volume.png", "SE");
+	/// 感度
+	um.CreateUI("./Data/Sprite/image.png", "OptionBarBack");
+	um.CreateUI("./Data/Sprite/image.png", "OptionBar"); ///< 9
+	um.CreateUI("./Data/Sprite/numbers.png", "100");
+	um.CreateUI("./Data/Sprite/numbers.png", "10");
+	um.CreateUI("./Data/Sprite/numbers.png", "1");
+	/// マスター用バー
+	um.CreateUI("./Data/Sprite/image.png", "MainBarBack");
+	um.CreateUI("./Data/Sprite/image.png", "MainBar"); ///< 14
+	um.CreateUI("./Data/Sprite/numbers.png", "Main100");
+	um.CreateUI("./Data/Sprite/numbers.png", "Main10");
+	um.CreateUI("./Data/Sprite/numbers.png", "Main1");
+	/// BGM用バー
+	um.CreateUI("./Data/Sprite/image.png", "BGMBarBack");
+	um.CreateUI("./Data/Sprite/image.png", "BGMBar"); ///< 19
+	um.CreateUI("./Data/Sprite/numbers.png", "BGM100");
+	um.CreateUI("./Data/Sprite/numbers.png", "BGM10");
+	um.CreateUI("./Data/Sprite/numbers.png", "BGM1");
+	/// SE用バー
+	um.CreateUI("./Data/Sprite/image.png", "SEBarBack");
+	um.CreateUI("./Data/Sprite/image.png", "SEBar"); ///< 24
+	um.CreateUI("./Data/Sprite/numbers.png", "SE100");
+	um.CreateUI("./Data/Sprite/numbers.png", "SE10");
+	um.CreateUI("./Data/Sprite/numbers.png", "SE1");
+	/// ゲームモード選択
+	um.CreateUI("./Data/Sprite/gameMode.png", "GameMode");
+	um.CreateUI("./Data/Sprite/gameMode.png", "Tutorial");
+	um.CreateUI("./Data/Sprite/gameMode.png", "Normal");
+	um.CreateUI("./Data/Sprite/gameMode.png", "Hard");
+	um.CreateUI("./Data/Sprite/gameMode.png", "Info");
+
+	isVolumeSliderActive = false;
+	oldSelect = -1;
+
+	Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
+	// リスナーの初期位置と向きを設定
+	Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
 
 
-    // 3Dオーディオシステムの再生開始
-    Audio3DSystem::Instance().SetVolumeByAll();
-    //Audio3DSystem::Instance().UpdateEmitters();
-    Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
-    Audio3DSystem::Instance().PlayByTag("aircon");
+	// 3Dオーディオシステムの再生開始
+	Audio3DSystem::Instance().SetVolumeByAll();
+	//Audio3DSystem::Instance().UpdateEmitters();
+	Audio3DSystem::Instance().PlayByTag("atmosphere_noise");
+	Audio3DSystem::Instance().PlayByTag("aircon");
 
-    // SE読み込み
-    selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
+	// SE読み込み
+	selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
 }
 
 //終了化
@@ -269,8 +277,37 @@ void SceneTitle::Render()
     rc.view = camera.GetView();
     rc.projection = camera.GetProjection();
 
-    UpdateConstants(rc);
-    LightManager::Instance().UpdateConstants(rc);
+	// shadow
+	{
+		Camera& camera = Camera::Instance();
+
+		// ライトの位置から見た視線行列を生成
+		DirectX::XMVECTOR LightPosition = DirectX::XMLoadFloat3(&lightDirection);
+		LightPosition = DirectX::XMVectorScale(LightPosition, -50);
+		DirectX::XMMATRIX V = DirectX::XMMatrixLookAtLH(LightPosition,
+			DirectX::XMVectorSet(camera.GetFocus().x, camera.GetFocus().y, camera.GetFocus().z, 1.0f),
+			DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+
+		// シャドウマップに描画したい範囲の射影行列を生成
+		DirectX::XMMATRIX P = DirectX::XMMatrixOrthographicLH(SHADOWMAP_DRAWRECT, SHADOWMAP_DRAWRECT,
+			0.1f, 200.0f);
+
+		DirectX::XMStoreFloat4x4(&rc.view, V);
+		DirectX::XMStoreFloat4x4(&rc.projection, P);
+		DirectX::XMStoreFloat4x4(&rc.lightViewProjection, V * P);
+
+		shadow->Clear(dc, 1.0f);
+		shadow->Active(dc);
+
+		// 3Dモデル描画
+		{
+			ObjectManager::Instance().Render(rc, renderer);
+		}
+		shadow->Deactive(dc);
+	}
+
+	UpdateConstants(rc);
+	LightManager::Instance().UpdateConstants(rc);
 
     /// フレームバッファのクリアとアクティベート（ポストプロセス用）
     Graphics::Instance().framebuffers[int(Graphics::PPShaderType::screenquad)]->clear(dc, 1, 1, 1, 1);
@@ -282,15 +319,20 @@ void SceneTitle::Render()
         //renderer->Render(rc, world, model.get(), ShaderId::Custom);
         model->Render(rc, renderer);
 
-        LightManager::Instance().Render(rc);
-    }
+		LightManager::Instance().Render(rc);
 
-    {
+		AirconManager::Instance().Render(rc);
 
-    }
+		ObjectManager::Instance().Render(rc, renderer);
+	}
+
+	shadow->Release(dc);
 
 #if 1
-    // 2Dスプライト描画
+	// 2Dスプライト描画
+	{
+
+	}
 
 #endif
 

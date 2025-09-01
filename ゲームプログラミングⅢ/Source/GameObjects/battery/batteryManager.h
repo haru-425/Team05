@@ -11,13 +11,15 @@
 #include <DirectXMath.h>
 #include <vector>
 
-#define BATTERY_REMAIN_MAX 9
+#define BATTERY_REMAIN_MAX 10
 #define BATTERY_NORMAL_MAX 9
 #define BATTERY_HARD_MAX 18
 #define BATTERY_DROP_NORML_INTERVAL 20.0f
 #define BATTERY_DROP_HARD_INTERVAL 10.0f
-#define NORML_RECOVERY 10.0f
-#define HARD_RECOVERY 5.0f
+#define ENERGY_RECOVERY_NORMALMODE_NORMALBATTERY 5.0f
+#define ENERGY_RECOVERY_NORMALMODE_HIGHSCOREBATTERY 10.0f
+#define ENERGY_RECOVERY_HARDMODE_NORMALBATTERY 3.0f
+#define	ENERGY_RECOVERY_HARDMODE_HIGHSCOREBATTERY 5.0f
 
 class batteryManager
 {
@@ -41,12 +43,14 @@ public:
 		{
 		case Difficulty::tutorial:
 		case Difficulty::normal:
-			battery_recovery = NORML_RECOVERY;
+			normalbattery_recovery = ENERGY_RECOVERY_NORMALMODE_NORMALBATTERY;
+			hardbattery_recovery = ENERGY_RECOVERY_NORMALMODE_HIGHSCOREBATTERY;
 			drop_interval = BATTERY_DROP_NORML_INTERVAL;
 			max_Battery = BATTERY_NORMAL_MAX;
 			break;
 		case Difficulty::hard:
-			battery_recovery = HARD_RECOVERY;
+			normalbattery_recovery = ENERGY_RECOVERY_HARDMODE_NORMALBATTERY;
+			hardbattery_recovery = ENERGY_RECOVERY_HARDMODE_HIGHSCOREBATTERY;
 			drop_interval = BATTERY_DROP_HARD_INTERVAL;
 			max_Battery = BATTERY_HARD_MAX;
 			break;
@@ -180,9 +184,11 @@ public:
 				switch (it->getType())
 				{
 				case BatteryType::Normal:
+					player->AddHijackTimer(normalbattery_recovery);
 					player_Get_Score += 10;
 					break;
 				case BatteryType::High:
+					player->AddHijackTimer(hardbattery_recovery);
 					player_Get_Score += 20;
 					enemy->detectPlayerPosition();
 					break;
@@ -190,7 +196,6 @@ public:
 					break;
 				}
 				hasBattery.erase(it);
-				player->AddHijackTimer(battery_recovery);
 				break;
 			}
 			else
@@ -269,7 +274,9 @@ private:
 
 	int max_Battery = 0;
 
-	float battery_recovery = NORML_RECOVERY;
+	float normalbattery_recovery = ENERGY_RECOVERY_NORMALMODE_NORMALBATTERY;
+
+	float hardbattery_recovery = ENERGY_RECOVERY_NORMALMODE_HIGHSCOREBATTERY;
 
 	float drop_interval = BATTERY_DROP_NORML_INTERVAL;
 

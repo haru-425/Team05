@@ -6,7 +6,6 @@
 #include "FreeCameraController.h"
 #include "LightDebugCameraController.h"
 #include "Scene.h"
-#include <memory>
 #include "Player/Player.h"
 #include"miniMap.h"
 #include "3DAudio/3DAudio.h"

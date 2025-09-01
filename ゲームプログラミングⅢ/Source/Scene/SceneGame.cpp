@@ -217,7 +217,7 @@ void SceneGame::Update(float elapsedTime)
 
 	// ESCキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
 	//if (GetAsyncKeyState('P') & 0x8000)
-	if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && !pause_Flug)
+	if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && !pause_Flug && !player->GetIsEvent())
 	{
 		Audio3DSystem::Instance().StopByTag("enemy_run");
 		Audio3DSystem::Instance().StopByTag("enemy_walk");
@@ -673,7 +673,7 @@ void SceneGame::Render()
 		return sin((x * DirectX::XM_PI) / 2);
 	};
 
-	if (tutorial_Flug && !tutorial_Flug2)
+	if (tutorial_Flug && !tutorial_Flug2 && !pause_Flug)
 	{
 		bool next_navi_vision = false;
 		switch (tutorial_Step)
@@ -1203,7 +1203,7 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 		};
 
 		DirectX::XMFLOAT3 hitPos;
-		if (Collision::IntersectSphereVsSphere(playerPos, player->GetRadius(), gatePos, 0.05f, hitPos))
+		if (Collision::IntersectSphereVsSphere(playerPos, player->GetRadius(), gatePos, 0.05f, hitPos) && !player->GetIsEvent())
 		{
 
 			if (IsPlayerFacingDoor(playerPos, playerDir, gatePos) && !player->GetUseCam())
