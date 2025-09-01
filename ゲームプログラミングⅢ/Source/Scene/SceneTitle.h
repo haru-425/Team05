@@ -44,7 +44,7 @@ private:
 
 	void RenderUI(const RenderContext& rc); ///< タイトルのUIをまとめて描画
 
-	void UpdateUI();
+	void UpdateUI(float elapsedTime);
 
 private:
 	struct UIParameter
@@ -145,4 +145,7 @@ private:
 
 	/// コントローラー用の変数
 	int selectNum = -1;
+
+	float selectTime = 0;
+	int selectCount = 0;
 };

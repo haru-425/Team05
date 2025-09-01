@@ -1063,7 +1063,7 @@ void SceneGame::UpdateConstants(RenderContext& rc)
 
 void SceneGame::TutorialUpdate(float elapsedTime)
 {
-	if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)//左クリックされたら
+	if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A)//左クリックされたら
 	{
 		tutorial_Step++;
 	}
@@ -1145,7 +1145,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		tutorial_Step--;
 	case 3:
 		//「【操作方法】右クリックで敵の視点を...」
-		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)
+		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT_THUMB)
 		{
 			tutorial_Click_Count++;
 		}
@@ -1221,7 +1221,7 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 
 					um.GetUIs().at(0)->GetSpriteData().isVisible = true;
 
-					if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT)
+					if ((Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A))
 					{
 						stage->SetGatePassed(i, true);
 						fadeStart = true;

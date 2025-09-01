@@ -27,6 +27,9 @@ public:
     void SetVolumeTexturePosition(int startID, int volume, float texWidght);
 
 private:
+    void UpdateWithController(float elapsedTime);
+
+private:
     /// UIスプライト関連
     struct UIParameter
     {
@@ -63,4 +66,7 @@ private:
     // 音響関連定数
     // ==============================
     AudioSource* selectSE = nullptr;
+
+    bool isSceneStart = false;
+    int selectNum = -1;
 };
