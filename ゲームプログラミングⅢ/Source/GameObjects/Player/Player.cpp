@@ -53,8 +53,9 @@ Player::Player(const DirectX::XMFLOAT3& position)
 	textures->LoadOcclusion("Data/Model/Player/Texture/player_mtl_Opacity.png");
 
 	/// SEの読み込み
-	changeCameraInSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
-	changeCameraKeepSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
+	changeCameraInSE     = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_in.wav");
+	changeCameraKeepSE   = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_keep.wav");
+	changeCameraFailedSE = Audio::Instance().LoadAudioSource("Data/Sound/change_camera_failed.wav");
 
 	if (Difficulty::Instance().GetDifficulty() == 2)
 	{
@@ -98,6 +99,7 @@ void Player::Update(float dt)
 	GameSettings setting = SettingsManager::Instance().GetGameSettings();
 	changeCameraInSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
 	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
+	changeCameraFailedSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
 
 	ChangeCamera();
 
@@ -188,6 +190,11 @@ void Player::DeleteSounds()
 		changeCameraKeepSE->Stop();
 		delete changeCameraKeepSE;
 		changeCameraKeepSE = nullptr;
+	}
+	if (changeCameraFailedSE) {
+		changeCameraFailedSE->Stop();
+		delete changeCameraFailedSE;
+		changeCameraFailedSE = nullptr;
 	}
 }
 
@@ -342,17 +349,26 @@ void Player::ChangeCamera()
 	if (isHijack)isHijack = false;
 
 	// �E�N���b�N�Ő؂�ւ�
-	if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
+	if (mouse.GetButtonDown() & Mouse::BTN_RIGHT)
 	{
-		if (useCam)
-			isChange = true; // �؂�ւ�����
-		else {
-			isHijack = true; // �n�C�W���b�N�J�n
-			changeCameraInSE->Play(false);
-		}
+		if (enableHijack) {
+			if (useCam)
+				isChange = true; // �؂�ւ�����
+			else {
+				isHijack = true; // �n�C�W���b�N�J�n
+				changeCameraInSE->Play(false);
+			}
 
-		useCam = !useCam;
-		hijackedElapsedTime = 0;
+			useCam = !useCam;
+			hijackedElapsedTime = 0;
+		}
+		else
+		{
+			if (changeCameraFailedSE->IsPlaying()) {
+				changeCameraFailedSE->Stop();
+			}
+			changeCameraFailedSE->Play(false);
+		}
 	}
 
 	// ゲージがなくなると強制的に戻す
