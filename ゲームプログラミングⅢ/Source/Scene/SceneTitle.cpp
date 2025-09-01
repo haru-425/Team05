@@ -8,6 +8,8 @@
 #include"SceneGraphics.h"
 #include "Scene/SceneMattsu.h"
 #include "./LightModels/LightManager.h"
+#include "./Object/ObjectManager.h"
+#include "./Aircon/AirconManager.h"
 #include "System/difficulty.h"
 #include "Camera/CameraController/SceneCameraController.h"
 #include "System/SettingsManager.h"
@@ -51,7 +53,13 @@ void SceneTitle::Initialize()
 	ID3D11Device* device = Graphics::Instance().GetDevice();
 	shadow = std::make_unique<ShadowCaster>(device, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
 
+	// ライトの初期化
 	LightManager::Instance().Initialize();
+
+	// エアコンの初期化
+	AirconManager::Instance().Initialize();
+
+	ObjectManager::Instance().Initialize();
 
 	//for (int i = 0; i < 7; ++i)
 	//{
@@ -269,6 +277,35 @@ void SceneTitle::Render()
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
 
+	// shadow
+	{
+		Camera& camera = Camera::Instance();
+
+		// ライトの位置から見た視線行列を生成
+		DirectX::XMVECTOR LightPosition = DirectX::XMLoadFloat3(&lightDirection);
+		LightPosition = DirectX::XMVectorScale(LightPosition, -50);
+		DirectX::XMMATRIX V = DirectX::XMMatrixLookAtLH(LightPosition,
+			DirectX::XMVectorSet(camera.GetFocus().x, camera.GetFocus().y, camera.GetFocus().z, 1.0f),
+			DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+
+		// シャドウマップに描画したい範囲の射影行列を生成
+		DirectX::XMMATRIX P = DirectX::XMMatrixOrthographicLH(SHADOWMAP_DRAWRECT, SHADOWMAP_DRAWRECT,
+			0.1f, 200.0f);
+
+		DirectX::XMStoreFloat4x4(&rc.view, V);
+		DirectX::XMStoreFloat4x4(&rc.projection, P);
+		DirectX::XMStoreFloat4x4(&rc.lightViewProjection, V * P);
+
+		shadow->Clear(dc, 1.0f);
+		shadow->Active(dc);
+
+		// 3Dモデル描画
+		{
+			ObjectManager::Instance().Render(rc, renderer);
+		}
+		shadow->Deactive(dc);
+	}
+
 	UpdateConstants(rc);
 	LightManager::Instance().UpdateConstants(rc);
 
@@ -283,14 +320,19 @@ void SceneTitle::Render()
 		model->Render(rc, renderer);
 
 		LightManager::Instance().Render(rc);
+
+		AirconManager::Instance().Render(rc);
+
+		ObjectManager::Instance().Render(rc, renderer);
 	}
 
-	{
-
-	}
+	shadow->Release(dc);
 
 #if 1
 	// 2Dスプライト描画
+	{
+
+	}
 
 #endif
 

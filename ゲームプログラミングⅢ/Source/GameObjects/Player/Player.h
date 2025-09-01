@@ -127,6 +127,7 @@ private:
     // カメラ切り替えのSE
     AudioSource* changeCameraInSE = nullptr;
     AudioSource* changeCameraKeepSE = nullptr;
+    AudioSource* changeCameraFailedSE = nullptr;
 
     bool deathStart = false;
 
