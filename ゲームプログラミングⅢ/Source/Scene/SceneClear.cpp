@@ -72,8 +72,9 @@ void Game_Clear::Update(float elapsedTime)
 	selectSE->SetVolume(0.5f * setting.seVolume);
 
 	Mouse& mouse = Input::Instance().GetMouse();
+	GamePad& gamePad = Input::Instance().GetGamePad();
 
-	if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+	if ((mouse.GetButtonDown() & Mouse::BTN_LEFT || gamePad.GetButtonDown() & GamePad::BTN_A))
 	{
 		GameCleartime = 120.0f;
 		selectSE->Play(false);

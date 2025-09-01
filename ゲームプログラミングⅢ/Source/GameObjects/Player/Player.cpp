@@ -336,13 +336,14 @@ void Player::ChangeCamera()
 	if (enableOpenGate && !useCam) return; ///< ドアが開ける場合
 
 	Mouse& mouse = Input::Instance().GetMouse();
+	GamePad& gamePad = Input::Instance().GetGamePad();
 
 	if (isChange)
 		isChange = false;
 	if (isHijack)isHijack = false;
 
 	// �E�N���b�N�Ő؂�ւ�
-	if (mouse.GetButtonDown() & Mouse::BTN_LEFT && enableHijack)
+	if ((mouse.GetButtonDown() & Mouse::BTN_LEFT || gamePad.GetButtonDown() & GamePad::BTN_RIGHT_THUMB) && enableHijack)
 	{
 		if (useCam)
 			isChange = true; // �؂�ւ�����
