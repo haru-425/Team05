@@ -92,6 +92,14 @@ void PauseSystem::Finalize()
 
 void PauseSystem::Update(float elapsedTime)
 {
+	/// ゲームパッドしようの場合
+	if (Input::Instance().GetIsGamePadActive())
+	{
+		UpdateWithController(elapsedTime);
+		return;
+	}
+	selectNum = -1;
+
 	GameSettings setting = SettingsManager::Instance().GetGameSettings();
 	selectSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
 
@@ -354,4 +362,91 @@ void PauseSystem::SetVolumeTexturePosition(int startID, int volume, float texWig
 	/// 10未満の時に10の位を非表示にする
 	if (volume < 10) { um.GetUIs().at(startID + 1)->GetSpriteData().isVisible = false; }
 
+}
+
+void PauseSystem::UpdateWithController(float elapsedTime)
+{
+	auto& gamePad = Input::Instance().GetGamePad();
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
+
+	/// シーンはじまって初めの処理
+	if (isSceneStart)
+	{
+
+		selectNum = 2;
+		isSceneStart = true;
+	}
+
+	/// ハイライト処理
+	for (auto& ui : um.GetUIs())
+	{
+		int id = ui->GetID();
+
+		// 対象IDのみ処理
+		if (!(id == 2 || id == 3 || id == 4 ||
+			id == 11 || id == 16 || id == 21 || id == 26)) continue;
+
+		/// 常に描画されいているUIを表示
+		if (id < 5) {
+			ui->GetSpriteData().isVisible = true;
+		}
+	}
+
+	/// コントローラーでの項目選択
+	if (gamePad.GetButtonDown() & GamePad::BTN_UP)  selectNum++;
+	if (gamePad.GetButtonDown() == GamePad::BTN_UP) selectNum--;
+
+	um.GetUIs().at(selectNum)->SetIsHit(true);
+
+	/// ヒット UI 処理
+	for (auto& ui : um.GetHitAllUI())
+	{
+		int id = ui->GetID();
+
+		switch (id)
+		{
+		case 2: ///< ゲーム開始
+			if (gamePad.GetButtonDown() & GamePad::BTN_A)
+			{
+				selectSE->Play(false);
+				SceneGame::SetPause(false);
+			}
+			break;
+		case 3: ///< 設定
+			if (gamePad.GetButtonDown() & GamePad::BTN_A)
+			{
+
+			}
+			break;
+		case 4: ///< 終了
+			if (gamePad.GetButtonDown() & GamePad::BTN_A)
+			{
+				SceneGame::SetPause(false);
+				SceneManager::instance().ChangeScene(new SceneLoading(new SceneTitle));
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	/// テクスチャの位置を設定
+	SetVolumeTexturePosition(12, sensitivity, 25);
+	SetVolumeTexturePosition(17, mVolume, 25);
+	SetVolumeTexturePosition(22, bgmVolume, 25);
+	SetVolumeTexturePosition(27, seVolume, 25);
+
+	/// 設定を変更した場合保存
+	{
+		setting.sensitivity = sensitivity * 0.01;
+		setting.masterVolume = mVolume * 0.01;
+		setting.bgmVolume = bgmVolume * 0.01;
+		setting.seVolume = seVolume * 0.01;
+
+		SettingsManager::Instance().SetGameSettings(setting);
+	}
+	Audio3DSystem::Instance().masterVolume = setting.masterVolume;
+	Audio3DSystem::Instance().seVolume = setting.seVolume;
+	Audio3DSystem::Instance().bgmVolume = setting.bgmVolume;
+	Audio3DSystem::Instance().SetVolumeByAll();
 }

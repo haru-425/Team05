@@ -47,9 +47,9 @@ void FPCameraController::Update(float dt)
         angle.x += (mouseY - screenH / 2) * sensitivity;
 
         /// コントローラー
-        int correctionValue = 15; ///< 補正値
+        int correctionValue = 10; ///< 補正値
         angle.y += lStick * sensitivity * correctionValue;
-        angle.x += rStick * sensitivity * correctionValue;
+        angle.x -= rStick * sensitivity * correctionValue * 0.7;
     }
     // 90度だとバグるので
     angle.x = std::clamp(angle.x, -MAX_PITCH, MAX_PITCH);
