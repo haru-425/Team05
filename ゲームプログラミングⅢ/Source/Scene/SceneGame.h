@@ -11,6 +11,8 @@
 #include "3DAudio/3DAudio.h"
 #include"Metar.h"
 
+#include "../DushUI.h"
+
 #include "System/ShadowCaster.h"
 #include "System/UiManager.h"
 
@@ -65,6 +67,7 @@ private:
 	std::shared_ptr<Player> player;
 	std::shared_ptr<Enemy> enemy;
 	std::shared_ptr<Metar> metar;
+	DushUI dushUI;
 
 	MiniMap* minimap = nullptr;
 	bool tutorial_Flug = false;

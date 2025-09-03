@@ -400,12 +400,12 @@ void Audio3DSystem::PlayAll()
  //
 void Audio3DSystem::PlayByTag(const std::string& tag)
 {
-	StartFadeIn(tag, 0.5f); // 1秒でフェードイン（任意で調整）
+	StartFadeIn(tag, 0.1f); // 1秒でフェードイン（任意で調整）
 }
 
 void Audio3DSystem::StopByTag(const std::string& tag)
 {
-	StartFadeOut(tag, 0.5f); // 1秒でフェードアウト
+	StartFadeOut(tag, 0.1f); // 1秒でフェードアウト
 }
 /**
  * @brief エミッターの3D音響更新処理用スレッドを開始する
