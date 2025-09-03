@@ -322,6 +322,7 @@ void SceneGame::Update(float elapsedTime)
 
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 	EnemyUI::Instance().Update(elapsedTime, player->GetPosition(), enemy->Get_Loocking());
+	dushUI.Update(elapsedTime, false);
 }
 
 // 描画処理
@@ -418,7 +419,6 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-
 	}
 
 	shadow->Release(dc);
@@ -565,6 +565,8 @@ void SceneGame::Render()
 		if (!tutorial_Flug || tutorial_Step >= 4)
 		{
 			metar->render();
+
+			dushUI.Render();
 			BatteryScore::Instance().Render(rc);
 		}
 		/// ポーズ中に表示するスプライト
@@ -669,9 +671,9 @@ void SceneGame::Render()
 	}
 
 	auto easeOutSine = [](float x) -> float
-	{
-		return sin((x * DirectX::XM_PI) / 2);
-	};
+		{
+			return sin((x * DirectX::XM_PI) / 2);
+		};
 
 	if (tutorial_Flug && !tutorial_Flug2 && !pause_Flug)
 	{
