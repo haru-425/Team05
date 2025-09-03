@@ -22,13 +22,18 @@ void BatteryScore::Render(RenderContext& rc)
 	float posX = 50 + size;
 	float posY = 450;
 
-	for (int i = 0; i < 64; ++i)
+	for (int i = 0; i < 32; ++i)
 	{
-
-		//int pattern = -1;
 		int pattern = batteryManager::Instance().getPlayerHasBattery(i);
 
+		/// null‚Ìê‡‚Í•`‰æ‚µ‚È‚¢
 		if (pattern == -1) break;
+
+		/// Šl“¾”‚ª10ŒÂ‚ð’´‚¦‚½‚çŽŸ‚Ì—ñ‚Ö
+		if (i == 10) { 
+			posX += size; 
+			posY = 450;
+		}
 
 		switch (pattern) {
 		case static_cast<int>(batteryPattern::normal):
