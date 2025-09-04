@@ -68,7 +68,7 @@ private:
 	std::shared_ptr<Enemy> enemy;
 	std::shared_ptr<Metar> metar;
 	DushUI dushUI;
-
+	Sprite* dushBackUI = nullptr;
 	MiniMap* minimap = nullptr;
 	bool tutorial_Flug = false;
 	int tutorial_Step = 0;
