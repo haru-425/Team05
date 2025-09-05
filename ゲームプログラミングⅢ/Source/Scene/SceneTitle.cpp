@@ -27,6 +27,8 @@ static bool isStart = false;
 //初期化
 void SceneTitle::Initialize()
 {
+    CursorManager::Instance().SetCursorVisible(true);
+
 	//スプライト初期化
 	sprite = new Sprite("Data/Sprite/GameTitleStrings.png");
 	TitleTimer = 0.25f; // タイトル画面のタイマー初期化
