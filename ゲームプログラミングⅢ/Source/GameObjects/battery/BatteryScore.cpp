@@ -19,7 +19,7 @@ void BatteryScore::Update(float elapsedTime)
 void BatteryScore::Render(RenderContext& rc)
 {
 	float size = 40;
-	float posX = 50 + size;
+	float posX = 70 + size;
 	float posY = 450;
 
 	for (int i = 0; i < 32; ++i)

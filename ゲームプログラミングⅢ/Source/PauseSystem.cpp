@@ -190,7 +190,7 @@ void PauseSystem::Update(float elapsedTime)
 					selectSE->Play(false);
 					oldSelect = 0;
 				}
-
+				isSceneStart = false;
 				SceneGame::SetPause(false);
 				break;
 			}
@@ -215,6 +215,7 @@ void PauseSystem::Update(float elapsedTime)
 			{
 				SceneGame::SetPause(false);
 				SceneManager::instance().ChangeScene(new SceneLoading(new SceneTitle));
+				isSceneStart = false;
 				break;
 			}
 			break;
@@ -364,15 +365,28 @@ void PauseSystem::SetVolumeTexturePosition(int startID, int volume, float texWig
 
 }
 
+void _BarMove(int id, const DirectX::XMFLOAT3& barInfo, int settingValue, UIManager* um)
+{
+	float valueParHundred = (barInfo.y - barInfo.z / 2) - (barInfo.x + barInfo.z / 2);
+	valueParHundred /= 100;
+
+	um->GetUIs().at(id)->GetSpriteData().spritePos.x = barInfo.x + valueParHundred * settingValue;
+}
+
+/**
+* コントローラー用のポーズ機能
+*/
 void PauseSystem::UpdateWithController(float elapsedTime)
 {
 	auto& gamePad = Input::Instance().GetGamePad();
 	GameSettings setting = SettingsManager::Instance().GetGameSettings();
 
+	static bool selectOption = false;
+
 	/// シーンはじまって初めの処理
 	if (isSceneStart)
 	{
-
+		selectOption = false;
 		selectNum = 2;
 		isSceneStart = true;
 	}
@@ -390,14 +404,39 @@ void PauseSystem::UpdateWithController(float elapsedTime)
 		if (id < 5) {
 			ui->GetSpriteData().isVisible = true;
 		}
+
+		ui->GetSpriteData().color = ui->GetIsHit() ?
+			ui->GetSpriteData().color = { 1, 1, 1, 1 } : ui->GetSpriteData().color = { 0.660f, 0.660f, 0.660f, 1 };
 	}
 
 	/// コントローラーでの項目選択
-	if (gamePad.GetButtonDown() & GamePad::BTN_UP)  selectNum++;
-	if (gamePad.GetButtonDown() == GamePad::BTN_UP) selectNum--;
+	if (selectOption)
+	{
+		if (gamePad.GetButtonDown() & GamePad::BTN_DOWN)  selectNum += 5;
+		if (gamePad.GetButtonDown() & GamePad::BTN_UP) selectNum -= 5;
 
-	um.GetUIs().at(selectNum)->SetIsHit(true);
+		if (selectNum > 26)selectNum = 11;
+		if (selectNum < 11)selectNum = 26;
+	}
+	else
+	{
+		if (gamePad.GetButtonDown() & GamePad::BTN_DOWN)  selectNum++;
+		if (gamePad.GetButtonDown() & GamePad::BTN_UP) selectNum--;
 
+		if (selectNum > 4)selectNum = 2;
+		if (selectNum < 2)selectNum = 4;
+	}
+
+	if(selectNum > 0)
+		um.GetUIs().at(selectNum)->SetIsHit(true);
+
+	bool isMoveBarR = false;
+	bool isMoveBarL = false;
+
+	/// 全体の長さ
+	float valueParHun = (BAR_MAX - SLIDER_WIDTH / 2) - (BAR_MIN + SLIDER_WIDTH / 2);
+	/// 1でどれだけ進むのか
+	valueParHun /= 100;
 	/// ヒット UI 処理
 	for (auto& ui : um.GetHitAllUI())
 	{
@@ -410,19 +449,150 @@ void PauseSystem::UpdateWithController(float elapsedTime)
 			{
 				selectSE->Play(false);
 				SceneGame::SetPause(false);
+				isSceneStart = false;
 			}
+
+			um.GetUIs().at(3)->SetIsHit(false);
+			um.GetUIs().at(4)->SetIsHit(false);
+
 			break;
 		case 3: ///< 設定
 			if (gamePad.GetButtonDown() & GamePad::BTN_A)
 			{
-
+				selectOption = true;
+				selectSE->Play(false);
+				selectNum = 11;
 			}
+
+			um.GetUIs().at(2)->SetIsHit(false);
+			um.GetUIs().at(4)->SetIsHit(false);
+
 			break;
 		case 4: ///< 終了
 			if (gamePad.GetButtonDown() & GamePad::BTN_A)
 			{
 				SceneGame::SetPause(false);
 				SceneManager::instance().ChangeScene(new SceneLoading(new SceneTitle));
+				selectSE->Play(false);
+				isSceneStart = false;
+			}
+
+			um.GetUIs().at(2)->SetIsHit(false);
+			um.GetUIs().at(3)->SetIsHit(false);
+
+			break;
+		case 11:
+			[[fallthrough]];
+		case 16:
+			[[fallthrough]];
+		case 21:
+			[[fallthrough]];
+		case 26:
+			isVolumeSliderActive = true;
+
+			if (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_LEFT || Input::Instance().GetGamePad().GetButton() & GamePad::BTN_RIGHT)
+			{
+				selectTime -= elapsedTime;
+				if (selectTime <= 0)
+				{
+					if (gamePad.GetButton() & GamePad::BTN_RIGHT)isMoveBarR = true;
+					if (gamePad.GetButton() & GamePad::BTN_LEFT)isMoveBarL = true;
+
+					++selectCount;
+
+					switch (selectCount)
+					{
+					case 1:
+						selectTime = 0.3f;
+						break;
+					case 2:
+						selectTime = 0.3f;
+						break;
+					case 3:
+						selectTime = 0.2f;
+						break;
+					case 4:
+						selectTime = 0.2f;
+						break;
+					case 5:
+						selectTime = 0.1f;
+						break;
+					case 6:
+						selectTime = 0.1f;
+						break;
+					default:
+						selectTime = 0.03;
+						break;
+					}
+				}
+			}
+			else
+			{
+				selectTime = 0;
+				selectCount = 0;
+			}
+
+			/// 操作するバー以外のヒット判定を全て取り消す
+			for (int selectId = 11; selectId < 27; selectId += 5)
+			{
+				if (selectId == selectNum)continue;
+
+				um.GetUIs().at(selectId)->SetIsHit(false);
+			}
+
+
+			switch (selectNum)
+			{
+			case 11:
+				if (isMoveBarR)
+					sensitivity++;
+				if (isMoveBarL)
+					sensitivity--;
+
+				um.GetUIs().at(selectNum)->GetSpriteData().spritePos.x = BAR_MIN + valueParHun * sensitivity;
+				break;
+			case 16:
+				if (isMoveBarR)
+					mVolume++;
+				if (isMoveBarL)
+					mVolume--;
+
+				um.GetUIs().at(selectNum)->GetSpriteData().spritePos.x = BAR_MIN + valueParHun * mVolume;
+				break;
+			case 21:
+				if (isMoveBarR)
+					bgmVolume++;
+				if (isMoveBarL)
+					bgmVolume--;
+
+				um.GetUIs().at(selectNum)->GetSpriteData().spritePos.x = BAR_MIN + valueParHun * bgmVolume;
+				break;
+			case 26:
+				if (isMoveBarR)
+					seVolume++;
+				if (isMoveBarL)
+					seVolume--;
+
+				um.GetUIs().at(selectNum)->GetSpriteData().spritePos.x = BAR_MIN + valueParHun * seVolume;
+				break;
+			default:
+				break;
+			}
+			sensitivity = std::clamp(sensitivity, 0, 100);
+			mVolume		= std::clamp(mVolume,	  0, 100);
+			bgmVolume	= std::clamp(bgmVolume,	  0, 100);
+			seVolume	= std::clamp(seVolume,	  0, 100);
+
+			/// Bボタンを押したときに全部のヒット判定を一度取り消し、
+			/// 操作対象を再開、設定、終了に戻すとともにヒット判定を設定にする
+			if (gamePad.GetButton() & GamePad::BTN_B)
+			{
+				selectNum = 3;
+				for (int selectId = 11; selectId < 27; selectId += 5)
+				{
+					um.GetUIs().at(selectId)->SetIsHit(false);
+				}
+				selectOption = false;
 			}
 			break;
 		default:
