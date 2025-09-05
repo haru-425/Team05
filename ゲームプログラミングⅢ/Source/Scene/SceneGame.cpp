@@ -1221,7 +1221,7 @@ void SceneGame::CheckGateInteraction(std::shared_ptr<Player> player, Stage* stag
 
 					um.GetUIs().at(0)->GetSpriteData().isVisible = true;
 
-					if ((Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A))
+					if ((Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_RIGHT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER))
 					{
 						stage->SetGatePassed(i, true);
 						fadeStart = true;
