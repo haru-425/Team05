@@ -36,22 +36,8 @@ Enemy::Enemy(std::shared_ptr<Player> playerRef, Stage* stage)
 	radius = 1.5f;                        // 衝突用の半径
 	radius = 1.7f;                        // 衝突用の半径
 	viewPoint = 1.5f;                     // 目線の高さ
-	position = stage->GetIndexWayPoint(33);      // 初期位置
-	Goal::Instance().SetPosition(stage->GetIndexWayPoint(61));
-
-	Start::Instance().SetPosition(this->position);
-	SearchAI::Instance().freeSearch(stage);
-
-	int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
-	int start = stage->NearWayPointIndex(this->position);
-
-
-	refinePath(start, current); // 経路を作成
-
-	// ステート遷移
-	targetPosition = route[0];
-	state = State::Roaming;
-	Animationplay();
+	position = stage->GetIndexWayPoint(stage->EnemySpawnPoint());      // 初期位置
+	state = State::Idle;
 
 	UpdateTransform();
 }
@@ -124,7 +110,6 @@ void Enemy::Update(float elapsedTime)
 	{
 		moveSpeed = 0;
 		state = State::Attack;
-
 
 		batteryManager::Instance().stop();
 		Audio3DSystem::Instance().StopByTag("enemy_run");
@@ -264,7 +249,7 @@ void Enemy::Update(float elapsedTime)
 		Audio3DSystem::Instance().StopByTag("enemy_walk");
 
 		// ランダムな目標地点を設定し経路探索
-		Goal::Instance().SetPosition(stage->GetIndexWayPoint(stage->randomPoint()));
+		Goal::Instance().SetPosition(stage->GetIndexWayPoint(stage->RandomPoint()));
 
 #if 0
 		//（デバッグ：Tキー）

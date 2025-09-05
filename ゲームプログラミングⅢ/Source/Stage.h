@@ -70,7 +70,9 @@ public:
 
     void AddEdgecost(int from, int to);
 
-    int randomPoint();
+    int RandomPoint();
+
+    int EnemySpawnPoint();
 
 	void SetPlayerPos(DirectX::XMFLOAT3 pos) { player_pos = pos; }
 
@@ -109,4 +111,6 @@ private:
 
     DirectX::XMFLOAT3 player_pos;
     std::vector<int> player_NearPoint;
+
+    int enemy_SpawnPoint[5] = {46,33,42,62,24};
 };
