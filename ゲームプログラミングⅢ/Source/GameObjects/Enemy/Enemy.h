@@ -90,6 +90,22 @@ public:
 
     void detectPlayerPosition();
 
+    bool GetIsDiscovery()
+    {
+        if (state == State::detection || state == State::feeling)
+            return true;
+
+        return false;
+    }
+
+    bool GetIsNotDiscovery()
+    {
+        if (state == State::Roaming || state == State::miss || state == State::Idle)
+            return true;
+
+        return false;
+    }
+
 private:
     // Œo˜HÄ\’ziŒ»İ’n“_‚©‚çƒS[ƒ‹‚Ü‚Å‚ğ‹t‡‚É‚½‚Ç‚Á‚Ä³‡‚É‚·‚éj
     void refinePath(int start, int current);
