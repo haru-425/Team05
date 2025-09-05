@@ -201,33 +201,39 @@ void SceneGame::Update(float elapsedTime)
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	//ポーズ処理
-	if (pause_Flug)
-	{
-		//Rキーを押したらautoPauseFlugをfalseに(プレイヤーがポーズ状態にしたフラグを解除)
-		if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && pause_Flug)
+		if (pause_Flug)
 		{
-			pause_Flug = false;
-			CursorManager::Instance().SetCursorVisible(false);
-			enemy->play_Enemy_Sound();
+			//Rキーを押したらautoPauseFlugをfalseに(プレイヤーがポーズ状態にしたフラグを解除)
+			if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && pause_Flug)
+			{
+				pause_Flug = false;
+				CursorManager::Instance().SetCursorVisible(false);
+				enemy->play_Enemy_Sound();
+			}
+			//ポーズ状態の処理はココ！
+			PauseSystem::Instance().Update(elapsedTime);
+			Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
+
+			if (player->GetIsDeath() && CursorManager::Instance().GetIsActiveWindow()) {
+				pause_Flug = false;
+			}
+
+			return;
 		}
-		//ポーズ状態の処理はココ！
-		PauseSystem::Instance().Update(elapsedTime);
-		Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 
-		return;
-	}
+		if (!pause_Flug && !player->GetIsDeath()) {
+			// ESCキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
+			//if (GetAsyncKeyState('P') & 0x8000)
+			if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && !pause_Flug && !player->GetIsEvent())
+			{
+				Audio3DSystem::Instance().StopByTag("enemy_run");
+				Audio3DSystem::Instance().StopByTag("enemy_walk");
+				pause_Flug = true;
+				CursorManager::Instance().SetCursorVisible(true);
 
-	// ESCキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
-	//if (GetAsyncKeyState('P') & 0x8000)
-	if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && !pause_Flug && !player->GetIsEvent())
-	{
-		Audio3DSystem::Instance().StopByTag("enemy_run");
-		Audio3DSystem::Instance().StopByTag("enemy_walk");
-		pause_Flug = true;
-		CursorManager::Instance().SetCursorVisible(true);
-
-		return;
-	}
+				return;
+			}
+		}
 
 
 	// フラグがまだ立っていない場合に入力検出
@@ -992,6 +998,10 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		{
 			// ウィンドウがアクティブなら、マウスカーソルの位置を画面中央に固定
 			SetCursorPos(screenPoint.x, screenPoint.y);
+
+			if (player->GetIsDeath()) {
+				pause_Flug = false;
+			}
 		}
 		else
 		{
