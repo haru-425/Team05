@@ -135,10 +135,10 @@ void SceneGame::Initialize()
 			tutorial[15] = std::make_unique<Sprite>("Data/Sprite/dialog/08_2.png");
 			tutorial[16] = std::make_unique<Sprite>("Data/Sprite/dialog/08_3.png");
 		}
-		else
+		/*else
 		{
 			tutorial_Step = 18;
-		}
+		}*/
 	}
 	EnemyUI::Instance().Initialize(); ///< 敵のUI初期化
 	PlayerUI::Instance().Initialize();
@@ -226,6 +226,9 @@ void SceneGame::Update(float elapsedTime)
 
 		return;
 	}
+
+	//ごり押し策なのでこれが原因でバグったらすぐに消す
+	CursorManager::Instance().SetCursorVisible(false);
 
 	if (!pause_Flug && !player->GetIsDeath()) {
 		// ESCキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
@@ -586,11 +589,15 @@ void SceneGame::Render()
 		if (!pause_Flug) {
 			PlayerUI::Instance().Render(rc);
 		}
+		if (!tutorial_Flug || tutorial_Step >= 4)
+		{
+			dushBackUI->Render(rc, 30, 400, 0, 70, 70, 0, 1, 1, 1, 0.5f);
+			dushUI.Render();
+		}
 		if (!tutorial_Flug || tutorial_Step >= 6)
 		{
 			metar->render();
-			dushBackUI->Render(rc, 30, 400, 0, 70, 70, 0, 1, 1, 1, 0.5f);
-			dushUI.Render();
+			
 			BatteryScore::Instance().Render(rc);
 		}
 		/// ポーズ中に表示するスプライト
@@ -1121,7 +1128,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 	switch (tutorial_Step)
 	{
 	case 20:
-		tutorial_Flug2 = true;
+		//tutorial_Flug2 = true;
 		//オートランやらなんやらはここで初期化
 		break;
 	case 19:
