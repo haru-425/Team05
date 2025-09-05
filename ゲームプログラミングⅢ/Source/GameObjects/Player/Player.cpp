@@ -102,6 +102,9 @@ void Player::Update(float dt)
 	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
 	changeCameraFailedSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
 
+	if(!inGate)
+		Dash(dt);
+
 	ChangeCamera();
 
 	if (isEvent) ///< Move() の中でフラグの切り替えをしてる
@@ -164,18 +167,11 @@ void Player::DrawDebug()
 		ImGui::InputFloat("pitch", &pitch);
 		ImGui::InputFloat("yaw", &yaw);
 		ImGui::InputFloat3("angle", &angle.x);
-		//float radian = CalcAngle();
-		//std::string text2;
-		//if (radian < 0.78 && radian > -0.78)text2 = "front";
-		//else if (radian < 2.3 && radian >= 0.78)text2 = "right";
-		//else text2 = "???";
-		//ImGui::Text(text2.c_str());
-		//ImGui::SameLine();
-		//ImGui::InputFloat("radian", &radian);
-		//DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&world);
-		//DirectX::XMVECTOR Forward = DirectX::XMVector3Normalize(M.r[2]);
-		//DirectX::XMFLOAT3 forward; DirectX::XMStoreFloat3(&forward, Forward);
-		//ImGui::InputFloat3("forward", &forward.x);
+    
+		ImGui::Checkbox("enableDash", &enableDash);
+		ImGui::Checkbox("isDash", &isDash);
+		ImGui::InputFloat("enableDash", &dashTimer);
+		ImGui::InputFloat("speed", &speed);
 
 		bool isRotating = FPCameraController::GetIsRotating();
 		ImGui::Checkbox("isRotating", &isRotating);
@@ -269,11 +265,9 @@ void Player::Move(float dt)
 	saveDirection = forward;
 
 	speed += accel * dt;
-	speed = DirectX::XMMin(speed, maxSpeed);
-	//speed = DirectX::XMMax(speed, 0.0f);
 
-	//position.x += speed * forward.x * dt;
-	//position.z += speed * forward.z * dt;
+	/// スピード
+	speed = DirectX::XMMin(speed, maxSpeed + dashSpeed);;
 
 	// ---------- 壁との当たり判定と押し出し処理 ----------
 	DirectX::XMFLOAT3 outPos = {};
@@ -359,8 +353,7 @@ void Player::ChangeCamera()
 	if (isHijack)isHijack = false;
 
 	// �E�N���b�N�Ő؂�ւ�
-
-	if (mouse.GetButtonDown() & Mouse::BTN_RIGHT)
+	if ((mouse.GetButtonDown() & Mouse::BTN_RIGHT || gamePad.GetButtonDown() & GamePad::BTN_RIGHT_SHOULDER) && enableHijack)
 	{
 		if (enableHijack) {
 			if (useCam)
@@ -583,4 +576,52 @@ float Player::CalcAngle()
 		radian *= -1;
 
 	return radian;
+}
+
+/**
+* ダッシュ関数
+*/
+void Player::Dash(float elapsedTime)
+{
+	auto& gamePad = Input::Instance().GetGamePad();
+	
+	/// 走っているか
+	if (isDash)
+	{
+		if (dashTimer > 2.2f)
+			dashSpeed += 5 * elapsedTime;
+		else if (dashTimer < 0.5f)
+			dashSpeed -= 6 * elapsedTime;
+
+		dashTimer -= elapsedTime;
+
+		dashSpeed = std::clamp(dashSpeed, 0.0f, maxDashSpeed);
+	}
+
+	/// ダッシュ時間が切れたかどうか
+	if (dashTimer < 0)
+	{
+		isDash = false;
+		dashTimer = 3;
+	}
+
+	/// ダッシュ状態じゃない場合にタイマーを減らす
+	if (!isDash)
+	{
+		dashAvailableTimer += elapsedTime;
+	}
+	dashAvailableTimer = std::clamp(dashAvailableTimer, 0.0f, dashCoolTime);
+
+	/// ダッシュが可能になるまでのタイマーが40になると走れるようになる
+	if (dashAvailableTimer == 40)
+	{
+		enableDash = true;
+	}
+
+	/// ダッシュできる状態かつボタンを押したとき
+	if ((gamePad.GetButtonDown() & GamePad::SHIFT/*PC*/ || gamePad.GetButtonDown() & GamePad::BTN_LEFT_SHOULDER/*コントローラー*/) && enableDash)
+	{
+		isDash = true;
+		enableDash = false;
+	}
 }

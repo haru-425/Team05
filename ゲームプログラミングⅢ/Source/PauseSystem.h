@@ -69,4 +69,6 @@ private:
 
     bool isSceneStart = false;
     int selectNum = -1;
+    float selectTime = 0;
+    int selectCount = 0;
 };
