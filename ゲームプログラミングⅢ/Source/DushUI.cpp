@@ -75,13 +75,13 @@ void DushUI::Update(float elapsedTime, bool dushflug)
 	{
 
 		auto updateAmount = [&](float& amount)
+		{
+			amount += (1.0f / 40.0f) * elapsedTime; // 40ïbÇ≈1.0Ç…Ç»ÇÈ
+			if (amount > 1.0f)
 			{
-				amount += (1.0f / 40.0f) * elapsedTime; // 40ïbÇ≈1.0Ç…Ç»ÇÈ
-				if (amount > 1.0f)
-				{
-					amount -= 1.0f; // ÉãÅ[ÉvÇ≥ÇπÇÈ
-				}
-			};
+				amount -= 1.0f; // ÉãÅ[ÉvÇ≥ÇπÇÈ
+			}
+		};
 
 		updateAmount(radialFillAmount);
 	}
@@ -126,7 +126,7 @@ void DushUI::Render()
 
 	// ï`âÊ
 
-	DrawFillRadial(dc, 100, 400, 70, 70, 0, 0, textureWidth, textureHeight, radialFillAmount, screenWidth, screenHeight);
+	DrawFillRadial(dc, 30, 400, 70, 70, 0, 0, textureWidth, textureHeight, radialFillAmount, screenWidth, screenHeight);
 }
 
 // ï˙éÀìhÇËÇ¬Ç‘Çµï`âÊ
@@ -193,18 +193,18 @@ void DushUI::DrawFillRadial(
 		float t7 = std::clamp(amount * 8.0f - 7.0f, 0.0f, 1.0f);
 		// í∏ì_ÇÃê¸å`ï‚äÆä÷êî
 		auto lerp = [&](const Vertex& v1, const Vertex& v2, float t) -> Vertex
-			{
-				DirectX::XMVECTOR P1 = DirectX::XMLoadFloat3(&v1.position);
-				DirectX::XMVECTOR P2 = DirectX::XMLoadFloat3(&v2.position);
-				DirectX::XMVECTOR P3 = DirectX::XMVectorLerp(P1, P2, t);
-				DirectX::XMVECTOR T1 = DirectX::XMLoadFloat2(&v1.texcoord);
-				DirectX::XMVECTOR T2 = DirectX::XMLoadFloat2(&v2.texcoord);
-				DirectX::XMVECTOR T3 = DirectX::XMVectorLerp(T1, T2, t);
-				Vertex out;
-				DirectX::XMStoreFloat3(&out.position, P3);
-				DirectX::XMStoreFloat2(&out.texcoord, T3);
-				return out;
-			};
+		{
+			DirectX::XMVECTOR P1 = DirectX::XMLoadFloat3(&v1.position);
+			DirectX::XMVECTOR P2 = DirectX::XMLoadFloat3(&v2.position);
+			DirectX::XMVECTOR P3 = DirectX::XMVectorLerp(P1, P2, t);
+			DirectX::XMVECTOR T1 = DirectX::XMLoadFloat2(&v1.texcoord);
+			DirectX::XMVECTOR T2 = DirectX::XMLoadFloat2(&v2.texcoord);
+			DirectX::XMVECTOR T3 = DirectX::XMVectorLerp(T1, T2, t);
+			Vertex out;
+			DirectX::XMStoreFloat3(&out.position, P3);
+			DirectX::XMStoreFloat2(&out.texcoord, T3);
+			return out;
+		};
 		// éOäpå`0
 		v[0] = lerp(p[1], p[2], t0); // ç∂è„
 		v[1] = p[4]; // ç∂â∫

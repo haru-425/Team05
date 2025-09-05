@@ -324,7 +324,7 @@ void SceneGame::Update(float elapsedTime)
 
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 	EnemyUI::Instance().Update(elapsedTime, player->GetPosition(), enemy->Get_Loocking());
-	dushUI.Update(elapsedTime, false);
+	dushUI.Update(elapsedTime, true);
 }
 
 // 描画処理
@@ -567,7 +567,7 @@ void SceneGame::Render()
 		if (!tutorial_Flug || tutorial_Step >= 6)
 		{
 			metar->render();
-			dushBackUI->Render(rc, 100, 400, 0, 70, 70, 0, 1, 1, 1, 0.5f);
+			dushBackUI->Render(rc, 30, 400, 0, 70, 70, 0, 1, 1, 1, 0.5f);
 			dushUI.Render();
 			BatteryScore::Instance().Render(rc);
 		}
