@@ -325,7 +325,7 @@ void SceneGame::Update(float elapsedTime)
 
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 	EnemyUI::Instance().Update(elapsedTime, player->GetPosition(), enemy->Get_Loocking());
-	dushUI.Update(elapsedTime, true);
+	dushUI.Update(elapsedTime, player->GetEnableDash());
 }
 
 // 描画処理
@@ -526,7 +526,14 @@ void SceneGame::Render()
 	else
 	{
 		//RadialBlur
-		Graphics::Instance().setRadialBlurCBuffer({ 0.5,0.5 }, 0.0f);
+		if (player->GetIsDash()) {
+			Graphics::Instance().setRadialBlurCBuffer();
+
+		}
+
+		else {
+			Graphics::Instance().setRadialBlurCBuffer({ 0.5,0.5 }, 0.0f);
+		}
 		Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::RadialBlur)]->activate(dc);
