@@ -21,7 +21,7 @@
 #include <imgui.h>
 #include <random>
 
-CONST LONG SHADOWMAP_WIDTH = { 2048 };
+CONST LONG SHADOWMAP_WIDTH	= { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 float reminingTime = 300.0f;
 bool SceneGame::tutorial_Flug2 = false;
@@ -290,10 +290,12 @@ void SceneGame::Update(float elapsedTime)
 		transTimer += elapsedTime;
 		if (transTimer >= 3.0f && nextScene != nullptr)
 		{
+			Input::Instance().GetGamePad().strength = { 0,0 };
 			SceneManager::instance().ChangeScene(nextScene);
 			nextScene = nullptr; // 多重遷移防止
 			sceneTrans = false;  // シーン遷移フラグをリセット
 		}
+		return;
 	}
 
 	/// チュートリアル処理
@@ -1000,7 +1002,7 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		i_CameraController->Update(elapsedTime);
 
 		// ウィンドウがアクティブであるかをチェック
-		if (CursorManager::Instance().GetIsActiveWindow())
+		if (CursorManager::Instance().GetIsActiveWindow()|| player->GetIsEvent())
 		{
 			// ウィンドウがアクティブなら、マウスカーソルの位置を画面中央に固定
 			SetCursorPos(screenPoint.x, screenPoint.y);

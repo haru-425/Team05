@@ -184,7 +184,7 @@ void GamePad::Update()
         }
     }
 
-
+    PlayVibration();
 
     // ボタン情報の更新
     {

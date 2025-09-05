@@ -159,5 +159,7 @@ private:
     const float dashCoolTime = 40;
     float dashSpeed = 0;
     const float maxDashSpeed = 2;
+
+    float vibrationTimer = 0;
 };
 
