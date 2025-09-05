@@ -189,7 +189,7 @@ public:
 					break;
 				case BatteryType::High:
 					player->AddHijackTimer(hardbattery_recovery);
-					player_Get_Score += 20;
+					player_Get_Score += 30;
 					enemy->detectPlayerPosition();
 					break;
 				default:

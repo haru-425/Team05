@@ -248,7 +248,7 @@ void Enemy::Update(float elapsedTime)
 			state = State::Roaming;
 			if (isTrackingPlayer|| isPlayerInView)
 			{
-				Audio3DSystem::Instance().PlayByTag("enemy_walk");
+				Audio3DSystem::Instance().PlayByTag("enemy_run");
 			}
 			else
 			{
@@ -810,7 +810,7 @@ void Enemy::play_Enemy_Sound()
 		}
 		else
 		{
-			Audio3DSystem::Instance().StopByTag("enemy_walk");
+			Audio3DSystem::Instance().PlayByTag("enemy_walk");
 		}
 		break;
 	case Enemy::State::Attack:

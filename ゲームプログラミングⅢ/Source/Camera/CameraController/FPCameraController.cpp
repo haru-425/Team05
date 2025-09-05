@@ -39,17 +39,53 @@ void FPCameraController::Update(float dt)
         screenH = mouse.GetScreenHeight();
     }
     
+    // グローバルまたはメンバ変数として保持
+    static float targetYaw = 0.0f;
+    static constexpr float ROTATE_SPEED = 10.0f; // 回転速度（ラジアン/秒）
 
     if (!useEnemyCam && !isEvent)
     {
-        /// マウス
-        angle.y += (mouseX - screenW / 2) * sensitivity;
-        angle.x += (mouseY - screenH / 2) * sensitivity;
+        if (!isRotating) {
+            /// マウス
+            angle.y += (mouseX - screenW / 2) * sensitivity;
+            angle.x += (mouseY - screenH / 2) * sensitivity;
 
-        /// コントローラー
-        int correctionValue = 10; ///< 補正値
-        angle.y += lStick * sensitivity * correctionValue;
-        angle.x -= rStick * sensitivity * correctionValue * 0.7;
+            /// コントローラー
+            int correctionValue = 10; ///< 補正値
+            angle.y += lStick * sensitivity * correctionValue;
+            angle.x -= rStick * sensitivity * correctionValue * 0.7;
+        }
+
+        static bool spacePressedLastFrame = false;
+        bool spacePressedNow = (gamePad.GetButtonDown() & GamePad::BTN_LEFT_TRIGGER) != 0;
+
+        if (spacePressedNow && !spacePressedLastFrame && !isRotating)
+        {
+            targetYaw = angle.y + DirectX::XM_PI;
+
+            // Wrap targetYaw to [-π, π] 範囲に収める（必要なら）
+            if (targetYaw > DirectX::XM_PI)
+                targetYaw -= DirectX::XM_2PI;
+
+            isRotating = true;
+        }
+        spacePressedLastFrame = spacePressedNow;
+        if (isRotating)
+        {
+            // 線形補間で徐々に回転
+            DirectX::XMVECTOR currentYaw = DirectX::XMVectorSet(angle.y, 0, 0, 0);
+            DirectX::XMVECTOR targetYawVec = DirectX::XMVectorSet(targetYaw, 0, 0, 0);
+            DirectX::XMVECTOR result = DirectX::XMVectorLerp(currentYaw, targetYawVec, ROTATE_SPEED * dt);
+            angle.y = DirectX::XMVectorGetX(result);
+
+            // 目標角度に十分近づいたら補間終了
+            if (fabsf(angle.y - targetYaw) < 0.001f)
+            {
+                angle.y = targetYaw;
+                isRotating = false;
+            }
+        }
+
     }
     // 90度だとバグるので
     angle.x = std::clamp(angle.x, -MAX_PITCH, MAX_PITCH);

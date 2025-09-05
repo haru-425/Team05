@@ -7,6 +7,7 @@
 #include "Math/Easing.h"
 #include "System/CollisionEditor.h"
 #include "System/SettingsManager.h"
+#include "Camera/CameraController/FPCameraController.h"
 
 static bool hit = false;
 static float time = 0;
@@ -166,11 +167,14 @@ void Player::DrawDebug()
 		ImGui::InputFloat("pitch", &pitch);
 		ImGui::InputFloat("yaw", &yaw);
 		ImGui::InputFloat3("angle", &angle.x);
-
+    
 		ImGui::Checkbox("enableDash", &enableDash);
 		ImGui::Checkbox("isDash", &isDash);
 		ImGui::InputFloat("enableDash", &dashTimer);
 		ImGui::InputFloat("speed", &speed);
+
+		bool isRotating = FPCameraController::GetIsRotating();
+		ImGui::Checkbox("isRotating", &isRotating);
 	}
 	ImGui::End();
 }
@@ -294,16 +298,21 @@ void Player::Move(float dt)
 		}
 	}
 
+	bool isRotating = FPCameraController::GetIsRotating();
+
+	float slow = 1;
+
 	if (!inGate) ///< ゲートに入ったらプレイヤーは移動しない
 	{
-#if 1 // TODO テスト
-		position.x += speed * forward.x * dt;
-		position.z += speed * forward.z * dt;
-#endif
-
-		// 減衰後の速度で移動
-		//position.x += adjustedSpeed * forward.x * dt;
-		//position.z += adjustedSpeed * forward.z * dt;
+		if (!isRotating) {
+			position.x += speed * forward.x * dt;
+			position.z += speed * forward.z * dt;
+		}
+		else {
+			/// 旋回中は減速
+			position.x += speed * slow * forward.x * dt;
+			position.z += speed * slow * forward.z * dt;
+		}
 	}
 
 	// 角度を求める

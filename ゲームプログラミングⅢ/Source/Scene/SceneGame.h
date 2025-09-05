@@ -11,6 +11,8 @@
 #include "3DAudio/3DAudio.h"
 #include"Metar.h"
 
+#include "../DushUI.h"
+
 #include "System/ShadowCaster.h"
 #include "System/UiManager.h"
 
@@ -65,7 +67,8 @@ private:
 	std::shared_ptr<Player> player;
 	std::shared_ptr<Enemy> enemy;
 	std::shared_ptr<Metar> metar;
-
+	DushUI dushUI;
+	Sprite* dushBackUI = nullptr;
 	MiniMap* minimap = nullptr;
 	bool tutorial_Flug = false;
 	int tutorial_Step = 0;
@@ -140,7 +143,7 @@ private:
 	// ======================================
 	// チュ－トリアルのスプライト配列
 	// ======================================
-	std::unique_ptr<Sprite> tutorial[15];
+	std::unique_ptr<Sprite> tutorial[17];
 
 	UIManager um;
 

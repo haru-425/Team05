@@ -4,7 +4,7 @@
 #include <algorithm>
 #include "System/GamePad.h"
 
-// XV
+// æ›´æ–°
 void GamePad::Update()
 {
     axisLx = axisLy = 0.0f;
@@ -13,7 +13,7 @@ void GamePad::Update()
 
     GamePadButton newButtonState = 0;
 
-    // ƒ{ƒ^ƒ“î•ñæ“¾
+    // ãƒœã‚¿ãƒ³æƒ…å ±å–å¾—
     XINPUT_STATE xinputState;
     if (XInputGetState(slot, &xinputState) == ERROR_SUCCESS)
     {
@@ -64,39 +64,39 @@ void GamePad::Update()
     {
         useController = false;
 #if 0
-        // XInput‚Å“ü—Íî•ñ‚ªæ“¾o—ˆ‚È‚©‚Á‚½ê‡‚ÍWindowsAPI‚Åæ“¾‚·‚é
+        // XInputã§å…¥åŠ›æƒ…å ±ãŒå–å¾—å‡ºæ¥ãªã‹ã£ãŸå ´åˆã¯WindowsAPIã§å–å¾—ã™ã‚‹
         JOYINFOEX joyInfo;
         joyInfo.dwSize = sizeof(JOYINFOEX);
-        joyInfo.dwFlags = JOY_RETURNALL;	// ‘S‚Ä‚Ìî•ñ‚ğæ“¾
+        joyInfo.dwFlags = JOY_RETURNALL;	// å…¨ã¦ã®æƒ…å ±ã‚’å–å¾—
 
         if (joyGetPosEx(slot, &joyInfo) == JOYERR_NOERROR)
         {
-            // »•iID‚ğƒ`ƒFƒbƒN‚µ‚ÄPS4ƒRƒ“ƒgƒ[ƒ‰[‚¾‚¯‘Î‰‚·‚é
+            // è£½å“IDã‚’ãƒã‚§ãƒƒã‚¯ã—ã¦PS4ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã ã‘å¯¾å¿œã™ã‚‹
             static const WORD PS4_PID = 1476;
 
             JOYCAPS joy_caps;
             if (joyGetDevCaps(slot, &joy_caps, sizeof(JOYCAPS)) == JOYERR_NOERROR)
             {
-                // \šƒL[
+                // åå­—ã‚­ãƒ¼
                 if (joyInfo.dwPOV != 0xFFFF)
                 {
                     static const int povBit[8] =
                     {
-                        BTN_UP,					// ã
-                        BTN_RIGHT | BTN_UP,		// ‰Eã
-                        BTN_RIGHT,				// ‰E
-                        BTN_RIGHT | BTN_DOWN,	// ‰E‰º
-                        BTN_DOWN,				// ‰º
-                        BTN_LEFT | BTN_DOWN,	// ¶‰º
-                        BTN_LEFT,				// ¶
-                        BTN_LEFT | BTN_UP		// ¶ã
+                        BTN_UP,					// ä¸Š
+                        BTN_RIGHT | BTN_UP,		// å³ä¸Š
+                        BTN_RIGHT,				// å³
+                        BTN_RIGHT | BTN_DOWN,	// å³ä¸‹
+                        BTN_DOWN,				// ä¸‹
+                        BTN_LEFT | BTN_DOWN,	// å·¦ä¸‹
+                        BTN_LEFT,				// å·¦
+                        BTN_LEFT | BTN_UP		// å·¦ä¸Š
                     };
                     int angle = joyInfo.dwPOV / 4500;
                     newButtonState |= povBit[angle];
                 }
                 if (joy_caps.wPid == PS4_PID)
                 {
-                    // ƒ{ƒ^ƒ“î•ñ
+                    // ãƒœã‚¿ãƒ³æƒ…å ±
                     if (joyInfo.dwButtons & JOY_BUTTON1)  newButtonState |= BTN_Y;
                     if (joyInfo.dwButtons & JOY_BUTTON2)  newButtonState |= BTN_B;
                     if (joyInfo.dwButtons & JOY_BUTTON3)  newButtonState |= BTN_A;
@@ -112,15 +112,15 @@ void GamePad::Update()
                     //if (joyInfo.dwButtons & JOY_BUTTON13) newButtonState |= BTN_?;	// PS
                     //if (joyInfo.dwButtons & JOY_BUTTON14) newButtonState |= BTN_?;	// Touch
 
-                    // ¶ƒXƒeƒBƒbƒN
+                    // å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯
                     axisLx = static_cast<int>(joyInfo.dwXpos - 0x7FFF) / static_cast<float>(0x8000);
                     axisLy = -static_cast<int>(joyInfo.dwYpos - 0x7FFF) / static_cast<float>(0x8000);
 
-                    // ‰EƒXƒeƒBƒbƒN
+                    // å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯
                     axisRx = static_cast<int>(joyInfo.dwZpos - 0x7FFF) / static_cast<float>(0x8000);
                     axisRy = -static_cast<int>(joyInfo.dwRpos - 0x7FFF) / static_cast<float>(0x8000);
 
-                    // LRƒgƒŠƒK[
+                    // LRãƒˆãƒªã‚¬ãƒ¼
                     triggerL = static_cast<float>(joyInfo.dwVpos) / static_cast<float>(0xFFFF);
                     triggerR = static_cast<float>(joyInfo.dwUpos) / static_cast<float>(0xFFFF);
 
@@ -132,7 +132,7 @@ void GamePad::Update()
 #endif
     }
 
-    // ƒL[ƒ{[ƒh‚ÅƒGƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“
+    // ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³
     {
         float lx = 0.0f;
         float ly = 0.0f;
@@ -160,6 +160,7 @@ void GamePad::Update()
         if (GetAsyncKeyState(VK_F2) & 0x8000)	newButtonState |= F2;
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)	newButtonState |= OPTION;
         if (GetAsyncKeyState(VK_SHIFT) & 0x8000) newButtonState |= SHIFT;
+        if (GetAsyncKeyState(VK_SPACE) & 0x8000)	newButtonState |= BTN_LEFT_TRIGGER;
 
 #if 1
         if (newButtonState & BTN_UP)    ly = 1.0f;
@@ -185,31 +186,31 @@ void GamePad::Update()
 
 
 
-    // ƒ{ƒ^ƒ“î•ñ‚ÌXV
+    // ãƒœã‚¿ãƒ³æƒ…å ±ã®æ›´æ–°
     {
-        buttonState[1] = buttonState[0];	// ƒXƒCƒbƒ`—š—ğ
+        buttonState[1] = buttonState[0];	// ã‚¹ã‚¤ãƒƒãƒå±¥æ­´
         buttonState[0] = newButtonState;
 
-        buttonDown = ~buttonState[1] & newButtonState;	// ‰Ÿ‚µ‚½uŠÔ
-        buttonUp = ~newButtonState & buttonState[1];	// —£‚µ‚½uŠÔ
+        buttonDown = ~buttonState[1] & newButtonState;	// æŠ¼ã—ãŸç¬é–“
+        buttonUp = ~newButtonState & buttonState[1];	// é›¢ã—ãŸç¬é–“
     }
 }
 
 /**
-* @brief ƒRƒ“ƒgƒ[ƒ‰[‚ğU“®‚³‚¹‚éŠÖ”
+* @brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã‚’æŒ¯å‹•ã•ã›ã‚‹é–¢æ•°
 * 
-* ƒƒ“ƒo‚Ì strength ‚ª0‚æ‚è’l‚ªƒfƒJ‚¢ê‡í‚É“®‚­
+* ãƒ¡ãƒ³ãƒã® strength ãŒ0ã‚ˆã‚Šå€¤ãŒãƒ‡ã‚«ã„å ´åˆå¸¸ã«å‹•ã
 */
 void GamePad::PlayVibration()
 {
-    /// Microsoft ƒŠƒtƒ@ƒŒƒ“ƒX
+    /// Microsoft ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹
     /// https://learn.microsoft.com/ja-jp/windows/win32/xinput/getting-started-with-xinput#setting-vibration-effects
     
-    /// U“®‚Ì‹­‚³‚ğ0`1‚É•ÏŠ·
+    /// æŒ¯å‹•ã®å¼·ã•ã‚’0ï½1ã«å¤‰æ›
     strength.x = std::clamp(strength.x, 0.0f, 1.0f);
     strength.y = std::clamp(strength.y, 0.0f, 1.0f);
 
-    /// 0`1‚ğ0`65535‚É•ÏŠ·
+    /// 0ï½1ã‚’0ï½65535ã«å¤‰æ›
     strength.x *= 65535;
     strength.y *= 65535;
 
@@ -218,19 +219,19 @@ void GamePad::PlayVibration()
     vibration.wLeftMotorSpeed = strength.x;
     vibration.wLeftMotorSpeed = strength.y;
 
-    /// ‘æˆêˆø” : ƒRƒ“ƒgƒ[ƒ‰[”Ô† | ‘æ“ñˆø” : XINPUT_VIBRATION
+    /// ç¬¬ä¸€å¼•æ•° : ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ç•ªå· | ç¬¬äºŒå¼•æ•° : XINPUT_VIBRATION
     XInputSetState(0, &vibration);
 }
 
 /**
-* @brief ƒRƒ“ƒgƒ[ƒ‰[‚É“ü—Í”½‰‚ª‚ ‚é‚©
+* @brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã«å…¥åŠ›åå¿œãŒã‚ã‚‹ã‹
 *
-* Ú‘±‚Í‚³‚ê‚Ä‚¢‚é‚¯‚ÇA“ü—Í‚³‚ê‚Ä‚¢‚é‚©‚ğ’²‚×‚éŠÖ”
+* æ¥ç¶šã¯ã•ã‚Œã¦ã„ã‚‹ã‘ã©ã€å…¥åŠ›ã•ã‚Œã¦ã„ã‚‹ã‹ã‚’èª¿ã¹ã‚‹é–¢æ•°
 */
 bool GamePad::GetIsActive()
 {
     bool isActive;
-    /// ƒXƒeƒBƒbƒN“ü—Í‚ª‚ ‚Á‚½‚©
+    /// ã‚¹ãƒ†ã‚£ãƒƒã‚¯å…¥åŠ›ãŒã‚ã£ãŸã‹
     isActive = fabsf(axisLx) || fabsf(axisLy) || fabsf(axisRx) || fabsf(axisRy);
 
     if (!isActive)
