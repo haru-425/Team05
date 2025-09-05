@@ -179,6 +179,8 @@ void SceneGame::Finalize()
 	enemy.reset();
 	EnemyUI::Instance().Finalize();
 	PlayerUI::Instance().Finalize();
+
+	CursorManager::Instance().SetCursorVisible(true);
 }
 
 // 更新処理
@@ -201,39 +203,43 @@ void SceneGame::Update(float elapsedTime)
 	Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
 
 	//ポーズ処理
-		if (pause_Flug)
-		{
-			//Rキーを押したらautoPauseFlugをfalseに(プレイヤーがポーズ状態にしたフラグを解除)
-			if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && pause_Flug)
-			{
-				pause_Flug = false;
-				CursorManager::Instance().SetCursorVisible(false);
-				enemy->play_Enemy_Sound();
-			}
-			//ポーズ状態の処理はココ！
-			PauseSystem::Instance().Update(elapsedTime);
-			Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
+	if (!pause_Flug && player->GetIsEvent()) {
+		CursorManager::Instance().SetCursorVisible(false);
+	}
 
-			if (player->GetIsDeath() && CursorManager::Instance().GetIsActiveWindow()) {
-				pause_Flug = false;
-			}
+	if (pause_Flug)
+	{
+		//Rキーを押したらautoPauseFlugをfalseに(プレイヤーがポーズ状態にしたフラグを解除)
+		if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && pause_Flug)
+		{
+			pause_Flug = false;
+			CursorManager::Instance().SetCursorVisible(false);
+			enemy->play_Enemy_Sound();
+		}
+		//ポーズ状態の処理はココ！
+		PauseSystem::Instance().Update(elapsedTime);
+		Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
+
+		if (player->GetIsDeath() && CursorManager::Instance().GetIsActiveWindow()) {
+			pause_Flug = false;
+		}
+
+		return;
+	}
+
+	if (!pause_Flug && !player->GetIsDeath()) {
+		// ESCキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
+		//if (GetAsyncKeyState('P') & 0x8000)
+		if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && !pause_Flug && !player->GetIsEvent())
+		{
+			Audio3DSystem::Instance().StopByTag("enemy_run");
+			Audio3DSystem::Instance().StopByTag("enemy_walk");
+			pause_Flug = true;
+			CursorManager::Instance().SetCursorVisible(true);
 
 			return;
 		}
-
-		if (!pause_Flug && !player->GetIsDeath()) {
-			// ESCキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
-			//if (GetAsyncKeyState('P') & 0x8000)
-			if ((gamePad.GetButtonDown() & GamePad::OPTION || gamePad.GetButtonDown() & GamePad::BTN_START) && !pause_Flug && !player->GetIsEvent())
-			{
-				Audio3DSystem::Instance().StopByTag("enemy_run");
-				Audio3DSystem::Instance().StopByTag("enemy_walk");
-				pause_Flug = true;
-				CursorManager::Instance().SetCursorVisible(true);
-
-				return;
-			}
-		}
+	}
 
 
 	// フラグがまだ立っていない場合に入力検出
@@ -1009,6 +1015,7 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		{
 			// ウィンドウが非アクティブ（＝フォーカスが外れている）ならポーズする
 			pause_Flug = true;
+			CursorManager::Instance().SetCursorVisible(true);
 			Audio3DSystem::Instance().StopByTag("enemy_run");
 			Audio3DSystem::Instance().StopByTag("enemy_walk");
 		}
