@@ -85,7 +85,11 @@ public:
 
     int GetDeathState() { return deathStart; }
 
+    /// ダッシュ関係
     bool GetIsDash() const { return isDash; }
+    bool GetEnableDash() const { return enableDash; }
+    /// ０から４０に値が変化していく　４０でダッシュ可能
+    float GetDashAvailableTimer() const { return dashAvailableTimer; }
 
 private:
 
