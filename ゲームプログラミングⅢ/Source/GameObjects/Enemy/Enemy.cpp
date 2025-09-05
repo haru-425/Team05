@@ -580,7 +580,7 @@ void Enemy::Animationplay()
 		// atan2 で Y軸回転角を計算（Zが前、Xが右の座標系）
 		angle.y = std::atan2(dx, dz);
 		animationcontroller.PlayAnimation("attack", false);
-		animationcontroller.SetAnimationSecondScale(1.0f);
+		animationcontroller.SetAnimationSecondScale(1.2f);
 		angle.y += 6 * 0.01745f;
 
 		int deathState = playerRef.lock()->GetDeathState();

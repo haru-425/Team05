@@ -92,6 +92,8 @@ void PauseSystem::Finalize()
 
 void PauseSystem::Update(float elapsedTime)
 {
+	Input::Instance().GetGamePad().strength = { 0,0 };
+
 	/// ゲームパッドしようの場合
 	if (Input::Instance().GetIsGamePadActive())
 	{

@@ -81,6 +81,8 @@ Player::~Player()
 {
 }
 
+bool isDiscovered = false;
+bool look = false;
 /// 更新処理
 void Player::Update(float dt)
 {
@@ -101,6 +103,42 @@ void Player::Update(float dt)
 	changeCameraInSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
 	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
 	changeCameraFailedSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
+
+	/// 敵に追跡されているのか(コントローラーの振動)
+	{
+		if (!isEvent)
+		{
+			if (enemyRef->Get_Tracking() || enemyRef->Get_isPlayerInView())
+			{
+				look = true;
+			}
+			else
+			{
+				look = false;
+			}
+		}
+		else
+		{
+			Input::Instance().GetGamePad().strength.x = 0;
+			Input::Instance().GetGamePad().strength.y = 0;
+			look = false;
+		}
+
+		if (look)
+		{
+			vibrationTimer += dt;
+			float bpm = 60.0f;
+			float freq = bpm / 60.0f;
+			float wave = (sinf(vibrationTimer * freq * 2.0f * 3.14f) + 1.0f) * 0.5f;
+			float vibration = powf(wave, 3.0f);
+			Input::Instance().GetGamePad().strength.x = vibration/*std::sinf(0.125f * vibrationTimer) * 0.5f + 0.25f*/;
+			Input::Instance().GetGamePad().strength.y = vibration/*std::sinf(0.125f * vibrationTimer) * 0.5f + 0.25f*/;
+		}
+		else
+		{
+			Input::Instance().GetGamePad().strength = { 0,0 };
+		}
+	}
 
 	if(!inGate)
 		Dash(dt);
@@ -170,6 +208,7 @@ void Player::DrawDebug()
     
 		ImGui::Checkbox("enableDash", &enableDash);
 		ImGui::Checkbox("isDash", &isDash);
+		ImGui::Checkbox("look", &look);
 		ImGui::InputFloat("enableDash", &dashTimer);
 		ImGui::InputFloat("speed", &speed);
 
@@ -536,6 +575,9 @@ void Player::DeathState(float dt)
 			isDeath = true;
 	}
 
+	if (isDeath)
+		Input::Instance().GetGamePad().strength = { 1,1 };
+
 	staticIsDeathStart = true;
 }
 
@@ -623,5 +665,6 @@ void Player::Dash(float elapsedTime)
 	{
 		isDash = true;
 		enableDash = false;
+		dashAvailableTimer = 0;
 	}
 }
