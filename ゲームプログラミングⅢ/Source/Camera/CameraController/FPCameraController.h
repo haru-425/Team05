@@ -10,5 +10,10 @@ public:
     void Update(float dt);
 
     void DebugGUI();
+
+    static bool GetIsRotating() { return isRotating; }
+
+private:
+    inline static bool isRotating = false;
 };
 
