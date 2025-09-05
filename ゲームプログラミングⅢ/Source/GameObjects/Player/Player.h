@@ -85,6 +85,8 @@ public:
 
     int GetDeathState() { return deathStart; }
 
+    bool GetIsDash() const { return isDash; }
+
 private:
 
     void Move(float dt);
@@ -93,6 +95,8 @@ private:
     void DeathState(float dt); ///< 死亡演出用
 
     float CalcAngle(); ///< 角度計算用
+
+    void Dash(float elapsedTime);
 
 private:
     std::shared_ptr<Model> model;
@@ -142,5 +146,14 @@ private:
     float eventTimer;   ///< 演出に使う時間 アニメーションをそのまま使うとびみょいから
     float angleTimer;   ///< 角度が変わるのにイージングを使うため
     bool eventStart;    ///< 敵演出開始フラグ
+
+    /// ダッシュ用の変数
+    bool isDash = false;
+    bool enableDash = true;
+    float dashTimer = 3;
+    float dashAvailableTimer = 0;
+    const float dashCoolTime = 40;
+    float dashSpeed = 0;
+    const float maxDashSpeed = 2;
 };
 

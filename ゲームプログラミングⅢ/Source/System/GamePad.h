@@ -23,11 +23,12 @@ public:
 	static const GamePadButton BTN_RIGHT_SHOULDER	= (1 << 13);
 	static const GamePadButton BTN_LEFT_TRIGGER		= (1 << 14);
 	static const GamePadButton BTN_RIGHT_TRIGGER	= (1 << 15);
-	static const GamePadButton CTRL	= (1 << 16);
-	static const GamePadButton LALT	= (1 << 17);
-	static const GamePadButton RETURN	= (1 << 18);
-	static const GamePadButton F2	= (1 << 19);
-	static const GamePadButton OPTION	= (1 << 20);
+	static const GamePadButton CTRL					= (1 << 16);
+	static const GamePadButton LALT					= (1 << 17);
+	static const GamePadButton RETURN				= (1 << 18);
+	static const GamePadButton F2					= (1 << 19);
+	static const GamePadButton OPTION				= (1 << 20);
+	static const GamePadButton SHIFT				= (1 << 21);
 
 public:
 	GamePad() {}
