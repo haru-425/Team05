@@ -35,9 +35,9 @@ public:
 		else if (score_ >= 20.f / 100.f) rank.Task = RankCode::B;
 		else  rank.Task = RankCode::C;
 
-		if (time >= 180.f) rank.Time = RankCode::S;
-		else if (time >= 120.f) rank.Time = RankCode::A;
-		else if (time >= 60.f) rank.Time = RankCode::B;
+		if (time <= 0.f) rank.Time = RankCode::S;
+		else if (time <= 60.f) rank.Time = RankCode::A;
+		else if (time <= 120.f) rank.Time = RankCode::B;
 		else  rank.Time = RankCode::C;
 
 

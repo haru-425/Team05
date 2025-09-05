@@ -240,6 +240,21 @@ void SceneGame::Update(float elapsedTime)
 		//	/// exit関数はメモリリークが大量発生する可能性があるのでこの方法にする
 		//	SceneManager::instance().SetIsExit(true);
 		//}
+
+		if (reminingTime <= 0.0f)
+		{
+			nextScene = new Game_Clear;
+			sceneTrans = true;
+			transTimer = 0.0f;
+			selectTrans = SelectTrans::Clear;
+			RankSystem::Instance().SetRank(
+				batteryManager::Instance().getScore(),
+				batteryManager::Instance().getMax_Score(),
+				reminingTime); // タイムアップでSランク
+			batteryManager::Instance().ClearBattery();
+			CursorManager::Instance().SetCursorVisible(true);
+			reminingTime = 0.0f;
+		}
 		if (player->GetIsDeath())
 		{
 			nextScene = new Game_Clear;
@@ -256,20 +271,6 @@ void SceneGame::Update(float elapsedTime)
 			reminingTime = 0.0f;
 		}
 
-		if (reminingTime <= 0.0f)
-		{
-			nextScene = new Game_Clear;
-			sceneTrans = true;
-			transTimer = 0.0f;
-			selectTrans = SelectTrans::Clear;
-			RankSystem::Instance().SetRank(
-				batteryManager::Instance().getScore(),
-				batteryManager::Instance().getMax_Score(),
-				reminingTime); // タイムアップでSランク
-			batteryManager::Instance().ClearBattery();
-			CursorManager::Instance().SetCursorVisible(true);
-			reminingTime = 0.0f;
-		}
 	}
 	else
 	{
