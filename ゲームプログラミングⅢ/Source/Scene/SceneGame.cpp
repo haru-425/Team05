@@ -980,7 +980,7 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		i_CameraController->Update(elapsedTime);
 
 		// ウィンドウがアクティブであるかをチェック
-		if (CursorManager::Instance().GetIsActiveWindow())
+		if (CursorManager::Instance().GetIsActiveWindow()|| player->GetIsEvent())
 		{
 			// ウィンドウがアクティブなら、マウスカーソルの位置を画面中央に固定
 			SetCursorPos(screenPoint.x, screenPoint.y);
