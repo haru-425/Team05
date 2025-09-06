@@ -14,6 +14,9 @@ public:
 
 	void Update(float elapsedTime, bool dushflug);
 	void Render();
+
+	void Debug();
+
 private:
 
 
