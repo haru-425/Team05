@@ -65,11 +65,10 @@ DushUI::DushUI()
 
 // 更新処理
 void DushUI::Update(float elapsedTime, bool dushflug)
-
 {
 	if (dushflug)
 	{
-		radialFillAmount == 1;
+		radialFillAmount = 1;
 	}
 	else
 	{
@@ -127,6 +126,16 @@ void DushUI::Render()
 	// 描画
 
 	DrawFillRadial(dc, 30, 400, 70, 70, 0, 0, textureWidth, textureHeight, radialFillAmount, screenWidth, screenHeight);
+}
+
+/// デバッグ用
+void DushUI::Debug()
+{
+	if (ImGui::Begin("Dush class"))
+	{
+		ImGui::InputFloat("amount", &radialFillAmount);
+	}
+	ImGui::End();
 }
 
 // 放射塗りつぶし描画

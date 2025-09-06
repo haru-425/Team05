@@ -333,7 +333,11 @@ void SceneGame::Update(float elapsedTime)
 
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 	EnemyUI::Instance().Update(elapsedTime, player->GetPosition(), enemy->Get_Loocking());
-	dushUI.Update(elapsedTime, player->GetEnableDash());
+
+	if (!player->GetIsDash())
+	{
+		dushUI.Update(elapsedTime, player->GetEnableDash());
+	}
 }
 
 // 描画処理
@@ -833,6 +837,7 @@ void SceneGame::DrawGUI()
 	ObjectManager::Instance().DebugGUI();
 
 	player->DrawDebug();
+	dushUI.Debug();
 
 	CollisionEditor::Instance().DrawDebug();
 
