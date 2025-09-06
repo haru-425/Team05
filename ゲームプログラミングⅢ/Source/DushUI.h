@@ -12,7 +12,7 @@ public:
 	DushUI();
 	~DushUI() {};
 
-	void Update(float elapsedTime, bool dushflug);
+	void Update(float elapsedTime, const bool dushflug);
 	void Render();
 private:
 
