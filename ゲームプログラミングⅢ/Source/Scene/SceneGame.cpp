@@ -21,7 +21,7 @@
 #include <imgui.h>
 #include <random>
 
-CONST LONG SHADOWMAP_WIDTH	= { 2048 };
+CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 float reminingTime = 300.0f;
 bool SceneGame::tutorial_Flug2 = false;
@@ -219,6 +219,7 @@ void SceneGame::Update(float elapsedTime)
 		//ポーズ状態の処理はココ！
 		PauseSystem::Instance().Update(elapsedTime);
 		Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
+		player->UpdateSounds(elapsedTime);
 
 		if (player->GetIsDeath() && CursorManager::Instance().GetIsActiveWindow()) {
 			pause_Flug = false;
@@ -573,7 +574,7 @@ void SceneGame::Render()
 		Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::BloomFinal]->activate(dc);
 		Graphics::Instance().bloomer->make(dc, Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RadialBlur]->shader_resource_views[0].Get());
 		ID3D11ShaderResourceView* shader_resource_views[2];
-		if (enemy->Get_isPlayerInView())//trueで追われている
+		if (enemy->Get_Tracking())//trueで追われている
 		{
 			shader_resource_views[0] = Graphics::Instance().framebuffers[(int)Graphics::PPShaderType::RedPulseAlert]->shader_resource_views[0].Get();
 			shader_resource_views[1] = Graphics::Instance().bloomer->shader_resource_view();
@@ -601,7 +602,7 @@ void SceneGame::Render()
 		if (!tutorial_Flug || tutorial_Step >= 6)
 		{
 			metar->render();
-			
+
 			BatteryScore::Instance().Render(rc);
 		}
 		/// ポーズ中に表示するスプライト
@@ -1014,7 +1015,7 @@ void SceneGame::UpdateCamera(float elapsedTime)
 		i_CameraController->Update(elapsedTime);
 
 		// ウィンドウがアクティブであるかをチェック
-		if (CursorManager::Instance().GetIsActiveWindow()|| player->GetIsEvent())
+		if (CursorManager::Instance().GetIsActiveWindow() || player->GetIsEvent())
 		{
 			// ウィンドウがアクティブなら、マウスカーソルの位置を画面中央に固定
 			SetCursorPos(screenPoint.x, screenPoint.y);

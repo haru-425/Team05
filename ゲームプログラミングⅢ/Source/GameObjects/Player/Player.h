@@ -31,6 +31,8 @@ public:
     Player(const DirectX::XMFLOAT3& position = {0,0,0});
     ~Player();
 
+    void UpdateSounds(float dt);
+
     // 更新処理
     void Update(float dt) override;
 
