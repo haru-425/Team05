@@ -1198,7 +1198,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		tutorial_Step--;
 	case 5:
 		//「【操作方法】右クリックで敵の視点を...」
-		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_RIGHT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT_THUMB)
+		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT_THUMB)
 		{
 			tutorial_Click_Count++;
 		}
