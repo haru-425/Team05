@@ -135,10 +135,10 @@ void SceneGame::Initialize()
 			tutorial[15] = std::make_unique<Sprite>("Data/Sprite/dialog/08_2.png");
 			tutorial[16] = std::make_unique<Sprite>("Data/Sprite/dialog/08_3.png");
 		}
-		else
+		/*else
 		{
 			tutorial_Step = 18;
-		}
+		}*/
 	}
 	EnemyUI::Instance().Initialize(); ///< 敵のUI初期化
 	PlayerUI::Instance().Initialize();
@@ -227,6 +227,9 @@ void SceneGame::Update(float elapsedTime)
 		return;
 	}
 
+	//ごり押し策なのでこれが原因でバグったらすぐに消す
+	CursorManager::Instance().SetCursorVisible(false);
+
 	if (!pause_Flug && !player->GetIsDeath()) {
 		// ESCキーを押したらautoPauseFlugをtrueに(プレイヤーがポーズ状態にするフラグを立てる)
 		//if (GetAsyncKeyState('P') & 0x8000)
@@ -299,7 +302,7 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	/// チュートリアル処理
-	if (tutorial_Flug && !tutorial_Flug2)
+	if (tutorial_Flug)
 	{
 		stage->Update(elapsedTime);
 		minimap->Update(player->GetPosition());
@@ -339,7 +342,11 @@ void SceneGame::Update(float elapsedTime)
 
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 	EnemyUI::Instance().Update(elapsedTime, player->GetPosition(), enemy->Get_Loocking());
-	dushUI.Update(elapsedTime, player->GetEnableDash());
+
+	if (!player->GetIsDash())
+	{
+		dushUI.Update(elapsedTime, player->GetEnableDash());
+	}
 }
 
 // 描画処理
@@ -586,11 +593,15 @@ void SceneGame::Render()
 		if (!pause_Flug) {
 			PlayerUI::Instance().Render(rc);
 		}
+		if (!tutorial_Flug || tutorial_Step >= 4)
+		{
+			dushBackUI->Render(rc, 30, 400, 0, 70, 70, 0, 1, 1, 1, 0.5f);
+			dushUI.Render();
+		}
 		if (!tutorial_Flug || tutorial_Step >= 6)
 		{
 			metar->render();
-			dushBackUI->Render(rc, 30, 400, 0, 70, 70, 0, 1, 1, 1, 0.5f);
-			dushUI.Render();
+			
 			BatteryScore::Instance().Render(rc);
 		}
 		/// ポーズ中に表示するスプライト
@@ -699,7 +710,7 @@ void SceneGame::Render()
 		return sin((x * DirectX::XM_PI) / 2);
 	};
 
-	if (tutorial_Flug && !tutorial_Flug2 && !pause_Flug)
+	if (tutorial_Flug && !pause_Flug)
 	{
 		bool next_navi_vision = false;
 		switch (tutorial_Step)
@@ -839,6 +850,7 @@ void SceneGame::DrawGUI()
 	ObjectManager::Instance().DebugGUI();
 
 	player->DrawDebug();
+	dushUI.Debug();
 
 	CollisionEditor::Instance().DrawDebug();
 
@@ -1121,7 +1133,8 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 	switch (tutorial_Step)
 	{
 	case 20:
-		tutorial_Flug2 = true;
+		//tutorial_Flug2 = true;
+		tutorial_Flug = false;
 		//オートランやらなんやらはここで初期化
 		break;
 	case 19:

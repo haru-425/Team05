@@ -64,26 +64,28 @@ DushUI::DushUI()
 }
 
 // 更新処理
-void DushUI::Update(float elapsedTime, bool dushflug)
 
+void DushUI::Update(float elapsedTime, bool dushflug)
 {
+	auto updateAmount = [&](float& amount)
+	{
+		amount += (1.0f / 40.0f) * elapsedTime; // 40秒で1.0になる
+		if (amount > 1.0f)
+		{
+			amount = 0.0f; // ループさせる
+		}
+	};
+	//radialFillAmount == 1.0f;
 	if (dushflug)
 	{
-		radialFillAmount == 1;
+		radialFillAmount = 1.0f;
 	}
-	else
+	if (!dushflug)
 	{
 
-		auto updateAmount = [&](float& amount)
-		{
-			amount += (1.0f / 40.0f) * elapsedTime; // 40秒で1.0になる
-			if (amount > 1.0f)
-			{
-				amount -= 1.0f; // ループさせる
-			}
-		};
-
 		updateAmount(radialFillAmount);
+	}
+	{
 	}
 }
 
@@ -127,6 +129,16 @@ void DushUI::Render()
 	// 描画
 
 	DrawFillRadial(dc, 30, 400, 70, 70, 0, 0, textureWidth, textureHeight, radialFillAmount, screenWidth, screenHeight);
+}
+
+/// デバッグ用
+void DushUI::Debug()
+{
+	if (ImGui::Begin("Dush class"))
+	{
+		ImGui::InputFloat("amount", &radialFillAmount);
+	}
+	ImGui::End();
 }
 
 // 放射塗りつぶし描画

@@ -529,7 +529,7 @@ void Stage::AddEdgecost(int from, int to)
 	}
 }
 
-int Stage::randomPoint()
+int Stage::RandomPoint()
 {
 	// ハードウェア由来のランダムシードを取得
 	std::random_device rd;
@@ -546,4 +546,17 @@ int Stage::randomPoint()
 	}
 
 	return player_NearPoint[value];
+}
+
+int Stage::EnemySpawnPoint()
+{
+	// ハードウェア由来のランダムシードを取得
+	std::random_device rd;
+
+	// メルセンヌツイスタ（高性能な乱数生成器）にシードを与える
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> dist(0, 5);
+	int value = dist(gen);
+	
+	return enemy_SpawnPoint[value];
 }
