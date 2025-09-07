@@ -38,7 +38,7 @@ void SceneCameraController::Update(float dt)
     bool isAngleMax = false;
 
     /// ŠÔ‚ª‚O–¢–‚É‚È‚é‚ÆƒJƒƒ‰Ø‚è‘Ö‚¦
-    if (timer < 0)
+    if (timer <= 0)
     {
         viewPoint++;
         timer = cameraChangeLimit;
