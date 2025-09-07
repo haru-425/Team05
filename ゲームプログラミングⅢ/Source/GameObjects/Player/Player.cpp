@@ -81,6 +81,14 @@ Player::~Player()
 {
 }
 
+void Player::UpdateSounds(float dt)
+{
+	GameSettings setting = SettingsManager::Instance().GetGameSettings();
+	changeCameraInSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
+	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
+	changeCameraFailedSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
+}
+
 bool isDiscovered = false;
 bool look = false;
 /// 更新処理
@@ -99,10 +107,6 @@ void Player::Update(float dt)
 			viewPoint = node.translate.y * 0.015f;
 		}
 	}
-	GameSettings setting = SettingsManager::Instance().GetGameSettings();
-	changeCameraInSE->SetVolume(0.5f * setting.seVolume * setting.masterVolume);
-	changeCameraKeepSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
-	changeCameraFailedSE->SetVolume(1.0f * setting.seVolume * setting.masterVolume);
 
 	/// 敵に追跡されているのか(コントローラーの振動)
 	{

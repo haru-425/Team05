@@ -219,6 +219,7 @@ void SceneGame::Update(float elapsedTime)
 		//ポーズ状態の処理はココ！
 		PauseSystem::Instance().Update(elapsedTime);
 		Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
+		player->UpdateSounds(elapsedTime);
 
 		if (player->GetIsDeath() && CursorManager::Instance().GetIsActiveWindow()) {
 			pause_Flug = false;
