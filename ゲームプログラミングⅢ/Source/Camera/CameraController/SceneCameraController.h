@@ -3,7 +3,7 @@
 
 #define VIEW_POINT_COUNT 5
 
-static constexpr float cameraChangeLimit = 5.0f;
+static constexpr float cameraChangeLimit = 4.99f;
 
 class SceneCameraController : public ICameraController
 {
