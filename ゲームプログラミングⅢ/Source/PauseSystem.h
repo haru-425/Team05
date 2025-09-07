@@ -71,4 +71,6 @@ private:
     int selectNum = -1;
     float selectTime = 0;
     int selectCount = 0;
+
+    bool isCenterCursor = false;
 };
