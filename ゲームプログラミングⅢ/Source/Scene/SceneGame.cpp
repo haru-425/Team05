@@ -302,7 +302,7 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	/// チュートリアル処理
-	if (tutorial_Flug && !tutorial_Flug2)
+	if (tutorial_Flug)
 	{
 		stage->Update(elapsedTime);
 		minimap->Update(player->GetPosition());
@@ -342,7 +342,11 @@ void SceneGame::Update(float elapsedTime)
 
 	Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 	EnemyUI::Instance().Update(elapsedTime, player->GetPosition(), enemy->Get_Loocking());
-	dushUI.Update(elapsedTime, player->GetEnableDash());
+
+	if (!player->GetIsDash())
+	{
+		dushUI.Update(elapsedTime, player->GetEnableDash());
+	}
 }
 
 // 描画処理
@@ -706,7 +710,7 @@ void SceneGame::Render()
 		return sin((x * DirectX::XM_PI) / 2);
 	};
 
-	if (tutorial_Flug && !tutorial_Flug2 && !pause_Flug)
+	if (tutorial_Flug && !pause_Flug)
 	{
 		bool next_navi_vision = false;
 		switch (tutorial_Step)
@@ -846,6 +850,7 @@ void SceneGame::DrawGUI()
 	ObjectManager::Instance().DebugGUI();
 
 	player->DrawDebug();
+	dushUI.Debug();
 
 	CollisionEditor::Instance().DrawDebug();
 
@@ -1129,6 +1134,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 	{
 	case 20:
 		//tutorial_Flug2 = true;
+		tutorial_Flug = false;
 		//オートランやらなんやらはここで初期化
 		break;
 	case 19:
