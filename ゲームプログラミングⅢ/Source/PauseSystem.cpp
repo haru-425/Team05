@@ -175,6 +175,18 @@ void PauseSystem::Update(float elapsedTime)
 		lastSelectID = -1;
 	}
 
+	if (isCenterCursor)
+	{
+		isSceneStart = false;
+		SceneGame::SetPause(false);
+		isCenterCursor = false;
+		if (oldSelect != 0 || selectSE->IsPlaying()) {
+			selectSE->Play(false);
+			oldSelect = 0;
+		}
+		return;
+	}
+
 	for (auto& ui : um.GetHitAllUI())
 	{
 		int id = ui->GetID();
@@ -182,18 +194,23 @@ void PauseSystem::Update(float elapsedTime)
 		switch (id)
 		{
 		case 2: ///< id 2‚ÍƒQ[ƒ€ŠJŽn
+
 			if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 			{
 				selectStart = true;
 
 				if (selectOptions)
 					selectOptions = !selectOptions;
-				if (oldSelect != 0 || selectSE->IsPlaying()) {
-					selectSE->Play(false);
-					oldSelect = 0;
+
+
+				if (!isCenterCursor)
+				{
+					POINT screenPoint = { Input::Instance().GetMouse().GetScreenWidth() / 2, Input::Instance().GetMouse().GetScreenHeight() / 2 };
+					ClientToScreen(Graphics::Instance().GetWindowHandle(), &screenPoint);
+					SetCursorPos(screenPoint.x, screenPoint.y);
+					isCenterCursor = true;
 				}
-				isSceneStart = false;
-				SceneGame::SetPause(false);
+
 				break;
 			}
 			break;
