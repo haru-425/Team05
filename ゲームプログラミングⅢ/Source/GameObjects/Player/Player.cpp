@@ -392,7 +392,7 @@ void Player::ChangeCamera()
 	if (isHijack)isHijack = false;
 
 	// �E�N���b�N�Ő؂�ւ�
-	if ((mouse.GetButtonDown() & Mouse::BTN_RIGHT || gamePad.GetButtonDown() & GamePad::BTN_RIGHT_SHOULDER) && enableHijack)
+	if ((mouse.GetButtonDown() & Mouse::BTN_LEFT || gamePad.GetButtonDown() & GamePad::BTN_RIGHT_SHOULDER) && enableHijack)
 	{
 		if (enableHijack) {
 			if (useCam)
