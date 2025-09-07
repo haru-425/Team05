@@ -1191,6 +1191,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		break;
 	case 7:
 		player->ChangeCamera();
+		player->UpdateHijack(elapsedTime);
 		tutorial_Step++;
 		break;
 	case 6:
@@ -1203,7 +1204,7 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		}
 		player->ChangeCamera();
 		player->UpdateHijack(elapsedTime);
-		if (tutorial_Click_Count >= 2) //右クリックが二回押されたら
+		if (tutorial_Click_Count >= 3) //右クリックが二回押されたら
 		{
 			tutorial_Step += 2;
 		}
