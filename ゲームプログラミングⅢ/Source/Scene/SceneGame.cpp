@@ -1192,14 +1192,14 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 		break;
 	case 7:
 		player->ChangeCamera();
-		player->UpdateHijack(elapsedTime);
+		//player->UpdateHijack(elapsedTime);
 		tutorial_Step++;
 		break;
 	case 6:
 		tutorial_Step--;
 	case 5:
 		//「【操作方法】右クリックで敵の視点を...」
-		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT_THUMB)
+		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A)
 		{
 			tutorial_Click_Count++;
 		}
