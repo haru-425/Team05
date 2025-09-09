@@ -391,9 +391,16 @@ void Player::ChangeCamera()
 	Mouse& mouse = Input::Instance().GetMouse();
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
-	if (isChange)
+	if (isChange) 
+	{
 		isChange = false;
-	if (isHijack)isHijack = false;
+		return;
+	}
+	if (isHijack)
+	{
+		isHijack = false;
+		return;
+	}
 
 	// �E�N���b�N�Ő؂�ւ�
 	if ((mouse.GetButtonDown() & Mouse::BTN_LEFT || gamePad.GetButtonDown() & GamePad::BTN_RIGHT_SHOULDER) && enableHijack)
