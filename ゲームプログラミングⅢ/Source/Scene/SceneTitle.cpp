@@ -129,6 +129,8 @@ void SceneTitle::Initialize()
 
 	// SE読み込み
 	selectSE = Audio::Instance().LoadAudioSource("Data/Sound/selectButton.wav");
+
+    selectNum = 0;
 }
 
 //終了化
