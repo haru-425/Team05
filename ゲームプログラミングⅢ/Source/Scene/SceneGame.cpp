@@ -525,25 +525,88 @@ void SceneGame::Render()
 			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TemporalNoise)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::FilmGrainDust)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->deactivate(dc);
 
+		//VisionBootDown
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->activate(dc);
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VisionBootDown)].Get());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->deactivate(dc);
+
 		//VHS
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->activate(dc);
 		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VHS)].Get());
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VisionBootDown)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VHS)].Get());
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->deactivate(dc);
+
+
+		//FadeToBlack
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->activate(dc);
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::NoSignalFinale)].Get());
+
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->deactivate(dc);
+		//TVNoiseFade
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->clear(dc);
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->activate(dc);
+		Graphics::Instance().bit_block_transfer->blit(dc,
+			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::TVNoiseFade)].Get());
+		//minimap->Render(player->GetPosition());
+		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->deactivate(dc);
 
 		//crt
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
 
-		Graphics::Instance().bit_block_transfer->blit(dc,
-			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+		switch (selectTrans)
+		{
+		case SceneGame::SelectTrans::Clear:
+			Graphics::Instance().bit_block_transfer->blit(dc,
+				Graphics::Instance().framebuffers[int(Graphics::PPShaderType::NoSignalFinale)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+
+			break;
+		case SceneGame::SelectTrans::GameOver:
+			Graphics::Instance().bit_block_transfer->blit(dc,
+				Graphics::Instance().framebuffers[int(Graphics::PPShaderType::TVNoiseFade)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+
+			break;
+		case SceneGame::SelectTrans::cnt:
+			break;
+		default:
+			break;
+		}
+
 		Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
 
 		Graphics::Instance().bit_block_transfer->blit(
 			dc,
 			Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
 		);
+
+
+
+
+
+		////VHS
+		//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->clear(dc);
+		//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->activate(dc);
+		//Graphics::Instance().bit_block_transfer->blit(dc,
+		//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::FilmGrainDust)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::VHS)].Get());
+		//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->deactivate(dc);
+
+		////crt
+		//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->clear(dc);
+		//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->activate(dc);
+
+		//Graphics::Instance().bit_block_transfer->blit(dc,
+		//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::VHS)]->shader_resource_views[0].GetAddressOf(), 10, 1, Graphics::Instance().pixel_shaders[int(Graphics::PPShaderType::crt)].Get());
+		//Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->deactivate(dc);
+
+		//Graphics::Instance().bit_block_transfer->blit(
+		//	dc,
+		//	Graphics::Instance().framebuffers[int(Graphics::PPShaderType::crt)]->shader_resource_views[0].GetAddressOf(), 10, 1
+		//);
 	}
 	else
 	{
