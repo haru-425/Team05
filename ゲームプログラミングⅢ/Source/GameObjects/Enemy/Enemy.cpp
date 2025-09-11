@@ -141,12 +141,12 @@ void Enemy::Update(float elapsedTime)
 		route.clear();
 		currentTargetIndex = 0;
 
-		Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
-		Start::Instance().SetPosition(this->position);
-		SearchAI::Instance().trackingSearch(stage);
-
-		int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+		int current = stage->NearWayPointIndex(playerRef.lock()->GetPosition());
 		int start = stage->NearWayPointIndex(this->position);
+
+		Goal::Instance().SetPosition(stage->GetIndexWayPoint(current));
+		Start::Instance().SetPosition(stage->GetIndexWayPoint(start));
+		SearchAI::Instance().trackingSearch(stage);
 
 		refinePath(start, current); // 経路を作成
 
@@ -173,12 +173,13 @@ void Enemy::Update(float elapsedTime)
 			route.clear();
 			currentTargetIndex = 0;
 
-			Goal::Instance().SetPosition(playerRef.lock()->GetPosition());
-			Start::Instance().SetPosition(this->position);
-			SearchAI::Instance().trackingSearch(stage);
 
-			int current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
+			int current = stage->NearWayPointIndex(playerRef.lock()->GetPosition());
 			int start = stage->NearWayPointIndex(this->position);
+
+			Goal::Instance().SetPosition(stage->GetIndexWayPoint(current));
+			Start::Instance().SetPosition(stage->GetIndexWayPoint(start));
+			SearchAI::Instance().trackingSearch(stage);
 
 			refinePath(start, current); // 経路を作成
 
@@ -206,7 +207,7 @@ void Enemy::Update(float elapsedTime)
 
 			refinePath(start, current);
 
-
+			isPlayerInView = true;
 			/*char checks[256];
 			sprintf_s(checks, sizeof(checks), "add\n");
 			OutputDebugStringA(checks);*/
@@ -273,7 +274,7 @@ void Enemy::Update(float elapsedTime)
 			Animationplay();
 		}
 #else
-		Start::Instance().SetPosition(this->position);
+		Start::Instance().SetPosition(stage->GetIndexWayPoint(stage->NearWayPointIndex(this->GetPosition())));
 		SearchAI::Instance().freeSearch(stage);
 
 		current = stage->NearWayPointIndex(Goal::Instance().GetPosition());
