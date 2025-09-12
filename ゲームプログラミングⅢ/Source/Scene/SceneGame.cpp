@@ -308,6 +308,11 @@ void SceneGame::Update(float elapsedTime)
 		metar->update(player->GetenableHijackTime());
 		UpdateCamera(elapsedTime);
 		Graphics::Instance().UpdateConstantBuffer(timer, transTimer, reminingTime);
+		LightManager::Instance().Update();
+		ObjectManager::Instance().Update(elapsedTime);
+		Audio3DSystem::Instance().UpdateListener(Camera::Instance().GetEye(), Camera::Instance().GetFront(), Camera::Instance().GetUp());
+		Audio3DSystem::Instance().SetEmitterPositionByTag("atmosphere_noise", Camera::Instance().GetEye());
+		Audio3DSystem::Instance().UpdateEmitters(elapsedTime);
 		return;
 	}
 
