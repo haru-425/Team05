@@ -59,7 +59,7 @@ private:
 
 	void CheckGateInteraction(std::shared_ptr<Player> player, Stage* stage, bool& fadeStart);
 
-	static bool tutorial_Flug2;
+	//static bool tutorial_Flug2;
 private:
 	Stage* stage = nullptr;
 

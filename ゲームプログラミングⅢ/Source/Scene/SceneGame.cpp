@@ -24,7 +24,7 @@
 CONST LONG SHADOWMAP_WIDTH = { 2048 };
 CONST LONG SHADOWMAP_HEIGHT = { 2048 };
 float reminingTime = 300.0f;
-bool SceneGame::tutorial_Flug2 = false;
+//bool SceneGame::tutorial_Flug2 = false;
 
 // 初期化
 void SceneGame::Initialize()
@@ -115,26 +115,23 @@ void SceneGame::Initialize()
 	{
 		tutorial_Flug = true;
 		reminingTime = 60.0f;
-		if (!tutorial_Flug2)
-		{
-			tutorial[0] = std::make_unique<Sprite>("Data/Sprite/dialog/01.png");
-			tutorial[1] = std::make_unique<Sprite>("Data/Sprite/dialog/02.png");
-			tutorial[2] = std::make_unique<Sprite>("Data/Sprite/dialog/03.png");
-			tutorial[3] = std::make_unique<Sprite>("Data/Sprite/dialog/04.png");
-			tutorial[4] = std::make_unique<Sprite>("Data/Sprite/dialog/05.png");
-			tutorial[5] = std::make_unique<Sprite>("Data/Sprite/dialog/06.png");
-			tutorial[6] = std::make_unique<Sprite>("Data/Sprite/dialog/07.png");
-			tutorial[7] = std::make_unique<Sprite>("Data/Sprite/dialog/08.png");
-			tutorial[8] = std::make_unique<Sprite>("Data/Sprite/dialog/09.png");
-			tutorial[9] = std::make_unique<Sprite>("Data/Sprite/dialog/10.png");
-			tutorial[10] = std::make_unique<Sprite>("Data/Sprite/dialog/11.png");
-			tutorial[11] = std::make_unique<Sprite>("Data/Sprite/dialog/12.png");
-			tutorial[12] = std::make_unique<Sprite>("Data/Sprite/dialog/next_navi.png");
-			tutorial[13] = std::make_unique<Sprite>("Data/Sprite/dialog/aisle.png");
-			tutorial[14] = std::make_unique<Sprite>("Data/Sprite/dialog/map.png");
-			tutorial[15] = std::make_unique<Sprite>("Data/Sprite/dialog/08_2.png");
-			tutorial[16] = std::make_unique<Sprite>("Data/Sprite/dialog/08_3.png");
-		}
+		tutorial[0] = std::make_unique<Sprite>("Data/Sprite/dialog/01.png");
+		tutorial[1] = std::make_unique<Sprite>("Data/Sprite/dialog/02.png");
+		tutorial[2] = std::make_unique<Sprite>("Data/Sprite/dialog/03.png");
+		tutorial[3] = std::make_unique<Sprite>("Data/Sprite/dialog/04.png");
+		tutorial[4] = std::make_unique<Sprite>("Data/Sprite/dialog/05.png");
+		tutorial[5] = std::make_unique<Sprite>("Data/Sprite/dialog/06.png");
+		tutorial[6] = std::make_unique<Sprite>("Data/Sprite/dialog/07.png");
+		tutorial[7] = std::make_unique<Sprite>("Data/Sprite/dialog/08.png");
+		tutorial[8] = std::make_unique<Sprite>("Data/Sprite/dialog/09.png");
+		tutorial[9] = std::make_unique<Sprite>("Data/Sprite/dialog/10.png");
+		tutorial[10] = std::make_unique<Sprite>("Data/Sprite/dialog/11.png");
+		tutorial[11] = std::make_unique<Sprite>("Data/Sprite/dialog/12.png");
+		tutorial[12] = std::make_unique<Sprite>("Data/Sprite/dialog/next_navi.png");
+		tutorial[13] = std::make_unique<Sprite>("Data/Sprite/dialog/aisle.png");
+		tutorial[14] = std::make_unique<Sprite>("Data/Sprite/dialog/map.png");
+		tutorial[15] = std::make_unique<Sprite>("Data/Sprite/dialog/08_2.png");
+		tutorial[16] = std::make_unique<Sprite>("Data/Sprite/dialog/08_3.png");
 		/*else
 		{
 			tutorial_Step = 18;
@@ -1256,13 +1253,14 @@ void SceneGame::TutorialUpdate(float elapsedTime)
 	case 7:
 		player->ChangeCamera();
 		//player->UpdateHijack(elapsedTime);
+		tutorial_Click_Count = 0;
 		tutorial_Step++;
 		break;
 	case 6:
 		tutorial_Step--;
 	case 5:
 		//「【操作方法】右クリックで敵の視点を...」
-		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A)
+		if (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT || Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
 		{
 			tutorial_Click_Count++;
 		}
