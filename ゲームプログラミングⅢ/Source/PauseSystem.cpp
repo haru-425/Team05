@@ -332,6 +332,7 @@ void PauseSystem::DrawDebug()
 		ImGui::InputInt("mVolume", &mVolume);
 		ImGui::InputInt("bgmVolume", &bgmVolume);
 		ImGui::InputInt("seVolume", &seVolume);
+		ImGui::InputInt("selectNum", &selectNum);
 
 		ImGui::TreePop();
 	}
@@ -403,10 +404,10 @@ void PauseSystem::UpdateWithController(float elapsedTime)
 	static bool selectOption = false;
 
 	/// ƒV[ƒ“‚Í‚¶‚Ü‚Á‚Ä‰‚ß‚Ìˆ—
-	if (isSceneStart)
+	if (!isSceneStart)
 	{
 		selectOption = false;
-		selectNum = 2;
+		selectNum = 3;
 		isSceneStart = true;
 	}
 
