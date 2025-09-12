@@ -143,7 +143,7 @@ private:
 	// ======================================
 	// チュ－トリアルのスプライト配列
 	// ======================================
-	std::unique_ptr<Sprite> tutorial[17];
+	std::unique_ptr<Sprite> tutorial[18];
 
 	UIManager um;
 
