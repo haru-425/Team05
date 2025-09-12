@@ -132,6 +132,7 @@ void SceneGame::Initialize()
 		tutorial[14] = std::make_unique<Sprite>("Data/Sprite/dialog/map.png");
 		tutorial[15] = std::make_unique<Sprite>("Data/Sprite/dialog/08_2.png");
 		tutorial[16] = std::make_unique<Sprite>("Data/Sprite/dialog/08_3.png");
+		tutorial[17] = std::make_unique<Sprite>("Data/Sprite/dialog/battery.png");
 		/*else
 		{
 			tutorial_Step = 18;
@@ -813,6 +814,7 @@ void SceneGame::Render()
 		case 14:
 			next_navi_vision = true;
 			//「【バッテリー】このように敵は巡回中に、バッテリーを...」
+			tutorial[17]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 			tutorial[7]->Render(rc, 0, 0, 0, 1280, 720, 0, 1, 1, 1, 1);
 			break;
 		case 13:
