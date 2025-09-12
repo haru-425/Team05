@@ -254,6 +254,11 @@ void SceneGame::Update(float elapsedTime)
 		//	SceneManager::instance().SetIsExit(true);
 		//}
 
+		bool tutorialFlug = false;
+		if (Difficulty::Instance().GetDifficulty() == Difficulty::mode::tutorial)
+		{
+			tutorialFlug = true;
+		}
 		if (reminingTime <= 0.0f)
 		{
 			nextScene = new Game_Clear;
@@ -263,7 +268,7 @@ void SceneGame::Update(float elapsedTime)
 			RankSystem::Instance().SetRank(
 				batteryManager::Instance().getScore(),
 				batteryManager::Instance().getMax_Score(),
-				reminingTime, tutorial_Flug); // タイムアップでSランク
+				reminingTime, tutorialFlug); // タイムアップでSランク
 			batteryManager::Instance().ClearBattery();
 			CursorManager::Instance().SetCursorVisible(true);
 			reminingTime = 0.0f;
@@ -277,7 +282,7 @@ void SceneGame::Update(float elapsedTime)
 			RankSystem::Instance().SetRank(
 				batteryManager::Instance().getScore(),
 				batteryManager::Instance().getMax_Score(),
-				reminingTime, tutorial_Flug); // タイムアップでSランク
+				reminingTime, tutorialFlug); // タイムアップでSランク
 			batteryManager::Instance().ClearBattery();
 			CursorManager::Instance().SetCursorVisible(true);
 			batteryManager::Instance().ClearBattery();
