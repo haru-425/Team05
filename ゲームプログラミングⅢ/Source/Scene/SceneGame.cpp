@@ -266,7 +266,7 @@ void SceneGame::Update(float elapsedTime)
 			RankSystem::Instance().SetRank(
 				batteryManager::Instance().getScore(),
 				batteryManager::Instance().getMax_Score(),
-				reminingTime); // タイムアップでSランク
+				reminingTime, tutorial_Flug); // タイムアップでSランク
 			batteryManager::Instance().ClearBattery();
 			CursorManager::Instance().SetCursorVisible(true);
 			reminingTime = 0.0f;
@@ -280,7 +280,7 @@ void SceneGame::Update(float elapsedTime)
 			RankSystem::Instance().SetRank(
 				batteryManager::Instance().getScore(),
 				batteryManager::Instance().getMax_Score(),
-				reminingTime); // タイムアップでSランク
+				reminingTime, tutorial_Flug); // タイムアップでSランク
 			batteryManager::Instance().ClearBattery();
 			CursorManager::Instance().SetCursorVisible(true);
 			batteryManager::Instance().ClearBattery();

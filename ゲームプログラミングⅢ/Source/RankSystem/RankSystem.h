@@ -28,16 +28,21 @@ public:
 	}
 	RankSystem() {};
 	~RankSystem() {};
-	void SetRank(float score, float maxScore, float time) {
+	void SetRank(float score, float maxScore, float time, bool isTutorial) {
+		float scale = 1.0f;
+		if (isTutorial)
+		{
+			scale = 1.f / 3.f;
+		}
 		float score_ = score / maxScore;
 		if (score_ >= 80.f / 100.f) rank.Task = RankCode::S;
 		else if (score_ >= 50.f / 100.f) rank.Task = RankCode::A;
 		else if (score_ >= 20.f / 100.f) rank.Task = RankCode::B;
 		else  rank.Task = RankCode::C;
 
-		if (time <= 0.f) rank.Time = RankCode::S;
-		else if (time <= 60.f) rank.Time = RankCode::A;
-		else if (time <= 120.f) rank.Time = RankCode::B;
+		if (time <= 0.f * scale) rank.Time = RankCode::S;
+		else if (time <= 60.f * scale) rank.Time = RankCode::A;
+		else if (time <= 120.f * scale) rank.Time = RankCode::B;
 		else  rank.Time = RankCode::C;
 
 
